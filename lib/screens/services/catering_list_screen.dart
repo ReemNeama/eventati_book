@@ -5,6 +5,7 @@ import 'package:eventati_book/widgets/services/service_card.dart';
 import 'package:eventati_book/widgets/services/filter_dialog.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/utils/utils.dart';
+import 'package:eventati_book/screens/services/catering_details_screen.dart';
 
 class CateringListScreen extends StatefulWidget {
   const CateringListScreen({super.key});
@@ -146,7 +147,14 @@ class _CateringListScreenState extends State<CateringListScreen> {
                   rating: service.rating,
                   imageUrl: service.imageUrl,
                   onTap: () {
-                    // Handle tap
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder:
+                            (context) =>
+                                CateringDetailsScreen(cateringService: service),
+                      ),
+                    );
                   },
                   additionalInfo: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

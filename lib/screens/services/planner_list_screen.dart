@@ -5,6 +5,7 @@ import 'package:eventati_book/widgets/services/service_card.dart';
 import 'package:eventati_book/widgets/services/filter_dialog.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/utils/utils.dart';
+import 'package:eventati_book/screens/services/planner_details_screen.dart';
 
 class PlannerListScreen extends StatefulWidget {
   const PlannerListScreen({super.key});
@@ -158,7 +159,13 @@ class _PlannerListScreenState extends State<PlannerListScreen> {
                   rating: planner.rating,
                   imageUrl: planner.imageUrl,
                   onTap: () {
-                    // Handle tap
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder:
+                            (context) => PlannerDetailsScreen(planner: planner),
+                      ),
+                    );
                   },
                   additionalInfo: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

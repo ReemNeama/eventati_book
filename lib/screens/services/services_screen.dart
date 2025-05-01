@@ -3,6 +3,9 @@ import 'package:eventati_book/screens/services/venue_list_screen.dart';
 import 'package:eventati_book/screens/services/catering_list_screen.dart';
 import 'package:eventati_book/screens/services/photographer_list_screen.dart';
 import 'package:eventati_book/screens/services/planner_list_screen.dart';
+import 'package:eventati_book/utils/utils.dart';
+import 'package:eventati_book/styles/app_colors.dart';
+import 'package:eventati_book/styles/app_colors_dark.dart';
 
 /// Services screen that provides access to all service categories
 /// (venues, catering, photographers, planners)
@@ -31,7 +34,9 @@ class _ServicesScreenState extends State<ServicesScreen>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final bool isDarkMode = UIUtils.isDarkMode(context);
+    final Color primaryColor =
+        isDarkMode ? AppColorsDark.primary : AppColors.primary;
 
     return Scaffold(
       appBar: AppBar(
@@ -40,16 +45,9 @@ class _ServicesScreenState extends State<ServicesScreen>
         elevation: 0,
         bottom: TabBar(
           controller: _tabController,
-          indicatorColor: theme.primaryColor,
-          labelColor:
-              theme.brightness == Brightness.dark
-                  ? Colors
-                      .white // Use white for dark mode
-                  : theme.primaryColor, // Use primary color for light mode
-          unselectedLabelColor:
-              theme.brightness == Brightness.dark
-                  ? Colors.white70
-                  : Colors.black54,
+          indicatorColor: primaryColor,
+          labelColor: isDarkMode ? Colors.white : primaryColor,
+          unselectedLabelColor: isDarkMode ? Colors.white70 : Colors.black54,
           tabs: const [
             Tab(text: 'Venues'),
             Tab(text: 'Catering'),

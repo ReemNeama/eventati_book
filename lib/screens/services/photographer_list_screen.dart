@@ -6,6 +6,7 @@ import 'package:eventati_book/widgets/services/multi_select_chip_group.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/widgets/services/price_range_filter.dart';
 import 'package:eventati_book/utils/utils.dart';
+import 'package:eventati_book/screens/services/photographer_details_screen.dart';
 
 class PhotographerListScreen extends StatefulWidget {
   const PhotographerListScreen({super.key});
@@ -137,7 +138,15 @@ class _PhotographerListScreenState extends State<PhotographerListScreen> {
                   rating: photographer.rating,
                   imageUrl: photographer.imageUrl,
                   onTap: () {
-                    // Handle tap
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder:
+                            (context) => PhotographerDetailsScreen(
+                              photographer: photographer,
+                            ),
+                      ),
+                    );
                   },
                   additionalInfo: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
