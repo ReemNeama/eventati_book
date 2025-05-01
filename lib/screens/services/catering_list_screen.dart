@@ -7,9 +7,7 @@ import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/utils/utils.dart';
 
 class CateringListScreen extends StatefulWidget {
-  final VoidCallback? toggleTheme;
-
-  const CateringListScreen({super.key, this.toggleTheme});
+  const CateringListScreen({super.key});
 
   @override
   State<CateringListScreen> createState() => _CateringListScreenState();
@@ -107,18 +105,6 @@ class _CateringListScreenState extends State<CateringListScreen> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
         title: const Text('Catering Services'),
-        actions: [
-          // Theme toggle button
-          IconButton(
-            icon: Icon(
-              Theme.of(context).brightness == Brightness.light
-                  ? Icons.dark_mode
-                  : Icons.light_mode,
-            ),
-            onPressed: widget.toggleTheme,
-            tooltip: 'Toggle Theme',
-          ),
-        ],
       ),
       body: Column(
         children: [

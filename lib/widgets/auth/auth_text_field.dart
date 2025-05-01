@@ -20,21 +20,33 @@ class AuthTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return TextFormField(
       controller: controller,
-      style: const TextStyle(color: Colors.white),
+      style: TextStyle(color: isDarkMode ? Colors.white : Colors.black87),
       obscureText: obscureText,
       keyboardType: keyboardType,
       decoration: InputDecoration(
         hintText: hintText,
-        hintStyle: const TextStyle(color: Colors.white70),
-        enabledBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.white),
+        hintStyle: TextStyle(
+          color: isDarkMode ? Colors.white70 : Colors.black54,
         ),
-        focusedBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.white),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+            color: isDarkMode ? Colors.white : Colors.grey,
+          ),
         ),
-        prefixIcon: Icon(prefixIcon, color: Colors.white),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+            color: Theme.of(context).primaryColor,
+            width: 2,
+          ),
+        ),
+        prefixIcon: Icon(
+          prefixIcon,
+          color: isDarkMode ? Colors.white : Theme.of(context).primaryColor,
+        ),
       ),
       validator: validator,
     );

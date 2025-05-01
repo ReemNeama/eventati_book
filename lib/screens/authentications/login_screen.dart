@@ -69,7 +69,9 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       );
 
-      // No need to navigate - main.dart will handle navigation based on auth state
+      // Pop the login screen to return to the previous screen
+      // This is needed because main.dart will handle showing the correct screen
+      Navigator.of(context).pop();
     } else {
       // Show error message
       ScaffoldMessenger.of(context).showSnackBar(
