@@ -92,7 +92,8 @@ class EventPlanningToolsScreen extends StatelessWidget {
                       Text(
                         DateUtils.formatDate(eventDate),
                         style: TextStyle(
-                          color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
+                          color:
+                              isDarkMode ? Colors.grey[400] : Colors.grey[600],
                         ),
                       ),
                     ],
@@ -109,15 +110,18 @@ class EventPlanningToolsScreen extends StatelessWidget {
                       Text(
                         eventType,
                         style: TextStyle(
-                          color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
+                          color:
+                              isDarkMode ? Colors.grey[400] : Colors.grey[600],
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 16),
                   LinearProgressIndicator(
-                    value: 0.35, // This would be calculated based on completed tasks
-                    backgroundColor: isDarkMode ? Colors.grey[700] : Colors.grey[300],
+                    value:
+                        0.35, // This would be calculated based on completed tasks
+                    backgroundColor:
+                        isDarkMode ? Colors.grey[700] : Colors.grey[300],
                     valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
                   ),
                   const SizedBox(height: 8),
@@ -128,7 +132,8 @@ class EventPlanningToolsScreen extends StatelessWidget {
                         '35% Complete',
                         style: TextStyle(
                           fontSize: 12,
-                          color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
+                          color:
+                              isDarkMode ? Colors.grey[400] : Colors.grey[600],
                         ),
                       ),
                       Text(
@@ -144,7 +149,7 @@ class EventPlanningToolsScreen extends StatelessWidget {
                 ],
               ),
             ),
-            
+
             // Planning tools grid
             Expanded(
               child: GridView.count(
@@ -162,10 +167,11 @@ class EventPlanningToolsScreen extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => BudgetOverviewScreen(
-                            eventId: eventId,
-                            eventName: eventName,
-                          ),
+                          builder:
+                              (context) => BudgetOverviewScreen(
+                                eventId: eventId,
+                                eventName: eventName,
+                              ),
                         ),
                       );
                     },
@@ -179,10 +185,11 @@ class EventPlanningToolsScreen extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => GuestListScreen(
-                            eventId: eventId,
-                            eventName: eventName,
-                          ),
+                          builder:
+                              (context) => GuestListScreen(
+                                eventId: eventId,
+                                eventName: eventName,
+                              ),
                         ),
                       );
                     },
@@ -196,10 +203,11 @@ class EventPlanningToolsScreen extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => TimelineScreen(
-                            eventId: eventId,
-                            eventName: eventName,
-                          ),
+                          builder:
+                              (context) => TimelineScreen(
+                                eventId: eventId,
+                                eventName: eventName,
+                              ),
                         ),
                       );
                     },
@@ -213,10 +221,11 @@ class EventPlanningToolsScreen extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => VendorListScreen(
-                            eventId: eventId,
-                            eventName: eventName,
-                          ),
+                          builder:
+                              (context) => VendorListScreen(
+                                eventId: eventId,
+                                eventName: eventName,
+                              ),
                         ),
                       );
                     },
@@ -265,11 +274,7 @@ class EventPlanningToolsScreen extends StatelessWidget {
                 color: color.withOpacity(0.2),
                 shape: BoxShape.circle,
               ),
-              child: Icon(
-                icon,
-                size: 40,
-                color: color,
-              ),
+              child: Icon(icon, size: 40, color: color),
             ),
             const SizedBox(height: 16),
             Text(
@@ -290,77 +295,5 @@ class EventPlanningToolsScreen extends StatelessWidget {
   int _getDaysUntil(DateTime date) {
     final now = DateTime.now();
     return date.difference(now).inDays;
-  }
-}
-
-// Placeholder screens for the other tools
-// These would be implemented in separate files
-
-class GuestListScreen extends StatelessWidget {
-  final String eventId;
-  final String eventName;
-
-  const GuestListScreen({
-    super.key,
-    required this.eventId,
-    required this.eventName,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Guest List for $eventName'),
-      ),
-      body: const Center(
-        child: Text('Guest List Management Coming Soon'),
-      ),
-    );
-  }
-}
-
-class TimelineScreen extends StatelessWidget {
-  final String eventId;
-  final String eventName;
-
-  const TimelineScreen({
-    super.key,
-    required this.eventId,
-    required this.eventName,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Timeline for $eventName'),
-      ),
-      body: const Center(
-        child: Text('Timeline & Checklist Coming Soon'),
-      ),
-    );
-  }
-}
-
-class VendorListScreen extends StatelessWidget {
-  final String eventId;
-  final String eventName;
-
-  const VendorListScreen({
-    super.key,
-    required this.eventId,
-    required this.eventName,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Vendors for $eventName'),
-      ),
-      body: const Center(
-        child: Text('Vendor Communication Coming Soon'),
-      ),
-    );
   }
 }
