@@ -6,11 +6,9 @@ import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/widgets/details/package_card.dart';
-import 'package:eventati_book/widgets/details/feature_item.dart';
 import 'package:eventati_book/widgets/details/info_card.dart';
 import 'package:eventati_book/widgets/details/detail_tab_bar.dart';
 import 'package:eventati_book/widgets/details/image_placeholder.dart';
-import 'package:eventati_book/widgets/details/chip_group.dart';
 
 class CateringDetailsScreen extends StatefulWidget {
   final CateringService cateringService;

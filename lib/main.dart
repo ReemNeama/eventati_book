@@ -1,4 +1,8 @@
 import 'package:eventati_book/providers/auth_provider.dart';
+import 'package:eventati_book/providers/budget_provider.dart';
+import 'package:eventati_book/providers/guest_list_provider.dart';
+import 'package:eventati_book/providers/task_provider.dart';
+import 'package:eventati_book/providers/messaging_provider.dart';
 import 'package:eventati_book/screens/authentications/authentication_screen.dart';
 import 'package:eventati_book/screens/authentications/forgetpassword_screen.dart';
 import 'package:eventati_book/screens/authentications/login_screen.dart';
@@ -13,7 +17,11 @@ import 'package:provider/provider.dart';
 void main() {
   runApp(
     MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => AuthProvider())],
+      providers: [
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        // We don't create instances here since these providers need event-specific parameters
+        // They will be created as needed in the respective screens
+      ],
       child: const MyApp(),
     ),
   );

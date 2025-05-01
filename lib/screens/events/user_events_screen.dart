@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:eventati_book/utils/utils.dart';
+import 'package:eventati_book/styles/app_colors.dart';
+import 'package:eventati_book/styles/app_colors_dark.dart';
+import 'package:eventati_book/screens/event_planning/event_planning_tools_screen.dart';
 
 /// Screen that displays all events created or saved by the user
 class UserEventsScreen extends StatefulWidget {
@@ -33,11 +37,15 @@ class _UserEventsScreenState extends State<UserEventsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = UIUtils.isDarkMode(context);
+    final primaryColor = isDarkMode ? AppColorsDark.primary : AppColors.primary;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('My Events'),
         centerTitle: true,
         elevation: 0,
+        backgroundColor: primaryColor,
       ),
       body: _mockEvents.isEmpty ? _buildEmptyState() : _buildEventsList(),
       floatingActionButton: FloatingActionButton(
@@ -45,6 +53,7 @@ class _UserEventsScreenState extends State<UserEventsScreen> {
           // Navigate to event selection screen
           Navigator.pushNamed(context, '/event-selection');
         },
+        backgroundColor: primaryColor,
         child: const Icon(Icons.add),
       ),
     );
@@ -124,7 +133,53 @@ class _UserEventsScreenState extends State<UserEventsScreen> {
                 ),
               ],
             ),
-            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+            trailing: PopupMenuButton<String>(
+              icon: const Icon(Icons.more_vert),
+              onSelected: (value) {
+                if (value == 'planning') {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) => EventPlanningToolsScreen(
+                            eventId:
+                                index
+                                    .toString(), // In a real app, this would be a real ID
+                            eventName: event['name'],
+                            eventType: event['type'],
+                            eventDate: event['date'],
+                          ),
+                    ),
+                  );
+                } else if (value == 'details') {
+                  // Navigate to event details
+                  // This would be implemented based on event type
+                }
+              },
+              itemBuilder:
+                  (context) => [
+                    const PopupMenuItem(
+                      value: 'planning',
+                      child: Row(
+                        children: [
+                          Icon(Icons.build_circle, size: 20),
+                          SizedBox(width: 8),
+                          Text('Planning Tools'),
+                        ],
+                      ),
+                    ),
+                    const PopupMenuItem(
+                      value: 'details',
+                      child: Row(
+                        children: [
+                          Icon(Icons.info, size: 20),
+                          SizedBox(width: 8),
+                          Text('Event Details'),
+                        ],
+                      ),
+                    ),
+                  ],
+            ),
             onTap: () {
               // Navigate to event details
               // This would be implemented based on event type
