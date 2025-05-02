@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
+import 'package:eventati_book/utils/utils.dart';
 
 /// A class that defines the application's theme using the colors from AppColors.
 /// This provides a consistent look and feel across the entire application.
@@ -28,7 +29,10 @@ class AppTheme {
       cardTheme: const CardTheme(
         color: AppColors.card,
         elevation: 2,
-        margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+        margin: EdgeInsets.symmetric(
+          vertical: AppConstants.smallPadding,
+          horizontal: AppConstants.mediumPadding,
+        ),
       ),
 
       // Button themes
@@ -36,7 +40,11 @@ class AppTheme {
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(
+              AppConstants.smallBorderRadius * 2,
+            ),
+          ),
         ),
       ),
 
@@ -49,24 +57,32 @@ class AppTheme {
         filled: true,
         fillColor: Colors.white,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(
+            AppConstants.smallBorderRadius * 2,
+          ),
           borderSide: const BorderSide(color: AppColors.divider),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(
+            AppConstants.smallBorderRadius * 2,
+          ),
           borderSide: const BorderSide(color: AppColors.divider),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(
+            AppConstants.smallBorderRadius * 2,
+          ),
           borderSide: const BorderSide(color: AppColors.primary, width: 2),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(
+            AppConstants.smallBorderRadius * 2,
+          ),
           borderSide: const BorderSide(color: AppColors.error),
         ),
         contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 12,
+          horizontal: AppConstants.mediumPadding,
+          vertical: AppConstants.smallPadding + 4,
         ),
       ),
 
@@ -75,7 +91,10 @@ class AppTheme {
         backgroundColor: AppColors.chipBackground,
         selectedColor: AppColors.primary,
         secondarySelectedColor: AppColors.primaryWithOpacity(0.7),
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppConstants.smallPadding,
+          vertical: AppConstants.smallPadding / 2,
+        ),
         labelStyle: const TextStyle(color: AppColors.textPrimary),
         secondaryLabelStyle: const TextStyle(color: Colors.white),
         brightness: Brightness.light,
@@ -125,7 +144,10 @@ class AppTheme {
       cardTheme: const CardTheme(
         color: AppColorsDark.card,
         elevation: 2,
-        margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+        margin: EdgeInsets.symmetric(
+          vertical: AppConstants.smallPadding,
+          horizontal: AppConstants.mediumPadding,
+        ),
       ),
 
       // Button themes
@@ -133,7 +155,11 @@ class AppTheme {
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColorsDark.primary,
           foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(
+              AppConstants.smallBorderRadius * 2,
+            ),
+          ),
         ),
       ),
 
@@ -146,24 +172,32 @@ class AppTheme {
         filled: true,
         fillColor: AppColorsDark.inputFieldBackground,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(
+            AppConstants.smallBorderRadius * 2,
+          ),
           borderSide: const BorderSide(color: AppColorsDark.divider),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(
+            AppConstants.smallBorderRadius * 2,
+          ),
           borderSide: const BorderSide(color: AppColorsDark.divider),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(
+            AppConstants.smallBorderRadius * 2,
+          ),
           borderSide: const BorderSide(color: AppColorsDark.primary, width: 2),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(
+            AppConstants.smallBorderRadius * 2,
+          ),
           borderSide: const BorderSide(color: AppColorsDark.error),
         ),
         contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 12,
+          horizontal: AppConstants.mediumPadding,
+          vertical: AppConstants.smallPadding + 4,
         ),
         hintStyle: const TextStyle(color: AppColorsDark.textHint),
         labelStyle: const TextStyle(color: AppColorsDark.textSecondary),
@@ -176,7 +210,10 @@ class AppTheme {
         backgroundColor: AppColorsDark.chipBackground,
         selectedColor: AppColorsDark.primary,
         secondarySelectedColor: AppColorsDark.primaryWithOpacity(0.7),
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppConstants.smallPadding,
+          vertical: AppConstants.smallPadding / 2,
+        ),
         labelStyle: const TextStyle(color: AppColorsDark.textPrimary),
         secondaryLabelStyle: const TextStyle(color: Colors.white),
         brightness: Brightness.dark,

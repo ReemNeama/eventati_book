@@ -22,8 +22,15 @@ class ServiceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = UIUtils.isDarkMode(context);
+    final backgroundColor = isDarkMode ? Colors.grey[800] : Colors.grey[300];
+    final iconColor = isDarkMode ? Colors.grey[400] : Colors.grey[600];
+
     return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      margin: EdgeInsets.symmetric(
+        vertical: AppConstants.smallPadding,
+        horizontal: AppConstants.mediumPadding,
+      ),
       elevation: AppConstants.smallElevation,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppConstants.mediumBorderRadius),
@@ -41,14 +48,14 @@ class ServiceCard extends StatelessWidget {
               child: Container(
                 height: 150,
                 width: double.infinity,
-                color: Colors.grey[300],
+                color: backgroundColor,
                 child: Center(
-                  child: Icon(Icons.image, size: 50, color: Colors.grey[600]),
+                  child: Icon(Icons.image, size: 50, color: iconColor),
                 ),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(12.0),
+              padding: EdgeInsets.all(AppConstants.mediumPadding - 4),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -79,10 +86,10 @@ class ServiceCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: AppConstants.smallPadding),
                   Text(description),
                   if (additionalInfo != null) ...[
-                    const SizedBox(height: 8),
+                    SizedBox(height: AppConstants.smallPadding),
                     additionalInfo!,
                   ],
                 ],

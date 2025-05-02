@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/utils/utils.dart';
+import 'package:eventati_book/styles/app_colors.dart';
+import 'package:eventati_book/styles/app_colors_dark.dart';
 
 class HomepageScreen extends StatefulWidget {
   const HomepageScreen({super.key});
@@ -44,7 +46,11 @@ class _HomepageScreenState extends State<HomepageScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDarkMode = theme.brightness == Brightness.dark;
+    final isDarkMode = UIUtils.isDarkMode(context);
+    final textPrimary =
+        isDarkMode ? AppColorsDark.textPrimary : AppColors.textPrimary;
+    final textSecondary =
+        isDarkMode ? AppColorsDark.textSecondary : AppColors.textSecondary;
 
     return Scaffold(
       appBar: AppBar(
@@ -54,7 +60,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: EdgeInsets.all(AppConstants.mediumPadding),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -64,18 +70,15 @@ class _HomepageScreenState extends State<HomepageScreen> {
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: isDarkMode ? Colors.white : Colors.black87,
+                  color: textPrimary,
                 ),
               ),
               const SizedBox(height: 4),
               Text(
                 'Plan your perfect event with us',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: isDarkMode ? Colors.white70 : Colors.black54,
-                ),
+                style: TextStyle(fontSize: 16, color: textSecondary),
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: AppConstants.largePadding),
 
               // Create new event button
               InkWell(
@@ -84,10 +87,14 @@ class _HomepageScreenState extends State<HomepageScreen> {
                 },
                 child: Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  padding: EdgeInsets.symmetric(
+                    vertical: AppConstants.mediumPadding,
+                  ),
                   decoration: BoxDecoration(
                     color: theme.primaryColor,
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(
+                      AppConstants.mediumBorderRadius,
+                    ),
                     boxShadow: [
                       BoxShadow(
                         color: theme.primaryColor.withAlpha(75),
@@ -117,11 +124,13 @@ class _HomepageScreenState extends State<HomepageScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 32),
+              SizedBox(
+                height: AppConstants.largePadding + AppConstants.smallPadding,
+              ),
 
               // Upcoming events section
               _sectionTitle('Upcoming Events'),
-              const SizedBox(height: 16),
+              SizedBox(height: AppConstants.mediumPadding),
               _upcomingEvents.isEmpty
                   ? _emptyStateCard(
                     'No upcoming events',

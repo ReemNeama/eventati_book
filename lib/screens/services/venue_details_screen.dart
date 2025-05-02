@@ -148,7 +148,7 @@ class _VenueDetailsScreenState extends State<VenueDetailsScreen>
 
   Widget _buildPackagesTab() {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
+      padding: EdgeInsets.all(AppConstants.mediumPadding),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -156,7 +156,7 @@ class _VenueDetailsScreenState extends State<VenueDetailsScreen>
             'Select a Package',
             style: Theme.of(context).textTheme.titleLarge,
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: AppConstants.mediumPadding),
           ...List.generate(_packages.length, (index) {
             final package = _packages[index];
             final isSelected = _selectedPackageIndex == index;
@@ -186,7 +186,7 @@ class _VenueDetailsScreenState extends State<VenueDetailsScreen>
 
   Widget _buildVenueDetailsTab() {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
+      padding: EdgeInsets.all(AppConstants.mediumPadding),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -194,11 +194,11 @@ class _VenueDetailsScreenState extends State<VenueDetailsScreen>
           ImagePlaceholder(
             height: 200,
             width: double.infinity,
-            borderRadius: 12,
+            borderRadius: AppConstants.mediumBorderRadius,
             icon: Icons.image,
             iconSize: 50,
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: AppConstants.mediumPadding),
 
           // Venue details
           InfoCard(
@@ -207,17 +207,17 @@ class _VenueDetailsScreenState extends State<VenueDetailsScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(widget.venue.description),
-                const SizedBox(height: 16),
+                SizedBox(height: AppConstants.mediumPadding),
 
                 // Venue types
                 const Text(
                   'Venue Type:',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: AppConstants.smallPadding),
                 ChipGroup(items: widget.venue.venueTypes),
 
-                const SizedBox(height: 16),
+                SizedBox(height: AppConstants.mediumPadding),
 
                 // Capacity
                 FeatureItem(
@@ -225,7 +225,7 @@ class _VenueDetailsScreenState extends State<VenueDetailsScreen>
                       'Capacity: ${NumberUtils.formatWithCommas(widget.venue.minCapacity)}-${NumberUtils.formatWithCommas(widget.venue.maxCapacity)} guests',
                   icon: Icons.people,
                   iconSize: 20,
-                  padding: const EdgeInsets.only(bottom: 8),
+                  padding: EdgeInsets.only(bottom: AppConstants.smallPadding),
                 ),
 
                 // Price
@@ -239,7 +239,7 @@ class _VenueDetailsScreenState extends State<VenueDetailsScreen>
             ),
           ),
 
-          const SizedBox(height: 16),
+          SizedBox(height: AppConstants.mediumPadding),
 
           // Features
           InfoCard(
@@ -250,7 +250,7 @@ class _VenueDetailsScreenState extends State<VenueDetailsScreen>
                 ...widget.venue.features.map(
                   (feature) => FeatureItem(
                     text: feature,
-                    padding: const EdgeInsets.only(bottom: 8),
+                    padding: EdgeInsets.only(bottom: AppConstants.smallPadding),
                     iconSize: 20,
                   ),
                 ),
@@ -258,7 +258,7 @@ class _VenueDetailsScreenState extends State<VenueDetailsScreen>
             ),
           ),
 
-          const SizedBox(height: 16),
+          SizedBox(height: AppConstants.mediumPadding),
 
           // Location (placeholder)
           InfoCard(
@@ -269,11 +269,11 @@ class _VenueDetailsScreenState extends State<VenueDetailsScreen>
                 ImagePlaceholder(
                   height: 150,
                   width: double.infinity,
-                  borderRadius: 8,
+                  borderRadius: AppConstants.smallBorderRadius * 2,
                   icon: Icons.map,
                   iconSize: 40,
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: AppConstants.smallPadding),
                 const FeatureItem(
                   text: '123 Event Street, City, State, ZIP',
                   icon: Icons.location_on,

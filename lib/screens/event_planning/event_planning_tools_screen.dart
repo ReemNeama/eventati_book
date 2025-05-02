@@ -48,20 +48,22 @@ class EventPlanningToolsScreen extends StatelessWidget {
       body: Container(
         decoration: BoxDecoration(
           color: isDarkMode ? Colors.grey[900] : Colors.grey[100],
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(30),
-            topRight: Radius.circular(30),
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(AppConstants.largeBorderRadius * 2),
+            topRight: Radius.circular(AppConstants.largeBorderRadius * 2),
           ),
         ),
         child: Column(
           children: [
             // Event info card
             Container(
-              margin: const EdgeInsets.all(16),
-              padding: const EdgeInsets.all(16),
+              margin: EdgeInsets.all(AppConstants.mediumPadding),
+              padding: EdgeInsets.all(AppConstants.mediumPadding),
               decoration: BoxDecoration(
                 color: cardColor,
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(
+                  AppConstants.largeBorderRadius,
+                ),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withAlpha(26), // 0.1 * 255 = 25.5 ≈ 26
@@ -81,7 +83,7 @@ class EventPlanningToolsScreen extends StatelessWidget {
                       color: textColor,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: AppConstants.smallPadding),
                   Row(
                     children: [
                       Icon(
@@ -89,7 +91,7 @@ class EventPlanningToolsScreen extends StatelessWidget {
                         size: 16,
                         color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
                       ),
-                      const SizedBox(width: 8),
+                      SizedBox(width: AppConstants.smallPadding),
                       Text(
                         DateTimeUtils.formatDate(eventDate),
                         style: TextStyle(
@@ -99,7 +101,7 @@ class EventPlanningToolsScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: AppConstants.smallPadding / 2),
                   Row(
                     children: [
                       Icon(
@@ -107,7 +109,7 @@ class EventPlanningToolsScreen extends StatelessWidget {
                         size: 16,
                         color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
                       ),
-                      const SizedBox(width: 8),
+                      SizedBox(width: AppConstants.smallPadding),
                       Text(
                         eventType,
                         style: TextStyle(
@@ -117,7 +119,7 @@ class EventPlanningToolsScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: AppConstants.mediumPadding),
                   LinearProgressIndicator(
                     value:
                         0.35, // This would be calculated based on completed tasks
@@ -125,7 +127,7 @@ class EventPlanningToolsScreen extends StatelessWidget {
                         isDarkMode ? Colors.grey[700] : Colors.grey[300],
                     valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: AppConstants.smallPadding),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -155,9 +157,9 @@ class EventPlanningToolsScreen extends StatelessWidget {
             Expanded(
               child: GridView.count(
                 crossAxisCount: 2,
-                padding: const EdgeInsets.all(16),
-                mainAxisSpacing: 16,
-                crossAxisSpacing: 16,
+                padding: EdgeInsets.all(AppConstants.mediumPadding),
+                mainAxisSpacing: AppConstants.mediumPadding,
+                crossAxisSpacing: AppConstants.mediumPadding,
                 children: [
                   ToolCard(
                     title: 'Budget Calculator',

@@ -2,7 +2,7 @@ import 'package:eventati_book/screens/authentications/forgetpassword_screen.dart
 import 'package:eventati_book/screens/authentications/login_screen.dart';
 import 'package:eventati_book/screens/authentications/register_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:eventati_book/utils/constants.dart';
+import 'package:eventati_book/utils/utils.dart';
 
 class AuthenticationScreen extends StatefulWidget {
   const AuthenticationScreen({super.key});
@@ -31,7 +31,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                 textAlign: TextAlign.center,
               ),
             ),
-            const SizedBox(height: 50),
+            SizedBox(height: AppConstants.largePadding * 2),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
@@ -41,7 +41,10 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
               },
               style: ButtonStyle(
                 padding: WidgetStateProperty.all(
-                  const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                  EdgeInsets.symmetric(
+                    horizontal: AppConstants.largePadding * 2,
+                    vertical: AppConstants.mediumPadding,
+                  ),
                 ),
                 minimumSize: WidgetStateProperty.all(const Size(200, 40)),
                 backgroundColor: WidgetStateProperty.all(Colors.white),
@@ -63,7 +66,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                 ),
               ),
             ),
-            const SizedBox(height: 10),
+            SizedBox(height: AppConstants.smallPadding),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
@@ -75,7 +78,10 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
               },
               style: ButtonStyle(
                 padding: WidgetStateProperty.all(
-                  const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                  EdgeInsets.symmetric(
+                    horizontal: AppConstants.largePadding * 2,
+                    vertical: AppConstants.mediumPadding,
+                  ),
                 ),
                 minimumSize: WidgetStateProperty.all(const Size(200, 40)),
                 backgroundColor: WidgetStateProperty.all(
@@ -99,11 +105,11 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            SizedBox(height: AppConstants.smallPadding),
             Align(
               alignment: Alignment.centerRight,
               child: Padding(
-                padding: EdgeInsets.only(right: 20),
+                padding: EdgeInsets.only(right: AppConstants.mediumPadding),
                 child: InkWell(
                   onTap: () {
                     Navigator.push(

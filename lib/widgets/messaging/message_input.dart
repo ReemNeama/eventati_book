@@ -6,10 +6,7 @@ import 'package:eventati_book/styles/app_colors_dark.dart';
 class MessageInput extends StatefulWidget {
   final Function(String) onSendMessage;
 
-  const MessageInput({
-    super.key,
-    required this.onSendMessage,
-  });
+  const MessageInput({super.key, required this.onSendMessage});
 
   @override
   State<MessageInput> createState() => _MessageInputState();
@@ -53,20 +50,22 @@ class _MessageInputState extends State<MessageInput> {
   Widget build(BuildContext context) {
     final isDarkMode = UIUtils.isDarkMode(context);
     final primaryColor = isDarkMode ? AppColorsDark.primary : AppColors.primary;
-    final backgroundColor = isDarkMode 
-        ? AppColorsDark.inputFieldBackground 
-        : Colors.grey[100];
+    final backgroundColor =
+        isDarkMode ? AppColorsDark.inputFieldBackground : Colors.grey[100];
     final textColor = isDarkMode ? Colors.white : Colors.black87;
     final hintColor = isDarkMode ? Colors.white70 : Colors.black54;
-    
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+      padding: EdgeInsets.symmetric(
+        horizontal: AppConstants.smallPadding,
+        vertical: AppConstants.smallPadding,
+      ),
       decoration: BoxDecoration(
         color: backgroundColor,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 4.0,
+            color: Colors.black.withAlpha(26),
+            blurRadius: 4,
             offset: const Offset(0, -1),
           ),
         ],
@@ -80,12 +79,14 @@ class _MessageInputState extends State<MessageInput> {
               decoration: InputDecoration(
                 hintText: 'Type a message...',
                 hintStyle: TextStyle(color: hintColor),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16.0,
-                  vertical: 10.0,
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: AppConstants.mediumPadding,
+                  vertical: AppConstants.smallPadding + 2,
                 ),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(24.0),
+                  borderRadius: BorderRadius.circular(
+                    AppConstants.largeBorderRadius + 8,
+                  ),
                   borderSide: BorderSide.none,
                 ),
                 filled: true,
@@ -96,21 +97,29 @@ class _MessageInputState extends State<MessageInput> {
               onSubmitted: _canSend ? (_) => _handleSend() : null,
             ),
           ),
-          const SizedBox(width: 8.0),
+          SizedBox(width: AppConstants.smallPadding),
           Material(
-            color: _canSend ? primaryColor : (isDarkMode ? Colors.grey[700] : Colors.grey[300]),
-            borderRadius: BorderRadius.circular(24.0),
+            color:
+                _canSend
+                    ? primaryColor
+                    : (isDarkMode ? Colors.grey[700] : Colors.grey[300]),
+            borderRadius: BorderRadius.circular(
+              AppConstants.largeBorderRadius + 8,
+            ),
             child: InkWell(
               onTap: _canSend ? _handleSend : null,
-              borderRadius: BorderRadius.circular(24.0),
+              borderRadius: BorderRadius.circular(
+                AppConstants.largeBorderRadius + 8,
+              ),
               child: Container(
-                padding: const EdgeInsets.all(12.0),
+                padding: EdgeInsets.all(AppConstants.smallPadding + 4),
                 child: Icon(
                   Icons.send,
-                  color: _canSend 
-                      ? Colors.white 
-                      : (isDarkMode ? Colors.grey[400] : Colors.grey[600]),
-                  size: 24.0,
+                  color:
+                      _canSend
+                          ? Colors.white
+                          : (isDarkMode ? Colors.grey[400] : Colors.grey[600]),
+                  size: 24,
                 ),
               ),
             ),

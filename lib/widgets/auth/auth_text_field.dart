@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:eventati_book/styles/app_colors.dart';
+import 'package:eventati_book/styles/app_colors_dark.dart';
+import 'package:eventati_book/utils/utils.dart';
 
 class AuthTextField extends StatelessWidget {
   final TextEditingController controller;
@@ -20,33 +23,31 @@ class AuthTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final isDarkMode = UIUtils.isDarkMode(context);
+    final textColor =
+        isDarkMode ? AppColorsDark.textPrimary : AppColors.textPrimary;
+    final hintColor = isDarkMode ? AppColorsDark.textHint : AppColors.textHint;
+    final borderColor = isDarkMode ? AppColorsDark.divider : AppColors.divider;
+    final primaryColor = isDarkMode ? AppColorsDark.primary : AppColors.primary;
 
     return TextFormField(
       controller: controller,
-      style: TextStyle(color: isDarkMode ? Colors.white : Colors.black87),
+      style: TextStyle(color: textColor),
       obscureText: obscureText,
       keyboardType: keyboardType,
       decoration: InputDecoration(
         hintText: hintText,
-        hintStyle: TextStyle(
-          color: isDarkMode ? Colors.white70 : Colors.black54,
-        ),
+        hintStyle: TextStyle(color: hintColor),
         enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(
-            color: isDarkMode ? Colors.white : Colors.grey,
-          ),
+          borderSide: BorderSide(color: borderColor),
+          borderRadius: BorderRadius.circular(AppConstants.smallBorderRadius),
         ),
         focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(
-            color: Theme.of(context).primaryColor,
-            width: 2,
-          ),
+          borderSide: BorderSide(color: primaryColor, width: 2),
+          borderRadius: BorderRadius.circular(AppConstants.smallBorderRadius),
         ),
-        prefixIcon: Icon(
-          prefixIcon,
-          color: isDarkMode ? Colors.white : Theme.of(context).primaryColor,
-        ),
+        prefixIcon: Icon(prefixIcon, color: primaryColor),
+        contentPadding: EdgeInsets.all(AppConstants.mediumPadding),
       ),
       validator: validator,
     );

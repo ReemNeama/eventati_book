@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/utils/utils.dart';
+import 'package:eventati_book/styles/app_colors.dart';
+import 'package:eventati_book/styles/app_colors_dark.dart';
 
 class AuthButton extends StatelessWidget {
   final VoidCallback onPressed;
@@ -15,16 +17,22 @@ class AuthButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = UIUtils.isDarkMode(context);
+    final primaryColor = isDarkMode ? AppColorsDark.primary : AppColors.primary;
+    final backgroundColor = isWhiteBackground ? Colors.white : primaryColor;
+    final textColor = isWhiteBackground ? primaryColor : Colors.white;
+
     return ElevatedButton(
       onPressed: onPressed,
       style: ButtonStyle(
         padding: WidgetStateProperty.all(
-          const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+          EdgeInsets.symmetric(
+            horizontal: AppConstants.largePadding * 2,
+            vertical: AppConstants.mediumPadding,
+          ),
         ),
         minimumSize: WidgetStateProperty.all(const Size(200, 40)),
-        backgroundColor: WidgetStateProperty.all(
-          isWhiteBackground ? Colors.white : Theme.of(context).primaryColor,
-        ),
+        backgroundColor: WidgetStateProperty.all(backgroundColor),
         elevation: WidgetStateProperty.all(0),
         shape: WidgetStateProperty.all(
           RoundedRectangleBorder(
@@ -37,8 +45,7 @@ class AuthButton extends StatelessWidget {
         style: TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.bold,
-          color:
-              isWhiteBackground ? Theme.of(context).primaryColor : Colors.white,
+          color: textColor,
         ),
       ),
     );
