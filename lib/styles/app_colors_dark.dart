@@ -33,8 +33,8 @@ class AppColorsDark {
   static const Color divider = Color(0xFF353535); // Dark divider
   static const Color disabled = Color(0xFF5A5A5A); // Disabled color
 
-  // Opacity values for semi-transparent colors
-  static Color primaryWithOpacity(double opacity) {
+  // Alpha values for semi-transparent colors
+  static Color primaryWithAlpha(double opacity) {
     return primary.withAlpha((opacity * 255).round());
   }
 

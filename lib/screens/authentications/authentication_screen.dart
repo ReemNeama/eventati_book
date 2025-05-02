@@ -20,10 +20,10 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Center(
+            const Center(
               child: Text(
                 AppConstants.appName,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 50,
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -31,7 +31,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                 textAlign: TextAlign.center,
               ),
             ),
-            SizedBox(height: AppConstants.largePadding * 2),
+            const SizedBox(height: AppConstants.largePadding * 2),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
@@ -41,7 +41,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
               },
               style: ButtonStyle(
                 padding: WidgetStateProperty.all(
-                  EdgeInsets.symmetric(
+                  const EdgeInsets.symmetric(
                     horizontal: AppConstants.largePadding * 2,
                     vertical: AppConstants.mediumPadding,
                   ),
@@ -58,7 +58,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                 ),
               ),
               child: Text(
-                "Login",
+                'Login',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -66,7 +66,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                 ),
               ),
             ),
-            SizedBox(height: AppConstants.smallPadding),
+            const SizedBox(height: AppConstants.smallPadding),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
@@ -78,7 +78,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
               },
               style: ButtonStyle(
                 padding: WidgetStateProperty.all(
-                  EdgeInsets.symmetric(
+                  const EdgeInsets.symmetric(
                     horizontal: AppConstants.largePadding * 2,
                     vertical: AppConstants.mediumPadding,
                   ),
@@ -97,7 +97,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                 ),
               ),
               child: const Text(
-                "Register",
+                'Register',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -105,11 +105,13 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                 ),
               ),
             ),
-            SizedBox(height: AppConstants.smallPadding),
+            const SizedBox(height: AppConstants.smallPadding),
             Align(
               alignment: Alignment.centerRight,
               child: Padding(
-                padding: EdgeInsets.only(right: AppConstants.mediumPadding),
+                padding: const EdgeInsets.only(
+                  right: AppConstants.mediumPadding,
+                ),
                 child: InkWell(
                   onTap: () {
                     Navigator.push(
@@ -119,8 +121,8 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                       ),
                     );
                   },
-                  child: Text(
-                    "Forgot Password?",
+                  child: const Text(
+                    'Forgot Password?',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,

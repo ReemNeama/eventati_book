@@ -24,8 +24,8 @@ class ToolCard extends StatelessWidget {
     final textColor = isDarkMode ? Colors.white : Colors.black;
     final shadowColor =
         isDarkMode
-            ? AppColorsDark.primary.withAlpha(26)
-            : AppColors.primary.withAlpha(26);
+            ? AppColorsDark.primaryWithAlpha(0.1)
+            : AppColors.primaryWithAlpha(0.1);
 
     return InkWell(
       onTap: onTap,

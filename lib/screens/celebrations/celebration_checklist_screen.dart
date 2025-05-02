@@ -28,7 +28,8 @@ class CelebrationChecklistScreen extends StatefulWidget {
       _CelebrationChecklistScreenState();
 }
 
-class _CelebrationChecklistScreenState extends State<CelebrationChecklistScreen> {
+class _CelebrationChecklistScreenState
+    extends State<CelebrationChecklistScreen> {
   late Map<String, List<TaskItem>> _serviceTasks;
 
   @override
@@ -115,8 +116,9 @@ class _CelebrationChecklistScreenState extends State<CelebrationChecklistScreen>
   @override
   Widget build(BuildContext context) {
     final primaryColor = Theme.of(context).primaryColor;
-    final selectedServices =
-        widget.selectedServices.entries.where((e) => e.value).map((e) => e.key);
+    final selectedServices = widget.selectedServices.entries
+        .where((e) => e.value)
+        .map((e) => e.key);
 
     return Scaffold(
       backgroundColor: primaryColor,
@@ -124,7 +126,7 @@ class _CelebrationChecklistScreenState extends State<CelebrationChecklistScreen>
         backgroundColor: primaryColor,
         elevation: 0,
         title: const Text(
-          "Celebration Checklist",
+          'Celebration Checklist',
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,

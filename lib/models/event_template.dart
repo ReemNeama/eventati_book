@@ -45,7 +45,7 @@ class EventTemplate {
 /// Predefined event templates
 class EventTemplates {
   /// Wedding event template
-  static final EventTemplate wedding = EventTemplate(
+  static const EventTemplate wedding = EventTemplate(
     id: 'wedding',
     name: 'Wedding',
     description: 'Plan your perfect wedding day',
@@ -82,7 +82,7 @@ class EventTemplates {
   );
 
   /// Business event template
-  static final EventTemplate business = EventTemplate(
+  static const EventTemplate business = EventTemplate(
     id: 'business',
     name: 'Business Event',
     description: 'Organize a professional business event',
@@ -119,7 +119,7 @@ class EventTemplates {
   );
 
   /// Celebration event template
-  static final EventTemplate celebration = EventTemplate(
+  static const EventTemplate celebration = EventTemplate(
     id: 'celebration',
     name: 'Celebration',
     description: 'Create a memorable celebration',
@@ -158,7 +158,7 @@ class EventTemplates {
   );
 
   /// Get all available templates
-  static List<EventTemplate> get all => [wedding, business, celebration];
+  static List<EventTemplate> get all => const [wedding, business, celebration];
 
   /// Find a template by ID
   static EventTemplate? findById(String id) {

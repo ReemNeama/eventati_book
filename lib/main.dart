@@ -1,6 +1,10 @@
 import 'package:eventati_book/providers/auth_provider.dart';
+import 'package:eventati_book/providers/budget_provider.dart';
+import 'package:eventati_book/providers/guest_list_provider.dart';
+import 'package:eventati_book/providers/messaging_provider.dart';
 import 'package:eventati_book/providers/milestone_provider.dart';
 import 'package:eventati_book/providers/suggestion_provider.dart';
+import 'package:eventati_book/providers/task_provider.dart';
 import 'package:eventati_book/providers/wizard_provider.dart';
 import 'package:eventati_book/screens/authentications/authentication_screen.dart';
 import 'package:eventati_book/screens/authentications/forgetpassword_screen.dart';
@@ -18,7 +22,10 @@ void main() {
   runApp(
     MultiProvider(
       providers: [
+        // Core providers
         ChangeNotifierProvider(create: (_) => AuthProvider()),
+
+        // Event wizard providers
         ChangeNotifierProvider(create: (_) => WizardProvider()),
         ChangeNotifierProxyProvider<WizardProvider, MilestoneProvider>(
           create:
@@ -30,7 +37,24 @@ void main() {
                   previous ?? MilestoneProvider(wizardProvider),
         ),
         ChangeNotifierProvider(create: (_) => SuggestionProvider()),
-        // Other providers will be created as needed in the respective screens
+
+        // Event planning tool providers
+        ChangeNotifierProvider(
+          create: (_) => BudgetProvider(eventId: 'default'),
+          lazy: true,
+        ),
+        ChangeNotifierProvider(
+          create: (_) => GuestListProvider(eventId: 'default'),
+          lazy: true,
+        ),
+        ChangeNotifierProvider(
+          create: (_) => MessagingProvider(eventId: 'default'),
+          lazy: true,
+        ),
+        ChangeNotifierProvider(
+          create: (_) => TaskProvider(eventId: 'default'),
+          lazy: true,
+        ),
       ],
       child: const MyApp(),
     ),

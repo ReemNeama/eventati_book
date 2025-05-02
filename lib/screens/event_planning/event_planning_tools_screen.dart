@@ -48,7 +48,7 @@ class EventPlanningToolsScreen extends StatelessWidget {
       body: Container(
         decoration: BoxDecoration(
           color: isDarkMode ? Colors.grey[900] : Colors.grey[100],
-          borderRadius: BorderRadius.only(
+          borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(AppConstants.largeBorderRadius * 2),
             topRight: Radius.circular(AppConstants.largeBorderRadius * 2),
           ),
@@ -57,8 +57,8 @@ class EventPlanningToolsScreen extends StatelessWidget {
           children: [
             // Event info card
             Container(
-              margin: EdgeInsets.all(AppConstants.mediumPadding),
-              padding: EdgeInsets.all(AppConstants.mediumPadding),
+              margin: const EdgeInsets.all(AppConstants.mediumPadding),
+              padding: const EdgeInsets.all(AppConstants.mediumPadding),
               decoration: BoxDecoration(
                 color: cardColor,
                 borderRadius: BorderRadius.circular(
@@ -83,7 +83,7 @@ class EventPlanningToolsScreen extends StatelessWidget {
                       color: textColor,
                     ),
                   ),
-                  SizedBox(height: AppConstants.smallPadding),
+                  const SizedBox(height: AppConstants.smallPadding),
                   Row(
                     children: [
                       Icon(
@@ -91,7 +91,7 @@ class EventPlanningToolsScreen extends StatelessWidget {
                         size: 16,
                         color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
                       ),
-                      SizedBox(width: AppConstants.smallPadding),
+                      const SizedBox(width: AppConstants.smallPadding),
                       Text(
                         DateTimeUtils.formatDate(eventDate),
                         style: TextStyle(
@@ -101,7 +101,7 @@ class EventPlanningToolsScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  SizedBox(height: AppConstants.smallPadding / 2),
+                  const SizedBox(height: AppConstants.smallPadding / 2),
                   Row(
                     children: [
                       Icon(
@@ -109,7 +109,7 @@ class EventPlanningToolsScreen extends StatelessWidget {
                         size: 16,
                         color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
                       ),
-                      SizedBox(width: AppConstants.smallPadding),
+                      const SizedBox(width: AppConstants.smallPadding),
                       Text(
                         eventType,
                         style: TextStyle(
@@ -119,7 +119,7 @@ class EventPlanningToolsScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  SizedBox(height: AppConstants.mediumPadding),
+                  const SizedBox(height: AppConstants.mediumPadding),
                   LinearProgressIndicator(
                     value:
                         0.35, // This would be calculated based on completed tasks
@@ -127,7 +127,7 @@ class EventPlanningToolsScreen extends StatelessWidget {
                         isDarkMode ? Colors.grey[700] : Colors.grey[300],
                     valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
                   ),
-                  SizedBox(height: AppConstants.smallPadding),
+                  const SizedBox(height: AppConstants.smallPadding),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -157,7 +157,7 @@ class EventPlanningToolsScreen extends StatelessWidget {
             Expanded(
               child: GridView.count(
                 crossAxisCount: 2,
-                padding: EdgeInsets.all(AppConstants.mediumPadding),
+                padding: const EdgeInsets.all(AppConstants.mediumPadding),
                 mainAxisSpacing: AppConstants.mediumPadding,
                 crossAxisSpacing: AppConstants.mediumPadding,
                 children: [

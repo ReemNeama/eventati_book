@@ -178,8 +178,9 @@ class _PlannerListScreenState extends State<PlannerListScreen> {
                                 .map(
                                   (specialty) => Chip(
                                     label: Text(specialty),
-                                    backgroundColor:
-                                        AppColors.primaryWithOpacity(0.7),
+                                    backgroundColor: AppColors.primaryWithAlpha(
+                                      0.7,
+                                    ),
                                   ),
                                 )
                                 .toList(),

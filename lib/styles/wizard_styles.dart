@@ -39,10 +39,7 @@ class WizardStyles {
 
   /// Get the style for the step title
   static TextStyle getStepTitleStyle() {
-    return const TextStyle(
-      fontSize: 18,
-      fontWeight: FontWeight.bold,
-    );
+    return const TextStyle(fontSize: 18, fontWeight: FontWeight.bold);
   }
 
   /// Get the style for the previous button
@@ -55,25 +52,22 @@ class WizardStyles {
       foregroundColor: Colors.white,
       padding: const EdgeInsets.symmetric(vertical: 15),
       elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(4),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
     );
   }
 
   /// Get the style for the next/finish button
   static ButtonStyle getNextButtonStyle(BuildContext context) {
     final isDarkMode = UIUtils.isDarkMode(context);
-    final backgroundColor = isDarkMode ? AppColorsDark.primary : AppColors.primary;
+    final backgroundColor =
+        isDarkMode ? AppColorsDark.primary : AppColors.primary;
 
     return ElevatedButton.styleFrom(
       backgroundColor: backgroundColor,
       foregroundColor: Colors.white,
       padding: const EdgeInsets.symmetric(vertical: 15),
       elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(4),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
     );
   }
 
@@ -99,11 +93,7 @@ class WizardStyles {
     final isDarkMode = UIUtils.isDarkMode(context);
     final color = isDarkMode ? AppColorsDark.primary : AppColors.primary;
 
-    return TextStyle(
-      fontSize: 18,
-      fontWeight: FontWeight.bold,
-      color: color,
-    );
+    return TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: color);
   }
 
   /// Get the style for the progress indicator
@@ -119,10 +109,7 @@ class WizardStyles {
     final isDarkMode = UIUtils.isDarkMode(context);
     final color = isDarkMode ? AppColorsDark.primary : AppColors.primary;
 
-    return BoxDecoration(
-      color: color,
-      borderRadius: BorderRadius.circular(10),
-    );
+    return BoxDecoration(color: color, borderRadius: BorderRadius.circular(10));
   }
 
   /// Get the style for the progress text
@@ -141,7 +128,7 @@ class WizardStyles {
       borderRadius: BorderRadius.circular(8),
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withOpacity(0.1),
+          color: Colors.black.withAlpha(25),
           blurRadius: 4,
           offset: const Offset(0, 2),
         ),

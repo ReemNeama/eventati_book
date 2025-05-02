@@ -84,10 +84,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const AuthTitleWidget(title: "Reset Password", fontSize: 32),
+              const AuthTitleWidget(title: 'Reset Password', fontSize: 32),
               const SizedBox(height: 20),
               const Text(
-                "Enter your new password",
+                'Enter your new password',
                 style: TextStyle(color: Colors.white70),
                 textAlign: TextAlign.center,
               ),

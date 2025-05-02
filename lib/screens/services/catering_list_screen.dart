@@ -167,8 +167,9 @@ class _CateringListScreenState extends State<CateringListScreen> {
                                 .map(
                                   (cuisine) => Chip(
                                     label: Text(cuisine),
-                                    backgroundColor:
-                                        AppColors.primaryWithOpacity(0.7),
+                                    backgroundColor: AppColors.primaryWithAlpha(
+                                      0.7,
+                                    ),
                                   ),
                                 )
                                 .toList(),

@@ -104,7 +104,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             key: _formKey,
             child: Column(
               children: [
-                const AuthTitleWidget(title: "Create Account"),
+                const AuthTitleWidget(title: 'Create Account'),
                 const SizedBox(height: 50),
                 AuthTextField(
                   controller: _nameController,

@@ -191,9 +191,9 @@ class _GuestFormScreenState extends State<GuestFormScreen> {
                 border: OutlineInputBorder(),
               ),
               items: [
-                DropdownMenuItem(
+                const DropdownMenuItem(
                   value: RsvpStatus.pending,
-                  child: const Row(
+                  child: Row(
                     children: [
                       Icon(Icons.pending, size: 20, color: Colors.orange),
                       SizedBox(width: 8),
@@ -201,9 +201,9 @@ class _GuestFormScreenState extends State<GuestFormScreen> {
                     ],
                   ),
                 ),
-                DropdownMenuItem(
+                const DropdownMenuItem(
                   value: RsvpStatus.confirmed,
-                  child: const Row(
+                  child: Row(
                     children: [
                       Icon(Icons.check_circle, size: 20, color: Colors.green),
                       SizedBox(width: 8),
@@ -211,9 +211,9 @@ class _GuestFormScreenState extends State<GuestFormScreen> {
                     ],
                   ),
                 ),
-                DropdownMenuItem(
+                const DropdownMenuItem(
                   value: RsvpStatus.declined,
-                  child: const Row(
+                  child: Row(
                     children: [
                       Icon(Icons.cancel, size: 20, color: Colors.red),
                       SizedBox(width: 8),
@@ -221,9 +221,9 @@ class _GuestFormScreenState extends State<GuestFormScreen> {
                     ],
                   ),
                 ),
-                DropdownMenuItem(
+                const DropdownMenuItem(
                   value: RsvpStatus.tentative,
-                  child: const Row(
+                  child: Row(
                     children: [
                       Icon(Icons.help, size: 20, color: Colors.blue),
                       SizedBox(width: 8),

@@ -13,7 +13,7 @@ class AppTheme {
       primaryColor: AppColors.primary,
       hintColor: AppColors.hintColor,
       canvasColor: AppColors.canvasColor,
-      fontFamily: "Montserrat",
+      fontFamily: 'Montserrat',
       brightness: Brightness.light,
 
       // Scaffold and background colors
@@ -90,7 +90,7 @@ class AppTheme {
       chipTheme: ChipThemeData(
         backgroundColor: AppColors.chipBackground,
         selectedColor: AppColors.primary,
-        secondarySelectedColor: AppColors.primaryWithOpacity(0.7),
+        secondarySelectedColor: AppColors.primaryWithAlpha(0.7),
         padding: const EdgeInsets.symmetric(
           horizontal: AppConstants.smallPadding,
           vertical: AppConstants.smallPadding / 2,
@@ -128,7 +128,7 @@ class AppTheme {
       primaryColor: AppColorsDark.primary,
       hintColor: AppColorsDark.hintColor,
       canvasColor: AppColorsDark.canvasColor,
-      fontFamily: "Montserrat",
+      fontFamily: 'Montserrat',
       brightness: Brightness.dark,
 
       // Scaffold and background colors
@@ -209,7 +209,7 @@ class AppTheme {
       chipTheme: ChipThemeData(
         backgroundColor: AppColorsDark.chipBackground,
         selectedColor: AppColorsDark.primary,
-        secondarySelectedColor: AppColorsDark.primaryWithOpacity(0.7),
+        secondarySelectedColor: AppColorsDark.primaryWithAlpha(0.7),
         padding: const EdgeInsets.symmetric(
           horizontal: AppConstants.smallPadding,
           vertical: AppConstants.smallPadding / 2,

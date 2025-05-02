@@ -112,7 +112,7 @@ class _BusinessEventChecklistScreenState
         backgroundColor: primaryColor,
         elevation: 0,
         title: const Text(
-          "Event Checklist",
+          'Event Checklist',
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,

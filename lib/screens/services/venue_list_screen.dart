@@ -167,8 +167,9 @@ class _VenueListScreenState extends State<VenueListScreen> {
                                 .map(
                                   (type) => Chip(
                                     label: Text(type),
-                                    backgroundColor:
-                                        AppColors.primaryWithOpacity(0.7),
+                                    backgroundColor: AppColors.primaryWithAlpha(
+                                      0.7,
+                                    ),
                                   ),
                                 )
                                 .toList(),

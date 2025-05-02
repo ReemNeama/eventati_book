@@ -18,12 +18,15 @@ class ChipGroup extends StatelessWidget {
     return Wrap(
       spacing: spacing,
       runSpacing: runSpacing,
-      children: items
-          .map((item) => Chip(
-                label: Text(item),
-                backgroundColor: AppColors.primaryWithOpacity(0.7),
-              ))
-          .toList(),
+      children:
+          items
+              .map(
+                (item) => Chip(
+                  label: Text(item),
+                  backgroundColor: AppColors.primaryWithAlpha(0.7),
+                ),
+              )
+              .toList(),
     );
   }
 }

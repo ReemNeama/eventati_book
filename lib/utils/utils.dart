@@ -2,6 +2,7 @@
 export 'constants.dart';
 export 'date_utils.dart';
 export 'extensions.dart';
+export 'file_utils.dart';
 export 'number_utils.dart';
 export 'service_utils.dart';
 export 'string_utils.dart';

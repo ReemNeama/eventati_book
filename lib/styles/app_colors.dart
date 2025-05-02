@@ -44,8 +44,8 @@ class AppColors {
   static const Color divider = Colors.grey;
   static const Color disabled = Colors.grey;
 
-  // Opacity values for semi-transparent colors
-  static Color primaryWithOpacity(double opacity) {
+  // Alpha values for semi-transparent colors
+  static Color primaryWithAlpha(double opacity) {
     return primary.withAlpha((opacity * 255).round());
   }
 

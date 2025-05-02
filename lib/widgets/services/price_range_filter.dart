@@ -49,8 +49,8 @@ class PriceRangeFilter extends StatelessWidget {
           activeColor: Theme.of(context).primaryColor,
           inactiveColor:
               UIUtils.isDarkMode(context)
-                  ? AppColorsDark.primaryWithOpacity(0.2)
-                  : AppColors.primaryWithOpacity(0.2),
+                  ? AppColorsDark.primaryWithAlpha(0.2)
+                  : AppColors.primaryWithAlpha(0.2),
           labels: RangeLabels(
             labelBuilder(currentRange.start),
             labelBuilder(currentRange.end),

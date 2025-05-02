@@ -94,10 +94,10 @@ class _VerificationScreenState extends State<VerificationScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const AuthTitleWidget(title: "Verification", fontSize: 32),
+            const AuthTitleWidget(title: 'Verification', fontSize: 32),
             const SizedBox(height: 20),
             const Text(
-              "Enter the verification code sent to your email",
+              'Enter the verification code sent to your email',
               style: TextStyle(color: Colors.white70),
               textAlign: TextAlign.center,
             ),
@@ -110,7 +110,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
             const SizedBox(height: 30),
             AuthButton(
               onPressed: () {
-                String code =
+                final String code =
                     controllers.map((controller) => controller.text).join();
                 if (code.length == 6) {
                   // Show success message

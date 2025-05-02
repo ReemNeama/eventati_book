@@ -159,8 +159,9 @@ class _PhotographerListScreenState extends State<PhotographerListScreen> {
                                 .map(
                                   (style) => Chip(
                                     label: Text(style),
-                                    backgroundColor:
-                                        AppColors.primaryWithOpacity(0.7),
+                                    backgroundColor: AppColors.primaryWithAlpha(
+                                      0.7,
+                                    ),
                                   ),
                                 )
                                 .toList(),

@@ -81,6 +81,26 @@ lib/
    flutter run
    ```
 
+## Development Guidelines
+
+To maintain code quality and consistency, please follow the guidelines in these documents:
+
+- [Development Guidelines](DEVELOPMENT_GUIDELINES.md) - Comprehensive coding standards and best practices
+- [Code Review Checklist](CODE_REVIEW_CHECKLIST.md) - Quick checklist to use before committing code
+
+### Code Quality Tools
+
+Run the code quality check script before committing:
+
+```
+# On Windows
+.\check_code.bat
+
+# On macOS/Linux
+chmod +x check_code.sh
+./check_code.sh
+```
+
 ## Development Progress
 
 Track development progress in the [Development Tracker](eventati_book_development_tracker.md).

@@ -106,7 +106,7 @@ class _ForgetpasswordScreenState extends State<ForgetpasswordScreen> {
             children: [
               const AuthTitleWidget(),
               const SizedBox(height: 20),
-              const AuthTitleWidget(title: "Reset Password", fontSize: 24),
+              const AuthTitleWidget(title: 'Reset Password', fontSize: 24),
               const SizedBox(height: 50),
               AuthTextField(
                 controller: _emailController,

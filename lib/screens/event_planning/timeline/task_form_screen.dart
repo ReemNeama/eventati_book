@@ -177,9 +177,9 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                 border: OutlineInputBorder(),
               ),
               items: [
-                DropdownMenuItem(
+                const DropdownMenuItem(
                   value: TaskStatus.notStarted,
-                  child: const Row(
+                  child: Row(
                     children: [
                       Icon(
                         Icons.circle_outlined,
@@ -191,9 +191,9 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                     ],
                   ),
                 ),
-                DropdownMenuItem(
+                const DropdownMenuItem(
                   value: TaskStatus.inProgress,
-                  child: const Row(
+                  child: Row(
                     children: [
                       Icon(Icons.pending, size: 20, color: Colors.blue),
                       SizedBox(width: 8),
@@ -201,9 +201,9 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                     ],
                   ),
                 ),
-                DropdownMenuItem(
+                const DropdownMenuItem(
                   value: TaskStatus.completed,
-                  child: const Row(
+                  child: Row(
                     children: [
                       Icon(Icons.check_circle, size: 20, color: Colors.green),
                       SizedBox(width: 8),

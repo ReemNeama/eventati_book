@@ -10,6 +10,7 @@ import 'package:eventati_book/widgets/details/info_card.dart';
 import 'package:eventati_book/widgets/details/detail_tab_bar.dart';
 import 'package:eventati_book/widgets/details/image_placeholder.dart';
 import 'package:eventati_book/widgets/details/chip_group.dart';
+import 'package:eventati_book/widgets/responsive/responsive.dart';
 
 class PhotographerDetailsScreen extends StatefulWidget {
   final Photographer photographer;
@@ -303,26 +304,37 @@ class _PhotographerDetailsScreenState extends State<PhotographerDetailsScreen>
           // Sample portfolio images
           InfoCard(
             title: 'Sample Work',
-            content: GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 8,
-                mainAxisSpacing: 8,
-                childAspectRatio: 1,
-              ),
-              itemCount: 6, // Sample count
-              itemBuilder: (context, index) {
-                return const ImagePlaceholder(
-                  borderRadius: 8,
-                  icon: Icons.image,
-                  iconSize: 40,
-                );
+            content: OrientationResponsiveBuilder(
+              portraitBuilder: (context, constraints) {
+                // Portrait mode: 2 columns
+                return _buildPortfolioGrid(2);
+              },
+              landscapeBuilder: (context, constraints) {
+                // Landscape mode: 3 columns
+                return _buildPortfolioGrid(3);
               },
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildPortfolioGrid(int crossAxisCount) {
+    return ResponsiveGridView(
+      minItemWidth: 120,
+      crossAxisSpacing: 8,
+      mainAxisSpacing: 8,
+      childAspectRatio: 1,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      children: List.generate(
+        6, // Sample count
+        (index) => const ImagePlaceholder(
+          borderRadius: 8,
+          icon: Icons.image,
+          iconSize: 40,
+        ),
       ),
     );
   }

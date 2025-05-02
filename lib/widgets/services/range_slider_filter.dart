@@ -49,7 +49,7 @@ class RangeSliderFilter extends StatelessWidget {
           max: max,
           divisions: divisions,
           activeColor: AppColors.primary,
-          inactiveColor: AppColors.primaryWithOpacity(0.2),
+          inactiveColor: AppColors.primaryWithAlpha(0.2),
           labels: RangeLabels(
             labelBuilder(currentRange.start),
             labelBuilder(currentRange.end),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
+import 'package:eventati_book/widgets/responsive/responsive.dart';
 
 class HomepageScreen extends StatefulWidget {
   const HomepageScreen({super.key});
@@ -142,16 +143,42 @@ class _HomepageScreenState extends State<HomepageScreen> {
               // Recommended venues section
               _sectionTitle('Recommended Venues'),
               const SizedBox(height: 16),
-              SizedBox(
-                height: 200,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: _recommendedVenues.length,
-                  itemBuilder: (context, index) {
-                    final venue = _recommendedVenues[index];
-                    return _buildVenueCard(venue);
-                  },
-                ),
+              OrientationResponsiveBuilder(
+                portraitBuilder: (context, constraints) {
+                  // Portrait mode: horizontal scrolling list
+                  return SizedBox(
+                    height: 200,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: _recommendedVenues.length,
+                      itemBuilder: (context, index) {
+                        final venue = _recommendedVenues[index];
+                        return _buildVenueCard(venue);
+                      },
+                    ),
+                  );
+                },
+                landscapeBuilder: (context, constraints) {
+                  // Landscape mode: grid view
+                  return SizedBox(
+                    height: 200,
+                    child: GridView.builder(
+                      scrollDirection: Axis.horizontal,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 8,
+                            mainAxisSpacing: 8,
+                            childAspectRatio: 0.8,
+                          ),
+                      itemCount: _recommendedVenues.length,
+                      itemBuilder: (context, index) {
+                        final venue = _recommendedVenues[index];
+                        return _buildVenueCard(venue);
+                      },
+                    ),
+                  );
+                },
               ),
               const SizedBox(height: 32),
 
@@ -270,73 +297,101 @@ class _HomepageScreenState extends State<HomepageScreen> {
   }
 
   Widget _buildVenueCard(Map<String, dynamic> venue) {
-    return Container(
-      width: 160,
-      margin: const EdgeInsets.only(right: 16),
-      child: Card(
-        elevation: 2,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Venue image (placeholder)
-            Container(
-              height: 100,
-              decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor.withAlpha(50),
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(12),
-                  topRight: Radius.circular(12),
-                ),
-              ),
-              child: Center(
-                child: Icon(
-                  Icons.location_city,
-                  size: 40,
-                  color: Theme.of(context).primaryColor,
-                ),
-              ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Calculate responsive width based on orientation and screen size
+        final isLandscape =
+            MediaQuery.of(context).orientation == Orientation.landscape;
+        final screenWidth = MediaQuery.of(context).size.width;
+
+        // Determine card width based on available space
+        final double cardWidth =
+            isLandscape
+                ? constraints.maxWidth
+                : UIUtils.isTablet(context)
+                ? screenWidth *
+                    0.3 // Tablet: 30% of screen width
+                : 160.0; // Phone: fixed width
+
+        return Container(
+          width: cardWidth,
+          margin: const EdgeInsets.only(right: 16),
+          child: Card(
+            elevation: 2,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
             ),
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    venue['name'],
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      const Icon(Icons.star, size: 14, color: Colors.amber),
-                      const SizedBox(width: 4),
-                      Text(
-                        venue['rating'].toString(),
-                        style: const TextStyle(fontSize: 12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Venue image (placeholder)
+                Expanded(
+                  flex: 3, // 60% of card height
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).primaryColor.withAlpha(50),
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(12),
+                        topRight: Radius.circular(12),
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    venue['price'],
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Theme.of(context).primaryColor,
-                      fontWeight: FontWeight.bold,
+                    ),
+                    child: Center(
+                      child: Icon(
+                        Icons.location_city,
+                        size: 40,
+                        color: Theme.of(context).primaryColor,
+                      ),
                     ),
                   ),
-                ],
-              ),
+                ),
+                Expanded(
+                  flex: 2, // 40% of card height
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Text(
+                          venue['name'],
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.star,
+                              size: 14,
+                              color: Colors.amber,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              venue['rating'].toString(),
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                          ],
+                        ),
+                        Text(
+                          venue['price'],
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Theme.of(context).primaryColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -376,11 +431,27 @@ class _HomepageScreenState extends State<HomepageScreen> {
       },
     ];
 
+    return ResponsiveBuilder(
+      mobileBuilder: (context, constraints) {
+        // Mobile: 2 columns
+        return _buildQuickLinksGridWithCount(quickLinks, 2);
+      },
+      tabletBuilder: (context, constraints) {
+        // Tablet: 4 columns
+        return _buildQuickLinksGridWithCount(quickLinks, 4);
+      },
+    );
+  }
+
+  Widget _buildQuickLinksGridWithCount(
+    List<Map<String, dynamic>> quickLinks,
+    int crossAxisCount,
+  ) {
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: crossAxisCount,
         crossAxisSpacing: 16,
         mainAxisSpacing: 16,
         childAspectRatio: 1.5,

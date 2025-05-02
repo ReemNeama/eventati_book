@@ -113,8 +113,8 @@ class UIUtils {
     }
   }
 
-  /// Get a color with opacity based on the current theme
-  static Color getColorWithOpacity(
+  /// Get a color with alpha based on the current theme
+  static Color getColorWithAlpha(
     BuildContext context,
     Color color,
     double opacity,
