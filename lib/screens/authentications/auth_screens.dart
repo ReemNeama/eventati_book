@@ -1,7 +1,7 @@
 // Barrel file for authentication screens
 // This file exports all authentication-related screens to simplify imports
 
-export 'authentication_screen.dart';
+export 'auth_screen.dart';
 export 'forgetpassword_screen.dart';
 export 'login_screen.dart';
 export 'register_screen.dart';

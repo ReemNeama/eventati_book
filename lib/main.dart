@@ -121,7 +121,7 @@ class _MyAppState extends State<MyApp> {
             return MainNavigationScreen(toggleTheme: toggleTheme);
           } else {
             // Show authentication screen if not authenticated
-            return const AuthenticationScreen();
+            return const AuthScreen();
           }
         },
       ),

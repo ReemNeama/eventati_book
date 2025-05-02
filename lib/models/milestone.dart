@@ -241,6 +241,9 @@ class Milestone {
   /// Whether this milestone should be hidden until unlocked
   final bool isHidden;
 
+  /// Whether this milestone is a template
+  final bool isTemplate;
+
   Milestone({
     required this.id,
     required this.title,
@@ -254,7 +257,39 @@ class Milestone {
     required this.criteria,
     required this.rewardText,
     this.isHidden = false,
+    this.isTemplate = false,
   });
+
+  /// Create a milestone instance from a template
+  factory Milestone.fromTemplate(Milestone template, String eventId) {
+    if (!template.isTemplate) {
+      throw ArgumentError('Cannot create milestone from non-template');
+    }
+
+    return Milestone(
+      id: '${eventId}_${template.id}',
+      title: template.title,
+      description: template.description,
+      category: template.category,
+      icon: template.icon,
+      points: template.points,
+      applicableEventTypes: template.applicableEventTypes,
+      status: MilestoneStatus.locked,
+      criteria: template.criteria,
+      rewardText: template.rewardText,
+      isHidden: template.isHidden,
+      isTemplate: false,
+    );
+  }
+
+  /// Convert this milestone to a template
+  Milestone toTemplate() {
+    return copyWith(
+      status: MilestoneStatus.locked,
+      completedDate: null,
+      isTemplate: true,
+    );
+  }
 
   /// Check if the milestone is completed
   bool get isCompleted => status == MilestoneStatus.completed;
@@ -304,6 +339,7 @@ class Milestone {
     MilestoneCriteria? criteria,
     String? rewardText,
     bool? isHidden,
+    bool? isTemplate,
   }) {
     return Milestone(
       id: id ?? this.id,
@@ -318,6 +354,7 @@ class Milestone {
       criteria: criteria ?? this.criteria,
       rewardText: rewardText ?? this.rewardText,
       isHidden: isHidden ?? this.isHidden,
+      isTemplate: isTemplate ?? this.isTemplate,
     );
   }
 
@@ -333,6 +370,7 @@ class Milestone {
       'completedDate': completedDate?.toIso8601String(),
       'rewardText': rewardText,
       'isHidden': isHidden,
+      'isTemplate': isTemplate,
     };
   }
 
@@ -367,6 +405,7 @@ class Milestone {
       criteria: criteria,
       rewardText: json['rewardText'] ?? 'Milestone completed!',
       isHidden: json['isHidden'] ?? false,
+      isTemplate: json['isTemplate'] ?? false,
     );
   }
 }

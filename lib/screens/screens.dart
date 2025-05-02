@@ -6,7 +6,7 @@ export 'main_navigation_screen.dart';
 
 // Feature-specific screens
 export 'authentications/auth_screens.dart';
-export 'services/service_screens.dart';
+export 'services/service_listing_screens.dart';
 
 // Homepage screens
 export 'homepage/homepage_screen.dart';
