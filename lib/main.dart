@@ -1,10 +1,13 @@
 import 'package:eventati_book/providers/auth_provider.dart';
+import 'package:eventati_book/providers/milestone_provider.dart';
+import 'package:eventati_book/providers/suggestion_provider.dart';
 import 'package:eventati_book/providers/wizard_provider.dart';
 import 'package:eventati_book/screens/authentications/authentication_screen.dart';
 import 'package:eventati_book/screens/authentications/forgetpassword_screen.dart';
 import 'package:eventati_book/screens/authentications/login_screen.dart';
 import 'package:eventati_book/screens/authentications/register_screen.dart';
 import 'package:eventati_book/screens/authentications/verification_screen.dart';
+import 'package:eventati_book/screens/event_wizard/suggestion_screen.dart';
 import 'package:eventati_book/screens/homepage/event_selection_screen.dart';
 import 'package:eventati_book/screens/main_navigation_screen.dart';
 import 'package:eventati_book/styles/app_theme.dart';
@@ -17,6 +20,16 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => WizardProvider()),
+        ChangeNotifierProxyProvider<WizardProvider, MilestoneProvider>(
+          create:
+              (context) => MilestoneProvider(
+                Provider.of<WizardProvider>(context, listen: false),
+              ),
+          update:
+              (context, wizardProvider, previous) =>
+                  previous ?? MilestoneProvider(wizardProvider),
+        ),
+        ChangeNotifierProvider(create: (_) => SuggestionProvider()),
         // Other providers will be created as needed in the respective screens
       ],
       child: const MyApp(),
@@ -69,6 +82,7 @@ class _MyAppState extends State<MyApp> {
         '/login': (context) => const LoginScreen(),
         '/register': (context) => const RegisterScreen(),
         '/forgot-password': (context) => const ForgetpasswordScreen(),
+        '/event-wizard/suggestions': (context) => const SuggestionScreen(),
       },
       // Use onGenerateRoute for routes that need parameters
       onGenerateRoute: (settings) {

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:eventati_book/models/event_template.dart';
+import 'package:eventati_book/models/milestone.dart';
+import 'package:eventati_book/providers/milestone_provider.dart';
 import 'package:eventati_book/providers/wizard_provider.dart';
+import 'package:eventati_book/screens/event_planning/milestones/milestone_screen.dart';
 import 'package:eventati_book/styles/wizard_styles.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/widgets/event_wizard/event_name_input.dart';
@@ -11,6 +14,7 @@ import 'package:eventati_book/widgets/event_wizard/guest_count_input.dart';
 import 'package:eventati_book/widgets/event_wizard/services_selection.dart';
 import 'package:eventati_book/widgets/event_wizard/time_picker_tile.dart';
 import 'package:eventati_book/widgets/event_wizard/wizard_progress_indicator.dart';
+import 'package:eventati_book/widgets/milestones/milestone_celebration_overlay.dart';
 
 /// A unified wizard screen for creating events of different types
 class EventWizardScreen extends StatefulWidget {
@@ -52,6 +56,13 @@ class _EventWizardScreenState extends State<EventWizardScreen> {
             wizardProvider.state!.eventName.isNotEmpty) {
           _eventNameController.text = wizardProvider.state!.eventName;
         }
+
+        // Initialize milestone provider
+        final milestoneProvider = Provider.of<MilestoneProvider>(
+          context,
+          listen: false,
+        );
+        milestoneProvider.initializeMilestones(widget.template.id);
       }
     });
   }
@@ -64,9 +75,9 @@ class _EventWizardScreenState extends State<EventWizardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<WizardProvider>(
-      builder: (context, wizardProvider, _) {
-        if (wizardProvider.isLoading) {
+    return Consumer2<WizardProvider, MilestoneProvider>(
+      builder: (context, wizardProvider, milestoneProvider, _) {
+        if (wizardProvider.isLoading || milestoneProvider.isLoading) {
           return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
           );
@@ -80,6 +91,19 @@ class _EventWizardScreenState extends State<EventWizardScreen> {
               ),
             ),
           );
+        }
+
+        // Check for newly completed milestones
+        final newlyCompleted = milestoneProvider.newlyCompletedMilestones;
+        if (newlyCompleted.isNotEmpty) {
+          // Show celebration overlay for the first newly completed milestone
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _showMilestoneCelebration(
+              context,
+              newlyCompleted.first,
+              milestoneProvider,
+            );
+          });
         }
 
         final state = wizardProvider.state!;
@@ -96,6 +120,23 @@ class _EventWizardScreenState extends State<EventWizardScreen> {
             ),
             centerTitle: true,
             iconTheme: const IconThemeData(color: Colors.white),
+            actions: [
+              // Milestones button
+              IconButton(
+                icon: const Icon(Icons.emoji_events),
+                tooltip: 'Milestones',
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) =>
+                              MilestoneScreen(eventId: widget.template.id),
+                    ),
+                  );
+                },
+              ),
+            ],
           ),
           body: Container(
             decoration: WizardStyles.getWizardBodyDecoration(),
@@ -537,6 +578,29 @@ class _EventWizardScreenState extends State<EventWizardScreen> {
               ],
             ),
           ),
+        );
+      },
+    );
+  }
+
+  /// Show milestone celebration overlay
+  void _showMilestoneCelebration(
+    BuildContext context,
+    Milestone milestone,
+    MilestoneProvider provider,
+  ) {
+    // Show the celebration overlay
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: false,
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return MilestoneCelebrationOverlay(
+          milestone: milestone,
+          onDismiss: () {
+            // Acknowledge the milestone and dismiss the overlay
+            provider.acknowledgeNewlyCompletedMilestone(milestone.id);
+            Navigator.of(context).pop();
+          },
         );
       },
     );
