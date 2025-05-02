@@ -6,6 +6,7 @@ import 'package:eventati_book/screens/event_planning/budget/budget_overview_scre
 import 'package:eventati_book/screens/event_planning/guest_list/guest_list_screen.dart';
 import 'package:eventati_book/screens/event_planning/timeline/timeline_screen.dart';
 import 'package:eventati_book/screens/event_planning/messaging/vendor_list_screen.dart';
+import 'package:eventati_book/widgets/event_planning/tool_card.dart';
 
 class EventPlanningToolsScreen extends StatelessWidget {
   final String eventId;
@@ -63,7 +64,7 @@ class EventPlanningToolsScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withAlpha(26), // 0.1 * 255 = 25.5 ≈ 26
                     blurRadius: 10,
                     offset: const Offset(0, 5),
                   ),
@@ -90,7 +91,7 @@ class EventPlanningToolsScreen extends StatelessWidget {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        DateUtils.formatDate(eventDate),
+                        DateTimeUtils.formatDate(eventDate),
                         style: TextStyle(
                           color:
                               isDarkMode ? Colors.grey[400] : Colors.grey[600],
@@ -158,12 +159,11 @@ class EventPlanningToolsScreen extends StatelessWidget {
                 mainAxisSpacing: 16,
                 crossAxisSpacing: 16,
                 children: [
-                  _buildToolCard(
-                    context,
-                    'Budget Calculator',
-                    Icons.calculate,
-                    Colors.green,
-                    () {
+                  ToolCard(
+                    title: 'Budget Calculator',
+                    icon: Icons.calculate,
+                    color: Colors.green,
+                    onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -176,12 +176,11 @@ class EventPlanningToolsScreen extends StatelessWidget {
                       );
                     },
                   ),
-                  _buildToolCard(
-                    context,
-                    'Guest List',
-                    Icons.people,
-                    Colors.blue,
-                    () {
+                  ToolCard(
+                    title: 'Guest List',
+                    icon: Icons.people,
+                    color: Colors.blue,
+                    onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -194,12 +193,11 @@ class EventPlanningToolsScreen extends StatelessWidget {
                       );
                     },
                   ),
-                  _buildToolCard(
-                    context,
-                    'Timeline & Checklist',
-                    Icons.checklist,
-                    Colors.orange,
-                    () {
+                  ToolCard(
+                    title: 'Timeline & Checklist',
+                    icon: Icons.checklist,
+                    color: Colors.orange,
+                    onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -212,12 +210,11 @@ class EventPlanningToolsScreen extends StatelessWidget {
                       );
                     },
                   ),
-                  _buildToolCard(
-                    context,
-                    'Vendor Communication',
-                    Icons.message,
-                    Colors.purple,
-                    () {
+                  ToolCard(
+                    title: 'Vendor Communication',
+                    icon: Icons.message,
+                    color: Colors.purple,
+                    onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -232,59 +229,6 @@ class EventPlanningToolsScreen extends StatelessWidget {
                   ),
                 ],
               ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildToolCard(
-    BuildContext context,
-    String title,
-    IconData icon,
-    Color color,
-    VoidCallback onTap,
-  ) {
-    final isDarkMode = UIUtils.isDarkMode(context);
-    final cardColor = isDarkMode ? Colors.grey[800] : Colors.white;
-    final textColor = isDarkMode ? Colors.white : Colors.black;
-
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: Container(
-        decoration: BoxDecoration(
-          color: cardColor,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 10,
-              offset: const Offset(0, 5),
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: color.withOpacity(0.2),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(icon, size: 40, color: color),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: textColor,
-              ),
-              textAlign: TextAlign.center,
             ),
           ],
         ),

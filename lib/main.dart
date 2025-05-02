@@ -1,8 +1,4 @@
 import 'package:eventati_book/providers/auth_provider.dart';
-import 'package:eventati_book/providers/budget_provider.dart';
-import 'package:eventati_book/providers/guest_list_provider.dart';
-import 'package:eventati_book/providers/task_provider.dart';
-import 'package:eventati_book/providers/messaging_provider.dart';
 import 'package:eventati_book/screens/authentications/authentication_screen.dart';
 import 'package:eventati_book/screens/authentications/forgetpassword_screen.dart';
 import 'package:eventati_book/screens/authentications/login_screen.dart';

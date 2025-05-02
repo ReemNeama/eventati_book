@@ -23,15 +23,16 @@ class TimelineScreen extends StatefulWidget {
   State<TimelineScreen> createState() => _TimelineScreenState();
 }
 
-class _TimelineScreenState extends State<TimelineScreen> with SingleTickerProviderStateMixin {
+class _TimelineScreenState extends State<TimelineScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  
+
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
   }
-  
+
   @override
   void dispose() {
     _tabController.dispose();
@@ -42,7 +43,7 @@ class _TimelineScreenState extends State<TimelineScreen> with SingleTickerProvid
   Widget build(BuildContext context) {
     final isDarkMode = UIUtils.isDarkMode(context);
     final primaryColor = isDarkMode ? AppColorsDark.primary : AppColors.primary;
-    
+
     return ChangeNotifierProvider(
       create: (_) => TaskProvider(eventId: widget.eventId),
       child: Scaffold(
@@ -52,10 +53,7 @@ class _TimelineScreenState extends State<TimelineScreen> with SingleTickerProvid
           bottom: TabBar(
             controller: _tabController,
             indicatorColor: Colors.white,
-            tabs: const [
-              Tab(text: 'Timeline'),
-              Tab(text: 'Checklist'),
-            ],
+            tabs: const [Tab(text: 'Timeline'), Tab(text: 'Checklist')],
           ),
         ),
         body: TabBarView(
@@ -72,10 +70,14 @@ class _TimelineScreenState extends State<TimelineScreen> with SingleTickerProvid
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => TaskFormScreen(
-                  eventId: widget.eventId,
-                  taskProvider: Provider.of<TaskProvider>(context, listen: false),
-                ),
+                builder:
+                    (context) => TaskFormScreen(
+                      eventId: widget.eventId,
+                      taskProvider: Provider.of<TaskProvider>(
+                        context,
+                        listen: false,
+                      ),
+                    ),
               ),
             );
           },
@@ -92,9 +94,7 @@ class _TimelineScreenState extends State<TimelineScreen> with SingleTickerProvid
         }
 
         if (taskProvider.error != null) {
-          return Center(
-            child: Text('Error: ${taskProvider.error}'),
-          );
+          return Center(child: Text('Error: ${taskProvider.error}'));
         }
 
         if (taskProvider.tasks.isEmpty) {
@@ -105,8 +105,8 @@ class _TimelineScreenState extends State<TimelineScreen> with SingleTickerProvid
 
         // Group tasks by month
         final groupedTasks = _groupTasksByMonth(taskProvider.tasks);
-        final sortedMonths = groupedTasks.keys.toList()
-          ..sort((a, b) => a.compareTo(b));
+        final sortedMonths =
+            groupedTasks.keys.toList()..sort((a, b) => a.compareTo(b));
 
         return ListView.builder(
           padding: const EdgeInsets.all(16),
@@ -114,7 +114,7 @@ class _TimelineScreenState extends State<TimelineScreen> with SingleTickerProvid
           itemBuilder: (context, index) {
             final month = sortedMonths[index];
             final monthTasks = groupedTasks[month]!;
-            
+
             return _buildMonthSection(context, month, monthTasks, taskProvider);
           },
         );
@@ -130,11 +130,10 @@ class _TimelineScreenState extends State<TimelineScreen> with SingleTickerProvid
   ) {
     final isDarkMode = UIUtils.isDarkMode(context);
     final primaryColor = isDarkMode ? AppColorsDark.primary : AppColors.primary;
-    final textColor = isDarkMode ? Colors.white : Colors.black;
-    
+
     // Sort tasks by date
     tasks.sort((a, b) => a.dueDate.compareTo(b.dueDate));
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -161,25 +160,26 @@ class _TimelineScreenState extends State<TimelineScreen> with SingleTickerProvid
     TaskProvider taskProvider,
   ) {
     final isDarkMode = UIUtils.isDarkMode(context);
-    final primaryColor = isDarkMode ? AppColorsDark.primary : AppColors.primary;
     final textColor = isDarkMode ? Colors.white : Colors.black;
-    
+
     final category = taskProvider.categories.firstWhere(
       (c) => c.id == task.categoryId,
-      orElse: () => TaskCategory(
-        id: '',
-        name: 'Unknown',
-        icon: Icons.help_outline,
-        color: Colors.grey,
-      ),
+      orElse:
+          () => TaskCategory(
+            id: '',
+            name: 'Unknown',
+            icon: Icons.help_outline,
+            color: Colors.grey,
+          ),
     );
-    
-    final isOverdue = task.status != TaskStatus.completed && 
-                      task.dueDate.isBefore(DateTime.now());
-    
+
+    final isOverdue =
+        task.status != TaskStatus.completed &&
+        task.dueDate.isBefore(DateTime.now());
+
     Color statusColor;
     IconData statusIcon;
-    
+
     switch (task.status) {
       case TaskStatus.completed:
         statusColor = Colors.green;
@@ -198,17 +198,18 @@ class _TimelineScreenState extends State<TimelineScreen> with SingleTickerProvid
         statusIcon = Icons.warning;
         break;
     }
-    
+
     return InkWell(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => TaskFormScreen(
-              eventId: widget.eventId,
-              taskProvider: taskProvider,
-              task: task,
-            ),
+            builder:
+                (context) => TaskFormScreen(
+                  eventId: widget.eventId,
+                  taskProvider: taskProvider,
+                  task: task,
+                ),
           ),
         );
       },
@@ -227,11 +228,7 @@ class _TimelineScreenState extends State<TimelineScreen> with SingleTickerProvid
                     color: statusColor,
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(
-                    statusIcon,
-                    color: Colors.white,
-                    size: 14,
-                  ),
+                  child: Icon(statusIcon, color: Colors.white, size: 14),
                 ),
                 Container(
                   width: 2,
@@ -255,17 +252,16 @@ class _TimelineScreenState extends State<TimelineScreen> with SingleTickerProvid
                     children: [
                       Row(
                         children: [
-                          Icon(
-                            category.icon,
-                            color: category.color,
-                            size: 16,
-                          ),
+                          Icon(category.icon, color: category.color, size: 16),
                           const SizedBox(width: 8),
                           Text(
                             category.name,
                             style: TextStyle(
                               fontSize: 12,
-                              color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
+                              color:
+                                  isDarkMode
+                                      ? Colors.grey[400]
+                                      : Colors.grey[600],
                             ),
                           ),
                           const Spacer(),
@@ -274,9 +270,13 @@ class _TimelineScreenState extends State<TimelineScreen> with SingleTickerProvid
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
-                              color: isOverdue && task.status != TaskStatus.completed
-                                  ? Colors.red
-                                  : isDarkMode ? Colors.grey[400] : Colors.grey[600],
+                              color:
+                                  isOverdue &&
+                                          task.status != TaskStatus.completed
+                                      ? Colors.red
+                                      : isDarkMode
+                                      ? Colors.grey[400]
+                                      : Colors.grey[600],
                             ),
                           ),
                         ],
@@ -290,13 +290,17 @@ class _TimelineScreenState extends State<TimelineScreen> with SingleTickerProvid
                           color: textColor,
                         ),
                       ),
-                      if (task.description != null && task.description!.isNotEmpty) ...[
+                      if (task.description != null &&
+                          task.description!.isNotEmpty) ...[
                         const SizedBox(height: 4),
                         Text(
                           task.description!,
                           style: TextStyle(
                             fontSize: 14,
-                            color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
+                            color:
+                                isDarkMode
+                                    ? Colors.grey[400]
+                                    : Colors.grey[600],
                           ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
@@ -338,17 +342,17 @@ class _TimelineScreenState extends State<TimelineScreen> with SingleTickerProvid
 
   Map<DateTime, List<Task>> _groupTasksByMonth(List<Task> tasks) {
     final Map<DateTime, List<Task>> grouped = {};
-    
+
     for (final task in tasks) {
       final month = DateTime(task.dueDate.year, task.dueDate.month);
-      
+
       if (!grouped.containsKey(month)) {
         grouped[month] = [];
       }
-      
+
       grouped[month]!.add(task);
     }
-    
+
     return grouped;
   }
 }

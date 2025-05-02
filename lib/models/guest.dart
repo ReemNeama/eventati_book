@@ -1,27 +1,19 @@
 enum RsvpStatus { pending, confirmed, declined, tentative }
 
-class MealPreference {
-  final String id;
-  final String name;
-  final String? description;
-
-  MealPreference({
-    required this.id,
-    required this.name,
-    this.description,
-  });
-}
-
 class GuestGroup {
   final String id;
   final String name;
   final String? description;
 
-  GuestGroup({
-    required this.id,
-    required this.name,
-    this.description,
-  });
+  GuestGroup({required this.id, required this.name, this.description});
+
+  GuestGroup copyWith({String? id, String? name, String? description}) {
+    return GuestGroup(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      description: description ?? this.description,
+    );
+  }
 }
 
 class Guest {
@@ -32,7 +24,7 @@ class Guest {
   final String? phone;
   final String? groupId;
   final RsvpStatus rsvpStatus;
-  final String? mealPreferenceId;
+  final DateTime? rsvpResponseDate;
   final bool plusOne;
   final int? plusOneCount;
   final String? notes;
@@ -45,7 +37,7 @@ class Guest {
     this.phone,
     this.groupId,
     this.rsvpStatus = RsvpStatus.pending,
-    this.mealPreferenceId,
+    this.rsvpResponseDate,
     this.plusOne = false,
     this.plusOneCount,
     this.notes,
@@ -61,7 +53,7 @@ class Guest {
     String? phone,
     String? groupId,
     RsvpStatus? rsvpStatus,
-    String? mealPreferenceId,
+    DateTime? rsvpResponseDate,
     bool? plusOne,
     int? plusOneCount,
     String? notes,
@@ -74,7 +66,7 @@ class Guest {
       phone: phone ?? this.phone,
       groupId: groupId ?? this.groupId,
       rsvpStatus: rsvpStatus ?? this.rsvpStatus,
-      mealPreferenceId: mealPreferenceId ?? this.mealPreferenceId,
+      rsvpResponseDate: rsvpResponseDate ?? this.rsvpResponseDate,
       plusOne: plusOne ?? this.plusOne,
       plusOneCount: plusOneCount ?? this.plusOneCount,
       notes: notes ?? this.notes,

@@ -26,7 +26,7 @@ class BudgetItemFormScreen extends StatefulWidget {
 
 class _BudgetItemFormScreenState extends State<BudgetItemFormScreen> {
   final _formKey = GlobalKey<FormState>();
-  
+
   late String _categoryId;
   final _descriptionController = TextEditingController();
   final _estimatedCostController = TextEditingController();
@@ -38,7 +38,7 @@ class _BudgetItemFormScreenState extends State<BudgetItemFormScreen> {
   @override
   void initState() {
     super.initState();
-    
+
     if (widget.item != null) {
       // Edit mode - populate form with existing data
       _categoryId = widget.item!.categoryId;
@@ -50,7 +50,8 @@ class _BudgetItemFormScreenState extends State<BudgetItemFormScreen> {
       _notesController.text = widget.item!.notes ?? '';
     } else {
       // Create mode - initialize with defaults
-      _categoryId = widget.initialCategoryId ?? widget.budgetProvider.categories.first.id;
+      _categoryId =
+          widget.initialCategoryId ?? widget.budgetProvider.categories.first.id;
       _isPaid = false;
       _paymentDate = null;
     }
@@ -88,18 +89,19 @@ class _BudgetItemFormScreenState extends State<BudgetItemFormScreen> {
                 labelText: 'Category',
                 border: OutlineInputBorder(),
               ),
-              items: widget.budgetProvider.categories.map((category) {
-                return DropdownMenuItem<String>(
-                  value: category.id,
-                  child: Row(
-                    children: [
-                      Icon(category.icon, size: 20),
-                      const SizedBox(width: 8),
-                      Text(category.name),
-                    ],
-                  ),
-                );
-              }).toList(),
+              items:
+                  widget.budgetProvider.categories.map((category) {
+                    return DropdownMenuItem<String>(
+                      value: category.id,
+                      child: Row(
+                        children: [
+                          Icon(category.icon, size: 20),
+                          const SizedBox(width: 8),
+                          Text(category.name),
+                        ],
+                      ),
+                    );
+                  }).toList(),
               onChanged: (value) {
                 if (value != null) {
                   setState(() {
@@ -115,7 +117,7 @@ class _BudgetItemFormScreenState extends State<BudgetItemFormScreen> {
               },
             ),
             const SizedBox(height: 16),
-            
+
             // Description
             TextFormField(
               controller: _descriptionController,
@@ -131,7 +133,7 @@ class _BudgetItemFormScreenState extends State<BudgetItemFormScreen> {
               },
             ),
             const SizedBox(height: 16),
-            
+
             // Estimated cost
             TextFormField(
               controller: _estimatedCostController,
@@ -152,7 +154,7 @@ class _BudgetItemFormScreenState extends State<BudgetItemFormScreen> {
               },
             ),
             const SizedBox(height: 16),
-            
+
             // Actual cost
             TextFormField(
               controller: _actualCostController,
@@ -172,7 +174,7 @@ class _BudgetItemFormScreenState extends State<BudgetItemFormScreen> {
               },
             ),
             const SizedBox(height: 16),
-            
+
             // Paid status
             SwitchListTile(
               title: const Text('Paid'),
@@ -184,13 +186,13 @@ class _BudgetItemFormScreenState extends State<BudgetItemFormScreen> {
                   _isPaid = value;
                   if (!value) {
                     _paymentDate = null;
-                  } else if (_paymentDate == null) {
-                    _paymentDate = DateTime.now();
+                  } else {
+                    _paymentDate ??= DateTime.now();
                   }
                 });
               },
             ),
-            
+
             // Payment date (only shown if paid)
             if (_isPaid) ...[
               const SizedBox(height: 8),
@@ -219,9 +221,9 @@ class _BudgetItemFormScreenState extends State<BudgetItemFormScreen> {
               ),
               const Divider(),
             ],
-            
+
             const SizedBox(height: 16),
-            
+
             // Notes
             TextFormField(
               controller: _notesController,
@@ -232,9 +234,9 @@ class _BudgetItemFormScreenState extends State<BudgetItemFormScreen> {
               ),
               maxLines: 3,
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             // Submit button
             ElevatedButton(
               style: ElevatedButton.styleFrom(
@@ -259,8 +261,10 @@ class _BudgetItemFormScreenState extends State<BudgetItemFormScreen> {
       final description = _descriptionController.text;
       final estimatedCost = double.parse(_estimatedCostController.text);
       final actualCostText = _actualCostController.text;
-      final actualCost = actualCostText.isNotEmpty ? double.parse(actualCostText) : null;
-      final notes = _notesController.text.isNotEmpty ? _notesController.text : null;
+      final actualCost =
+          actualCostText.isNotEmpty ? double.parse(actualCostText) : null;
+      final notes =
+          _notesController.text.isNotEmpty ? _notesController.text : null;
 
       if (widget.item != null) {
         // Update existing item
@@ -273,7 +277,7 @@ class _BudgetItemFormScreenState extends State<BudgetItemFormScreen> {
           paymentDate: _isPaid ? _paymentDate : null,
           notes: notes,
         );
-        
+
         await widget.budgetProvider.updateBudgetItem(updatedItem);
       } else {
         // Create new item
@@ -287,10 +291,10 @@ class _BudgetItemFormScreenState extends State<BudgetItemFormScreen> {
           paymentDate: _isPaid ? _paymentDate : null,
           notes: notes,
         );
-        
+
         await widget.budgetProvider.addBudgetItem(newItem);
       }
-      
+
       if (mounted) {
         Navigator.pop(context);
       }

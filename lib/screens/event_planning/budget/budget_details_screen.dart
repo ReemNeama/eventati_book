@@ -70,26 +70,30 @@ class _BudgetDetailsScreenState extends State<BudgetDetailsScreen> {
               children: [
                 _buildFilterBar(context, budgetProvider),
                 Expanded(
-                  child: filteredItems.isEmpty
-                      ? Center(
-                          child: Text(
-                            'No budget items found',
-                            style: TextStyle(
-                              color: isDarkMode ? Colors.white70 : Colors.black54,
+                  child:
+                      filteredItems.isEmpty
+                          ? Center(
+                            child: Text(
+                              'No budget items found',
+                              style: TextStyle(
+                                color:
+                                    isDarkMode
+                                        ? Colors.white70
+                                        : Colors.black54,
+                              ),
                             ),
+                          )
+                          : ListView.builder(
+                            padding: const EdgeInsets.all(16),
+                            itemCount: filteredItems.length,
+                            itemBuilder: (context, index) {
+                              return _buildBudgetItemCard(
+                                context,
+                                filteredItems[index],
+                                budgetProvider,
+                              );
+                            },
                           ),
-                        )
-                      : ListView.builder(
-                          padding: const EdgeInsets.all(16),
-                          itemCount: filteredItems.length,
-                          itemBuilder: (context, index) {
-                            return _buildBudgetItemCard(
-                              context,
-                              filteredItems[index],
-                              budgetProvider,
-                            );
-                          },
-                        ),
                 ),
               ],
             ),
@@ -100,11 +104,12 @@ class _BudgetDetailsScreenState extends State<BudgetDetailsScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => BudgetItemFormScreen(
-                      eventId: widget.eventId,
-                      budgetProvider: budgetProvider,
-                      initialCategoryId: _selectedCategoryId,
-                    ),
+                    builder:
+                        (context) => BudgetItemFormScreen(
+                          eventId: widget.eventId,
+                          budgetProvider: budgetProvider,
+                          initialCategoryId: _selectedCategoryId,
+                        ),
                   ),
                 );
               },
@@ -120,14 +125,22 @@ class _BudgetDetailsScreenState extends State<BudgetDetailsScreen> {
 
     // Filter by category if selected
     if (_selectedCategoryId != null) {
-      items = items.where((item) => item.categoryId == _selectedCategoryId).toList();
+      items =
+          items
+              .where((item) => item.categoryId == _selectedCategoryId)
+              .toList();
     }
 
     // Filter by search query
     if (_searchQuery.isNotEmpty) {
-      items = items.where((item) => 
-        item.description.toLowerCase().contains(_searchQuery.toLowerCase())
-      ).toList();
+      items =
+          items
+              .where(
+                (item) => item.description.toLowerCase().contains(
+                  _searchQuery.toLowerCase(),
+                ),
+              )
+              .toList();
     }
 
     return items;
@@ -184,7 +197,7 @@ class _BudgetDetailsScreenState extends State<BudgetDetailsScreen> {
                     category.icon,
                     primaryColor,
                   );
-                }).toList(),
+                }),
               ],
             ),
           ),
@@ -211,9 +224,10 @@ class _BudgetDetailsScreenState extends State<BudgetDetailsScreen> {
         avatar: Icon(
           icon,
           size: 18,
-          color: isSelected
-              ? Colors.white
-              : isDarkMode
+          color:
+              isSelected
+                  ? Colors.white
+                  : isDarkMode
                   ? Colors.white
                   : primaryColor,
         ),
@@ -221,9 +235,10 @@ class _BudgetDetailsScreenState extends State<BudgetDetailsScreen> {
         selectedColor: primaryColor,
         checkmarkColor: Colors.white,
         labelStyle: TextStyle(
-          color: isSelected
-              ? Colors.white
-              : isDarkMode
+          color:
+              isSelected
+                  ? Colors.white
+                  : isDarkMode
                   ? Colors.white
                   : Colors.black,
         ),
@@ -245,19 +260,15 @@ class _BudgetDetailsScreenState extends State<BudgetDetailsScreen> {
     final primaryColor = isDarkMode ? AppColorsDark.primary : AppColors.primary;
     final category = budgetProvider.categories.firstWhere(
       (c) => c.id == item.categoryId,
-      orElse: () => BudgetCategory(
-        id: '',
-        name: 'Unknown',
-        icon: Icons.help_outline,
-      ),
+      orElse:
+          () =>
+              BudgetCategory(id: '', name: 'Unknown', icon: Icons.help_outline),
     );
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -286,7 +297,7 @@ class _BudgetDetailsScreenState extends State<BudgetDetailsScreen> {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.green.withOpacity(0.2),
+                      color: Colors.green.withAlpha(51), // 0.2 * 255 = 51
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Row(
@@ -333,7 +344,10 @@ class _BudgetDetailsScreenState extends State<BudgetDetailsScreen> {
                       ),
                     ),
                     Text(
-                      ServiceUtils.formatPrice(item.estimatedCost, decimalPlaces: 0),
+                      ServiceUtils.formatPrice(
+                        item.estimatedCost,
+                        decimalPlaces: 0,
+                      ),
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -350,11 +364,15 @@ class _BudgetDetailsScreenState extends State<BudgetDetailsScreen> {
                         'Actual',
                         style: TextStyle(
                           fontSize: 12,
-                          color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
+                          color:
+                              isDarkMode ? Colors.grey[400] : Colors.grey[600],
                         ),
                       ),
                       Text(
-                        ServiceUtils.formatPrice(item.actualCost!, decimalPlaces: 0),
+                        ServiceUtils.formatPrice(
+                          item.actualCost!,
+                          decimalPlaces: 0,
+                        ),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -392,18 +410,16 @@ class _BudgetDetailsScreenState extends State<BudgetDetailsScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => BudgetItemFormScreen(
-                          eventId: widget.eventId,
-                          budgetProvider: budgetProvider,
-                          item: item,
-                        ),
+                        builder:
+                            (context) => BudgetItemFormScreen(
+                              eventId: widget.eventId,
+                              budgetProvider: budgetProvider,
+                              item: item,
+                            ),
                       ),
                     );
                   },
-                  child: Text(
-                    'Edit',
-                    style: TextStyle(color: primaryColor),
-                  ),
+                  child: Text('Edit', style: TextStyle(color: primaryColor)),
                 ),
                 TextButton(
                   onPressed: () {
@@ -429,28 +445,29 @@ class _BudgetDetailsScreenState extends State<BudgetDetailsScreen> {
   ) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Delete Budget Item'),
-        content: Text(
-          'Are you sure you want to delete "${item.description}"?',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              budgetProvider.deleteBudgetItem(item.id);
-              Navigator.pop(context);
-            },
-            child: const Text(
-              'Delete',
-              style: TextStyle(color: Colors.red),
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Delete Budget Item'),
+            content: Text(
+              'Are you sure you want to delete "${item.description}"?',
             ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () {
+                  budgetProvider.deleteBudgetItem(item.id);
+                  Navigator.pop(context);
+                },
+                child: const Text(
+                  'Delete',
+                  style: TextStyle(color: Colors.red),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
     );
   }
 }

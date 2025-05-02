@@ -11,10 +11,7 @@ import 'package:intl/intl.dart';
 class ChecklistScreen extends StatefulWidget {
   final String eventId;
 
-  const ChecklistScreen({
-    super.key,
-    required this.eventId,
-  });
+  const ChecklistScreen({super.key, required this.eventId});
 
   @override
   State<ChecklistScreen> createState() => _ChecklistScreenState();
@@ -34,9 +31,7 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
         }
 
         if (taskProvider.error != null) {
-          return Center(
-            child: Text('Error: ${taskProvider.error}'),
-          );
+          return Center(child: Text('Error: ${taskProvider.error}'));
         }
 
         if (taskProvider.tasks.isEmpty) {
@@ -52,28 +47,30 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
           children: [
             _buildFilterBar(context, taskProvider),
             Expanded(
-              child: filteredTasks.isEmpty
-                  ? Center(
-                      child: Text(
-                        'No tasks match your filters',
-                        style: TextStyle(
-                          color: UIUtils.isDarkMode(context)
-                              ? Colors.white70
-                              : Colors.black54,
+              child:
+                  filteredTasks.isEmpty
+                      ? Center(
+                        child: Text(
+                          'No tasks match your filters',
+                          style: TextStyle(
+                            color:
+                                UIUtils.isDarkMode(context)
+                                    ? Colors.white70
+                                    : Colors.black54,
+                          ),
                         ),
+                      )
+                      : ListView.builder(
+                        padding: const EdgeInsets.all(16),
+                        itemCount: filteredTasks.length,
+                        itemBuilder: (context, index) {
+                          return _buildTaskItem(
+                            context,
+                            filteredTasks[index],
+                            taskProvider,
+                          );
+                        },
                       ),
-                    )
-                  : ListView.builder(
-                      padding: const EdgeInsets.all(16),
-                      itemCount: filteredTasks.length,
-                      itemBuilder: (context, index) {
-                        return _buildTaskItem(
-                          context,
-                          filteredTasks[index],
-                          taskProvider,
-                        );
-                      },
-                    ),
             ),
             _buildProgressBar(context, taskProvider),
           ],
@@ -87,12 +84,16 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
 
     // Filter by completion status
     if (!_showCompleted) {
-      tasks = tasks.where((task) => task.status != TaskStatus.completed).toList();
+      tasks =
+          tasks.where((task) => task.status != TaskStatus.completed).toList();
     }
 
     // Filter by category if selected
     if (_selectedCategoryId != null) {
-      tasks = tasks.where((task) => task.categoryId == _selectedCategoryId).toList();
+      tasks =
+          tasks
+              .where((task) => task.categoryId == _selectedCategoryId)
+              .toList();
     }
 
     // Filter by status if selected
@@ -136,7 +137,7 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
                     category.icon,
                     category.color,
                   );
-                }).toList(),
+                }),
               ],
             ),
           ),
@@ -221,9 +222,10 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
         avatar: Icon(
           icon,
           size: 18,
-          color: isSelected
-              ? Colors.white
-              : isDarkMode
+          color:
+              isSelected
+                  ? Colors.white
+                  : isDarkMode
                   ? Colors.white
                   : color,
         ),
@@ -231,9 +233,10 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
         selectedColor: color,
         checkmarkColor: Colors.white,
         labelStyle: TextStyle(
-          color: isSelected
-              ? Colors.white
-              : isDarkMode
+          color:
+              isSelected
+                  ? Colors.white
+                  : isDarkMode
                   ? Colors.white
                   : Colors.black,
         ),
@@ -264,9 +267,10 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
         avatar: Icon(
           icon,
           size: 18,
-          color: isSelected
-              ? Colors.white
-              : isDarkMode
+          color:
+              isSelected
+                  ? Colors.white
+                  : isDarkMode
                   ? Colors.white
                   : color,
         ),
@@ -274,9 +278,10 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
         selectedColor: color,
         checkmarkColor: Colors.white,
         labelStyle: TextStyle(
-          color: isSelected
-              ? Colors.white
-              : isDarkMode
+          color:
+              isSelected
+                  ? Colors.white
+                  : isDarkMode
                   ? Colors.white
                   : Colors.black,
         ),
@@ -296,23 +301,25 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
   ) {
     final isDarkMode = UIUtils.isDarkMode(context);
     final textColor = isDarkMode ? Colors.white : Colors.black;
-    
+
     final category = taskProvider.categories.firstWhere(
       (c) => c.id == task.categoryId,
-      orElse: () => TaskCategory(
-        id: '',
-        name: 'Unknown',
-        icon: Icons.help_outline,
-        color: Colors.grey,
-      ),
+      orElse:
+          () => TaskCategory(
+            id: '',
+            name: 'Unknown',
+            icon: Icons.help_outline,
+            color: Colors.grey,
+          ),
     );
-    
-    final isOverdue = task.status != TaskStatus.completed && 
-                      task.dueDate.isBefore(DateTime.now());
-    
+
+    final isOverdue =
+        task.status != TaskStatus.completed &&
+        task.dueDate.isBefore(DateTime.now());
+
     Color statusColor;
     IconData statusIcon;
-    
+
     switch (task.status) {
       case TaskStatus.completed:
         statusColor = Colors.green;
@@ -331,23 +338,22 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
         statusIcon = Icons.warning;
         break;
     }
-    
+
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
         onTap: () {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => TaskFormScreen(
-                eventId: widget.eventId,
-                taskProvider: taskProvider,
-                task: task,
-              ),
+              builder:
+                  (context) => TaskFormScreen(
+                    eventId: widget.eventId,
+                    taskProvider: taskProvider,
+                    task: task,
+                  ),
             ),
           );
         },
@@ -362,14 +368,10 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
                 width: 24,
                 height: 24,
                 decoration: BoxDecoration(
-                  color: statusColor.withOpacity(0.2),
+                  color: statusColor.withAlpha(51), // 0.2 * 255 = 51
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
-                  statusIcon,
-                  color: statusColor,
-                  size: 16,
-                ),
+                child: Icon(statusIcon, color: statusColor, size: 16),
               ),
               const SizedBox(width: 16),
               // Task content
@@ -379,17 +381,16 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
                   children: [
                     Row(
                       children: [
-                        Icon(
-                          category.icon,
-                          color: category.color,
-                          size: 16,
-                        ),
+                        Icon(category.icon, color: category.color, size: 16),
                         const SizedBox(width: 8),
                         Text(
                           category.name,
                           style: TextStyle(
                             fontSize: 12,
-                            color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
+                            color:
+                                isDarkMode
+                                    ? Colors.grey[400]
+                                    : Colors.grey[600],
                           ),
                         ),
                       ],
@@ -401,21 +402,25 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: textColor,
-                        decoration: task.status == TaskStatus.completed
-                            ? TextDecoration.lineThrough
-                            : null,
+                        decoration:
+                            task.status == TaskStatus.completed
+                                ? TextDecoration.lineThrough
+                                : null,
                       ),
                     ),
-                    if (task.description != null && task.description!.isNotEmpty) ...[
+                    if (task.description != null &&
+                        task.description!.isNotEmpty) ...[
                       const SizedBox(height: 4),
                       Text(
                         task.description!,
                         style: TextStyle(
                           fontSize: 14,
-                          color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
-                          decoration: task.status == TaskStatus.completed
-                              ? TextDecoration.lineThrough
-                              : null,
+                          color:
+                              isDarkMode ? Colors.grey[400] : Colors.grey[600],
+                          decoration:
+                              task.status == TaskStatus.completed
+                                  ? TextDecoration.lineThrough
+                                  : null,
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -430,9 +435,12 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
-                            color: isOverdue && task.status != TaskStatus.completed
-                                ? Colors.red
-                                : isDarkMode ? Colors.grey[400] : Colors.grey[600],
+                            color:
+                                isOverdue && task.status != TaskStatus.completed
+                                    ? Colors.red
+                                    : isDarkMode
+                                    ? Colors.grey[400]
+                                    : Colors.grey[600],
                           ),
                         ),
                         if (task.status != TaskStatus.completed)
@@ -473,9 +481,9 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
     final isDarkMode = UIUtils.isDarkMode(context);
     final primaryColor = isDarkMode ? AppColorsDark.primary : AppColors.primary;
     final backgroundColor = isDarkMode ? Colors.grey[800] : Colors.grey[200];
-    
+
     final completionPercentage = taskProvider.completionPercentage;
-    
+
     return Container(
       padding: const EdgeInsets.all(16),
       color: backgroundColor,
