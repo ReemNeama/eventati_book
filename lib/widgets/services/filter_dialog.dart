@@ -12,6 +12,7 @@ class FilterDialog extends StatelessWidget {
   final List<String> selectedOptions;
   final Function(String, bool) onOptionSelected;
   final String filterTitle;
+  final Widget? extraFilterWidget;
 
   const FilterDialog({
     super.key,
@@ -23,6 +24,7 @@ class FilterDialog extends StatelessWidget {
     required this.selectedOptions,
     required this.onOptionSelected,
     required this.filterTitle,
+    this.extraFilterWidget,
   });
 
   @override
@@ -92,6 +94,10 @@ class FilterDialog extends StatelessWidget {
                     );
                   }).toList(),
             ),
+            if (extraFilterWidget != null) ...[
+              const SizedBox(height: 16),
+              extraFilterWidget!,
+            ],
           ],
         ),
       ),

@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/models/event_template.dart';
-import 'package:eventati_book/models/task.dart';
 import 'package:eventati_book/screens/event_wizard/event_wizard_screen.dart';
 import 'package:eventati_book/screens/event_planning/timeline/timeline_screen.dart';
 import 'package:eventati_book/services/wizard_connection_service.dart';
-import 'package:eventati_book/services/task_template_service.dart';
-import 'package:eventati_book/providers/task_provider.dart';
-import 'package:provider/provider.dart';
 
 /// Factory class to create appropriate wizard and checklist screens
 class WizardFactory {
@@ -26,6 +22,7 @@ class WizardFactory {
           WizardConnectionService.connectToBudget(context, data);
           WizardConnectionService.connectToGuestList(context, data);
           WizardConnectionService.connectToTimeline(context, data);
+          WizardConnectionService.connectToServiceScreens(context, data);
         } catch (e) {
           // Log the error but continue with navigation
           debugPrint('Error connecting wizard data to planning tools: $e');

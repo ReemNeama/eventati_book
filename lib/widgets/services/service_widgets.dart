@@ -10,3 +10,4 @@ export 'service_filter_bar.dart';
 
 // Card widgets
 export 'service_card.dart';
+export 'recommended_badge.dart';

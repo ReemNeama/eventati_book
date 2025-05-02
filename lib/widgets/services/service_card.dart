@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/utils/utils.dart';
+import 'package:eventati_book/widgets/services/recommended_badge.dart';
 
 class ServiceCard extends StatelessWidget {
   final String name;
@@ -9,6 +10,8 @@ class ServiceCard extends StatelessWidget {
   final String imageUrl;
   final Widget? additionalInfo;
   final VoidCallback onTap;
+  final bool isRecommended;
+  final String? recommendationReason;
 
   const ServiceCard({
     super.key,
@@ -18,6 +21,8 @@ class ServiceCard extends StatelessWidget {
     required this.imageUrl,
     this.additionalInfo,
     required this.onTap,
+    this.isRecommended = false,
+    this.recommendationReason,
   });
 
   @override
@@ -40,19 +45,29 @@ class ServiceCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ClipRRect(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(AppConstants.mediumBorderRadius),
-                topRight: Radius.circular(AppConstants.mediumBorderRadius),
-              ),
-              child: Container(
-                height: 150,
-                width: double.infinity,
-                color: backgroundColor,
-                child: Center(
-                  child: Icon(Icons.image, size: 50, color: iconColor),
+            Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(AppConstants.mediumBorderRadius),
+                    topRight: Radius.circular(AppConstants.mediumBorderRadius),
+                  ),
+                  child: Container(
+                    height: 150,
+                    width: double.infinity,
+                    color: backgroundColor,
+                    child: Center(
+                      child: Icon(Icons.image, size: 50, color: iconColor),
+                    ),
+                  ),
                 ),
-              ),
+                if (isRecommended)
+                  Positioned(
+                    top: 10,
+                    right: 10,
+                    child: RecommendedBadge(reason: recommendationReason),
+                  ),
+              ],
             ),
             Padding(
               padding: const EdgeInsets.all(AppConstants.mediumPadding - 4),

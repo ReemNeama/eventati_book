@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:eventati_book/models/task.dart';
 
 /// Service to provide task templates for different event types
@@ -31,33 +30,36 @@ class TaskTemplateService {
     final templates = getTaskTemplates(eventType);
     final tasks = <Task>[];
     final now = DateTime.now();
-    
+
     // Filter templates based on selected services
-    final filteredTemplates = templates.where((template) {
-      final service = template['service'] as String;
-      return selectedServices[service] == true || service == 'General';
-    }).toList();
-    
+    final filteredTemplates =
+        templates.where((template) {
+          final service = template['service'] as String;
+          return selectedServices[service] == true || service == 'General';
+        }).toList();
+
     // Create tasks from templates
     for (var i = 0; i < filteredTemplates.length; i++) {
       final template = filteredTemplates[i];
       final daysBeforeEvent = template['daysBeforeEvent'] as int;
       final dueDate = eventDate.subtract(Duration(days: daysBeforeEvent));
-      
+
       // Skip tasks that would be due in the past
       if (dueDate.isBefore(now)) continue;
-      
-      tasks.add(Task(
-        id: '${eventId}_${i + 1}',
-        title: template['title'] as String,
-        description: template['description'] as String?,
-        dueDate: dueDate,
-        status: TaskStatus.notStarted,
-        categoryId: template['categoryId'] as String,
-        isImportant: template['isImportant'] as bool? ?? false,
-      ));
+
+      tasks.add(
+        Task(
+          id: '${eventId}_${i + 1}',
+          title: template['title'] as String,
+          description: template['description'] as String?,
+          dueDate: dueDate,
+          status: TaskStatus.notStarted,
+          categoryId: template['categoryId'] as String,
+          isImportant: template['isImportant'] as bool? ?? false,
+        ),
+      );
     }
-    
+
     return tasks;
   }
 
@@ -116,7 +118,7 @@ class TaskTemplateService {
       'description': 'Arrange tables, dance floor, and other elements',
       'daysBeforeEvent': 90,
     },
-    
+
     // Catering tasks
     {
       'service': 'Catering',
@@ -168,7 +170,7 @@ class TaskTemplateService {
       'description': 'Decide on open bar, cash bar, or limited service',
       'daysBeforeEvent': 150,
     },
-    
+
     // Photography tasks
     {
       'service': 'Photography',
@@ -213,7 +215,7 @@ class TaskTemplateService {
       'description': 'Decide if you want videography and what to include',
       'daysBeforeEvent': 240,
     },
-    
+
     // Attire tasks
     {
       'service': 'Attire',
@@ -258,7 +260,7 @@ class TaskTemplateService {
       'description': 'Choose bridesmaid dresses and groomsmen attire',
       'daysBeforeEvent': 210,
     },
-    
+
     // General wedding tasks
     {
       'service': 'General',
@@ -334,7 +336,7 @@ class TaskTemplateService {
       'description': 'Check on insurance, permits, and other requirements',
       'daysBeforeEvent': 90,
     },
-    
+
     // Catering tasks
     {
       'service': 'Catering',
@@ -372,7 +374,7 @@ class TaskTemplateService {
       'daysBeforeEvent': 30,
       'isImportant': true,
     },
-    
+
     // Audio/Visual tasks
     {
       'service': 'Audio/Visual',
@@ -409,7 +411,7 @@ class TaskTemplateService {
       'description': 'Plan for technical contingencies',
       'daysBeforeEvent': 30,
     },
-    
+
     // General business event tasks
     {
       'service': 'General',
@@ -492,7 +494,7 @@ class TaskTemplateService {
       'description': 'Check on insurance, permits, and other requirements',
       'daysBeforeEvent': 60,
     },
-    
+
     // Catering tasks
     {
       'service': 'Catering',
@@ -530,7 +532,7 @@ class TaskTemplateService {
       'daysBeforeEvent': 60,
       'isImportant': true,
     },
-    
+
     // Entertainment tasks
     {
       'service': 'Entertainment',
@@ -561,7 +563,7 @@ class TaskTemplateService {
       'daysBeforeEvent': 60,
       'isImportant': true,
     },
-    
+
     // Decoration tasks
     {
       'service': 'Decoration',
@@ -591,7 +593,7 @@ class TaskTemplateService {
       'description': 'Create a layout and schedule for decoration',
       'daysBeforeEvent': 30,
     },
-    
+
     // General celebration tasks
     {
       'service': 'General',
@@ -645,7 +647,7 @@ class TaskTemplateService {
       'daysBeforeEvent': 90,
       'isImportant': true,
     },
-    
+
     // Catering tasks
     {
       'service': 'Catering',
@@ -662,7 +664,7 @@ class TaskTemplateService {
       'daysBeforeEvent': 60,
       'isImportant': true,
     },
-    
+
     // General tasks
     {
       'service': 'General',

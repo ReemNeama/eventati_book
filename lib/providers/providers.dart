@@ -8,6 +8,7 @@ export 'wizard_provider.dart';
 // Feature providers
 export 'milestone_provider.dart';
 export 'suggestion_provider.dart';
+export 'service_recommendation_provider.dart';
 
 // Planning tool providers
 export 'budget_provider.dart';

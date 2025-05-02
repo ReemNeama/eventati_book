@@ -72,10 +72,10 @@
   - [ ] Initialize guest list with capacity from wizard
   - [ ] Add guest group suggestions based on event type
   - [ ] Create RSVP deadline based on event date
-- [ ] Connect to services screens for recommended vendors
-  - [ ] Filter service listings based on wizard selections
-  - [ ] Highlight compatible service providers
-  - [ ] Provide package recommendations
+- [x] Connect to services screens for recommended vendors
+  - [x] Filter service listings based on wizard selections
+  - [x] Highlight compatible service providers
+  - [x] Provide package recommendations
 
 ## Phase 3: Service Booking & Purchasing
 
@@ -141,13 +141,40 @@
 - [ ] Conduct usability review
 - [ ] Improve animations and transitions
 - [ ] Enhance visual design consistency
-- [ ] Optimize for accessibility
+- [ ] Implement UI/UX Polish
+  - [ ] Consistent Error Handling
+    - [ ] Create an ErrorScreen widget for full-page errors
+    - [ ] Enhance ErrorMessage widget for inline errors
+    - [ ] Implement error handling utilities
+    - [ ] Apply consistent error handling across all screens
+  - [ ] Empty States
+    - [ ] Create an EmptyStateWidget component
+    - [ ] Implement empty states for guest list, budget, timeline, and services
+  - [ ] Enhanced Responsiveness
+    - [ ] Audit existing responsive components
+    - [ ] Create a ResponsiveConstants class for breakpoints
+    - [ ] Add tablet-specific layouts for all screens
+    - [ ] Test and optimize for different orientations
+  - [ ] Accessibility Improvements
+    - [ ] Create an AccessibilityUtils class with helper methods
+    - [ ] Add semantic labels to all interactive elements
+    - [ ] Ensure proper contrast ratios for text
+    - [ ] Add keyboard navigation support
 
 ### Week 3: Final Polish
 - [ ] Perform performance optimization
 - [ ] Reduce app size and loading times
 - [ ] Prepare for app store submission
 - [ ] Create marketing materials and screenshots
+- [ ] Implement Feature Enhancements
+  - [ ] Onboarding Flow
+    - [ ] Design onboarding screens
+    - [ ] Implement onboarding components
+    - [ ] Add logic to show onboarding only on first app launch
+  - [ ] User Feedback System
+    - [ ] Create feedback components
+    - [ ] Implement feedback collection
+    - [ ] Add triggers for feedback collection
 
 ---
 
@@ -207,6 +234,33 @@
       - [ ] Create barrel files for modules with 4 or more imports
 
 - Code Organization Improvements (Next Priority)
+  - [ ] Utils Refactoring
+    - [ ] Create specialized utility files:
+      - [ ] date_utils.dart - For all date/time operations
+      - [ ] string_utils.dart - For string manipulation and formatting
+      - [ ] validation_utils.dart - For form validation logic
+      - [ ] ui_utils.dart - Keep UI-specific utilities
+      - [ ] format_utils.dart - For number/currency formatting
+    - [ ] Move relevant functions from existing utils to these new files
+    - [ ] Update imports across the codebase
+    - [ ] Add comprehensive documentation to each utility function
+  - [ ] File Naming Standardization
+    - [ ] Establish naming conventions:
+      - [ ] Screens: feature_screen.dart (singular)
+      - [ ] Screen collections: feature_screens.dart (plural for barrel files)
+      - [ ] Components: feature_component.dart (e.g., venue_card.dart)
+      - [ ] Models: feature.dart (e.g., venue.dart)
+    - [ ] Rename files to follow conventions:
+      - [ ] Change authentication_screen.dart to auth_screen.dart
+      - [ ] Rename service_screens.dart to more specific service_listing_screens.dart
+    - [ ] Update all imports and references
+  - [ ] Model Consolidation
+    - [ ] Consolidate milestone_templates.dart and milestone.dart
+    - [ ] Add isTemplate flag to distinguish templates from instances
+    - [ ] Migrate existing code to use the unified model
+    - [ ] Review other models for similar consolidation opportunities
+
+- Previous Code Organization Improvements (Completed)
   - [x] Centralize provider registration in main.dart
     - [x] Move all core providers to main.dart
     - [x] Use ChangeNotifierProxyProvider for dependent providers

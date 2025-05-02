@@ -10,6 +10,8 @@ import 'package:eventati_book/widgets/details/info_card.dart';
 import 'package:eventati_book/widgets/details/detail_tab_bar.dart';
 import 'package:eventati_book/widgets/details/image_placeholder.dart';
 import 'package:eventati_book/widgets/details/chip_group.dart';
+import 'package:eventati_book/providers/service_recommendation_provider.dart';
+import 'package:provider/provider.dart';
 
 class VenueDetailsScreen extends StatefulWidget {
   final Venue venue;
@@ -157,6 +159,96 @@ class _VenueDetailsScreenState extends State<VenueDetailsScreen>
             style: Theme.of(context).textTheme.titleLarge,
           ),
           const SizedBox(height: AppConstants.mediumPadding),
+
+          // Package recommendation
+          Consumer<ServiceRecommendationProvider>(
+            builder: (context, provider, _) {
+              // Only show recommendations if the venue is recommended
+              if (!provider.isVenueRecommended(widget.venue) ||
+                  provider.wizardData == null) {
+                return const SizedBox.shrink();
+              }
+
+              final guestCount = provider.wizardData!['guestCount'] as int;
+              final eventType = provider.wizardData!['eventType'] as String;
+
+              // Find the most suitable package based on guest count
+              VenuePackage? recommendedPackage;
+              int recommendedIndex = -1;
+
+              for (int i = 0; i < _packages.length; i++) {
+                final package = _packages[i];
+                if (package.maxCapacity >= guestCount) {
+                  recommendedPackage = package;
+                  recommendedIndex = i;
+                  break;
+                }
+              }
+
+              if (recommendedPackage == null) {
+                return const SizedBox.shrink();
+              }
+
+              // Build recommendation message
+              String recommendationMessage =
+                  'Based on your guest count of $guestCount, we recommend the ${recommendedPackage.name}.';
+
+              if (eventType.toLowerCase().contains('wedding') &&
+                  recommendedPackage.name.contains('Premium')) {
+                recommendationMessage +=
+                    ' This package includes features perfect for weddings.';
+              } else if (eventType.toLowerCase().contains('business') &&
+                  recommendedPackage.name.contains('Standard')) {
+                recommendationMessage +=
+                    ' This package includes features suitable for business events.';
+              }
+
+              return Padding(
+                padding: const EdgeInsets.only(
+                  bottom: AppConstants.mediumPadding,
+                ),
+                child: Card(
+                  color: Theme.of(context).primaryColor.withAlpha(50),
+                  child: Padding(
+                    padding: const EdgeInsets.all(AppConstants.mediumPadding),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.recommend,
+                              color: Theme.of(context).primaryColor,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Recommended Package',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).primaryColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Text(recommendationMessage),
+                        const SizedBox(height: 8),
+                        TextButton(
+                          onPressed: () {
+                            setState(() {
+                              _selectedPackageIndex = recommendedIndex;
+                            });
+                          },
+                          child: const Text('Select This Package'),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
           ...List.generate(_packages.length, (index) {
             final package = _packages[index];
             final isSelected = _selectedPackageIndex == index;
@@ -199,6 +291,55 @@ class _VenueDetailsScreenState extends State<VenueDetailsScreen>
             iconSize: 50,
           ),
           const SizedBox(height: AppConstants.mediumPadding),
+
+          // Recommendation info (if available)
+          Consumer<ServiceRecommendationProvider>(
+            builder: (context, provider, _) {
+              final isRecommended = provider.isVenueRecommended(widget.venue);
+              final recommendationReason = provider
+                  .getVenueRecommendationReason(widget.venue);
+
+              if (isRecommended && recommendationReason != null) {
+                return Padding(
+                  padding: const EdgeInsets.only(
+                    bottom: AppConstants.mediumPadding,
+                  ),
+                  child: Card(
+                    color: Theme.of(context).primaryColor.withAlpha(50),
+                    child: Padding(
+                      padding: const EdgeInsets.all(AppConstants.mediumPadding),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.thumb_up,
+                                color: Theme.of(context).primaryColor,
+                                size: 20,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                'Recommended for Your Event',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context).primaryColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Text(recommendationReason),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              }
+
+              return const SizedBox.shrink();
+            },
+          ),
 
           // Venue details
           InfoCard(

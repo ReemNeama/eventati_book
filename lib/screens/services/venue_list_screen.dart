@@ -6,6 +6,8 @@ import 'package:eventati_book/widgets/services/filter_dialog.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/screens/services/venue_details_screen.dart';
+import 'package:eventati_book/providers/service_recommendation_provider.dart';
+import 'package:provider/provider.dart';
 
 class VenueListScreen extends StatefulWidget {
   const VenueListScreen({super.key});
@@ -21,6 +23,7 @@ class _VenueListScreenState extends State<VenueListScreen> {
   final List<String> _selectedVenueTypes = [];
   RangeValues _priceRange = const RangeValues(1000, 5000);
   RangeValues _capacityRange = const RangeValues(50, 300);
+  bool _showRecommendedOnly = false;
 
   final List<Venue> _venues = [
     Venue(
@@ -64,6 +67,9 @@ class _VenueListScreenState extends State<VenueListScreen> {
   ];
 
   List<Venue> get filteredVenues {
+    final serviceRecommendationProvider =
+        Provider.of<ServiceRecommendationProvider>(context, listen: false);
+
     return _venues.where((venue) {
         final matchesSearch =
             venue.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
@@ -83,9 +89,28 @@ class _VenueListScreenState extends State<VenueListScreen> {
             venue.maxCapacity >= _capacityRange.start &&
             venue.minCapacity <= _capacityRange.end;
 
-        return matchesSearch && matchesType && matchesPrice && matchesCapacity;
+        final matchesRecommended =
+            !_showRecommendedOnly ||
+            serviceRecommendationProvider.isVenueRecommended(venue);
+
+        return matchesSearch &&
+            matchesType &&
+            matchesPrice &&
+            matchesCapacity &&
+            matchesRecommended;
       }).toList()
       ..sort((a, b) {
+        // If showing recommended only, sort recommended venues first
+        if (_showRecommendedOnly) {
+          final aIsRecommended = serviceRecommendationProvider
+              .isVenueRecommended(a);
+          final bIsRecommended = serviceRecommendationProvider
+              .isVenueRecommended(b);
+
+          if (aIsRecommended && !bIsRecommended) return -1;
+          if (!aIsRecommended && bIsRecommended) return 1;
+        }
+
         switch (_selectedSortOption) {
           case 'Price (Low to High)':
             return a.pricePerEvent.compareTo(b.pricePerEvent);
@@ -143,11 +168,26 @@ class _VenueListScreenState extends State<VenueListScreen> {
               itemCount: filteredVenues.length,
               itemBuilder: (context, index) {
                 final venue = filteredVenues[index];
+                final serviceRecommendationProvider =
+                    Provider.of<ServiceRecommendationProvider>(
+                      context,
+                      listen: false,
+                    );
+                final isRecommended = serviceRecommendationProvider
+                    .isVenueRecommended(venue);
+                final recommendationReason =
+                    isRecommended
+                        ? serviceRecommendationProvider
+                            .getVenueRecommendationReason(venue)
+                        : null;
+
                 return ServiceCard(
                   name: venue.name,
                   description: venue.description,
                   rating: venue.rating,
                   imageUrl: venue.imageUrl,
+                  isRecommended: isRecommended,
+                  recommendationReason: recommendationReason,
                   onTap: () {
                     Navigator.push(
                       context,
@@ -202,6 +242,7 @@ class _VenueListScreenState extends State<VenueListScreen> {
     RangeValues localPriceRange = _priceRange;
     RangeValues localCapacityRange = _capacityRange;
     final List<String> localSelectedVenueTypes = List.from(_selectedVenueTypes);
+    bool localShowRecommendedOnly = _showRecommendedOnly;
 
     showDialog(
       context: context,
@@ -256,6 +297,28 @@ class _VenueListScreenState extends State<VenueListScreen> {
                     });
                   },
                   filterTitle: 'Venue Types',
+                  extraFilterWidget: Consumer<ServiceRecommendationProvider>(
+                    builder: (context, provider, _) {
+                      // Only show the recommended filter if there's wizard data
+                      if (provider.wizardData == null) {
+                        return const SizedBox.shrink();
+                      }
+
+                      return CheckboxListTile(
+                        title: const Text('Show Recommended Only'),
+                        value: localShowRecommendedOnly,
+                        onChanged: (value) {
+                          setDialogState(() {
+                            localShowRecommendedOnly = value ?? false;
+                          });
+
+                          setState(() {
+                            _showRecommendedOnly = value ?? false;
+                          });
+                        },
+                      );
+                    },
+                  ),
                 ),
           ),
     );

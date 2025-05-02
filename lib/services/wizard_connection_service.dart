@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:eventati_book/models/budget_item.dart';
 import 'package:eventati_book/models/guest.dart';
-import 'package:eventati_book/models/task.dart';
 import 'package:eventati_book/providers/budget_provider.dart';
 import 'package:eventati_book/providers/guest_list_provider.dart';
 import 'package:eventati_book/providers/task_provider.dart';
+import 'package:eventati_book/providers/service_recommendation_provider.dart';
 import 'package:eventati_book/services/task_template_service.dart';
 
 /// Service to connect the wizard with other planning tools
@@ -216,6 +216,27 @@ class WizardConnectionService {
           description: 'Friends',
         ),
       );
+    }
+  }
+
+  /// Connect wizard data to service screens for recommended vendors
+  static void connectToServiceScreens(
+    BuildContext context,
+    Map<String, dynamic> wizardData,
+  ) {
+    try {
+      // Get the service recommendation provider
+      final serviceRecommendationProvider =
+          Provider.of<ServiceRecommendationProvider>(context, listen: false);
+
+      // Set the wizard data in the provider
+      serviceRecommendationProvider.setWizardData(wizardData);
+
+      debugPrint(
+        'Connected wizard data to service screens for recommendations',
+      );
+    } catch (e) {
+      debugPrint('Error connecting wizard data to service screens: $e');
     }
   }
 }

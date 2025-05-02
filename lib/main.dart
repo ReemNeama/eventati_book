@@ -26,6 +26,7 @@ void main() {
                   previous ?? MilestoneProvider(wizardProvider),
         ),
         ChangeNotifierProvider(create: (_) => SuggestionProvider()),
+        ChangeNotifierProvider(create: (_) => ServiceRecommendationProvider()),
 
         // Event planning tool providers
         ChangeNotifierProvider(
