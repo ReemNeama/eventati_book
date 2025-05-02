@@ -1,12 +1,21 @@
 import 'package:flutter/material.dart';
+
+// Import utilities using barrel file
 import 'package:eventati_book/utils/utils.dart';
+
+// Import styles
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
+
+// Import screens
 import 'package:eventati_book/screens/event_planning/budget/budget_overview_screen.dart';
 import 'package:eventati_book/screens/event_planning/guest_list/guest_list_screen.dart';
 import 'package:eventati_book/screens/event_planning/timeline/timeline_screen.dart';
 import 'package:eventati_book/screens/event_planning/messaging/vendor_list_screen.dart';
-import 'package:eventati_book/widgets/event_planning/tool_card.dart';
+
+// Import widgets using barrel files
+import 'package:eventati_book/widgets/event_planning/event_planning_widgets.dart';
+import 'package:eventati_book/widgets/responsive/responsive.dart';
 
 class EventPlanningToolsScreen extends StatelessWidget {
   final String eventId;
@@ -153,83 +162,23 @@ class EventPlanningToolsScreen extends StatelessWidget {
               ),
             ),
 
-            // Planning tools grid
+            // Planning tools grid - responsive
             Expanded(
-              child: GridView.count(
-                crossAxisCount: 2,
-                padding: const EdgeInsets.all(AppConstants.mediumPadding),
-                mainAxisSpacing: AppConstants.mediumPadding,
-                crossAxisSpacing: AppConstants.mediumPadding,
-                children: [
-                  ToolCard(
-                    title: 'Budget Calculator',
-                    icon: Icons.calculate,
-                    color: Colors.green,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder:
-                              (context) => BudgetOverviewScreen(
-                                eventId: eventId,
-                                eventName: eventName,
-                              ),
-                        ),
-                      );
-                    },
-                  ),
-                  ToolCard(
-                    title: 'Guest List',
-                    icon: Icons.people,
-                    color: Colors.blue,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder:
-                              (context) => GuestListScreen(
-                                eventId: eventId,
-                                eventName: eventName,
-                              ),
-                        ),
-                      );
-                    },
-                  ),
-                  ToolCard(
-                    title: 'Timeline & Checklist',
-                    icon: Icons.checklist,
-                    color: Colors.orange,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder:
-                              (context) => TimelineScreen(
-                                eventId: eventId,
-                                eventName: eventName,
-                              ),
-                        ),
-                      );
-                    },
-                  ),
-                  ToolCard(
-                    title: 'Vendor Communication',
-                    icon: Icons.message,
-                    color: Colors.purple,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder:
-                              (context) => VendorListScreen(
-                                eventId: eventId,
-                                eventName: eventName,
-                              ),
-                        ),
-                      );
-                    },
-                  ),
-                ],
+              child: OrientationResponsiveBuilder(
+                portraitBuilder: (context, constraints) {
+                  // Portrait mode: 2 columns for phones, 3 for tablets
+                  return _buildToolsGrid(
+                    context,
+                    UIUtils.isTablet(context) ? 3 : 2,
+                  );
+                },
+                landscapeBuilder: (context, constraints) {
+                  // Landscape mode: 3 columns for phones, 4 for tablets
+                  return _buildToolsGrid(
+                    context,
+                    UIUtils.isTablet(context) ? 4 : 3,
+                  );
+                },
               ),
             ),
           ],
@@ -241,5 +190,89 @@ class EventPlanningToolsScreen extends StatelessWidget {
   int _getDaysUntil(DateTime date) {
     final now = DateTime.now();
     return date.difference(now).inDays;
+  }
+
+  Widget _buildToolsGrid(BuildContext context, int crossAxisCount) {
+    final List<Map<String, dynamic>> tools = [
+      {
+        'title': 'Budget Calculator',
+        'icon': Icons.calculate,
+        'color': Colors.green,
+        'onTap': (BuildContext context) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder:
+                  (context) => BudgetOverviewScreen(
+                    eventId: eventId,
+                    eventName: eventName,
+                  ),
+            ),
+          );
+        },
+      },
+      {
+        'title': 'Guest List',
+        'icon': Icons.people,
+        'color': Colors.blue,
+        'onTap': (BuildContext context) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder:
+                  (context) =>
+                      GuestListScreen(eventId: eventId, eventName: eventName),
+            ),
+          );
+        },
+      },
+      {
+        'title': 'Timeline & Checklist',
+        'icon': Icons.checklist,
+        'color': Colors.orange,
+        'onTap': (BuildContext context) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder:
+                  (context) =>
+                      TimelineScreen(eventId: eventId, eventName: eventName),
+            ),
+          );
+        },
+      },
+      {
+        'title': 'Vendor Communication',
+        'icon': Icons.message,
+        'color': Colors.purple,
+        'onTap': (BuildContext context) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder:
+                  (context) =>
+                      VendorListScreen(eventId: eventId, eventName: eventName),
+            ),
+          );
+        },
+      },
+    ];
+
+    // Use ResponsiveGridView for more flexibility
+    return ResponsiveGridView(
+      minItemWidth: 150, // Minimum width for each tool card
+      padding: const EdgeInsets.all(AppConstants.mediumPadding),
+      crossAxisSpacing: AppConstants.mediumPadding,
+      mainAxisSpacing: AppConstants.mediumPadding,
+      children:
+          tools.map((tool) {
+            return ToolCard(
+              title: tool['title'],
+              icon: tool['icon'],
+              color: tool['color'],
+              onTap: () => tool['onTap'](context),
+            );
+          }).toList(),
+    );
   }
 }

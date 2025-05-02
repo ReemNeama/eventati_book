@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 /// Temporary database for service data
 class ServiceDB {
   /// Get all catering services
@@ -8,10 +6,16 @@ class ServiceDB {
       {
         'id': '1',
         'name': 'Gourmet Delights Catering',
-        'description': 'Premium catering service specializing in gourmet cuisine.',
+        'description':
+            'Premium catering service specializing in gourmet cuisine.',
         'priceRange': '\$\$\$',
         'rating': 4.8,
-        'features': ['Custom Menus', 'Dietary Accommodations', 'Staff Included', 'Bar Service'],
+        'features': [
+          'Custom Menus',
+          'Dietary Accommodations',
+          'Staff Included',
+          'Bar Service',
+        ],
         'imageUrls': [],
         'contactEmail': 'info@gourmetdelights.com',
         'contactPhone': '555-123-4567',
@@ -19,7 +23,8 @@ class ServiceDB {
           {
             'id': '1',
             'name': 'Bronze Package',
-            'description': 'Basic catering package with appetizers and main course.',
+            'description':
+                'Basic catering package with appetizers and main course.',
             'price': 45.0, // per person
             'items': [
               '3 appetizer options',
@@ -87,10 +92,17 @@ class ServiceDB {
       {
         'id': '2',
         'name': 'Taste of Elegance',
-        'description': 'Upscale catering service for elegant events and weddings.',
+        'description':
+            'Upscale catering service for elegant events and weddings.',
         'priceRange': '\$\$\$\$',
         'rating': 4.9,
-        'features': ['Custom Menus', 'Dietary Accommodations', 'Staff Included', 'Bar Service', 'Cake Service'],
+        'features': [
+          'Custom Menus',
+          'Dietary Accommodations',
+          'Staff Included',
+          'Bar Service',
+          'Cake Service',
+        ],
         'imageUrls': [],
         'contactEmail': 'events@tasteofelegance.com',
         'contactPhone': '555-234-5678',
@@ -111,7 +123,8 @@ class ServiceDB {
           {
             'id': '2',
             'name': 'Premium Package',
-            'description': 'Comprehensive catering package with premium options.',
+            'description':
+                'Comprehensive catering package with premium options.',
             'price': 95.0, // per person
             'items': [
               '6 appetizer options',
@@ -171,10 +184,16 @@ class ServiceDB {
       {
         'id': '3',
         'name': 'Fresh & Flavorful Catering',
-        'description': 'Farm-to-table catering service using locally sourced ingredients.',
+        'description':
+            'Farm-to-table catering service using locally sourced ingredients.',
         'priceRange': '\$\$',
         'rating': 4.7,
-        'features': ['Local Ingredients', 'Seasonal Menus', 'Eco-Friendly', 'Dietary Accommodations'],
+        'features': [
+          'Local Ingredients',
+          'Seasonal Menus',
+          'Eco-Friendly',
+          'Dietary Accommodations',
+        ],
         'imageUrls': [],
         'contactEmail': 'info@freshandflavorful.com',
         'contactPhone': '555-345-6789',
@@ -238,10 +257,16 @@ class ServiceDB {
       {
         'id': '1',
         'name': 'Capture Moments Photography',
-        'description': 'Professional photography service specializing in weddings and events.',
+        'description':
+            'Professional photography service specializing in weddings and events.',
         'priceRange': '\$\$\$',
         'rating': 4.9,
-        'features': ['Wedding Photography', 'Event Coverage', 'Portrait Sessions', 'Photo Booth'],
+        'features': [
+          'Wedding Photography',
+          'Event Coverage',
+          'Portrait Sessions',
+          'Photo Booth',
+        ],
         'imageUrls': [],
         'contactEmail': 'info@capturemoments.com',
         'contactPhone': '555-456-7890',
@@ -274,7 +299,8 @@ class ServiceDB {
           {
             'id': '3',
             'name': 'Premium Coverage',
-            'description': 'Full day photography coverage with 2 photographers.',
+            'description':
+                'Full day photography coverage with 2 photographers.',
             'price': 3600.0,
             'items': [
               'Full day coverage (up to 12 hours)',
@@ -290,10 +316,16 @@ class ServiceDB {
       {
         'id': '2',
         'name': 'Artistic Vision Photography',
-        'description': 'Creative photography service with a unique artistic style.',
+        'description':
+            'Creative photography service with a unique artistic style.',
         'priceRange': '\$\$\$\$',
         'rating': 4.8,
-        'features': ['Fine Art Photography', 'Editorial Style', 'Destination Events', 'Album Design'],
+        'features': [
+          'Fine Art Photography',
+          'Editorial Style',
+          'Destination Events',
+          'Album Design',
+        ],
         'imageUrls': [],
         'contactEmail': 'info@artisticvision.com',
         'contactPhone': '555-567-8901',
@@ -328,7 +360,8 @@ class ServiceDB {
           {
             'id': '3',
             'name': 'Destination Collection',
-            'description': 'Multi-day photography coverage for destination events.',
+            'description':
+                'Multi-day photography coverage for destination events.',
             'price': 6500.0,
             'items': [
               '2 days of coverage',
@@ -345,10 +378,16 @@ class ServiceDB {
       {
         'id': '3',
         'name': 'Timeless Photography',
-        'description': 'Classic photography service capturing timeless moments.',
+        'description':
+            'Classic photography service capturing timeless moments.',
         'priceRange': '\$\$',
         'rating': 4.7,
-        'features': ['Wedding Photography', 'Event Coverage', 'Portrait Sessions', 'Prints Available'],
+        'features': [
+          'Wedding Photography',
+          'Event Coverage',
+          'Portrait Sessions',
+          'Prints Available',
+        ],
         'imageUrls': [],
         'contactEmail': 'info@timelessphotography.com',
         'contactPhone': '555-678-9012',
@@ -400,7 +439,7 @@ class ServiceDB {
   /// Get service by ID and type
   static Map<String, dynamic>? getServiceById(String id, String type) {
     List<Map<String, dynamic>> services;
-    
+
     if (type == 'catering') {
       services = getCateringServices();
     } else if (type == 'photography') {
@@ -408,7 +447,7 @@ class ServiceDB {
     } else {
       return null;
     }
-    
+
     try {
       return services.firstWhere((service) => service['id'] == id);
     } catch (e) {
@@ -419,7 +458,7 @@ class ServiceDB {
   /// Search services by name or description
   static List<Map<String, dynamic>> searchServices(String query, String type) {
     List<Map<String, dynamic>> services;
-    
+
     if (type == 'catering') {
       services = getCateringServices();
     } else if (type == 'photography') {
@@ -427,14 +466,15 @@ class ServiceDB {
     } else {
       return [];
     }
-    
+
     final lowercaseQuery = query.toLowerCase();
-    
+
     return services.where((service) {
       final name = service['name'].toString().toLowerCase();
       final description = service['description'].toString().toLowerCase();
-      
-      return name.contains(lowercaseQuery) || description.contains(lowercaseQuery);
+
+      return name.contains(lowercaseQuery) ||
+          description.contains(lowercaseQuery);
     }).toList();
   }
 
@@ -446,7 +486,7 @@ class ServiceDB {
     List<String>? features,
   }) {
     List<Map<String, dynamic>> services;
-    
+
     if (type == 'catering') {
       services = getCateringServices();
     } else if (type == 'photography') {
@@ -454,22 +494,29 @@ class ServiceDB {
     } else {
       return [];
     }
-    
+
     if (priceRange != null) {
-      services = services.where((service) => service['priceRange'] == priceRange).toList();
+      services =
+          services
+              .where((service) => service['priceRange'] == priceRange)
+              .toList();
     }
-    
+
     if (minRating != null) {
-      services = services.where((service) => service['rating'] >= minRating).toList();
+      services =
+          services.where((service) => service['rating'] >= minRating).toList();
     }
-    
+
     if (features != null && features.isNotEmpty) {
-      services = services.where((service) {
-        final serviceFeatures = List<String>.from(service['features']);
-        return features.every((feature) => serviceFeatures.contains(feature));
-      }).toList();
+      services =
+          services.where((service) {
+            final serviceFeatures = List<String>.from(service['features']);
+            return features.every(
+              (feature) => serviceFeatures.contains(feature),
+            );
+          }).toList();
     }
-    
+
     return services;
   }
 }

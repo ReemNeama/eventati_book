@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 /// Temporary database for venue data
 class VenueDB {
   /// Get all venues
@@ -8,12 +6,18 @@ class VenueDB {
       {
         'id': '1',
         'name': 'Grand Plaza Hotel',
-        'description': 'Elegant hotel venue with spacious ballrooms and outdoor gardens.',
+        'description':
+            'Elegant hotel venue with spacious ballrooms and outdoor gardens.',
         'location': 'Downtown',
         'capacity': 500,
         'priceRange': '\$\$\$',
         'rating': 4.8,
-        'features': ['Catering', 'Parking', 'Outdoor Space', 'Wheelchair Access'],
+        'features': [
+          'Catering',
+          'Parking',
+          'Outdoor Space',
+          'Wheelchair Access',
+        ],
         'imageUrls': [],
         'contactEmail': 'events@grandplaza.com',
         'contactPhone': '555-123-4567',
@@ -39,7 +43,12 @@ class VenueDB {
         'capacity': 200,
         'priceRange': '\$\$',
         'rating': 4.6,
-        'features': ['Industrial Style', 'Rooftop Access', 'Parking', 'Wheelchair Access'],
+        'features': [
+          'Industrial Style',
+          'Rooftop Access',
+          'Parking',
+          'Wheelchair Access',
+        ],
         'imageUrls': [],
         'contactEmail': 'events@urbanloft.com',
         'contactPhone': '555-345-6789',
@@ -47,7 +56,8 @@ class VenueDB {
       {
         'id': '4',
         'name': 'Greenfield Gardens',
-        'description': 'Lush garden venue with beautiful landscaping and outdoor pavilion.',
+        'description':
+            'Lush garden venue with beautiful landscaping and outdoor pavilion.',
         'location': 'Suburban Area',
         'capacity': 250,
         'priceRange': '\$\$\$',
@@ -60,7 +70,8 @@ class VenueDB {
       {
         'id': '5',
         'name': 'Historic Mansion',
-        'description': 'Elegant historic mansion with classic architecture and beautiful grounds.',
+        'description':
+            'Elegant historic mansion with classic architecture and beautiful grounds.',
         'location': 'Heritage District',
         'capacity': 150,
         'priceRange': '\$\$\$\$',
@@ -73,12 +84,18 @@ class VenueDB {
       {
         'id': '6',
         'name': 'Mountain View Lodge',
-        'description': 'Rustic lodge with stunning mountain views and outdoor ceremony space.',
+        'description':
+            'Rustic lodge with stunning mountain views and outdoor ceremony space.',
         'location': 'Mountain Region',
         'capacity': 200,
         'priceRange': '\$\$\$',
         'rating': 4.8,
-        'features': ['Mountain Views', 'Accommodation', 'Fireplace', 'Outdoor Ceremony'],
+        'features': [
+          'Mountain Views',
+          'Accommodation',
+          'Fireplace',
+          'Outdoor Ceremony',
+        ],
         'imageUrls': [],
         'contactEmail': 'events@mountainviewlodge.com',
         'contactPhone': '555-678-9012',
@@ -86,12 +103,18 @@ class VenueDB {
       {
         'id': '7',
         'name': 'Riverside Pavilion',
-        'description': 'Beautiful venue alongside the river with indoor and outdoor spaces.',
+        'description':
+            'Beautiful venue alongside the river with indoor and outdoor spaces.',
         'location': 'Riverside',
         'capacity': 300,
         'priceRange': '\$\$',
         'rating': 4.5,
-        'features': ['River Views', 'Outdoor Space', 'Parking', 'Wheelchair Access'],
+        'features': [
+          'River Views',
+          'Outdoor Space',
+          'Parking',
+          'Wheelchair Access',
+        ],
         'imageUrls': [],
         'contactEmail': 'events@riversidepavilion.com',
         'contactPhone': '555-789-0123',
@@ -131,15 +154,15 @@ class VenueDB {
   static List<Map<String, dynamic>> searchVenues(String query) {
     final venues = getVenues();
     final lowercaseQuery = query.toLowerCase();
-    
+
     return venues.where((venue) {
       final name = venue['name'].toString().toLowerCase();
       final location = venue['location'].toString().toLowerCase();
       final description = venue['description'].toString().toLowerCase();
-      
-      return name.contains(lowercaseQuery) || 
-             location.contains(lowercaseQuery) ||
-             description.contains(lowercaseQuery);
+
+      return name.contains(lowercaseQuery) ||
+          location.contains(lowercaseQuery) ||
+          description.contains(lowercaseQuery);
     }).toList();
   }
 
@@ -152,30 +175,34 @@ class VenueDB {
     double? minRating,
   }) {
     var venues = getVenues();
-    
+
     if (minCapacity != null) {
-      venues = venues.where((venue) => venue['capacity'] >= minCapacity).toList();
+      venues =
+          venues.where((venue) => venue['capacity'] >= minCapacity).toList();
     }
-    
+
     if (maxCapacity != null) {
-      venues = venues.where((venue) => venue['capacity'] <= maxCapacity).toList();
+      venues =
+          venues.where((venue) => venue['capacity'] <= maxCapacity).toList();
     }
-    
+
     if (features != null && features.isNotEmpty) {
-      venues = venues.where((venue) {
-        final venueFeatures = List<String>.from(venue['features']);
-        return features.every((feature) => venueFeatures.contains(feature));
-      }).toList();
+      venues =
+          venues.where((venue) {
+            final venueFeatures = List<String>.from(venue['features']);
+            return features.every((feature) => venueFeatures.contains(feature));
+          }).toList();
     }
-    
+
     if (priceRange != null) {
-      venues = venues.where((venue) => venue['priceRange'] == priceRange).toList();
+      venues =
+          venues.where((venue) => venue['priceRange'] == priceRange).toList();
     }
-    
+
     if (minRating != null) {
       venues = venues.where((venue) => venue['rating'] >= minRating).toList();
     }
-    
+
     return venues;
   }
 }

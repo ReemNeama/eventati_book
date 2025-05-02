@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:eventati_book/models/planner.dart';
-import 'package:eventati_book/models/planner_package.dart';
+
+// Import models using barrel file
+import 'package:eventati_book/models/models.dart';
+
+// Import styles
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
+
+// Import utilities using barrel file
 import 'package:eventati_book/utils/utils.dart';
-import 'package:eventati_book/widgets/details/package_card.dart';
-import 'package:eventati_book/widgets/details/feature_item.dart';
-import 'package:eventati_book/widgets/details/info_card.dart';
-import 'package:eventati_book/widgets/details/detail_tab_bar.dart';
-import 'package:eventati_book/widgets/details/image_placeholder.dart';
-import 'package:eventati_book/widgets/details/chip_group.dart';
+
+// Import widgets using barrel files
+import 'package:eventati_book/widgets/details/detail_widgets.dart';
+import 'package:eventati_book/widgets/responsive/responsive.dart';
 
 class PlannerDetailsScreen extends StatefulWidget {
   final Planner planner;
@@ -149,6 +152,19 @@ class _PlannerDetailsScreenState extends State<PlannerDetailsScreen>
   }
 
   Widget _buildPackagesTab() {
+    return OrientationResponsiveBuilder(
+      portraitBuilder: (context, constraints) {
+        // Portrait mode: single column list
+        return _buildPackagesList(1);
+      },
+      landscapeBuilder: (context, constraints) {
+        // Landscape mode: two columns on larger screens
+        return _buildPackagesList(UIUtils.isTablet(context) ? 2 : 1);
+      },
+    );
+  }
+
+  Widget _buildPackagesList(int columns) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -159,138 +175,250 @@ class _PlannerDetailsScreenState extends State<PlannerDetailsScreen>
             style: Theme.of(context).textTheme.titleLarge,
           ),
           const SizedBox(height: 16),
-          ...List.generate(_packages.length, (index) {
-            final package = _packages[index];
-            final isSelected = _selectedPackageIndex == index;
-
-            return PackageCard(
-              name: package.name,
-              description: package.description,
-              price: package.price,
-              includedItems: package.includedServices,
-              additionalFeatures: package.additionalFeatures,
-              isSelected: isSelected,
-              onTap: () {
-                setState(() {
-                  _selectedPackageIndex = index;
-                });
+          if (columns == 1)
+            // Single column layout
+            ...List.generate(_packages.length, (index) {
+              return _buildPackageCard(index);
+            })
+          else
+            // Multi-column layout using grid
+            GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: columns,
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
+                childAspectRatio:
+                    0.8, // Adjust based on your card's aspect ratio
+              ),
+              itemCount: _packages.length,
+              itemBuilder: (context, index) {
+                return _buildPackageCard(index);
               },
-            );
-          }),
+            ),
         ],
       ),
     );
   }
 
+  Widget _buildPackageCard(int index) {
+    final package = _packages[index];
+    final isSelected = _selectedPackageIndex == index;
+
+    return PackageCard(
+      name: package.name,
+      description: package.description,
+      price: package.price,
+      includedItems: package.includedServices,
+      additionalFeatures: package.additionalFeatures,
+      isSelected: isSelected,
+      onTap: () {
+        setState(() {
+          _selectedPackageIndex = index;
+        });
+      },
+    );
+  }
+
   Widget _buildPlannerDetailsTab() {
+    return OrientationResponsiveBuilder(
+      portraitBuilder: (context, constraints) {
+        // Portrait mode: standard layout
+        return _buildPlannerDetailsContent(false);
+      },
+      landscapeBuilder: (context, constraints) {
+        // Landscape mode: optimized layout
+        return _buildPlannerDetailsContent(true);
+      },
+    );
+  }
+
+  Widget _buildPlannerDetailsContent(bool isLandscape) {
+    final bool isTablet = UIUtils.isTablet(context);
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Planner profile
-          Row(
-            children: [
-              const ImagePlaceholder(
-                height: 100,
-                width: 100,
-                borderRadius: 50,
-                icon: Icons.person,
-                iconSize: 50,
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.planner.name,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.star,
-                          color: AppColors.ratingStarColor,
-                          size: 18,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          ServiceUtils.formatRating(widget.planner.rating),
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '${widget.planner.yearsExperience} years of experience',
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 24),
-
-          // About the planner
-          InfoCard(title: 'About', content: Text(widget.planner.description)),
-
-          const SizedBox(height: 16),
-
-          // Specialties
-          InfoCard(
-            title: 'Specialties',
-            content: ChipGroup(items: widget.planner.specialties),
-          ),
-
-          const SizedBox(height: 16),
-
-          // Services
-          InfoCard(
-            title: 'Services Offered',
-            content: Column(
+          // Planner profile - responsive layout
+          if (isLandscape && isTablet)
+            // Tablet landscape: larger profile with more space
+            Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ...widget.planner.services.map(
-                  (service) => FeatureItem(
-                    text: service,
-                    padding: const EdgeInsets.only(bottom: 8),
-                    iconSize: 20,
+                // Left column: profile and about
+                Expanded(
+                  flex: 1,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildPlannerProfile(),
+                      const SizedBox(height: 16),
+                      InfoCard(
+                        title: 'About',
+                        content: Text(widget.planner.description),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 16),
+                // Right column: specialties and services
+                Expanded(
+                  flex: 1,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      InfoCard(
+                        title: 'Specialties',
+                        content: ChipGroup(items: widget.planner.specialties),
+                      ),
+                      const SizedBox(height: 16),
+                      _buildServicesCard(),
+                    ],
                   ),
                 ),
               ],
+            )
+          else
+            // Phone or portrait: standard stacked layout
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildPlannerProfile(),
+                const SizedBox(height: 24),
+                InfoCard(
+                  title: 'About',
+                  content: Text(widget.planner.description),
+                ),
+                const SizedBox(height: 16),
+                InfoCard(
+                  title: 'Specialties',
+                  content: ChipGroup(items: widget.planner.specialties),
+                ),
+                const SizedBox(height: 16),
+                _buildServicesCard(),
+              ],
             ),
-          ),
 
           const SizedBox(height: 16),
 
-          // Past events (placeholder)
+          // Past events - responsive grid for tablet
           InfoCard(
             title: 'Past Events',
-            content: SizedBox(
-              height: 120,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: 5,
-                itemBuilder: (context, index) {
-                  return Container(
-                    width: 160,
-                    margin: const EdgeInsets.only(right: 8),
-                    child: const ImagePlaceholder(
-                      height: 120,
-                      width: 160,
-                      borderRadius: 8,
-                    ),
-                  );
-                },
+            content: isTablet ? _buildPastEventsGrid() : _buildPastEventsList(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPlannerProfile() {
+    final bool isTablet = UIUtils.isTablet(context);
+    final double profileSize = isTablet ? 120.0 : 100.0;
+    final double iconSize = isTablet ? 60.0 : 50.0;
+    final double nameSize = isTablet ? 24.0 : 20.0;
+
+    return Row(
+      children: [
+        ImagePlaceholder(
+          height: profileSize,
+          width: profileSize,
+          borderRadius: profileSize / 2,
+          icon: Icons.person,
+          iconSize: iconSize,
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                widget.planner.name,
+                style: TextStyle(
+                  fontSize: nameSize,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
+              const SizedBox(height: 4),
+              Row(
+                children: [
+                  const Icon(
+                    Icons.star,
+                    color: AppColors.ratingStarColor,
+                    size: 18,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    ServiceUtils.formatRating(widget.planner.rating),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 4),
+              Text('${widget.planner.yearsExperience} years of experience'),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildServicesCard() {
+    return InfoCard(
+      title: 'Services Offered',
+      content: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ...widget.planner.services.map(
+            (service) => FeatureItem(
+              text: service,
+              padding: const EdgeInsets.only(bottom: 8),
+              iconSize: 20,
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildPastEventsList() {
+    return SizedBox(
+      height: 120,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: 5,
+        itemBuilder: (context, index) {
+          return Container(
+            width: 160,
+            margin: const EdgeInsets.only(right: 8),
+            child: const ImagePlaceholder(
+              height: 120,
+              width: 160,
+              borderRadius: 8,
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildPastEventsGrid() {
+    return ResponsiveGridView(
+      minItemWidth: 150,
+      crossAxisSpacing: 8,
+      mainAxisSpacing: 8,
+      childAspectRatio: 1.3,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      children: List.generate(
+        5,
+        (index) => const ImagePlaceholder(
+          borderRadius: 8,
+          icon: Icons.image,
+          iconSize: 40,
+        ),
       ),
     );
   }

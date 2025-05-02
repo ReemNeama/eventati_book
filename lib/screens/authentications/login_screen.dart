@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:eventati_book/providers/auth_provider.dart';
-import 'package:eventati_book/widgets/auth/auth_title_widget.dart';
-import 'package:eventati_book/widgets/auth/auth_text_field.dart';
-import 'package:eventati_book/widgets/auth/auth_button.dart';
-import 'package:eventati_book/utils/utils.dart';
 import 'package:provider/provider.dart';
+
+// Import providers using barrel file
+import 'package:eventati_book/providers/providers.dart';
+
+// Import utilities using barrel file
+import 'package:eventati_book/utils/utils.dart';
+
+// Import authentication widgets using barrel file
+import 'package:eventati_book/widgets/auth/auth_widgets.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});

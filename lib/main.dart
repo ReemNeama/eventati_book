@@ -1,19 +1,8 @@
-import 'package:eventati_book/providers/auth_provider.dart';
-import 'package:eventati_book/providers/budget_provider.dart';
-import 'package:eventati_book/providers/guest_list_provider.dart';
-import 'package:eventati_book/providers/messaging_provider.dart';
-import 'package:eventati_book/providers/milestone_provider.dart';
-import 'package:eventati_book/providers/suggestion_provider.dart';
-import 'package:eventati_book/providers/task_provider.dart';
-import 'package:eventati_book/providers/wizard_provider.dart';
-import 'package:eventati_book/screens/authentications/authentication_screen.dart';
-import 'package:eventati_book/screens/authentications/forgetpassword_screen.dart';
-import 'package:eventati_book/screens/authentications/login_screen.dart';
-import 'package:eventati_book/screens/authentications/register_screen.dart';
-import 'package:eventati_book/screens/authentications/verification_screen.dart';
-import 'package:eventati_book/screens/event_wizard/suggestion_screen.dart';
-import 'package:eventati_book/screens/homepage/event_selection_screen.dart';
-import 'package:eventati_book/screens/main_navigation_screen.dart';
+// Import providers using barrel file
+import 'package:eventati_book/providers/providers.dart';
+
+// Import screens using barrel files
+import 'package:eventati_book/screens/screens.dart';
 import 'package:eventati_book/styles/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

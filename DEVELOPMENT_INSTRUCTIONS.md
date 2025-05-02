@@ -19,7 +19,7 @@ This document outlines the key instructions and guidelines to follow when develo
 
 ## Code Organization
 
-1. **Create Barrel Files**: For modules with more than 5 imports, create a barrel file to export all components.
+1. **Create Barrel Files**: For modules with 4 or more imports, create a barrel file to export all components.
    ```dart
    // lib/widgets/buttons/buttons.dart
    export 'primary_button.dart';
