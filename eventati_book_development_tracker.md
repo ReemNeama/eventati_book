@@ -1,5 +1,5 @@
 # Eventati Book - Development Tracker
-*Last updated: May 2023*
+*Last updated: June 2023*
 
 ## How to use this tracker
 - [ ] Unchecked task (not started or in progress)
@@ -39,20 +39,43 @@
 ### Week 2: Suggestion System
 - [x] Create event_template.dart model for different event types
 - [ ] Implement suggestion.dart model for recommendations
+  - [ ] Create suggestion model with categories, priority levels, and relevance scores
+  - [ ] Implement suggestion templates for different event types
+  - [ ] Add support for custom suggestions
 - [x] Build wizard_provider.dart to manage the wizard state
 - [ ] Develop algorithms for generating appropriate suggestions
+  - [ ] Create budget-based suggestion algorithm
+  - [ ] Implement guest count-based recommendations
+  - [ ] Add season/date-aware suggestions
+  - [ ] Build service compatibility recommendations
 
 ### Week 3: Progress Tracking
 - [x] Create wizard_progress_screen.dart to visualize completion
 - [x] Implement progress calculation across all planning areas
 - [x] Build visual progress indicators (charts, progress bars)
 - [ ] Add achievement/milestone tracking
+  - [ ] Create milestone model with completion criteria
+  - [ ] Implement milestone notification system
+  - [ ] Add visual celebration for completed milestones
+  - [ ] Create milestone history view
 
 ### Week 4: Integration
 - [ ] Connect wizard to timeline/checklist to populate tasks
+  - [ ] Auto-generate tasks based on selected services
+  - [ ] Set task deadlines based on event date
+  - [ ] Create task dependencies and sequences
 - [ ] Link to budget with suggested budget items
+  - [ ] Generate budget categories from selected services
+  - [ ] Provide cost estimates based on guest count and location
+  - [ ] Create budget allocation recommendations
 - [ ] Integrate with guest list for capacity planning
+  - [ ] Initialize guest list with capacity from wizard
+  - [ ] Add guest group suggestions based on event type
+  - [ ] Create RSVP deadline based on event date
 - [ ] Connect to services screens for recommended vendors
+  - [ ] Filter service listings based on wizard selections
+  - [ ] Highlight compatible service providers
+  - [ ] Provide package recommendations
 
 ## Phase 3: Service Booking & Purchasing
 
@@ -133,6 +156,20 @@
 ### Current Blockers
 - None at the moment
 
+### Next Steps (For Next Conversation)
+- Implement the suggestion system:
+  1. Create suggestion.dart model with categories, priority levels, and relevance scores
+  2. Implement suggestion templates for different event types
+  3. Develop algorithms for generating appropriate suggestions based on event details
+- Add achievement/milestone tracking:
+  1. Create milestone model with completion criteria
+  2. Implement milestone notification system
+  3. Add visual celebration for completed milestones
+- Connect wizard to other planning tools:
+  1. Link to budget calculator with suggested budget items
+  2. Connect to guest list management for capacity planning
+  3. Integrate with timeline/checklist to populate tasks
+
 ### Ideas for Future Enhancements
 - Consider implementing email verification for authentication
 - Add password strength indicator on registration screen
@@ -140,9 +177,11 @@
 
 ### Current Focus
 - Completing Phase 1 tasks: responsive design
-- Implementing Phase 2: Event Wizard Implementation (completed unified architecture)
-- Enhancing data persistence across the application
-- Code cleanup and organization
+- Implementing Phase 2: Event Wizard Enhancement
+  - Suggestion System: Creating suggestion model and recommendation algorithms
+  - Achievement Tracking: Implementing milestone tracking for the wizard
+  - Integration: Connecting wizard to budget calculator, guest list, and timeline
+- Enhancing responsive design for different screen sizes
 
 ### Completed Milestones
 - Basic app structure with navigation, screens, and styling system
