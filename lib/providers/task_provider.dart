@@ -20,9 +20,12 @@ class TaskProvider extends ChangeNotifier {
 
   // Calculated properties
   int get totalTasks => _tasks.length;
-  int get completedTasks => _tasks.where((t) => t.status == TaskStatus.completed).length;
-  int get pendingTasks => _tasks.where((t) => t.status != TaskStatus.completed).length;
-  double get completionPercentage => totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
+  int get completedTasks =>
+      _tasks.where((t) => t.status == TaskStatus.completed).length;
+  int get pendingTasks =>
+      _tasks.where((t) => t.status != TaskStatus.completed).length;
+  double get completionPercentage =>
+      totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
 
   // Get tasks by category
   List<Task> getTasksByCategory(String categoryId) {
@@ -36,30 +39,38 @@ class TaskProvider extends ChangeNotifier {
 
   // Get tasks by due date range
   List<Task> getTasksByDateRange(DateTime start, DateTime end) {
-    return _tasks.where((task) => 
-      task.dueDate.isAfter(start.subtract(const Duration(days: 1))) && 
-      task.dueDate.isBefore(end.add(const Duration(days: 1)))
-    ).toList();
+    return _tasks
+        .where(
+          (task) =>
+              task.dueDate.isAfter(start.subtract(const Duration(days: 1))) &&
+              task.dueDate.isBefore(end.add(const Duration(days: 1))),
+        )
+        .toList();
   }
 
   // Get upcoming tasks
   List<Task> getUpcomingTasks(int days) {
     final now = DateTime.now();
     final end = now.add(Duration(days: days));
-    return _tasks.where((task) => 
-      task.status != TaskStatus.completed && 
-      task.dueDate.isAfter(now.subtract(const Duration(days: 1))) && 
-      task.dueDate.isBefore(end.add(const Duration(days: 1)))
-    ).toList();
+    return _tasks
+        .where(
+          (task) =>
+              task.status != TaskStatus.completed &&
+              task.dueDate.isAfter(now.subtract(const Duration(days: 1))) &&
+              task.dueDate.isBefore(end.add(const Duration(days: 1))),
+        )
+        .toList();
   }
 
   // Get overdue tasks
   List<Task> getOverdueTasks() {
     final now = DateTime.now();
-    return _tasks.where((task) => 
-      task.status != TaskStatus.completed && 
-      task.dueDate.isBefore(now)
-    ).toList();
+    return _tasks
+        .where(
+          (task) =>
+              task.status != TaskStatus.completed && task.dueDate.isBefore(now),
+        )
+        .toList();
   }
 
   // CRUD operations
@@ -88,7 +99,47 @@ class TaskProvider extends ChangeNotifier {
     try {
       // In a real app, this would save to a database or API
       await Future.delayed(const Duration(milliseconds: 300));
-      _tasks.add(task);
+
+      // Check if task with this ID already exists
+      final existingTaskIndex = _tasks.indexWhere((t) => t.id == task.id);
+      if (existingTaskIndex >= 0) {
+        // Update existing task
+        _tasks[existingTaskIndex] = task;
+      } else {
+        // Add new task
+        _tasks.add(task);
+      }
+
+      _isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      _isLoading = false;
+      _error = e.toString();
+      notifyListeners();
+    }
+  }
+
+  /// Add multiple tasks at once
+  Future<void> addTasks(List<Task> tasks) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      // In a real app, this would save to a database or API
+      await Future.delayed(const Duration(milliseconds: 300));
+
+      for (final task in tasks) {
+        // Check if task with this ID already exists
+        final existingTaskIndex = _tasks.indexWhere((t) => t.id == task.id);
+        if (existingTaskIndex >= 0) {
+          // Update existing task
+          _tasks[existingTaskIndex] = task;
+        } else {
+          // Add new task
+          _tasks.add(task);
+        }
+      }
+
       _isLoading = false;
       notifyListeners();
     } catch (e) {
@@ -158,17 +209,52 @@ class TaskProvider extends ChangeNotifier {
   // Mock data for testing
   void _loadMockData() {
     _categories = [
-      TaskCategory(id: '1', name: 'Venue', icon: Icons.location_on, color: Colors.blue),
-      TaskCategory(id: '2', name: 'Catering', icon: Icons.restaurant, color: Colors.orange),
-      TaskCategory(id: '3', name: 'Invitations', icon: Icons.mail, color: Colors.purple),
-      TaskCategory(id: '4', name: 'Decoration', icon: Icons.celebration, color: Colors.pink),
-      TaskCategory(id: '5', name: 'Attire', icon: Icons.checkroom, color: Colors.teal),
-      TaskCategory(id: '6', name: 'Transportation', icon: Icons.directions_car, color: Colors.green),
-      TaskCategory(id: '7', name: 'Miscellaneous', icon: Icons.more_horiz, color: Colors.grey),
+      TaskCategory(
+        id: '1',
+        name: 'Venue',
+        icon: Icons.location_on,
+        color: Colors.blue,
+      ),
+      TaskCategory(
+        id: '2',
+        name: 'Catering',
+        icon: Icons.restaurant,
+        color: Colors.orange,
+      ),
+      TaskCategory(
+        id: '3',
+        name: 'Invitations',
+        icon: Icons.mail,
+        color: Colors.purple,
+      ),
+      TaskCategory(
+        id: '4',
+        name: 'Decoration',
+        icon: Icons.celebration,
+        color: Colors.pink,
+      ),
+      TaskCategory(
+        id: '5',
+        name: 'Attire',
+        icon: Icons.checkroom,
+        color: Colors.teal,
+      ),
+      TaskCategory(
+        id: '6',
+        name: 'Transportation',
+        icon: Icons.directions_car,
+        color: Colors.green,
+      ),
+      TaskCategory(
+        id: '7',
+        name: 'Miscellaneous',
+        icon: Icons.more_horiz,
+        color: Colors.grey,
+      ),
     ];
 
     final now = DateTime.now();
-    
+
     _tasks = [
       Task(
         id: '1',

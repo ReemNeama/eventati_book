@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/models/event_template.dart';
+import 'package:eventati_book/models/task.dart';
 import 'package:eventati_book/screens/event_wizard/event_wizard_screen.dart';
-import 'package:eventati_book/screens/weddings/wedding_checklist_screen.dart';
-import 'package:eventati_book/screens/businesses/business_event_checklist_screen.dart';
-import 'package:eventati_book/screens/celebrations/celebration_checklist_screen.dart';
+import 'package:eventati_book/screens/event_planning/timeline/timeline_screen.dart';
 import 'package:eventati_book/services/wizard_connection_service.dart';
+import 'package:eventati_book/services/task_template_service.dart';
+import 'package:eventati_book/providers/task_provider.dart';
+import 'package:provider/provider.dart';
 
 /// Factory class to create appropriate wizard and checklist screens
 class WizardFactory {
@@ -45,36 +47,15 @@ class WizardFactory {
     String templateId,
     Map<String, dynamic> data,
   ) {
-    switch (templateId) {
-      case 'wedding':
-        return WeddingChecklistScreen(
-          eventName: data['eventName'],
-          eventType: data['eventType'],
-          eventDate: data['eventDate'],
-          guestCount: data['guestCount'],
-          selectedServices: Map<String, bool>.from(data['selectedServices']),
-        );
+    // Generate a unique event ID based on the event name and date
+    final String eventId =
+        '${data['eventName']}_${DateTime.now().millisecondsSinceEpoch}';
+    final String eventName = data['eventName'];
 
-      case 'business':
-        return BusinessEventChecklistScreen(
-          eventName: data['eventName'],
-          eventType: data['eventType'],
-          eventDate: data['eventDate'],
-          guestCount: data['guestCount'],
-          selectedServices: Map<String, bool>.from(data['selectedServices']),
-        );
+    // Initialize the task provider with template tasks based on event type
+    // This will be done in the WizardConnectionService
 
-      case 'celebration':
-        return CelebrationChecklistScreen(
-          eventName: data['eventName'],
-          eventType: data['eventType'],
-          eventDate: data['eventDate'],
-          guestCount: data['guestCount'],
-          selectedServices: Map<String, bool>.from(data['selectedServices']),
-        );
-
-      default:
-        throw Exception('Unknown template ID: $templateId');
-    }
+    // Return the unified timeline screen which includes the checklist functionality
+    return TimelineScreen(eventId: eventId, eventName: eventName);
   }
 }

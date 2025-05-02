@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:eventati_book/models/budget_item.dart';
 import 'package:eventati_book/models/guest.dart';
+import 'package:eventati_book/models/task.dart';
 import 'package:eventati_book/providers/budget_provider.dart';
 import 'package:eventati_book/providers/guest_list_provider.dart';
+import 'package:eventati_book/providers/task_provider.dart';
+import 'package:eventati_book/services/task_template_service.dart';
 
 /// Service to connect the wizard with other planning tools
 class WizardConnectionService {
@@ -56,8 +59,45 @@ class WizardConnectionService {
     BuildContext context,
     Map<String, dynamic> wizardData,
   ) {
-    // Implementation will depend on the timeline provider
-    // This will be implemented when we create the timeline provider
+    try {
+      // Generate a unique event ID based on the event name and date
+      final String eventId =
+          '${wizardData['eventName']}_${DateTime.now().millisecondsSinceEpoch}';
+
+      // Get event details
+      final String eventType = wizardData['eventType'] as String;
+      final DateTime eventDate = wizardData['eventDate'] as DateTime;
+      final Map<String, bool> selectedServices = Map<String, bool>.from(
+        wizardData['selectedServices'],
+      );
+
+      // Create task provider if it doesn't exist yet
+      TaskProvider? taskProvider;
+      try {
+        taskProvider = Provider.of<TaskProvider>(context, listen: false);
+      } catch (e) {
+        // Provider not found, will be created by the TimelineScreen
+        debugPrint(
+          'Task provider not found, will be created by the TimelineScreen',
+        );
+        return;
+      }
+
+      // Generate tasks from templates based on event type
+      final tasks = TaskTemplateService.createTasksFromTemplates(
+        eventId,
+        eventType,
+        eventDate,
+        selectedServices,
+      );
+
+      // Add tasks to the provider
+      taskProvider.addTasks(tasks);
+
+      debugPrint('Added ${tasks.length} template tasks for $eventType event');
+    } catch (e) {
+      debugPrint('Error connecting wizard data to timeline: $e');
+    }
   }
 
   // Private helper methods
