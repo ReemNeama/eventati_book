@@ -3,6 +3,8 @@
 
 // Common widgets
 export 'common/error_message.dart';
+export 'common/error_screen.dart';
+export 'common/empty_state.dart';
 export 'common/loading_indicator.dart';
 
 // Feature-specific widgets

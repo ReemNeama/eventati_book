@@ -11,9 +11,7 @@ class FormUtils {
 
   /// Get a text input formatter for currency input
   static List<TextInputFormatter> getCurrencyFormatters() {
-    return [
-      FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
-    ];
+    return [FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}'))];
   }
 
   /// Get a text input formatter for phone numbers
@@ -26,16 +24,12 @@ class FormUtils {
 
   /// Get a text input formatter for names (letters, spaces, hyphens, apostrophes)
   static List<TextInputFormatter> getNameFormatters() {
-    return [
-      FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z\s\-']")),
-    ];
+    return [FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z\s\-']"))];
   }
 
   /// Get a text input formatter for email addresses
   static List<TextInputFormatter> getEmailFormatters() {
-    return [
-      FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9@\.\-_]')),
-    ];
+    return [FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9@\.\-_]'))];
   }
 
   /// Format error message for display
@@ -43,17 +37,18 @@ class FormUtils {
     if (errorMessage == null || errorMessage.isEmpty) {
       return '';
     }
-    
+
     // Ensure the error message starts with a capital letter
-    final formattedMessage = errorMessage[0].toUpperCase() + errorMessage.substring(1);
-    
+    final formattedMessage =
+        errorMessage[0].toUpperCase() + errorMessage.substring(1);
+
     // Add a period if the message doesn't end with punctuation
-    if (!formattedMessage.endsWith('.') && 
-        !formattedMessage.endsWith('!') && 
+    if (!formattedMessage.endsWith('.') &&
+        !formattedMessage.endsWith('!') &&
         !formattedMessage.endsWith('?')) {
       return '$formattedMessage.';
     }
-    
+
     return formattedMessage;
   }
 
@@ -95,7 +90,10 @@ class FormUtils {
 
   /// Create a standard form validator for required fields
   static String? Function(String?) requiredValidator(String fieldName) {
-    return (value) => ValidationUtils.validateRequired(value, fieldName: fieldName);
+    return (value) => ValidationUtils.validateRequired(
+      value,
+      message: '$fieldName is required',
+    );
   }
 
   /// Create a standard form validator for email fields
@@ -127,7 +125,9 @@ class FormUtils {
   }
 
   /// Create a standard form validator for number fields
-  static String? Function(String?) numberValidator({String message = 'Please enter a valid number'}) {
+  static String? Function(String?) numberValidator({
+    String message = 'Please enter a valid number',
+  }) {
     return (value) => ValidationUtils.validateNumber(value, message: message);
   }
 }

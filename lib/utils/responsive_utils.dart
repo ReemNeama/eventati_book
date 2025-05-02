@@ -1,28 +1,8 @@
 import 'package:flutter/material.dart';
-
-/// Device type enum for responsive design
-enum DeviceType {
-  /// Mobile phone (small screen)
-  mobile,
-  
-  /// Tablet (medium screen)
-  tablet,
-  
-  /// Desktop (large screen)
-  desktop,
-}
+import 'package:eventati_book/utils/responsive_constants.dart';
 
 /// Utility functions for responsive design
 class ResponsiveUtils {
-  /// Breakpoint for mobile devices (0-599)
-  static const double mobileBreakpoint = 600;
-  
-  /// Breakpoint for tablet devices (600-959)
-  static const double tabletBreakpoint = 960;
-  
-  /// Breakpoint for desktop devices (960+)
-  static const double desktopBreakpoint = 1280;
-
   /// Get the device type based on screen width
   static DeviceType getDeviceType(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
@@ -31,9 +11,9 @@ class ResponsiveUtils {
 
   /// Get the device type based on a specific width
   static DeviceType getDeviceTypeFromWidth(double width) {
-    if (width < mobileBreakpoint) {
+    if (width < ResponsiveConstants.mobileBreakpoint) {
       return DeviceType.mobile;
-    } else if (width < desktopBreakpoint) {
+    } else if (width < ResponsiveConstants.desktopBreakpoint) {
       return DeviceType.tablet;
     } else {
       return DeviceType.desktop;
@@ -42,16 +22,7 @@ class ResponsiveUtils {
 
   /// Get the number of columns for a grid based on screen width
   static int getColumnCount(BuildContext context) {
-    final deviceType = getDeviceType(context);
-    
-    switch (deviceType) {
-      case DeviceType.mobile:
-        return 1;
-      case DeviceType.tablet:
-        return 2;
-      case DeviceType.desktop:
-        return 3;
-    }
+    return ResponsiveConstants.getGridColumns(context);
   }
 
   /// Get a responsive value based on device type
@@ -61,30 +32,17 @@ class ResponsiveUtils {
     required T tablet,
     T? desktop,
   }) {
-    final deviceType = getDeviceType(context);
-    
-    switch (deviceType) {
-      case DeviceType.mobile:
-        return mobile;
-      case DeviceType.tablet:
-        return tablet;
-      case DeviceType.desktop:
-        return desktop ?? tablet;
-    }
+    return ResponsiveConstants.getResponsiveValue(
+      context: context,
+      mobile: mobile,
+      tablet: tablet,
+      desktop: desktop,
+    );
   }
 
   /// Get a responsive padding based on device type
   static EdgeInsets getResponsivePadding(BuildContext context) {
-    final deviceType = getDeviceType(context);
-    
-    switch (deviceType) {
-      case DeviceType.mobile:
-        return const EdgeInsets.all(16.0);
-      case DeviceType.tablet:
-        return const EdgeInsets.all(24.0);
-      case DeviceType.desktop:
-        return const EdgeInsets.all(32.0);
-    }
+    return ResponsiveConstants.getPadding(context);
   }
 
   /// Get a responsive font size based on device type
@@ -94,7 +52,7 @@ class ResponsiveUtils {
     required double tablet,
     double? desktop,
   }) {
-    return getResponsiveValue(
+    return ResponsiveConstants.getResponsiveValue(
       context: context,
       mobile: mobile,
       tablet: tablet,
@@ -104,7 +62,7 @@ class ResponsiveUtils {
 
   /// Get a responsive icon size based on device type
   static double getResponsiveIconSize(BuildContext context) {
-    return getResponsiveValue(
+    return ResponsiveConstants.getResponsiveValue(
       context: context,
       mobile: 24.0,
       tablet: 28.0,
