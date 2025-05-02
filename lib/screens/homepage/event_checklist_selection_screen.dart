@@ -18,12 +18,12 @@ class _EventChecklistSelectionScreenState
         backgroundColor: Theme.of(context).primaryColor,
         elevation: 0,
         title: const Text(
-          "Eventati Book",
+          'Eventati Book',
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
       ),
-      body: Column(),
+      body: const Column(),
     );
   }
 }

@@ -314,7 +314,7 @@ class _PhotographerDetailsScreenState extends State<PhotographerDetailsScreen>
               ),
               itemCount: 6, // Sample count
               itemBuilder: (context, index) {
-                return ImagePlaceholder(
+                return const ImagePlaceholder(
                   borderRadius: 8,
                   icon: Icons.image,
                   iconSize: 40,

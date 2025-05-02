@@ -246,7 +246,7 @@ class _CateringDetailsScreenState extends State<CateringDetailsScreen>
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            ImagePlaceholder(
+                            const ImagePlaceholder(
                               height: 60,
                               width: 60,
                               borderRadius: 8,

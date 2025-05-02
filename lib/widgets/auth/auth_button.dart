@@ -26,7 +26,7 @@ class AuthButton extends StatelessWidget {
       onPressed: onPressed,
       style: ButtonStyle(
         padding: WidgetStateProperty.all(
-          EdgeInsets.symmetric(
+          const EdgeInsets.symmetric(
             horizontal: AppConstants.largePadding * 2,
             vertical: AppConstants.mediumPadding,
           ),

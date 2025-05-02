@@ -54,13 +54,13 @@ class _HomepageScreenState extends State<HomepageScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppConstants.appName),
+        title: const Text(AppConstants.appName),
         centerTitle: true,
         elevation: 0,
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.all(AppConstants.mediumPadding),
+          padding: const EdgeInsets.all(AppConstants.mediumPadding),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -78,7 +78,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
                 'Plan your perfect event with us',
                 style: TextStyle(fontSize: 16, color: textSecondary),
               ),
-              SizedBox(height: AppConstants.largePadding),
+              const SizedBox(height: AppConstants.largePadding),
 
               // Create new event button
               InkWell(
@@ -87,7 +87,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
                 },
                 child: Container(
                   width: double.infinity,
-                  padding: EdgeInsets.symmetric(
+                  padding: const EdgeInsets.symmetric(
                     vertical: AppConstants.mediumPadding,
                   ),
                   decoration: BoxDecoration(
@@ -124,13 +124,13 @@ class _HomepageScreenState extends State<HomepageScreen> {
                   ),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: AppConstants.largePadding + AppConstants.smallPadding,
               ),
 
               // Upcoming events section
               _sectionTitle('Upcoming Events'),
-              SizedBox(height: AppConstants.mediumPadding),
+              const SizedBox(height: AppConstants.mediumPadding),
               _upcomingEvents.isEmpty
                   ? _emptyStateCard(
                     'No upcoming events',

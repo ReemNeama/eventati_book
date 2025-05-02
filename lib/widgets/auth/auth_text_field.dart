@@ -28,23 +28,23 @@ class AuthTextField extends StatelessWidget {
 
     // Always use contrasting colors for text fields in authentication screens
     // since they often have colored backgrounds
-    final textColor = Colors.black87;
-    final hintColor = Colors.black54;
-    final borderColor = Colors.white70;
-    final fillColor = Colors.white;
+    const textColor = Colors.black87;
+    const hintColor = Colors.black54;
+    const borderColor = Colors.white70;
+    const fillColor = Colors.white;
 
     return TextFormField(
       controller: controller,
-      style: TextStyle(color: textColor),
+      style: const TextStyle(color: textColor),
       obscureText: obscureText,
       keyboardType: keyboardType,
       decoration: InputDecoration(
         hintText: hintText,
-        hintStyle: TextStyle(color: hintColor),
+        hintStyle: const TextStyle(color: hintColor),
         filled: true,
         fillColor: fillColor,
         enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: borderColor),
+          borderSide: const BorderSide(color: borderColor),
           borderRadius: BorderRadius.circular(AppConstants.smallBorderRadius),
         ),
         focusedBorder: OutlineInputBorder(
@@ -52,7 +52,7 @@ class AuthTextField extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppConstants.smallBorderRadius),
         ),
         prefixIcon: Icon(prefixIcon, color: primaryColor),
-        contentPadding: EdgeInsets.all(AppConstants.mediumPadding),
+        contentPadding: const EdgeInsets.all(AppConstants.mediumPadding),
       ),
       validator: validator,
     );

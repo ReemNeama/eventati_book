@@ -337,15 +337,15 @@ class GuestDetailsScreen extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     RadioListTile<RsvpStatus>(
-                      title: Row(
+                      title: const Row(
                         children: [
                           Icon(
                             Icons.check_circle,
                             color: Colors.green,
                             size: 20,
                           ),
-                          const SizedBox(width: 8),
-                          const Text('Confirmed'),
+                          SizedBox(width: 8),
+                          Text('Confirmed'),
                         ],
                       ),
                       value: RsvpStatus.confirmed,
@@ -357,11 +357,11 @@ class GuestDetailsScreen extends StatelessWidget {
                       },
                     ),
                     RadioListTile<RsvpStatus>(
-                      title: Row(
+                      title: const Row(
                         children: [
                           Icon(Icons.pending, color: Colors.orange, size: 20),
-                          const SizedBox(width: 8),
-                          const Text('Pending'),
+                          SizedBox(width: 8),
+                          Text('Pending'),
                         ],
                       ),
                       value: RsvpStatus.pending,
@@ -373,11 +373,11 @@ class GuestDetailsScreen extends StatelessWidget {
                       },
                     ),
                     RadioListTile<RsvpStatus>(
-                      title: Row(
+                      title: const Row(
                         children: [
                           Icon(Icons.cancel, color: Colors.red, size: 20),
-                          const SizedBox(width: 8),
-                          const Text('Declined'),
+                          SizedBox(width: 8),
+                          Text('Declined'),
                         ],
                       ),
                       value: RsvpStatus.declined,
@@ -389,11 +389,11 @@ class GuestDetailsScreen extends StatelessWidget {
                       },
                     ),
                     RadioListTile<RsvpStatus>(
-                      title: Row(
+                      title: const Row(
                         children: [
                           Icon(Icons.help, color: Colors.blue, size: 20),
-                          const SizedBox(width: 8),
-                          const Text('Tentative'),
+                          SizedBox(width: 8),
+                          Text('Tentative'),
                         ],
                       ),
                       value: RsvpStatus.tentative,

@@ -39,7 +39,9 @@ class AppColorsDark {
   }
 
   // Specific UI element colors
-  static Color filterBarBackground = Color(0xFF1A1A1A); // Very dark filter bar
+  static const Color filterBarBackground = Color(
+    0xFF1A1A1A,
+  ); // Very dark filter bar
   static const Color chipBackground = Color(0xFF333333); // Dark chip background
   static const Color ratingStarColor = Color(
     0xFFD4AF37,

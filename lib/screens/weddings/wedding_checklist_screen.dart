@@ -136,7 +136,10 @@ class _WeddingChecklistScreenState extends State<WeddingChecklistScreen> {
   @override
   Widget build(BuildContext context) {
     final selectedServices =
-        widget.selectedServices.entries.where((e) => e.value).map((e) => e.key).toList();
+        widget.selectedServices.entries
+            .where((e) => e.value)
+            .map((e) => e.key)
+            .toList();
 
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
@@ -144,7 +147,7 @@ class _WeddingChecklistScreenState extends State<WeddingChecklistScreen> {
         backgroundColor: Theme.of(context).primaryColor,
         elevation: 0,
         title: const Text(
-          "Wedding Planning Checklist",
+          'Wedding Planning Checklist',
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
@@ -235,18 +238,19 @@ class _WeddingChecklistScreenState extends State<WeddingChecklistScreen> {
                           ),
                         ],
                       ),
-                      children: tasks.map((task) {
-                        return CheckboxListTile(
-                          title: Text(task.description),
-                          value: task.isCompleted,
-                          activeColor: Theme.of(context).primaryColor,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              task.isCompleted = value ?? false;
-                            });
-                          },
-                        );
-                      }).toList(),
+                      children:
+                          tasks.map((task) {
+                            return CheckboxListTile(
+                              title: Text(task.description),
+                              value: task.isCompleted,
+                              activeColor: Theme.of(context).primaryColor,
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  task.isCompleted = value ?? false;
+                                });
+                              },
+                            );
+                          }).toList(),
                     ),
                   );
                 },

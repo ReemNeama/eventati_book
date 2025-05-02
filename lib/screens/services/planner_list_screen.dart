@@ -209,7 +209,9 @@ class _PlannerListScreenState extends State<PlannerListScreen> {
     // Create local variables to track changes within the dialog
     RangeValues localPriceRange = _priceRange;
     RangeValues localExperienceRange = _experienceRange;
-    List<String> localSelectedSpecialties = List.from(_selectedSpecialties);
+    final List<String> localSelectedSpecialties = List.from(
+      _selectedSpecialties,
+    );
 
     showDialog(
       context: context,

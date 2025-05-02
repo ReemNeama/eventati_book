@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:eventati_book/models/event_template.dart';
 import 'package:eventati_book/providers/wizard_provider.dart';
 import 'package:eventati_book/screens/event_wizard/wizard_factory.dart';
 import 'package:eventati_book/utils/utils.dart';
@@ -20,9 +19,9 @@ class _EventSelectionScreenState extends State<EventSelectionScreen> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
         elevation: 0,
-        title: Text(
+        title: const Text(
           AppConstants.appName,
-          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
       ),
@@ -33,7 +32,7 @@ class _EventSelectionScreenState extends State<EventSelectionScreen> {
           children: [
             const SizedBox(height: 40),
             const Text(
-              "What type of event are\nyou planning?",
+              'What type of event are\nyou planning?',
               style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
@@ -43,7 +42,7 @@ class _EventSelectionScreenState extends State<EventSelectionScreen> {
             ),
             const SizedBox(height: 60),
             _buildEventButton(
-              title: "Business Event",
+              title: 'Business Event',
               onPressed: () {
                 // Initialize the wizard provider
                 Provider.of<WizardProvider>(
@@ -68,7 +67,7 @@ class _EventSelectionScreenState extends State<EventSelectionScreen> {
             ),
             const SizedBox(height: 20),
             _buildEventButton(
-              title: "Wedding/Engagement",
+              title: 'Wedding/Engagement',
               onPressed: () {
                 // Initialize the wizard provider
                 Provider.of<WizardProvider>(
@@ -93,7 +92,7 @@ class _EventSelectionScreenState extends State<EventSelectionScreen> {
             ),
             const SizedBox(height: 20),
             _buildEventButton(
-              title: "Celebration",
+              title: 'Celebration',
               onPressed: () {
                 // Initialize the wizard provider
                 Provider.of<WizardProvider>(

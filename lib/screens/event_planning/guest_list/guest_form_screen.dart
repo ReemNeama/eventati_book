@@ -193,41 +193,41 @@ class _GuestFormScreenState extends State<GuestFormScreen> {
               items: [
                 DropdownMenuItem(
                   value: RsvpStatus.pending,
-                  child: Row(
+                  child: const Row(
                     children: [
                       Icon(Icons.pending, size: 20, color: Colors.orange),
-                      const SizedBox(width: 8),
-                      const Text('Pending'),
+                      SizedBox(width: 8),
+                      Text('Pending'),
                     ],
                   ),
                 ),
                 DropdownMenuItem(
                   value: RsvpStatus.confirmed,
-                  child: Row(
+                  child: const Row(
                     children: [
                       Icon(Icons.check_circle, size: 20, color: Colors.green),
-                      const SizedBox(width: 8),
-                      const Text('Confirmed'),
+                      SizedBox(width: 8),
+                      Text('Confirmed'),
                     ],
                   ),
                 ),
                 DropdownMenuItem(
                   value: RsvpStatus.declined,
-                  child: Row(
+                  child: const Row(
                     children: [
                       Icon(Icons.cancel, size: 20, color: Colors.red),
-                      const SizedBox(width: 8),
-                      const Text('Declined'),
+                      SizedBox(width: 8),
+                      Text('Declined'),
                     ],
                   ),
                 ),
                 DropdownMenuItem(
                   value: RsvpStatus.tentative,
-                  child: Row(
+                  child: const Row(
                     children: [
                       Icon(Icons.help, size: 20, color: Colors.blue),
-                      const SizedBox(width: 8),
-                      const Text('Tentative'),
+                      SizedBox(width: 8),
+                      Text('Tentative'),
                     ],
                   ),
                 ),

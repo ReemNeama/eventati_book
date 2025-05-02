@@ -191,7 +191,7 @@ class _PlannerDetailsScreenState extends State<PlannerDetailsScreen>
           // Planner profile
           Row(
             children: [
-              ImagePlaceholder(
+              const ImagePlaceholder(
                 height: 100,
                 width: 100,
                 borderRadius: 50,
@@ -280,7 +280,7 @@ class _PlannerDetailsScreenState extends State<PlannerDetailsScreen>
                   return Container(
                     width: 160,
                     margin: const EdgeInsets.only(right: 8),
-                    child: ImagePlaceholder(
+                    child: const ImagePlaceholder(
                       height: 120,
                       width: 160,
                       borderRadius: 8,

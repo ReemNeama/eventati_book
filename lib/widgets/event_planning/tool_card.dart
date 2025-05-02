@@ -46,14 +46,14 @@ class ToolCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: EdgeInsets.all(AppConstants.mediumPadding),
+              padding: const EdgeInsets.all(AppConstants.mediumPadding),
               decoration: BoxDecoration(
                 color: color.withAlpha(51), // 0.2 * 255 = 51
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, size: 40, color: color),
             ),
-            SizedBox(height: AppConstants.mediumPadding),
+            const SizedBox(height: AppConstants.mediumPadding),
             Text(
               title,
               style: TextStyle(

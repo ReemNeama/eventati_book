@@ -27,7 +27,7 @@ class ServiceCard extends StatelessWidget {
     final iconColor = isDarkMode ? Colors.grey[400] : Colors.grey[600];
 
     return Card(
-      margin: EdgeInsets.symmetric(
+      margin: const EdgeInsets.symmetric(
         vertical: AppConstants.smallPadding,
         horizontal: AppConstants.mediumPadding,
       ),
@@ -41,7 +41,7 @@ class ServiceCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.only(
+              borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(AppConstants.mediumBorderRadius),
                 topRight: Radius.circular(AppConstants.mediumBorderRadius),
               ),
@@ -55,7 +55,7 @@ class ServiceCard extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(AppConstants.mediumPadding - 4),
+              padding: const EdgeInsets.all(AppConstants.mediumPadding - 4),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -86,10 +86,10 @@ class ServiceCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  SizedBox(height: AppConstants.smallPadding),
+                  const SizedBox(height: AppConstants.smallPadding),
                   Text(description),
                   if (additionalInfo != null) ...[
-                    SizedBox(height: AppConstants.smallPadding),
+                    const SizedBox(height: AppConstants.smallPadding),
                     additionalInfo!,
                   ],
                 ],

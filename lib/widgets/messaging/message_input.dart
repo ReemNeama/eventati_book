@@ -56,7 +56,7 @@ class _MessageInputState extends State<MessageInput> {
     final hintColor = isDarkMode ? Colors.white70 : Colors.black54;
 
     return Container(
-      padding: EdgeInsets.symmetric(
+      padding: const EdgeInsets.symmetric(
         horizontal: AppConstants.smallPadding,
         vertical: AppConstants.smallPadding,
       ),
@@ -79,7 +79,7 @@ class _MessageInputState extends State<MessageInput> {
               decoration: InputDecoration(
                 hintText: 'Type a message...',
                 hintStyle: TextStyle(color: hintColor),
-                contentPadding: EdgeInsets.symmetric(
+                contentPadding: const EdgeInsets.symmetric(
                   horizontal: AppConstants.mediumPadding,
                   vertical: AppConstants.smallPadding + 2,
                 ),
@@ -97,7 +97,7 @@ class _MessageInputState extends State<MessageInput> {
               onSubmitted: _canSend ? (_) => _handleSend() : null,
             ),
           ),
-          SizedBox(width: AppConstants.smallPadding),
+          const SizedBox(width: AppConstants.smallPadding),
           Material(
             color:
                 _canSend
@@ -112,7 +112,7 @@ class _MessageInputState extends State<MessageInput> {
                 AppConstants.largeBorderRadius + 8,
               ),
               child: Container(
-                padding: EdgeInsets.all(AppConstants.smallPadding + 4),
+                padding: const EdgeInsets.all(AppConstants.smallPadding + 4),
                 child: Icon(
                   Icons.send,
                   color:

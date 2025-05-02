@@ -192,7 +192,7 @@ class _PhotographerListScreenState extends State<PhotographerListScreen> {
     // Create local variables to track changes within the dialog
     RangeValues localPriceRange = _priceRange;
     RangeValues localExperienceRange = _experienceRange;
-    List<String> localSelectedStyles = List.from(_selectedStyles);
+    final List<String> localSelectedStyles = List.from(_selectedStyles);
 
     showDialog(
       context: context,

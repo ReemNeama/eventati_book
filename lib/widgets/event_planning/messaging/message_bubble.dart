@@ -19,37 +19,39 @@ class MessageBubble extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDarkMode = UIUtils.isDarkMode(context);
     final primaryColor = isDarkMode ? AppColorsDark.primary : AppColors.primary;
-    
+
     // Colors for user messages
     final userBubbleColor = primaryColor;
-    final userTextColor = Colors.white;
-    
+    const userTextColor = Colors.white;
+
     // Colors for vendor messages
     final vendorBubbleColor = isDarkMode ? Colors.grey[800] : Colors.grey[200];
     final vendorTextColor = isDarkMode ? Colors.white : Colors.black87;
-    
+
     // Timestamp color
     final timestampColor = isDarkMode ? Colors.white70 : Colors.black54;
-    
+
     // Format timestamp
     final formatter = DateFormat('MMM d, h:mm a');
     final timeString = formatter.format(message.timestamp);
-    
+
     // Calculate max width based on screen size
     final screenWidth = MediaQuery.of(context).size.width;
     final bubbleMaxWidth = screenWidth * maxWidth;
-    
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
       child: Column(
-        crossAxisAlignment: message.isFromUser 
-            ? CrossAxisAlignment.end 
-            : CrossAxisAlignment.start,
+        crossAxisAlignment:
+            message.isFromUser
+                ? CrossAxisAlignment.end
+                : CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment: message.isFromUser 
-                ? MainAxisAlignment.end 
-                : MainAxisAlignment.start,
+            mainAxisAlignment:
+                message.isFromUser
+                    ? MainAxisAlignment.end
+                    : MainAxisAlignment.start,
             children: [
               Container(
                 constraints: BoxConstraints(maxWidth: bubbleMaxWidth),
@@ -58,10 +60,17 @@ class MessageBubble extends StatelessWidget {
                   vertical: 10.0,
                 ),
                 decoration: BoxDecoration(
-                  color: message.isFromUser ? userBubbleColor : vendorBubbleColor,
+                  color:
+                      message.isFromUser ? userBubbleColor : vendorBubbleColor,
                   borderRadius: BorderRadius.circular(16.0).copyWith(
-                    bottomRight: message.isFromUser ? Radius.zero : const Radius.circular(16.0),
-                    bottomLeft: message.isFromUser ? const Radius.circular(16.0) : Radius.zero,
+                    bottomRight:
+                        message.isFromUser
+                            ? Radius.zero
+                            : const Radius.circular(16.0),
+                    bottomLeft:
+                        message.isFromUser
+                            ? const Radius.circular(16.0)
+                            : Radius.zero,
                   ),
                 ),
                 child: Text(
@@ -78,16 +87,14 @@ class MessageBubble extends StatelessWidget {
             padding: const EdgeInsets.only(top: 4.0, left: 8.0, right: 8.0),
             child: Row(
               mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: message.isFromUser 
-                  ? MainAxisAlignment.end 
-                  : MainAxisAlignment.start,
+              mainAxisAlignment:
+                  message.isFromUser
+                      ? MainAxisAlignment.end
+                      : MainAxisAlignment.start,
               children: [
                 Text(
                   timeString,
-                  style: TextStyle(
-                    color: timestampColor,
-                    fontSize: 12.0,
-                  ),
+                  style: TextStyle(color: timestampColor, fontSize: 12.0),
                 ),
                 if (message.isFromUser) ...[
                   const SizedBox(width: 4.0),

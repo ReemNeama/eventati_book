@@ -200,7 +200,7 @@ class _VenueListScreenState extends State<VenueListScreen> {
     // Create local variables to track changes within the dialog
     RangeValues localPriceRange = _priceRange;
     RangeValues localCapacityRange = _capacityRange;
-    List<String> localSelectedVenueTypes = List.from(_selectedVenueTypes);
+    final List<String> localSelectedVenueTypes = List.from(_selectedVenueTypes);
 
     showDialog(
       context: context,

@@ -24,7 +24,7 @@ class TaskFormScreen extends StatefulWidget {
 
 class _TaskFormScreenState extends State<TaskFormScreen> {
   final _formKey = GlobalKey<FormState>();
-  
+
   late String _categoryId;
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
@@ -36,7 +36,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
   @override
   void initState() {
     super.initState();
-    
+
     if (widget.task != null) {
       // Edit mode - populate form with existing data
       _categoryId = widget.task!.categoryId;
@@ -93,18 +93,19 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                 labelText: 'Category',
                 border: OutlineInputBorder(),
               ),
-              items: widget.taskProvider.categories.map((category) {
-                return DropdownMenuItem<String>(
-                  value: category.id,
-                  child: Row(
-                    children: [
-                      Icon(category.icon, size: 20, color: category.color),
-                      const SizedBox(width: 8),
-                      Text(category.name),
-                    ],
-                  ),
-                );
-              }).toList(),
+              items:
+                  widget.taskProvider.categories.map((category) {
+                    return DropdownMenuItem<String>(
+                      value: category.id,
+                      child: Row(
+                        children: [
+                          Icon(category.icon, size: 20, color: category.color),
+                          const SizedBox(width: 8),
+                          Text(category.name),
+                        ],
+                      ),
+                    );
+                  }).toList(),
               onChanged: (value) {
                 if (value != null) {
                   setState(() {
@@ -120,7 +121,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
               },
             ),
             const SizedBox(height: 16),
-            
+
             // Title
             TextFormField(
               controller: _titleController,
@@ -136,7 +137,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
               },
             ),
             const SizedBox(height: 16),
-            
+
             // Description
             TextFormField(
               controller: _descriptionController,
@@ -148,7 +149,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
               maxLines: 3,
             ),
             const SizedBox(height: 16),
-            
+
             // Due date
             InkWell(
               onTap: () => _selectDueDate(context),
@@ -167,7 +168,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            
+
             // Status
             DropdownButtonFormField<TaskStatus>(
               value: _status,
@@ -178,31 +179,35 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
               items: [
                 DropdownMenuItem(
                   value: TaskStatus.notStarted,
-                  child: Row(
+                  child: const Row(
                     children: [
-                      Icon(Icons.circle_outlined, size: 20, color: Colors.orange),
-                      const SizedBox(width: 8),
-                      const Text('Not Started'),
+                      Icon(
+                        Icons.circle_outlined,
+                        size: 20,
+                        color: Colors.orange,
+                      ),
+                      SizedBox(width: 8),
+                      Text('Not Started'),
                     ],
                   ),
                 ),
                 DropdownMenuItem(
                   value: TaskStatus.inProgress,
-                  child: Row(
+                  child: const Row(
                     children: [
                       Icon(Icons.pending, size: 20, color: Colors.blue),
-                      const SizedBox(width: 8),
-                      const Text('In Progress'),
+                      SizedBox(width: 8),
+                      Text('In Progress'),
                     ],
                   ),
                 ),
                 DropdownMenuItem(
                   value: TaskStatus.completed,
-                  child: Row(
+                  child: const Row(
                     children: [
                       Icon(Icons.check_circle, size: 20, color: Colors.green),
-                      const SizedBox(width: 8),
-                      const Text('Completed'),
+                      SizedBox(width: 8),
+                      Text('Completed'),
                     ],
                   ),
                 ),
@@ -216,7 +221,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
               },
             ),
             const SizedBox(height: 16),
-            
+
             // Important flag
             SwitchListTile(
               title: const Text('Mark as Important'),
@@ -229,10 +234,10 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                 });
               },
             ),
-            
+
             const Divider(),
             const SizedBox(height: 16),
-            
+
             // Notes
             TextFormField(
               controller: _notesController,
@@ -243,9 +248,9 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
               ),
               maxLines: 3,
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             // Submit button
             ElevatedButton(
               style: ElevatedButton.styleFrom(
@@ -271,7 +276,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
       firstDate: DateTime.now().subtract(const Duration(days: 365)),
       lastDate: DateTime.now().add(const Duration(days: 365 * 2)),
     );
-    
+
     if (pickedDate != null && pickedDate != _dueDate) {
       setState(() {
         _dueDate = pickedDate;
@@ -283,12 +288,12 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
     if (_formKey.currentState!.validate()) {
       // Create or update task
       final title = _titleController.text;
-      final description = _descriptionController.text.isNotEmpty
-          ? _descriptionController.text
-          : null;
-      final notes = _notesController.text.isNotEmpty
-          ? _notesController.text
-          : null;
+      final description =
+          _descriptionController.text.isNotEmpty
+              ? _descriptionController.text
+              : null;
+      final notes =
+          _notesController.text.isNotEmpty ? _notesController.text : null;
 
       if (widget.task != null) {
         // Update existing task
@@ -301,7 +306,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
           isImportant: _isImportant,
           notes: notes,
         );
-        
+
         await widget.taskProvider.updateTask(updatedTask);
       } else {
         // Create new task
@@ -315,10 +320,10 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
           isImportant: _isImportant,
           notes: notes,
         );
-        
+
         await widget.taskProvider.addTask(newTask);
       }
-      
+
       if (mounted) {
         Navigator.pop(context);
       }
@@ -328,29 +333,30 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
   void _showDeleteConfirmation(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Delete Task'),
-        content: Text(
-          'Are you sure you want to delete "${widget.task!.title}"?',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              widget.taskProvider.deleteTask(widget.task!.id);
-              Navigator.pop(context); // Close dialog
-              Navigator.pop(context); // Return to previous screen
-            },
-            child: const Text(
-              'Delete',
-              style: TextStyle(color: Colors.red),
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Delete Task'),
+            content: Text(
+              'Are you sure you want to delete "${widget.task!.title}"?',
             ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () {
+                  widget.taskProvider.deleteTask(widget.task!.id);
+                  Navigator.pop(context); // Close dialog
+                  Navigator.pop(context); // Return to previous screen
+                },
+                child: const Text(
+                  'Delete',
+                  style: TextStyle(color: Colors.red),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
     );
   }
 }

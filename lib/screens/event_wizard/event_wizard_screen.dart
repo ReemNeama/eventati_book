@@ -16,7 +16,7 @@ import 'package:eventati_book/widgets/event_wizard/wizard_progress_indicator.dar
 class EventWizardScreen extends StatefulWidget {
   /// The template for the event type
   final EventTemplate template;
-  
+
   /// Function to call when the wizard is completed
   final Function(Map<String, dynamic>) onComplete;
 
@@ -33,25 +33,29 @@ class EventWizardScreen extends StatefulWidget {
 class _EventWizardScreenState extends State<EventWizardScreen> {
   // Form controllers
   final _eventNameController = TextEditingController();
-  
+
   @override
   void initState() {
     super.initState();
-    
+
     // Initialize the wizard provider
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        final wizardProvider = Provider.of<WizardProvider>(context, listen: false);
+        final wizardProvider = Provider.of<WizardProvider>(
+          context,
+          listen: false,
+        );
         wizardProvider.initializeWizard(widget.template);
-        
+
         // Set up the event name controller
-        if (wizardProvider.state != null && wizardProvider.state!.eventName.isNotEmpty) {
+        if (wizardProvider.state != null &&
+            wizardProvider.state!.eventName.isNotEmpty) {
           _eventNameController.text = wizardProvider.state!.eventName;
         }
       }
     });
   }
-  
+
   @override
   void dispose() {
     _eventNameController.dispose();
@@ -67,7 +71,7 @@ class _EventWizardScreenState extends State<EventWizardScreen> {
             body: Center(child: CircularProgressIndicator()),
           );
         }
-        
+
         if (wizardProvider.state == null) {
           return Scaffold(
             body: Center(
@@ -77,17 +81,17 @@ class _EventWizardScreenState extends State<EventWizardScreen> {
             ),
           );
         }
-        
+
         final state = wizardProvider.state!;
         final primaryColor = Theme.of(context).primaryColor;
-        
+
         return Scaffold(
           backgroundColor: primaryColor,
           appBar: AppBar(
             backgroundColor: primaryColor,
             elevation: 0,
             title: Text(
-              "Plan Your ${widget.template.name}",
+              'Plan Your ${widget.template.name}',
               style: WizardStyles.getTitleStyle(),
             ),
             centerTitle: true,
@@ -112,7 +116,7 @@ class _EventWizardScreenState extends State<EventWizardScreen> {
                     ],
                   ),
                 ),
-                
+
                 // Wizard content
                 Expanded(
                   child: Theme(
@@ -122,22 +126,27 @@ class _EventWizardScreenState extends State<EventWizardScreen> {
                       onStepContinue: () {
                         // Update the event name before proceeding
                         if (state.currentStep == 0) {
-                          wizardProvider.updateEventName(_eventNameController.text);
+                          wizardProvider.updateEventName(
+                            _eventNameController.text,
+                          );
                         }
-                        
+
                         final success = wizardProvider.nextStep();
-                        
+
                         // If we've completed the wizard, call the onComplete callback
-                        if (success && state.currentStep == state.totalSteps - 1) {
+                        if (success &&
+                            state.currentStep == state.totalSteps - 1) {
                           wizardProvider.completeWizard();
-                          
+
                           // Prepare the data for the callback
                           final data = {
                             'eventName': state.eventName,
                             'eventType': state.selectedEventType ?? '',
                             'eventDate': state.eventDate ?? DateTime.now(),
                             'guestCount': state.guestCount ?? 0,
-                            'selectedServices': Map<String, bool>.from(state.selectedServices),
+                            'selectedServices': Map<String, bool>.from(
+                              state.selectedServices,
+                            ),
                             'eventDuration': state.eventDuration,
                             'dailyStartTime': state.dailyStartTime,
                             'dailyEndTime': state.dailyEndTime,
@@ -146,7 +155,7 @@ class _EventWizardScreenState extends State<EventWizardScreen> {
                             'needsTeardown': state.needsTeardown,
                             'teardownHours': state.teardownHours,
                           };
-                          
+
                           widget.onComplete(data);
                         }
                       },
@@ -162,20 +171,27 @@ class _EventWizardScreenState extends State<EventWizardScreen> {
                                 Expanded(
                                   child: ElevatedButton(
                                     onPressed: details.onStepCancel,
-                                    style: WizardStyles.getPreviousButtonStyle(context),
+                                    style: WizardStyles.getPreviousButtonStyle(
+                                      context,
+                                    ),
                                     child: Text(
                                       'Previous',
                                       style: WizardStyles.getButtonTextStyle(),
                                     ),
                                   ),
                                 ),
-                              if (state.currentStep > 0) const SizedBox(width: 12),
+                              if (state.currentStep > 0)
+                                const SizedBox(width: 12),
                               Expanded(
                                 child: ElevatedButton(
                                   onPressed: details.onStepContinue,
-                                  style: WizardStyles.getNextButtonStyle(context),
+                                  style: WizardStyles.getNextButtonStyle(
+                                    context,
+                                  ),
                                   child: Text(
-                                    state.currentStep == state.totalSteps - 1 ? 'Finish' : 'Next',
+                                    state.currentStep == state.totalSteps - 1
+                                        ? 'Finish'
+                                        : 'Next',
                                     style: WizardStyles.getButtonTextStyle(),
                                   ),
                                 ),
@@ -187,7 +203,10 @@ class _EventWizardScreenState extends State<EventWizardScreen> {
                       steps: [
                         // Step 1: Event Details
                         Step(
-                          title: Text('Event Details', style: WizardStyles.getStepTitleStyle()),
+                          title: Text(
+                            'Event Details',
+                            style: WizardStyles.getStepTitleStyle(),
+                          ),
                           content: Column(
                             children: [
                               EventNameInput(
@@ -209,10 +228,13 @@ class _EventWizardScreenState extends State<EventWizardScreen> {
                           ),
                           isActive: state.currentStep >= 0,
                         ),
-                        
+
                         // Step 2: Date & Guests
                         Step(
-                          title: Text('Date & Guests', style: WizardStyles.getStepTitleStyle()),
+                          title: Text(
+                            'Date & Guests',
+                            style: WizardStyles.getStepTitleStyle(),
+                          ),
                           content: Column(
                             children: [
                               DatePickerTile(
@@ -226,7 +248,7 @@ class _EventWizardScreenState extends State<EventWizardScreen> {
                                 label: 'Select Event Date',
                               ),
                               const SizedBox(height: 16),
-                              
+
                               // Business event specific fields
                               if (widget.template.id == 'business') ...[
                                 Row(
@@ -237,19 +259,31 @@ class _EventWizardScreenState extends State<EventWizardScreen> {
                                           labelText: 'Event Duration (Days)',
                                           border: const OutlineInputBorder(),
                                           focusedBorder: OutlineInputBorder(
-                                            borderSide: BorderSide(color: primaryColor),
+                                            borderSide: BorderSide(
+                                              color: primaryColor,
+                                            ),
                                           ),
                                         ),
                                         value: state.eventDuration,
-                                        items: List.generate(14, (index) => index + 1)
-                                            .map((days) => DropdownMenuItem(
-                                                  value: days,
-                                                  child: Text('$days ${days == 1 ? 'day' : 'days'}'),
-                                                ))
-                                            .toList(),
+                                        items:
+                                            List.generate(
+                                                  14,
+                                                  (index) => index + 1,
+                                                )
+                                                .map(
+                                                  (days) => DropdownMenuItem(
+                                                    value: days,
+                                                    child: Text(
+                                                      '$days ${days == 1 ? 'day' : 'days'}',
+                                                    ),
+                                                  ),
+                                                )
+                                                .toList(),
                                         onChanged: (value) {
                                           if (value != null) {
-                                            wizardProvider.updateEventDuration(value);
+                                            wizardProvider.updateEventDuration(
+                                              value,
+                                            );
                                           }
                                         },
                                       ),
@@ -265,7 +299,9 @@ class _EventWizardScreenState extends State<EventWizardScreen> {
                                         label: 'Daily Start Time',
                                         onTimeSelected: (time) {
                                           if (time != null) {
-                                            wizardProvider.updateDailyStartTime(time);
+                                            wizardProvider.updateDailyStartTime(
+                                              time,
+                                            );
                                           }
                                         },
                                       ),
@@ -277,7 +313,9 @@ class _EventWizardScreenState extends State<EventWizardScreen> {
                                         label: 'Daily End Time',
                                         onTimeSelected: (time) {
                                           if (time != null) {
-                                            wizardProvider.updateDailyEndTime(time);
+                                            wizardProvider.updateDailyEndTime(
+                                              time,
+                                            );
                                           }
                                         },
                                       ),
@@ -290,7 +328,9 @@ class _EventWizardScreenState extends State<EventWizardScreen> {
                                   value: state.needsSetup,
                                   activeColor: primaryColor,
                                   onChanged: (value) {
-                                    wizardProvider.updateSetupNeeds(value ?? false);
+                                    wizardProvider.updateSetupNeeds(
+                                      value ?? false,
+                                    );
                                   },
                                 ),
                                 if (state.needsSetup)
@@ -301,19 +341,31 @@ class _EventWizardScreenState extends State<EventWizardScreen> {
                                         labelText: 'Setup Hours Needed',
                                         border: const OutlineInputBorder(),
                                         focusedBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(color: primaryColor),
+                                          borderSide: BorderSide(
+                                            color: primaryColor,
+                                          ),
                                         ),
                                       ),
                                       value: state.setupHours,
-                                      items: List.generate(12, (index) => index + 1)
-                                          .map((hours) => DropdownMenuItem(
-                                                value: hours,
-                                                child: Text('$hours ${hours == 1 ? 'hour' : 'hours'}'),
-                                              ))
-                                          .toList(),
+                                      items:
+                                          List.generate(
+                                                12,
+                                                (index) => index + 1,
+                                              )
+                                              .map(
+                                                (hours) => DropdownMenuItem(
+                                                  value: hours,
+                                                  child: Text(
+                                                    '$hours ${hours == 1 ? 'hour' : 'hours'}',
+                                                  ),
+                                                ),
+                                              )
+                                              .toList(),
                                       onChanged: (value) {
                                         if (value != null) {
-                                          wizardProvider.updateSetupHours(value);
+                                          wizardProvider.updateSetupHours(
+                                            value,
+                                          );
                                         }
                                       },
                                     ),
@@ -324,7 +376,9 @@ class _EventWizardScreenState extends State<EventWizardScreen> {
                                   value: state.needsTeardown,
                                   activeColor: primaryColor,
                                   onChanged: (value) {
-                                    wizardProvider.updateTeardownNeeds(value ?? false);
+                                    wizardProvider.updateTeardownNeeds(
+                                      value ?? false,
+                                    );
                                   },
                                 ),
                                 if (state.needsTeardown)
@@ -335,26 +389,38 @@ class _EventWizardScreenState extends State<EventWizardScreen> {
                                         labelText: 'Teardown Hours Needed',
                                         border: const OutlineInputBorder(),
                                         focusedBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(color: primaryColor),
+                                          borderSide: BorderSide(
+                                            color: primaryColor,
+                                          ),
                                         ),
                                       ),
                                       value: state.teardownHours,
-                                      items: List.generate(12, (index) => index + 1)
-                                          .map((hours) => DropdownMenuItem(
-                                                value: hours,
-                                                child: Text('$hours ${hours == 1 ? 'hour' : 'hours'}'),
-                                              ))
-                                          .toList(),
+                                      items:
+                                          List.generate(
+                                                12,
+                                                (index) => index + 1,
+                                              )
+                                              .map(
+                                                (hours) => DropdownMenuItem(
+                                                  value: hours,
+                                                  child: Text(
+                                                    '$hours ${hours == 1 ? 'hour' : 'hours'}',
+                                                  ),
+                                                ),
+                                              )
+                                              .toList(),
                                       onChanged: (value) {
                                         if (value != null) {
-                                          wizardProvider.updateTeardownHours(value);
+                                          wizardProvider.updateTeardownHours(
+                                            value,
+                                          );
                                         }
                                       },
                                     ),
                                   ),
                                 const SizedBox(height: 16),
                               ],
-                              
+
                               GuestCountInput(
                                 primaryColor: primaryColor,
                                 onChanged: (value) {
@@ -368,61 +434,87 @@ class _EventWizardScreenState extends State<EventWizardScreen> {
                           ),
                           isActive: state.currentStep >= 1,
                         ),
-                        
+
                         // Step 3: Required Services
                         Step(
-                          title: Text('Required Services', style: WizardStyles.getStepTitleStyle()),
+                          title: Text(
+                            'Required Services',
+                            style: WizardStyles.getStepTitleStyle(),
+                          ),
                           content: ServicesSelection(
                             selectedServices: state.selectedServices,
                             primaryColor: primaryColor,
                             onServiceChanged: (service, value) {
-                              wizardProvider.updateServiceSelection(service, value ?? false);
+                              wizardProvider.updateServiceSelection(
+                                service,
+                                value ?? false,
+                              );
                             },
                           ),
                           isActive: state.currentStep >= 2,
                         ),
-                        
+
                         // Step 4: Review
                         Step(
-                          title: Text('Review', style: WizardStyles.getStepTitleStyle()),
+                          title: Text(
+                            'Review',
+                            style: WizardStyles.getStepTitleStyle(),
+                          ),
                           content: Container(
                             padding: const EdgeInsets.all(16),
-                            decoration: WizardStyles.getReviewContainerDecoration(),
+                            decoration:
+                                WizardStyles.getReviewContainerDecoration(),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
                                   'Event Details',
-                                  style: WizardStyles.getReviewSectionTitleStyle(context),
+                                  style:
+                                      WizardStyles.getReviewSectionTitleStyle(
+                                        context,
+                                      ),
                                 ),
                                 const SizedBox(height: 8),
                                 Text('Event Name: ${state.eventName}'),
-                                Text('Event Type: ${state.selectedEventType ?? "Not selected"}'),
+                                Text(
+                                  'Event Type: ${state.selectedEventType ?? "Not selected"}',
+                                ),
                                 Text(
                                   'Date: ${state.eventDate != null ? DateTimeUtils.formatDate(state.eventDate!) : "Not selected"}',
                                 ),
                                 Text(
                                   'Guest Count: ${state.guestCount != null ? NumberUtils.formatWithCommas(state.guestCount!) : "Not specified"}',
                                 ),
-                                
+
                                 // Business event specific details
                                 if (widget.template.id == 'business') ...[
                                   const SizedBox(height: 8),
-                                  Text('Duration: ${state.eventDuration} ${state.eventDuration == 1 ? "day" : "days"}'),
+                                  Text(
+                                    'Duration: ${state.eventDuration} ${state.eventDuration == 1 ? "day" : "days"}',
+                                  ),
                                   if (state.dailyStartTime != null)
-                                    Text('Daily Start Time: ${state.dailyStartTime!.format(context)}'),
+                                    Text(
+                                      'Daily Start Time: ${state.dailyStartTime!.format(context)}',
+                                    ),
                                   if (state.dailyEndTime != null)
-                                    Text('Daily End Time: ${state.dailyEndTime!.format(context)}'),
+                                    Text(
+                                      'Daily End Time: ${state.dailyEndTime!.format(context)}',
+                                    ),
                                   if (state.needsSetup)
                                     Text('Setup Hours: ${state.setupHours}'),
                                   if (state.needsTeardown)
-                                    Text('Teardown Hours: ${state.teardownHours}'),
+                                    Text(
+                                      'Teardown Hours: ${state.teardownHours}',
+                                    ),
                                 ],
-                                
+
                                 const SizedBox(height: 16),
                                 Text(
                                   'Selected Services',
-                                  style: WizardStyles.getReviewSectionTitleStyle(context),
+                                  style:
+                                      WizardStyles.getReviewSectionTitleStyle(
+                                        context,
+                                      ),
                                 ),
                                 const SizedBox(height: 8),
                                 ...state.selectedServices.entries

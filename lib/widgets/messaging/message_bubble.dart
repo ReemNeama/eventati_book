@@ -22,7 +22,7 @@ class MessageBubble extends StatelessWidget {
 
     // Colors for user messages
     final userBubbleColor = primaryColor;
-    final userTextColor = Colors.white;
+    const userTextColor = Colors.white;
 
     // Colors for vendor messages
     final vendorBubbleColor = isDarkMode ? Colors.grey[800] : Colors.grey[200];
@@ -40,7 +40,7 @@ class MessageBubble extends StatelessWidget {
     final bubbleMaxWidth = screenWidth * maxWidth;
 
     return Padding(
-      padding: EdgeInsets.symmetric(
+      padding: const EdgeInsets.symmetric(
         horizontal: AppConstants.mediumPadding,
         vertical: AppConstants.smallPadding / 2,
       ),
@@ -58,7 +58,7 @@ class MessageBubble extends StatelessWidget {
             children: [
               Container(
                 constraints: BoxConstraints(maxWidth: bubbleMaxWidth),
-                padding: EdgeInsets.symmetric(
+                padding: const EdgeInsets.symmetric(
                   horizontal: AppConstants.mediumPadding,
                   vertical: AppConstants.smallPadding + 2,
                 ),
@@ -71,10 +71,14 @@ class MessageBubble extends StatelessWidget {
                     bottomRight:
                         message.isFromUser
                             ? Radius.zero
-                            : Radius.circular(AppConstants.largeBorderRadius),
+                            : const Radius.circular(
+                              AppConstants.largeBorderRadius,
+                            ),
                     bottomLeft:
                         message.isFromUser
-                            ? Radius.circular(AppConstants.largeBorderRadius)
+                            ? const Radius.circular(
+                              AppConstants.largeBorderRadius,
+                            )
                             : Radius.zero,
                   ),
                 ),
@@ -89,7 +93,7 @@ class MessageBubble extends StatelessWidget {
             ],
           ),
           Padding(
-            padding: EdgeInsets.only(
+            padding: const EdgeInsets.only(
               top: AppConstants.smallPadding / 2,
               left: AppConstants.smallPadding,
               right: AppConstants.smallPadding,
@@ -106,7 +110,7 @@ class MessageBubble extends StatelessWidget {
                   style: TextStyle(color: timestampColor, fontSize: 12),
                 ),
                 if (message.isFromUser) ...[
-                  SizedBox(width: AppConstants.smallPadding / 2),
+                  const SizedBox(width: AppConstants.smallPadding / 2),
                   Icon(
                     message.isRead ? Icons.done_all : Icons.done,
                     size: 14,

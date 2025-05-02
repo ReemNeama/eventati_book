@@ -200,7 +200,9 @@ class _CateringListScreenState extends State<CateringListScreen> {
     // Create local variables to track changes within the dialog
     RangeValues localPriceRange = _priceRange;
     RangeValues localCapacityRange = _capacityRange;
-    List<String> localSelectedCuisineTypes = List.from(_selectedCuisineTypes);
+    final List<String> localSelectedCuisineTypes = List.from(
+      _selectedCuisineTypes,
+    );
 
     showDialog(
       context: context,
