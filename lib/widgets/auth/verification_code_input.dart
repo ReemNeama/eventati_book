@@ -28,7 +28,7 @@ class VerificationCodeInput extends StatelessWidget {
             focusNode: focusNodes[index],
             onChanged: (value) => onCodeChanged(value, index),
             style: const TextStyle(
-              color: Colors.white,
+              color: Colors.black87,
               fontSize: 24,
               fontWeight: FontWeight.bold,
             ),
@@ -40,14 +40,19 @@ class VerificationCodeInput extends StatelessWidget {
             ],
             decoration: InputDecoration(
               contentPadding: EdgeInsets.zero,
+              filled: true,
+              fillColor: Colors.white,
               enabledBorder: OutlineInputBorder(
-                borderSide: const BorderSide(color: Colors.white),
+                borderSide: const BorderSide(color: Colors.white70),
                 borderRadius: BorderRadius.circular(
                   AppConstants.mediumBorderRadius,
                 ),
               ),
               focusedBorder: OutlineInputBorder(
-                borderSide: const BorderSide(color: Colors.white, width: 2),
+                borderSide: BorderSide(
+                  color: Theme.of(context).primaryColor,
+                  width: 2,
+                ),
                 borderRadius: BorderRadius.circular(
                   AppConstants.mediumBorderRadius,
                 ),

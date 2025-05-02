@@ -24,11 +24,14 @@ class AuthTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = UIUtils.isDarkMode(context);
-    final textColor =
-        isDarkMode ? AppColorsDark.textPrimary : AppColors.textPrimary;
-    final hintColor = isDarkMode ? AppColorsDark.textHint : AppColors.textHint;
-    final borderColor = isDarkMode ? AppColorsDark.divider : AppColors.divider;
     final primaryColor = isDarkMode ? AppColorsDark.primary : AppColors.primary;
+
+    // Always use contrasting colors for text fields in authentication screens
+    // since they often have colored backgrounds
+    final textColor = Colors.black87;
+    final hintColor = Colors.black54;
+    final borderColor = Colors.white70;
+    final fillColor = Colors.white;
 
     return TextFormField(
       controller: controller,
@@ -38,6 +41,8 @@ class AuthTextField extends StatelessWidget {
       decoration: InputDecoration(
         hintText: hintText,
         hintStyle: TextStyle(color: hintColor),
+        filled: true,
+        fillColor: fillColor,
         enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(color: borderColor),
           borderRadius: BorderRadius.circular(AppConstants.smallBorderRadius),

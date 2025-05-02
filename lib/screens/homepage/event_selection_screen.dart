@@ -1,7 +1,8 @@
-import 'package:eventati_book/screens/businesses/business_event_wizard_screen.dart';
-import 'package:eventati_book/screens/weddings/wedding_wizard_screen.dart';
-import 'package:eventati_book/screens/celebrations/celebration_wizard_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:eventati_book/models/event_template.dart';
+import 'package:eventati_book/providers/wizard_provider.dart';
+import 'package:eventati_book/screens/event_wizard/wizard_factory.dart';
 import 'package:eventati_book/utils/utils.dart';
 
 class EventSelectionScreen extends StatefulWidget {
@@ -44,10 +45,23 @@ class _EventSelectionScreenState extends State<EventSelectionScreen> {
             _buildEventButton(
               title: "Business Event",
               onPressed: () {
+                // Initialize the wizard provider
+                Provider.of<WizardProvider>(
+                  context,
+                  listen: false,
+                ).resetWizard();
+
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const BusinessEventWizardScreen(),
+                    builder:
+                        (context) => ChangeNotifierProvider(
+                          create: (_) => WizardProvider(),
+                          child: WizardFactory.createWizardScreen(
+                            context,
+                            'business',
+                          ),
+                        ),
                   ),
                 );
               },
@@ -56,10 +70,23 @@ class _EventSelectionScreenState extends State<EventSelectionScreen> {
             _buildEventButton(
               title: "Wedding/Engagement",
               onPressed: () {
+                // Initialize the wizard provider
+                Provider.of<WizardProvider>(
+                  context,
+                  listen: false,
+                ).resetWizard();
+
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const WeddingWizardScreen(),
+                    builder:
+                        (context) => ChangeNotifierProvider(
+                          create: (_) => WizardProvider(),
+                          child: WizardFactory.createWizardScreen(
+                            context,
+                            'wedding',
+                          ),
+                        ),
                   ),
                 );
               },
@@ -68,10 +95,23 @@ class _EventSelectionScreenState extends State<EventSelectionScreen> {
             _buildEventButton(
               title: "Celebration",
               onPressed: () {
+                // Initialize the wizard provider
+                Provider.of<WizardProvider>(
+                  context,
+                  listen: false,
+                ).resetWizard();
+
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const CelebrationWizardScreen(),
+                    builder:
+                        (context) => ChangeNotifierProvider(
+                          create: (_) => WizardProvider(),
+                          child: WizardFactory.createWizardScreen(
+                            context,
+                            'celebration',
+                          ),
+                        ),
                   ),
                 );
               },

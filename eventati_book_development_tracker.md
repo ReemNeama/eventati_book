@@ -1,4 +1,5 @@
 # Eventati Book - Development Tracker
+*Last updated: May 2023*
 
 ## How to use this tracker
 - [ ] Unchecked task (not started or in progress)
@@ -11,7 +12,7 @@
 
 ### Week 1: Review & Fix
 - [x] Audit existing code and identify bugs or incomplete features
-- [ ] Fix text input visibility issue on login page
+- [x] Fix text input visibility issue on login page
 - [x] Ensure dark/light theme toggle works properly across all screens
 - [x] Test navigation flows between all existing screens
 
@@ -30,21 +31,21 @@
 ## Phase 2: Event Wizard Implementation
 
 ### Week 1: Wizard Flow Design
-- [ ] Create wizard_start_screen.dart for gathering event basics
-- [ ] Design the wizard UI flow with progress indicators
-- [ ] Implement event type selection with visual options
-- [ ] Build the event details input forms
+- [x] Create wizard_start_screen.dart for gathering event basics
+- [x] Design the wizard UI flow with progress indicators
+- [x] Implement event type selection with visual options
+- [x] Build the event details input forms
 
 ### Week 2: Suggestion System
-- [ ] Create event_template.dart model for different event types
+- [x] Create event_template.dart model for different event types
 - [ ] Implement suggestion.dart model for recommendations
-- [ ] Build wizard_provider.dart to manage the wizard state
+- [x] Build wizard_provider.dart to manage the wizard state
 - [ ] Develop algorithms for generating appropriate suggestions
 
 ### Week 3: Progress Tracking
-- [ ] Create wizard_progress_screen.dart to visualize completion
-- [ ] Implement progress calculation across all planning areas
-- [ ] Build visual progress indicators (charts, progress bars)
+- [x] Create wizard_progress_screen.dart to visualize completion
+- [x] Implement progress calculation across all planning areas
+- [x] Build visual progress indicators (charts, progress bars)
 - [ ] Add achievement/milestone tracking
 
 ### Week 4: Integration
@@ -130,16 +131,30 @@
 ## Notes & Issues
 
 ### Current Blockers
--
+- None at the moment
 
 ### Ideas for Future Enhancements
--
+- Consider implementing email verification for authentication
+- Add password strength indicator on registration screen
+- Implement biometric authentication option (fingerprint/face ID)
+
+### Current Focus
+- Completing Phase 1 tasks: responsive design
+- Implementing Phase 2: Event Wizard Implementation (completed unified architecture)
+- Enhancing data persistence across the application
+- Code cleanup and organization
 
 ### Completed Milestones
 - Basic app structure with navigation, screens, and styling system
 - Dark/light theme toggle functionality
 - Service browsing screens with filtering and sorting
 - Error handling and loading states
+- Fixed text input visibility issues in authentication screens
+- Implemented consistent UI for authentication forms
+- Created unified event wizard architecture with progress tracking
+- Implemented data persistence for wizard state
+- Added visual progress indicators for the wizard flow
+- Removed redundant code and improved code organization
 
 ---
 
