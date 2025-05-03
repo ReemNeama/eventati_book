@@ -6,6 +6,7 @@ class GuestListProvider extends ChangeNotifier {
   List<Guest> _guests = [];
   List<GuestGroup> _groups = [];
   DateTime? _rsvpDeadline;
+  int _expectedGuestCount = 0;
   bool _isLoading = false;
   String? _error;
 
@@ -17,6 +18,7 @@ class GuestListProvider extends ChangeNotifier {
   List<Guest> get guests => _guests;
   List<GuestGroup> get groups => _groups;
   DateTime? get rsvpDeadline => _rsvpDeadline;
+  int get expectedGuestCount => _expectedGuestCount;
   bool get isLoading => _isLoading;
   String? get error => _error;
 
@@ -199,6 +201,12 @@ class GuestListProvider extends ChangeNotifier {
   // RSVP deadline management
   Future<void> setRsvpDeadline(DateTime deadline) async {
     _rsvpDeadline = deadline;
+    notifyListeners();
+  }
+
+  // Expected guest count management
+  Future<void> setExpectedGuestCount(int count) async {
+    _expectedGuestCount = count;
     notifyListeners();
   }
 
