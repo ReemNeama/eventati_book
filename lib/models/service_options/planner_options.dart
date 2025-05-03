@@ -1,14 +1,5 @@
-import 'package:flutter/material.dart';
-
 /// Enum representing planner consultation preferences
-enum ConsultationPreference {
-  inPerson,
-  virtual,
-  phone,
-  email,
-  mixed,
-  custom
-}
+enum ConsultationPreference { inPerson, virtual, phone, email, mixed, custom }
 
 /// Extension to add helper methods to ConsultationPreference
 extension ConsultationPreferenceExtension on ConsultationPreference {
@@ -38,7 +29,7 @@ enum PlanningPackageType {
   monthOf,
   dayOf,
   consultationOnly,
-  custom
+  custom,
 }
 
 /// Extension to add helper methods to PlanningPackageType

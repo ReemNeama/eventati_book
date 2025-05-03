@@ -4,9 +4,13 @@ import 'package:eventati_book/widgets/services/service_filter_bar.dart';
 import 'package:eventati_book/widgets/services/service_card.dart';
 import 'package:eventati_book/widgets/services/multi_select_chip_group.dart';
 import 'package:eventati_book/styles/app_colors.dart';
+import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/widgets/services/price_range_filter.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/screens/services/photographer_details_screen.dart';
+import 'package:eventati_book/screens/services/service_comparison_screen.dart';
+import 'package:eventati_book/providers/comparison_provider.dart';
+import 'package:provider/provider.dart';
 
 class PhotographerListScreen extends StatefulWidget {
   const PhotographerListScreen({super.key});
@@ -92,6 +96,9 @@ class _PhotographerListScreenState extends State<PhotographerListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final comparisonProvider = Provider.of<ComparisonProvider>(context);
+    final isDarkMode = UIUtils.isDarkMode(context);
+
     return Scaffold(
       backgroundColor: Theme.of(context).canvasColor,
       appBar: AppBar(
@@ -137,6 +144,12 @@ class _PhotographerListScreenState extends State<PhotographerListScreen> {
                   description: photographer.description,
                   rating: photographer.rating,
                   imageUrl: photographer.imageUrl,
+                  isCompareSelected: comparisonProvider.isServiceSelected(
+                    photographer,
+                  ),
+                  onCompareToggle: (_) {
+                    comparisonProvider.toggleServiceSelection(photographer);
+                  },
                   onTap: () {
                     Navigator.push(
                       context,
@@ -185,6 +198,34 @@ class _PhotographerListScreenState extends State<PhotographerListScreen> {
             ),
           ),
         ],
+      ),
+      floatingActionButton: Consumer<ComparisonProvider>(
+        builder: (context, provider, child) {
+          final int count = provider.getSelectedCount('Photographer');
+
+          // Only show FAB if at least 2 items are selected
+          if (count >= 2) {
+            return FloatingActionButton.extended(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) => const ServiceComparisonScreen(
+                          serviceType: 'Photographer',
+                        ),
+                  ),
+                );
+              },
+              label: Text('Compare ($count)'),
+              icon: const Icon(Icons.compare_arrows),
+              backgroundColor:
+                  isDarkMode ? AppColorsDark.primary : AppColors.primary,
+            );
+          }
+
+          return const SizedBox.shrink();
+        },
       ),
     );
   }

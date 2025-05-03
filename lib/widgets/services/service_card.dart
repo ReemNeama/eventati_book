@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/styles/app_colors.dart';
+import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/widgets/services/recommended_badge.dart';
 
@@ -12,6 +13,9 @@ class ServiceCard extends StatelessWidget {
   final VoidCallback onTap;
   final bool isRecommended;
   final String? recommendationReason;
+  final bool isCompareSelected;
+  final Function(bool)? onCompareToggle;
+  final bool showCompareCheckbox;
 
   const ServiceCard({
     super.key,
@@ -23,6 +27,9 @@ class ServiceCard extends StatelessWidget {
     required this.onTap,
     this.isRecommended = false,
     this.recommendationReason,
+    this.isCompareSelected = false,
+    this.onCompareToggle,
+    this.showCompareCheckbox = true,
   });
 
   @override
@@ -106,6 +113,36 @@ class ServiceCard extends StatelessWidget {
                   if (additionalInfo != null) ...[
                     const SizedBox(height: AppConstants.smallPadding),
                     additionalInfo!,
+                  ],
+                  if (showCompareCheckbox && onCompareToggle != null) ...[
+                    const SizedBox(height: AppConstants.smallPadding),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          'Compare',
+                          style: TextStyle(
+                            color:
+                                isDarkMode
+                                    ? AppColorsDark.primary
+                                    : AppColors.primary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Checkbox(
+                          value: isCompareSelected,
+                          onChanged: (value) {
+                            if (value != null) {
+                              onCompareToggle!(value);
+                            }
+                          },
+                          activeColor:
+                              isDarkMode
+                                  ? AppColorsDark.primary
+                                  : AppColors.primary,
+                        ),
+                      ],
+                    ),
                   ],
                 ],
               ),

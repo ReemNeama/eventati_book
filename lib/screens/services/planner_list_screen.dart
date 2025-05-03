@@ -4,8 +4,12 @@ import 'package:eventati_book/widgets/services/service_filter_bar.dart';
 import 'package:eventati_book/widgets/services/service_card.dart';
 import 'package:eventati_book/widgets/services/filter_dialog.dart';
 import 'package:eventati_book/styles/app_colors.dart';
+import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/screens/services/planner_details_screen.dart';
+import 'package:eventati_book/screens/services/service_comparison_screen.dart';
+import 'package:eventati_book/providers/comparison_provider.dart';
+import 'package:provider/provider.dart';
 
 class PlannerListScreen extends StatefulWidget {
   const PlannerListScreen({super.key});
@@ -113,6 +117,9 @@ class _PlannerListScreenState extends State<PlannerListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final comparisonProvider = Provider.of<ComparisonProvider>(context);
+    final isDarkMode = UIUtils.isDarkMode(context);
+
     return Scaffold(
       backgroundColor: Theme.of(context).canvasColor,
       appBar: AppBar(
@@ -158,6 +165,12 @@ class _PlannerListScreenState extends State<PlannerListScreen> {
                   description: planner.description,
                   rating: planner.rating,
                   imageUrl: planner.imageUrl,
+                  isCompareSelected: comparisonProvider.isServiceSelected(
+                    planner,
+                  ),
+                  onCompareToggle: (_) {
+                    comparisonProvider.toggleServiceSelection(planner);
+                  },
                   onTap: () {
                     Navigator.push(
                       context,
@@ -202,6 +215,34 @@ class _PlannerListScreenState extends State<PlannerListScreen> {
             ),
           ),
         ],
+      ),
+      floatingActionButton: Consumer<ComparisonProvider>(
+        builder: (context, provider, child) {
+          final int count = provider.getSelectedCount('Planner');
+
+          // Only show FAB if at least 2 items are selected
+          if (count >= 2) {
+            return FloatingActionButton.extended(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) => const ServiceComparisonScreen(
+                          serviceType: 'Planner',
+                        ),
+                  ),
+                );
+              },
+              label: Text('Compare ($count)'),
+              icon: const Icon(Icons.compare_arrows),
+              backgroundColor:
+                  isDarkMode ? AppColorsDark.primary : AppColors.primary,
+            );
+          }
+
+          return const SizedBox.shrink();
+        },
       ),
     );
   }

@@ -11,3 +11,8 @@ export 'service_filter_bar.dart';
 // Card widgets
 export 'service_card.dart';
 export 'recommended_badge.dart';
+
+// Comparison widgets
+export 'comparison_item_card.dart';
+export 'feature_comparison_table.dart';
+export 'pricing_comparison_table.dart';

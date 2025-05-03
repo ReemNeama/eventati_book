@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 /// Enum representing photography session types
 enum PhotoSessionType {
   portrait,
@@ -8,7 +6,7 @@ enum PhotoSessionType {
   documentary,
   artistic,
   aerial,
-  custom
+  custom,
 }
 
 /// Extension to add helper methods to PhotoSessionType
@@ -41,7 +39,7 @@ enum PhotoLocationPreference {
   both,
   studio,
   specificLocation,
-  custom
+  custom,
 }
 
 /// Extension to add helper methods to PhotoLocationPreference
@@ -139,9 +137,10 @@ class PhotographyOptions {
   /// Create photography options from JSON
   factory PhotographyOptions.fromJson(Map<String, dynamic> json) {
     return PhotographyOptions(
-      sessionTypes: (json['sessionTypes'] as List)
-          .map((index) => PhotoSessionType.values[index])
-          .toList(),
+      sessionTypes:
+          (json['sessionTypes'] as List)
+              .map((index) => PhotoSessionType.values[index])
+              .toList(),
       customSessionTypeDescription: json['customSessionTypeDescription'],
       locationPreference:
           PhotoLocationPreference.values[json['locationPreference']],

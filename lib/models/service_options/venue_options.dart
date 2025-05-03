@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 /// Enum representing venue layout preferences
 enum VenueLayout {
   banquet,
@@ -8,7 +6,7 @@ enum VenueLayout {
   reception,
   boardroom,
   uShape,
-  custom
+  custom,
 }
 
 /// Extension to add helper methods to VenueLayout

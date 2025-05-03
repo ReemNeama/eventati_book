@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/models/service_options/service_options.dart';
-import 'package:eventati_book/styles/app_colors.dart';
-import 'package:eventati_book/styles/app_colors_dark.dart';
-import 'package:eventati_book/utils/utils.dart';
 
 /// Factory class for generating service-specific form fields
 class ServiceOptionsFactory {
@@ -12,21 +9,25 @@ class ServiceOptionsFactory {
     required VenueOptions initialOptions,
     required Function(VenueOptions) onOptionsChanged,
   }) {
-    final isDarkMode = UIUtils.isDarkMode(context);
-    final primaryColor = isDarkMode ? AppColorsDark.primary : AppColors.primary;
-    
+    // No theme variables needed for this widget
+
     // Controllers for text fields
     final setupTimeController = TextEditingController(
-        text: initialOptions.setupTimeMinutes.toString());
+      text: initialOptions.setupTimeMinutes.toString(),
+    );
     final teardownTimeController = TextEditingController(
-        text: initialOptions.teardownTimeMinutes.toString());
+      text: initialOptions.teardownTimeMinutes.toString(),
+    );
     final customLayoutController = TextEditingController(
-        text: initialOptions.customLayoutDescription ?? '');
-    
-    // Local state
+      text: initialOptions.customLayoutDescription ?? '',
+    );
+
+    // Local state - variables can't be final because they're modified in setState
+    // ignore: prefer_final_locals
     VenueLayout selectedLayout = initialOptions.layout;
+    // ignore: prefer_final_locals
     List<String> selectedEquipment = List.from(initialOptions.equipmentNeeds);
-    
+
     // Equipment options
     final equipmentOptions = [
       'Projector',
@@ -40,7 +41,7 @@ class ServiceOptionsFactory {
       'Lighting',
       'Decorations',
     ];
-    
+
     // Update the options whenever a field changes
     void updateOptions() {
       onOptionsChanged(
@@ -48,25 +49,23 @@ class ServiceOptionsFactory {
           setupTimeMinutes: int.tryParse(setupTimeController.text) ?? 60,
           teardownTimeMinutes: int.tryParse(teardownTimeController.text) ?? 60,
           layout: selectedLayout,
-          customLayoutDescription: selectedLayout == VenueLayout.custom
-              ? customLayoutController.text
-              : null,
+          customLayoutDescription:
+              selectedLayout == VenueLayout.custom
+                  ? customLayoutController.text
+                  : null,
           equipmentNeeds: selectedEquipment,
         ),
       );
     }
-    
+
     return [
       const SizedBox(height: 16),
       const Text(
         'Venue Setup Options',
-        style: TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-        ),
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
       ),
       const SizedBox(height: 16),
-      
+
       // Setup time
       TextField(
         controller: setupTimeController,
@@ -79,7 +78,7 @@ class ServiceOptionsFactory {
         onChanged: (_) => updateOptions(),
       ),
       const SizedBox(height: 16),
-      
+
       // Teardown time
       TextField(
         controller: teardownTimeController,
@@ -92,17 +91,14 @@ class ServiceOptionsFactory {
         onChanged: (_) => updateOptions(),
       ),
       const SizedBox(height: 16),
-      
+
       // Layout preference
       const Text(
         'Layout Preference',
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-        ),
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
       const SizedBox(height: 8),
-      
+
       // Layout options
       StatefulBuilder(
         builder: (context, setState) {
@@ -122,8 +118,8 @@ class ServiceOptionsFactory {
                     }
                   },
                 );
-              }).toList(),
-              
+              }),
+
               // Custom layout description
               if (selectedLayout == VenueLayout.custom)
                 Padding(
@@ -143,39 +139,37 @@ class ServiceOptionsFactory {
         },
       ),
       const SizedBox(height: 16),
-      
+
       // Equipment needs
       const Text(
         'Equipment Needs',
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-        ),
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
       const SizedBox(height: 8),
-      
+
       // Equipment options
       StatefulBuilder(
         builder: (context, setState) {
           return Column(
-            children: equipmentOptions.map((equipment) {
-              return CheckboxListTile(
-                title: Text(equipment),
-                value: selectedEquipment.contains(equipment),
-                onChanged: (value) {
-                  setState(() {
-                    if (value == true) {
-                      if (!selectedEquipment.contains(equipment)) {
-                        selectedEquipment.add(equipment);
-                      }
-                    } else {
-                      selectedEquipment.remove(equipment);
-                    }
-                  });
-                  updateOptions();
-                },
-              );
-            }).toList(),
+            children:
+                equipmentOptions.map((equipment) {
+                  return CheckboxListTile(
+                    title: Text(equipment),
+                    value: selectedEquipment.contains(equipment),
+                    onChanged: (value) {
+                      setState(() {
+                        if (value == true) {
+                          if (!selectedEquipment.contains(equipment)) {
+                            selectedEquipment.add(equipment);
+                          }
+                        } else {
+                          selectedEquipment.remove(equipment);
+                        }
+                      });
+                      updateOptions();
+                    },
+                  );
+                }).toList(),
           );
         },
       ),
@@ -188,23 +182,31 @@ class ServiceOptionsFactory {
     required CateringOptions initialOptions,
     required Function(CateringOptions) onOptionsChanged,
   }) {
-    final isDarkMode = UIUtils.isDarkMode(context);
-    final primaryColor = isDarkMode ? AppColorsDark.primary : AppColors.primary;
-    
+    // No theme variables needed for this widget
+
     // Controllers for text fields
     final customMealServiceController = TextEditingController(
-        text: initialOptions.customMealServiceDescription ?? '');
+      text: initialOptions.customMealServiceDescription ?? '',
+    );
     final customBeverageController = TextEditingController(
-        text: initialOptions.customBeverageDescription ?? '');
+      text: initialOptions.customBeverageDescription ?? '',
+    );
     final staffCountController = TextEditingController(
-        text: initialOptions.staffCount?.toString() ?? '2');
-    
-    // Local state
+      text: initialOptions.staffCount?.toString() ?? '2',
+    );
+
+    // Local state - variables can't be final because they're modified in setState
+    // ignore: prefer_final_locals
     MealServiceStyle selectedMealStyle = initialOptions.mealServiceStyle;
+    // ignore: prefer_final_locals
     BeverageOption selectedBeverageOption = initialOptions.beverageOption;
-    List<String> selectedDietaryRestrictions = List.from(initialOptions.dietaryRestrictions);
+    // ignore: prefer_final_locals
+    List<String> selectedDietaryRestrictions = List.from(
+      initialOptions.dietaryRestrictions,
+    );
+    // ignore: prefer_final_locals
     bool includeStaffService = initialOptions.includeStaffService;
-    
+
     // Dietary restriction options
     final dietaryOptions = [
       'Vegetarian',
@@ -218,49 +220,46 @@ class ServiceOptionsFactory {
       'Low-Sugar',
       'Pescatarian',
     ];
-    
+
     // Update the options whenever a field changes
     void updateOptions() {
       onOptionsChanged(
         initialOptions.copyWith(
           mealServiceStyle: selectedMealStyle,
-          customMealServiceDescription: selectedMealStyle == MealServiceStyle.custom
-              ? customMealServiceController.text
-              : null,
+          customMealServiceDescription:
+              selectedMealStyle == MealServiceStyle.custom
+                  ? customMealServiceController.text
+                  : null,
           dietaryRestrictions: selectedDietaryRestrictions,
           beverageOption: selectedBeverageOption,
-          customBeverageDescription: selectedBeverageOption == BeverageOption.custom
-              ? customBeverageController.text
-              : null,
+          customBeverageDescription:
+              selectedBeverageOption == BeverageOption.custom
+                  ? customBeverageController.text
+                  : null,
           includeStaffService: includeStaffService,
-          staffCount: includeStaffService
-              ? int.tryParse(staffCountController.text) ?? 2
-              : null,
+          staffCount:
+              includeStaffService
+                  ? int.tryParse(staffCountController.text) ?? 2
+                  : null,
         ),
       );
     }
-    
+
     return [
       const SizedBox(height: 16),
       const Text(
         'Catering Service Options',
-        style: TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-        ),
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
       ),
       const SizedBox(height: 16),
-      
+
       // Meal service style
       const Text(
         'Meal Service Style',
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-        ),
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
       const SizedBox(height: 8),
-      
+
       // Meal service options
       StatefulBuilder(
         builder: (context, setState) {
@@ -280,8 +279,8 @@ class ServiceOptionsFactory {
                     }
                   },
                 );
-              }).toList(),
-              
+              }),
+
               // Custom meal service description
               if (selectedMealStyle == MealServiceStyle.custom)
                 Padding(
@@ -301,54 +300,51 @@ class ServiceOptionsFactory {
         },
       ),
       const SizedBox(height: 16),
-      
+
       // Dietary restrictions
       const Text(
         'Dietary Restrictions to Accommodate',
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-        ),
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
       const SizedBox(height: 8),
-      
+
       // Dietary restriction options
       StatefulBuilder(
         builder: (context, setState) {
           return Column(
-            children: dietaryOptions.map((restriction) {
-              return CheckboxListTile(
-                title: Text(restriction),
-                value: selectedDietaryRestrictions.contains(restriction),
-                onChanged: (value) {
-                  setState(() {
-                    if (value == true) {
-                      if (!selectedDietaryRestrictions.contains(restriction)) {
-                        selectedDietaryRestrictions.add(restriction);
-                      }
-                    } else {
-                      selectedDietaryRestrictions.remove(restriction);
-                    }
-                  });
-                  updateOptions();
-                },
-              );
-            }).toList(),
+            children:
+                dietaryOptions.map((restriction) {
+                  return CheckboxListTile(
+                    title: Text(restriction),
+                    value: selectedDietaryRestrictions.contains(restriction),
+                    onChanged: (value) {
+                      setState(() {
+                        if (value == true) {
+                          if (!selectedDietaryRestrictions.contains(
+                            restriction,
+                          )) {
+                            selectedDietaryRestrictions.add(restriction);
+                          }
+                        } else {
+                          selectedDietaryRestrictions.remove(restriction);
+                        }
+                      });
+                      updateOptions();
+                    },
+                  );
+                }).toList(),
           );
         },
       ),
       const SizedBox(height: 16),
-      
+
       // Beverage options
       const Text(
         'Beverage Service',
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-        ),
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
       const SizedBox(height: 8),
-      
+
       // Beverage service options
       StatefulBuilder(
         builder: (context, setState) {
@@ -368,8 +364,8 @@ class ServiceOptionsFactory {
                     }
                   },
                 );
-              }).toList(),
-              
+              }),
+
               // Custom beverage description
               if (selectedBeverageOption == BeverageOption.custom)
                 Padding(
@@ -389,7 +385,7 @@ class ServiceOptionsFactory {
         },
       ),
       const SizedBox(height: 16),
-      
+
       // Staff service
       StatefulBuilder(
         builder: (context, setState) {
@@ -405,7 +401,7 @@ class ServiceOptionsFactory {
                   updateOptions();
                 },
               ),
-              
+
               // Staff count
               if (includeStaffService)
                 Padding(
@@ -434,22 +430,33 @@ class ServiceOptionsFactory {
     required PhotographyOptions initialOptions,
     required Function(PhotographyOptions) onOptionsChanged,
   }) {
-    final isDarkMode = UIUtils.isDarkMode(context);
-    final primaryColor = isDarkMode ? AppColorsDark.primary : AppColors.primary;
-    
+    // No theme variables needed for this widget
+
     // Controllers for text fields
     final customSessionTypeController = TextEditingController(
-        text: initialOptions.customSessionTypeDescription ?? '');
+      text: initialOptions.customSessionTypeDescription ?? '',
+    );
     final specificLocationController = TextEditingController(
-        text: initialOptions.specificLocationDescription ?? '');
-    
-    // Local state
-    List<PhotoSessionType> selectedSessionTypes = List.from(initialOptions.sessionTypes);
-    PhotoLocationPreference selectedLocationPreference = initialOptions.locationPreference;
-    List<String> selectedEquipment = List.from(initialOptions.equipmentRequests);
+      text: initialOptions.specificLocationDescription ?? '',
+    );
+
+    // Local state - variables can't be final because they're modified in setState
+    // ignore: prefer_final_locals
+    List<PhotoSessionType> selectedSessionTypes = List.from(
+      initialOptions.sessionTypes,
+    );
+    // ignore: prefer_final_locals
+    PhotoLocationPreference selectedLocationPreference =
+        initialOptions.locationPreference;
+    // ignore: prefer_final_locals
+    List<String> selectedEquipment = List.from(
+      initialOptions.equipmentRequests,
+    );
+    // ignore: prefer_final_locals
     bool includeSecondPhotographer = initialOptions.includeSecondPhotographer;
+    // ignore: prefer_final_locals
     bool includeVideography = initialOptions.includeVideography;
-    
+
     // Equipment options
     final equipmentOptions = [
       'Drone',
@@ -463,75 +470,73 @@ class ServiceOptionsFactory {
       'Gimbal',
       'Props',
     ];
-    
+
     // Update the options whenever a field changes
     void updateOptions() {
       onOptionsChanged(
         initialOptions.copyWith(
           sessionTypes: selectedSessionTypes,
-          customSessionTypeDescription: selectedSessionTypes.contains(PhotoSessionType.custom)
-              ? customSessionTypeController.text
-              : null,
+          customSessionTypeDescription:
+              selectedSessionTypes.contains(PhotoSessionType.custom)
+                  ? customSessionTypeController.text
+                  : null,
           locationPreference: selectedLocationPreference,
-          specificLocationDescription: 
-              (selectedLocationPreference == PhotoLocationPreference.specificLocation ||
-               selectedLocationPreference == PhotoLocationPreference.custom)
-              ? specificLocationController.text
-              : null,
+          specificLocationDescription:
+              (selectedLocationPreference ==
+                          PhotoLocationPreference.specificLocation ||
+                      selectedLocationPreference ==
+                          PhotoLocationPreference.custom)
+                  ? specificLocationController.text
+                  : null,
           equipmentRequests: selectedEquipment,
           includeSecondPhotographer: includeSecondPhotographer,
           includeVideography: includeVideography,
         ),
       );
     }
-    
+
     return [
       const SizedBox(height: 16),
       const Text(
         'Photography Service Options',
-        style: TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-        ),
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
       ),
       const SizedBox(height: 16),
-      
+
       // Photo session types
       const Text(
         'Photo Session Types',
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-        ),
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
       const SizedBox(height: 8),
-      
+
       // Session type options
       StatefulBuilder(
         builder: (context, setState) {
           return Column(
-            children: PhotoSessionType.values.map((type) {
-              return CheckboxListTile(
-                title: Text(type.displayName),
-                value: selectedSessionTypes.contains(type),
-                onChanged: (value) {
-                  setState(() {
-                    if (value == true) {
-                      if (!selectedSessionTypes.contains(type)) {
-                        selectedSessionTypes.add(type);
-                      }
-                    } else {
-                      selectedSessionTypes.remove(type);
-                    }
-                  });
-                  updateOptions();
-                },
-              );
-            }).toList(),
+            children:
+                PhotoSessionType.values.map((type) {
+                  return CheckboxListTile(
+                    title: Text(type.displayName),
+                    value: selectedSessionTypes.contains(type),
+                    onChanged: (value) {
+                      setState(() {
+                        if (value == true) {
+                          if (!selectedSessionTypes.contains(type)) {
+                            selectedSessionTypes.add(type);
+                          }
+                        } else {
+                          selectedSessionTypes.remove(type);
+                        }
+                      });
+                      updateOptions();
+                    },
+                  );
+                }).toList(),
           );
         },
       ),
-      
+
       // Custom session type description
       StatefulBuilder(
         builder: (context, setState) {
@@ -553,17 +558,14 @@ class ServiceOptionsFactory {
         },
       ),
       const SizedBox(height: 16),
-      
+
       // Location preference
       const Text(
         'Location Preference',
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-        ),
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
       const SizedBox(height: 8),
-      
+
       // Location preference options
       StatefulBuilder(
         builder: (context, setState) {
@@ -583,10 +585,11 @@ class ServiceOptionsFactory {
                     }
                   },
                 );
-              }).toList(),
-              
+              }),
+
               // Specific location description
-              if (selectedLocationPreference == PhotoLocationPreference.specificLocation ||
+              if (selectedLocationPreference ==
+                      PhotoLocationPreference.specificLocation ||
                   selectedLocationPreference == PhotoLocationPreference.custom)
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0),
@@ -605,44 +608,42 @@ class ServiceOptionsFactory {
         },
       ),
       const SizedBox(height: 16),
-      
+
       // Equipment requests
       const Text(
         'Equipment Requests',
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-        ),
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
       const SizedBox(height: 8),
-      
+
       // Equipment options
       StatefulBuilder(
         builder: (context, setState) {
           return Column(
-            children: equipmentOptions.map((equipment) {
-              return CheckboxListTile(
-                title: Text(equipment),
-                value: selectedEquipment.contains(equipment),
-                onChanged: (value) {
-                  setState(() {
-                    if (value == true) {
-                      if (!selectedEquipment.contains(equipment)) {
-                        selectedEquipment.add(equipment);
-                      }
-                    } else {
-                      selectedEquipment.remove(equipment);
-                    }
-                  });
-                  updateOptions();
-                },
-              );
-            }).toList(),
+            children:
+                equipmentOptions.map((equipment) {
+                  return CheckboxListTile(
+                    title: Text(equipment),
+                    value: selectedEquipment.contains(equipment),
+                    onChanged: (value) {
+                      setState(() {
+                        if (value == true) {
+                          if (!selectedEquipment.contains(equipment)) {
+                            selectedEquipment.add(equipment);
+                          }
+                        } else {
+                          selectedEquipment.remove(equipment);
+                        }
+                      });
+                      updateOptions();
+                    },
+                  );
+                }).toList(),
           );
         },
       ),
       const SizedBox(height: 16),
-      
+
       // Additional options
       StatefulBuilder(
         builder: (context, setState) {
@@ -681,22 +682,31 @@ class ServiceOptionsFactory {
     required PlannerOptions initialOptions,
     required Function(PlannerOptions) onOptionsChanged,
   }) {
-    final isDarkMode = UIUtils.isDarkMode(context);
-    final primaryColor = isDarkMode ? AppColorsDark.primary : AppColors.primary;
-    
+    // No theme variables needed for this widget
+
     // Controllers for text fields
     final customConsultationController = TextEditingController(
-        text: initialOptions.customConsultationDescription ?? '');
+      text: initialOptions.customConsultationDescription ?? '',
+    );
     final customPackageController = TextEditingController(
-        text: initialOptions.customPackageDescription ?? '');
-    
-    // Local state
-    ConsultationPreference selectedConsultationPreference = initialOptions.consultationPreference;
+      text: initialOptions.customPackageDescription ?? '',
+    );
+
+    // Local state - variables can't be final because they're modified in setState
+    // ignore: prefer_final_locals
+    ConsultationPreference selectedConsultationPreference =
+        initialOptions.consultationPreference;
+    // ignore: prefer_final_locals
     PlanningPackageType selectedPackageType = initialOptions.packageType;
-    List<String> selectedPlanningNeeds = List.from(initialOptions.specificPlanningNeeds);
+    // ignore: prefer_final_locals
+    List<String> selectedPlanningNeeds = List.from(
+      initialOptions.specificPlanningNeeds,
+    );
+    // ignore: prefer_final_locals
     bool includeVendorCoordination = initialOptions.includeVendorCoordination;
+    // ignore: prefer_final_locals
     bool includeBudgetManagement = initialOptions.includeBudgetManagement;
-    
+
     // Planning needs options
     final planningNeedsOptions = [
       'Venue Selection',
@@ -710,47 +720,43 @@ class ServiceOptionsFactory {
       'Transportation Coordination',
       'Accommodation Coordination',
     ];
-    
+
     // Update the options whenever a field changes
     void updateOptions() {
       onOptionsChanged(
         initialOptions.copyWith(
           consultationPreference: selectedConsultationPreference,
-          customConsultationDescription: selectedConsultationPreference == ConsultationPreference.custom
-              ? customConsultationController.text
-              : null,
+          customConsultationDescription:
+              selectedConsultationPreference == ConsultationPreference.custom
+                  ? customConsultationController.text
+                  : null,
           packageType: selectedPackageType,
-          customPackageDescription: selectedPackageType == PlanningPackageType.custom
-              ? customPackageController.text
-              : null,
+          customPackageDescription:
+              selectedPackageType == PlanningPackageType.custom
+                  ? customPackageController.text
+                  : null,
           specificPlanningNeeds: selectedPlanningNeeds,
           includeVendorCoordination: includeVendorCoordination,
           includeBudgetManagement: includeBudgetManagement,
         ),
       );
     }
-    
+
     return [
       const SizedBox(height: 16),
       const Text(
         'Planner Service Options',
-        style: TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-        ),
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
       ),
       const SizedBox(height: 16),
-      
+
       // Consultation preference
       const Text(
         'Consultation Preference',
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-        ),
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
       const SizedBox(height: 8),
-      
+
       // Consultation preference options
       StatefulBuilder(
         builder: (context, setState) {
@@ -770,10 +776,11 @@ class ServiceOptionsFactory {
                     }
                   },
                 );
-              }).toList(),
-              
+              }),
+
               // Custom consultation description
-              if (selectedConsultationPreference == ConsultationPreference.custom)
+              if (selectedConsultationPreference ==
+                  ConsultationPreference.custom)
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0),
                   child: TextField(
@@ -791,17 +798,14 @@ class ServiceOptionsFactory {
         },
       ),
       const SizedBox(height: 16),
-      
+
       // Planning package type
       const Text(
         'Planning Package Type',
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-        ),
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
       const SizedBox(height: 8),
-      
+
       // Planning package options
       StatefulBuilder(
         builder: (context, setState) {
@@ -821,8 +825,8 @@ class ServiceOptionsFactory {
                     }
                   },
                 );
-              }).toList(),
-              
+              }),
+
               // Custom package description
               if (selectedPackageType == PlanningPackageType.custom)
                 Padding(
@@ -842,44 +846,42 @@ class ServiceOptionsFactory {
         },
       ),
       const SizedBox(height: 16),
-      
+
       // Specific planning needs
       const Text(
         'Specific Planning Needs',
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-        ),
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
       const SizedBox(height: 8),
-      
+
       // Planning needs options
       StatefulBuilder(
         builder: (context, setState) {
           return Column(
-            children: planningNeedsOptions.map((need) {
-              return CheckboxListTile(
-                title: Text(need),
-                value: selectedPlanningNeeds.contains(need),
-                onChanged: (value) {
-                  setState(() {
-                    if (value == true) {
-                      if (!selectedPlanningNeeds.contains(need)) {
-                        selectedPlanningNeeds.add(need);
-                      }
-                    } else {
-                      selectedPlanningNeeds.remove(need);
-                    }
-                  });
-                  updateOptions();
-                },
-              );
-            }).toList(),
+            children:
+                planningNeedsOptions.map((need) {
+                  return CheckboxListTile(
+                    title: Text(need),
+                    value: selectedPlanningNeeds.contains(need),
+                    onChanged: (value) {
+                      setState(() {
+                        if (value == true) {
+                          if (!selectedPlanningNeeds.contains(need)) {
+                            selectedPlanningNeeds.add(need);
+                          }
+                        } else {
+                          selectedPlanningNeeds.remove(need);
+                        }
+                      });
+                      updateOptions();
+                    },
+                  );
+                }).toList(),
           );
         },
       ),
       const SizedBox(height: 16),
-      
+
       // Additional options
       StatefulBuilder(
         builder: (context, setState) {
@@ -911,7 +913,7 @@ class ServiceOptionsFactory {
       ),
     ];
   }
-  
+
   /// Generate service-specific form fields based on service type
   static List<Widget> generateServiceOptionsFields({
     required BuildContext context,
@@ -921,10 +923,11 @@ class ServiceOptionsFactory {
   }) {
     switch (serviceType) {
       case 'venue':
-        final venueOptions = initialOptions.containsKey('venue')
-            ? VenueOptions.fromJson(initialOptions['venue'])
-            : VenueOptions.defaultOptions();
-        
+        final venueOptions =
+            initialOptions.containsKey('venue')
+                ? VenueOptions.fromJson(initialOptions['venue'])
+                : VenueOptions.defaultOptions();
+
         return generateVenueOptionsFields(
           context: context,
           initialOptions: venueOptions,
@@ -934,12 +937,13 @@ class ServiceOptionsFactory {
             onOptionsChanged(newOptions);
           },
         );
-        
+
       case 'catering':
-        final cateringOptions = initialOptions.containsKey('catering')
-            ? CateringOptions.fromJson(initialOptions['catering'])
-            : CateringOptions.defaultOptions();
-        
+        final cateringOptions =
+            initialOptions.containsKey('catering')
+                ? CateringOptions.fromJson(initialOptions['catering'])
+                : CateringOptions.defaultOptions();
+
         return generateCateringOptionsFields(
           context: context,
           initialOptions: cateringOptions,
@@ -949,12 +953,13 @@ class ServiceOptionsFactory {
             onOptionsChanged(newOptions);
           },
         );
-        
+
       case 'photography':
-        final photographyOptions = initialOptions.containsKey('photography')
-            ? PhotographyOptions.fromJson(initialOptions['photography'])
-            : PhotographyOptions.defaultOptions();
-        
+        final photographyOptions =
+            initialOptions.containsKey('photography')
+                ? PhotographyOptions.fromJson(initialOptions['photography'])
+                : PhotographyOptions.defaultOptions();
+
         return generatePhotographyOptionsFields(
           context: context,
           initialOptions: photographyOptions,
@@ -964,12 +969,13 @@ class ServiceOptionsFactory {
             onOptionsChanged(newOptions);
           },
         );
-        
+
       case 'planner':
-        final plannerOptions = initialOptions.containsKey('planner')
-            ? PlannerOptions.fromJson(initialOptions['planner'])
-            : PlannerOptions.defaultOptions();
-        
+        final plannerOptions =
+            initialOptions.containsKey('planner')
+                ? PlannerOptions.fromJson(initialOptions['planner'])
+                : PlannerOptions.defaultOptions();
+
         return generatePlannerOptionsFields(
           context: context,
           initialOptions: plannerOptions,
@@ -979,16 +985,13 @@ class ServiceOptionsFactory {
             onOptionsChanged(newOptions);
           },
         );
-        
+
       default:
         return [
           const SizedBox(height: 16),
           const Text(
             'No service-specific options available for this service type.',
-            style: TextStyle(
-              fontSize: 16,
-              fontStyle: FontStyle.italic,
-            ),
+            style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
           ),
         ];
     }

@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 /// Enum representing meal service styles
 enum MealServiceStyle {
   buffet,
@@ -7,7 +5,7 @@ enum MealServiceStyle {
   familyStyle,
   stationBased,
   cocktailStyle,
-  custom
+  custom,
 }
 
 /// Extension to add helper methods to MealServiceStyle
@@ -40,7 +38,7 @@ enum BeverageOption {
   openBar,
   cashBar,
   byob,
-  custom
+  custom,
 }
 
 /// Extension to add helper methods to BeverageOption

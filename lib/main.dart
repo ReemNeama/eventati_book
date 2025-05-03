@@ -27,6 +27,7 @@ void main() {
         ),
         ChangeNotifierProvider(create: (_) => SuggestionProvider()),
         ChangeNotifierProvider(create: (_) => ServiceRecommendationProvider()),
+        ChangeNotifierProvider(create: (_) => ComparisonProvider()),
 
         // Event planning tool providers
         ChangeNotifierProvider(

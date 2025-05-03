@@ -4,9 +4,12 @@ import 'package:eventati_book/widgets/services/service_filter_bar.dart';
 import 'package:eventati_book/widgets/services/service_card.dart';
 import 'package:eventati_book/widgets/services/filter_dialog.dart';
 import 'package:eventati_book/styles/app_colors.dart';
+import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/screens/services/venue_details_screen.dart';
+import 'package:eventati_book/screens/services/service_comparison_screen.dart';
 import 'package:eventati_book/providers/service_recommendation_provider.dart';
+import 'package:eventati_book/providers/comparison_provider.dart';
 import 'package:provider/provider.dart';
 
 class VenueListScreen extends StatefulWidget {
@@ -128,6 +131,11 @@ class _VenueListScreenState extends State<VenueListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final serviceRecommendationProvider =
+        Provider.of<ServiceRecommendationProvider>(context);
+    final comparisonProvider = Provider.of<ComparisonProvider>(context);
+    final isDarkMode = UIUtils.isDarkMode(context);
+
     return Scaffold(
       backgroundColor: Theme.of(context).canvasColor,
       appBar: AppBar(
@@ -168,11 +176,6 @@ class _VenueListScreenState extends State<VenueListScreen> {
               itemCount: filteredVenues.length,
               itemBuilder: (context, index) {
                 final venue = filteredVenues[index];
-                final serviceRecommendationProvider =
-                    Provider.of<ServiceRecommendationProvider>(
-                      context,
-                      listen: false,
-                    );
                 final isRecommended = serviceRecommendationProvider
                     .isVenueRecommended(venue);
                 final recommendationReason =
@@ -188,6 +191,12 @@ class _VenueListScreenState extends State<VenueListScreen> {
                   imageUrl: venue.imageUrl,
                   isRecommended: isRecommended,
                   recommendationReason: recommendationReason,
+                  isCompareSelected: comparisonProvider.isServiceSelected(
+                    venue,
+                  ),
+                  onCompareToggle: (_) {
+                    comparisonProvider.toggleServiceSelection(venue);
+                  },
                   onTap: () {
                     Navigator.push(
                       context,
@@ -233,6 +242,33 @@ class _VenueListScreenState extends State<VenueListScreen> {
             ),
           ),
         ],
+      ),
+      floatingActionButton: Consumer<ComparisonProvider>(
+        builder: (context, provider, child) {
+          final int count = provider.getSelectedCount('Venue');
+
+          // Only show FAB if at least 2 items are selected
+          if (count >= 2) {
+            return FloatingActionButton.extended(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) =>
+                            const ServiceComparisonScreen(serviceType: 'Venue'),
+                  ),
+                );
+              },
+              label: Text('Compare ($count)'),
+              icon: const Icon(Icons.compare_arrows),
+              backgroundColor:
+                  isDarkMode ? AppColorsDark.primary : AppColors.primary,
+            );
+          }
+
+          return const SizedBox.shrink();
+        },
       ),
     );
   }
