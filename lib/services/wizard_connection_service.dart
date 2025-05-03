@@ -11,6 +11,23 @@ import 'package:eventati_book/services/task_template_service.dart';
 
 /// Service to connect the wizard with other planning tools
 class WizardConnectionService {
+  /// Connect wizard to all planning tools at once
+  static void connectToAllPlanningTools(
+    BuildContext context,
+    Map<String, dynamic> wizardData,
+  ) {
+    // Connect to budget calculator
+    connectToBudget(context, wizardData);
+
+    // Connect to guest list
+    connectToGuestList(context, wizardData);
+
+    // Connect to timeline/checklist
+    connectToTimeline(context, wizardData);
+
+    debugPrint('Connected wizard to all planning tools');
+  }
+
   /// Connect wizard data to budget calculator
   static void connectToBudget(
     BuildContext context,

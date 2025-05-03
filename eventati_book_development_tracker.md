@@ -222,6 +222,22 @@
   3. ✅ Implement widget tests for key components
   4. ✅ Add integration tests for critical user flows
 
+- [ ] Create barrel files for modules with 4 or more imports:
+  1. [ ] Identify remaining modules that need barrel files
+  2. [ ] Create barrel files for these modules
+  3. [ ] Update imports throughout the codebase
+  4. [ ] Add comments in barrel files to clarify exports
+
+- [ ] Implement Feature Enhancements:
+  1. [ ] Onboarding Flow
+     - [ ] Design onboarding screens
+     - [ ] Implement onboarding components
+     - [ ] Add logic to show onboarding only on first app launch
+  2. [ ] User Feedback System
+     - [ ] Create feedback components
+     - [ ] Implement feedback collection
+     - [ ] Add triggers for feedback collection
+
 ### Ideas for Future Enhancements
 - Consider implementing email verification for authentication
 - Add password strength indicator on registration screen

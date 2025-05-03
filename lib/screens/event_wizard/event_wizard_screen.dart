@@ -177,7 +177,7 @@ class _EventWizardScreenState extends State<EventWizardScreen> {
                         // If we've completed the wizard, call the onComplete callback
                         if (success &&
                             state.currentStep == state.totalSteps - 1) {
-                          wizardProvider.completeWizard();
+                          wizardProvider.completeWizard(context);
 
                           // Prepare the data for the callback
                           final data = {
