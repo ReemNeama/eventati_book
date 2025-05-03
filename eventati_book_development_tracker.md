@@ -129,9 +129,19 @@
 
 ### Week 3: Saving & Sharing
 - [ ] Implement saving comparison results to events
-- [ ] Add sharing functionality (PDF, email, etc.)
+  - [ ] Create saved_comparison.dart model
+  - [ ] Implement ComparisonSavingProvider
+  - [ ] Add "Save Comparison" functionality
+- [ ] Add sharing functionality
+  - [ ] Implement PDF export
+  - [ ] Add email sharing
+  - [ ] Create shareable links
 - [ ] Create comparison history in user profile
+  - [ ] Build SavedComparisonsScreen
+  - [ ] Implement filtering and sorting for saved comparisons
 - [ ] Build comparison notes and annotations
+  - [ ] Add note-taking functionality to comparisons
+  - [ ] Implement highlighting and annotations
 
 ### Week 4: Enhanced Integration
 - [ ] Improve connections between all app sections
@@ -234,6 +244,21 @@
   3. ✅ Create booking details screen
   4. ✅ Build booking history screen
   5. ✅ Add booking management functionality
+
+- ✅ Implement Comparison Feature:
+  1. ✅ Create service_comparison_screen.dart for side-by-side comparison
+  2. ✅ Implement comparison_item_card.dart for individual services
+  3. ✅ Build feature-by-feature comparison tables
+  4. ✅ Add visual indicators for better/worse features
+  5. ✅ Create pricing comparison with interactive parameters
+
+- [ ] Implement Saving & Sharing for Comparisons:
+  1. [ ] Create saved_comparison.dart model
+  2. [ ] Implement ComparisonSavingProvider for managing saved comparisons
+  3. [ ] Add "Save Comparison" functionality to comparison screen
+  4. [ ] Create SavedComparisonsScreen to view and manage saved comparisons
+  5. [ ] Implement comparison sharing (PDF export, email, etc.)
+  6. [ ] Add comparison notes and annotations
 
 - [ ] Create barrel files for modules with 4 or more imports:
   1. [ ] Identify remaining modules that need barrel files
