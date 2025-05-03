@@ -85,7 +85,10 @@ void main() {
       expect(message.content, equals('Test message'));
       expect(message.timestamp, equals(timestamp));
       expect(message.isFromUser, isTrue);
-      expect(message.attachments, equals(['attachment1.jpg', 'attachment2.pdf']));
+      expect(
+        message.attachments,
+        equals(['attachment1.jpg', 'attachment2.pdf']),
+      );
       expect(message.isRead, isTrue);
     });
   });

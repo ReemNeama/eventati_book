@@ -5,59 +5,60 @@ import 'package:eventati_book/models/milestone.dart';
 class MilestoneCelebrationOverlay extends StatefulWidget {
   /// The milestone that was completed
   final Milestone milestone;
-  
+
   /// Callback when the celebration is dismissed
   final VoidCallback onDismiss;
-  
+
   const MilestoneCelebrationOverlay({
     super.key,
     required this.milestone,
     required this.onDismiss,
   });
-  
+
   @override
-  State<MilestoneCelebrationOverlay> createState() => _MilestoneCelebrationOverlayState();
+  State<MilestoneCelebrationOverlay> createState() =>
+      _MilestoneCelebrationOverlayState();
 }
 
-class _MilestoneCelebrationOverlayState extends State<MilestoneCelebrationOverlay> with SingleTickerProviderStateMixin {
+class _MilestoneCelebrationOverlayState
+    extends State<MilestoneCelebrationOverlay>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
   late Animation<double> _opacityAnimation;
-  
+
   @override
   void initState() {
     super.initState();
-    
+
     // Initialize animations
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1000),
     );
-    
-    _scaleAnimation = Tween<double>(begin: 0.5, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: Curves.elasticOut,
-      ),
-    );
-    
+
+    _scaleAnimation = Tween<double>(
+      begin: 0.5,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.elasticOut));
+
     _opacityAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _controller,
         curve: const Interval(0.0, 0.5, curve: Curves.easeIn),
       ),
     );
-    
+
     // Start animation
     _controller.forward();
   }
-  
+
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -94,13 +95,9 @@ class _MilestoneCelebrationOverlayState extends State<MilestoneCelebrationOverla
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   // Confetti icon
-                  const Icon(
-                    Icons.celebration,
-                    size: 48,
-                    color: Colors.amber,
-                  ),
+                  const Icon(Icons.celebration, size: 48, color: Colors.amber),
                   const SizedBox(height: 16),
-                  
+
                   // Milestone achieved text
                   const Text(
                     'Milestone Achieved!',
@@ -112,7 +109,7 @@ class _MilestoneCelebrationOverlayState extends State<MilestoneCelebrationOverla
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 16),
-                  
+
                   // Milestone icon and title
                   Icon(
                     widget.milestone.icon,
@@ -130,18 +127,15 @@ class _MilestoneCelebrationOverlayState extends State<MilestoneCelebrationOverla
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 8),
-                  
+
                   // Reward text
                   Text(
                     widget.milestone.rewardText,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: Colors.black54,
-                    ),
+                    style: const TextStyle(fontSize: 16, color: Colors.black54),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 16),
-                  
+
                   // Points
                   Container(
                     padding: const EdgeInsets.symmetric(
@@ -155,11 +149,7 @@ class _MilestoneCelebrationOverlayState extends State<MilestoneCelebrationOverla
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(
-                          Icons.star,
-                          color: Colors.white,
-                          size: 20,
-                        ),
+                        const Icon(Icons.star, color: Colors.white, size: 20),
                         const SizedBox(width: 8),
                         Text(
                           '+${widget.milestone.points} points',
@@ -173,7 +163,7 @@ class _MilestoneCelebrationOverlayState extends State<MilestoneCelebrationOverla
                     ),
                   ),
                   const SizedBox(height: 24),
-                  
+
                   // Dismiss button
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(

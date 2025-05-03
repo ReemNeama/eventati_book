@@ -13,36 +13,34 @@ import 'package:eventati_book/widgets/milestones/milestone_celebration_overlay.d
 class MilestoneScreen extends StatefulWidget {
   /// The event ID
   final String eventId;
-  
-  const MilestoneScreen({
-    super.key,
-    required this.eventId,
-  });
-  
+
+  const MilestoneScreen({super.key, required this.eventId});
+
   @override
   State<MilestoneScreen> createState() => _MilestoneScreenState();
 }
 
-class _MilestoneScreenState extends State<MilestoneScreen> with SingleTickerProviderStateMixin {
+class _MilestoneScreenState extends State<MilestoneScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  
+
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 6, vsync: this);
   }
-  
+
   @override
   void dispose() {
     _tabController.dispose();
     super.dispose();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     final isDarkMode = UIUtils.isDarkMode(context);
     final primaryColor = isDarkMode ? AppColorsDark.primary : AppColors.primary;
-    
+
     return Consumer<MilestoneProvider>(
       builder: (context, milestoneProvider, _) {
         if (milestoneProvider.isLoading) {
@@ -50,16 +48,20 @@ class _MilestoneScreenState extends State<MilestoneScreen> with SingleTickerProv
             body: Center(child: CircularProgressIndicator()),
           );
         }
-        
+
         // Check for newly completed milestones
         final newlyCompleted = milestoneProvider.newlyCompletedMilestones;
         if (newlyCompleted.isNotEmpty) {
           // Show celebration overlay for the first newly completed milestone
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            _showMilestoneCelebration(context, newlyCompleted.first, milestoneProvider);
+            _showMilestoneCelebration(
+              context,
+              newlyCompleted.first,
+              milestoneProvider,
+            );
           });
         }
-        
+
         return Scaffold(
           appBar: AppBar(
             title: const Text('Milestones & Achievements'),
@@ -100,11 +102,7 @@ class _MilestoneScreenState extends State<MilestoneScreen> with SingleTickerProv
                           const SizedBox(height: 4),
                           Row(
                             children: [
-                              Icon(
-                                Icons.star,
-                                color: primaryColor,
-                                size: 20,
-                              ),
+                              Icon(Icons.star, color: primaryColor, size: 20),
                               const SizedBox(width: 4),
                               Text(
                                 '${milestoneProvider.totalPoints}',
@@ -119,7 +117,7 @@ class _MilestoneScreenState extends State<MilestoneScreen> with SingleTickerProv
                         ],
                       ),
                     ),
-                    
+
                     // Completion progress
                     Expanded(
                       child: Column(
@@ -146,7 +144,7 @@ class _MilestoneScreenState extends State<MilestoneScreen> with SingleTickerProv
                   ],
                 ),
               ),
-              
+
               // Milestone tabs
               Expanded(
                 child: TabBarView(
@@ -155,37 +153,59 @@ class _MilestoneScreenState extends State<MilestoneScreen> with SingleTickerProv
                     // All milestones
                     MilestoneGrid(
                       milestones: milestoneProvider.milestones,
-                      onMilestoneTap: (milestone) => _showMilestoneDetails(context, milestone),
+                      onMilestoneTap:
+                          (milestone) =>
+                              _showMilestoneDetails(context, milestone),
                     ),
-                    
+
                     // Planning milestones
                     MilestoneGrid(
-                      milestones: milestoneProvider.getMilestonesByCategory(MilestoneCategory.planning),
-                      onMilestoneTap: (milestone) => _showMilestoneDetails(context, milestone),
+                      milestones: milestoneProvider.getMilestonesByCategory(
+                        MilestoneCategory.planning,
+                      ),
+                      onMilestoneTap:
+                          (milestone) =>
+                              _showMilestoneDetails(context, milestone),
                     ),
-                    
+
                     // Budget milestones
                     MilestoneGrid(
-                      milestones: milestoneProvider.getMilestonesByCategory(MilestoneCategory.budget),
-                      onMilestoneTap: (milestone) => _showMilestoneDetails(context, milestone),
+                      milestones: milestoneProvider.getMilestonesByCategory(
+                        MilestoneCategory.budget,
+                      ),
+                      onMilestoneTap:
+                          (milestone) =>
+                              _showMilestoneDetails(context, milestone),
                     ),
-                    
+
                     // Guest milestones
                     MilestoneGrid(
-                      milestones: milestoneProvider.getMilestonesByCategory(MilestoneCategory.guests),
-                      onMilestoneTap: (milestone) => _showMilestoneDetails(context, milestone),
+                      milestones: milestoneProvider.getMilestonesByCategory(
+                        MilestoneCategory.guests,
+                      ),
+                      onMilestoneTap:
+                          (milestone) =>
+                              _showMilestoneDetails(context, milestone),
                     ),
-                    
+
                     // Services milestones
                     MilestoneGrid(
-                      milestones: milestoneProvider.getMilestonesByCategory(MilestoneCategory.services),
-                      onMilestoneTap: (milestone) => _showMilestoneDetails(context, milestone),
+                      milestones: milestoneProvider.getMilestonesByCategory(
+                        MilestoneCategory.services,
+                      ),
+                      onMilestoneTap:
+                          (milestone) =>
+                              _showMilestoneDetails(context, milestone),
                     ),
-                    
+
                     // Timeline milestones
                     MilestoneGrid(
-                      milestones: milestoneProvider.getMilestonesByCategory(MilestoneCategory.timeline),
-                      onMilestoneTap: (milestone) => _showMilestoneDetails(context, milestone),
+                      milestones: milestoneProvider.getMilestonesByCategory(
+                        MilestoneCategory.timeline,
+                      ),
+                      onMilestoneTap:
+                          (milestone) =>
+                              _showMilestoneDetails(context, milestone),
                     ),
                   ],
                 ),
@@ -196,7 +216,7 @@ class _MilestoneScreenState extends State<MilestoneScreen> with SingleTickerProv
       },
     );
   }
-  
+
   /// Show milestone details dialog
   void _showMilestoneDetails(BuildContext context, Milestone milestone) {
     showDialog(
@@ -204,7 +224,7 @@ class _MilestoneScreenState extends State<MilestoneScreen> with SingleTickerProv
       builder: (context) => MilestoneDetailDialog(milestone: milestone),
     );
   }
-  
+
   /// Show milestone celebration overlay
   void _showMilestoneCelebration(
     BuildContext context,

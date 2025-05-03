@@ -5,14 +5,12 @@ import '../../helpers/simple_test_helpers.dart';
 
 void main() {
   group('LoadingIndicator Widget Tests', () {
-    testWidgets('should render with default properties', (WidgetTester tester) async {
+    testWidgets('should render with default properties', (
+      WidgetTester tester,
+    ) async {
       // Arrange & Act
-      await tester.pumpWidget(
-        wrapWithMaterialApp(
-          const LoadingIndicator(),
-        ),
-      );
-      
+      await tester.pumpWidget(wrapWithMaterialApp(const LoadingIndicator()));
+
       // Assert
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
       expect(find.byType(Text), findsNothing); // No message by default
@@ -21,14 +19,12 @@ void main() {
     testWidgets('should render with message', (WidgetTester tester) async {
       // Arrange
       const testMessage = 'Loading...';
-      
+
       // Act
       await tester.pumpWidget(
-        wrapWithMaterialApp(
-          const LoadingIndicator(message: testMessage),
-        ),
+        wrapWithMaterialApp(const LoadingIndicator(message: testMessage)),
       );
-      
+
       // Assert
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
       expect(find.text(testMessage), findsOneWidget);
@@ -37,17 +33,15 @@ void main() {
     testWidgets('should render with custom size', (WidgetTester tester) async {
       // Arrange
       const customSize = 60.0;
-      
+
       // Act
       await tester.pumpWidget(
-        wrapWithMaterialApp(
-          const LoadingIndicator(size: customSize),
-        ),
+        wrapWithMaterialApp(const LoadingIndicator(size: customSize)),
       );
-      
+
       // Assert
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
-      
+
       // Find the SizedBox that wraps the CircularProgressIndicator
       final sizedBox = tester.widget<SizedBox>(
         find.ancestor(
@@ -55,7 +49,7 @@ void main() {
           matching: find.byType(SizedBox),
         ),
       );
-      
+
       // Verify the size
       expect(sizedBox.width, equals(customSize));
       expect(sizedBox.height, equals(customSize));

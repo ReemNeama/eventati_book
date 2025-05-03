@@ -9,21 +9,16 @@ import 'package:eventati_book/utils/utils.dart';
 class MilestoneDetailDialog extends StatelessWidget {
   /// The milestone to display
   final Milestone milestone;
-  
-  const MilestoneDetailDialog({
-    super.key,
-    required this.milestone,
-  });
-  
+
+  const MilestoneDetailDialog({super.key, required this.milestone});
+
   @override
   Widget build(BuildContext context) {
     final isDarkMode = UIUtils.isDarkMode(context);
     final primaryColor = isDarkMode ? AppColorsDark.primary : AppColors.primary;
-    
+
     return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -33,27 +28,22 @@ class MilestoneDetailDialog extends StatelessWidget {
             Icon(
               milestone.icon,
               size: 48,
-              color: milestone.status == MilestoneStatus.completed
-                  ? primaryColor
-                  : Colors.grey[400],
+              color:
+                  milestone.status == MilestoneStatus.completed
+                      ? primaryColor
+                      : Colors.grey[400],
             ),
             const SizedBox(height: 16),
             Text(
               milestone.title,
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
-            
+
             // Status badge
             Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 12,
-                vertical: 6,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
                 color: _getStatusColor(milestone.status, isDarkMode),
                 borderRadius: BorderRadius.circular(16),
@@ -63,14 +53,17 @@ class MilestoneDetailDialog extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
-                  color: milestone.status == MilestoneStatus.completed
-                      ? Colors.white
-                      : isDarkMode ? Colors.white : Colors.black87,
+                  color:
+                      milestone.status == MilestoneStatus.completed
+                          ? Colors.white
+                          : isDarkMode
+                          ? Colors.white
+                          : Colors.black87,
                 ),
               ),
             ),
             const SizedBox(height: 16),
-            
+
             // Description
             Text(
               milestone.description,
@@ -81,16 +74,12 @@ class MilestoneDetailDialog extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
-            
+
             // Points
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.star,
-                  color: primaryColor,
-                  size: 20,
-                ),
+                Icon(Icons.star, color: primaryColor, size: 20),
                 const SizedBox(width: 4),
                 Text(
                   '${milestone.points} points',
@@ -102,9 +91,10 @@ class MilestoneDetailDialog extends StatelessWidget {
                 ),
               ],
             ),
-            
+
             // Completion date for completed milestones
-            if (milestone.status == MilestoneStatus.completed && milestone.completedDate != null)
+            if (milestone.status == MilestoneStatus.completed &&
+                milestone.completedDate != null)
               Padding(
                 padding: const EdgeInsets.only(top: 16),
                 child: Text(
@@ -115,9 +105,9 @@ class MilestoneDetailDialog extends StatelessWidget {
                   ),
                 ),
               ),
-            
+
             const SizedBox(height: 24),
-            
+
             // Close button
             ElevatedButton(
               style: ElevatedButton.styleFrom(
@@ -133,10 +123,7 @@ class MilestoneDetailDialog extends StatelessWidget {
               onPressed: () => Navigator.of(context).pop(),
               child: const Text(
                 'Close',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ),
           ],
@@ -144,7 +131,7 @@ class MilestoneDetailDialog extends StatelessWidget {
       ),
     );
   }
-  
+
   /// Get color for milestone status
   Color _getStatusColor(MilestoneStatus status, bool isDarkMode) {
     switch (status) {
@@ -156,7 +143,7 @@ class MilestoneDetailDialog extends StatelessWidget {
         return isDarkMode ? Colors.grey[800]! : Colors.grey[300]!;
     }
   }
-  
+
   /// Get text for milestone status
   String _getStatusText(MilestoneStatus status) {
     switch (status) {

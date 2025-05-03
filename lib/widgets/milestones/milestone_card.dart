@@ -9,26 +9,22 @@ import 'package:eventati_book/utils/utils.dart';
 class MilestoneCard extends StatelessWidget {
   /// The milestone to display
   final Milestone milestone;
-  
+
   /// Callback when the milestone is tapped
   final VoidCallback? onTap;
-  
-  const MilestoneCard({
-    super.key,
-    required this.milestone,
-    this.onTap,
-  });
-  
+
+  const MilestoneCard({super.key, required this.milestone, this.onTap});
+
   @override
   Widget build(BuildContext context) {
     final isDarkMode = UIUtils.isDarkMode(context);
     final primaryColor = isDarkMode ? AppColorsDark.primary : AppColors.primary;
-    
+
     // Determine the card color based on milestone status
     Color cardColor;
     Color textColor;
     Color iconColor;
-    
+
     switch (milestone.status) {
       case MilestoneStatus.completed:
         cardColor = primaryColor;
@@ -46,15 +42,16 @@ class MilestoneCard extends StatelessWidget {
         iconColor = isDarkMode ? Colors.grey[600]! : Colors.grey[400]!;
         break;
     }
-    
+
     return Card(
       elevation: milestone.status == MilestoneStatus.completed ? 4 : 1,
       color: cardColor,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: milestone.status == MilestoneStatus.unlocked
-            ? BorderSide(color: primaryColor, width: 2)
-            : BorderSide.none,
+        side:
+            milestone.status == MilestoneStatus.unlocked
+                ? BorderSide(color: primaryColor, width: 2)
+                : BorderSide.none,
       ),
       child: InkWell(
         onTap: onTap,
@@ -65,13 +62,9 @@ class MilestoneCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               // Icon
-              Icon(
-                milestone.icon,
-                size: 40,
-                color: iconColor,
-              ),
+              Icon(milestone.icon, size: 40, color: iconColor),
               const SizedBox(height: 12),
-              
+
               // Title
               Text(
                 milestone.title,
@@ -83,17 +76,15 @@ class MilestoneCard extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 8),
-              
+
               // Points
               Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 8,
-                  vertical: 4,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: milestone.status == MilestoneStatus.completed
-                      ? Colors.white.withAlpha(50)
-                      : primaryColor.withAlpha(50),
+                  color:
+                      milestone.status == MilestoneStatus.completed
+                          ? Colors.white.withAlpha(50)
+                          : primaryColor.withAlpha(50),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -101,15 +92,17 @@ class MilestoneCard extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
-                    color: milestone.status == MilestoneStatus.completed
-                        ? Colors.white
-                        : primaryColor,
+                    color:
+                        milestone.status == MilestoneStatus.completed
+                            ? Colors.white
+                            : primaryColor,
                   ),
                 ),
               ),
-              
+
               // Completion date for completed milestones
-              if (milestone.status == MilestoneStatus.completed && milestone.completedDate != null)
+              if (milestone.status == MilestoneStatus.completed &&
+                  milestone.completedDate != null)
                 Padding(
                   padding: const EdgeInsets.only(top: 8),
                   child: Text(

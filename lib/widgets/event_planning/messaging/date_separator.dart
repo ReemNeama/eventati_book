@@ -5,16 +5,13 @@ import 'package:intl/intl.dart';
 class DateSeparator extends StatelessWidget {
   final DateTime date;
 
-  const DateSeparator({
-    super.key,
-    required this.date,
-  });
+  const DateSeparator({super.key, required this.date});
 
   @override
   Widget build(BuildContext context) {
     final isDarkMode = UIUtils.isDarkMode(context);
     final dateString = DateFormat('MMMM d, yyyy').format(date);
-    
+
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 16),
       child: Row(

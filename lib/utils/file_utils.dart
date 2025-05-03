@@ -80,37 +80,42 @@ class FileUtils {
   /// Format bytes to a human-readable string
   static String formatBytes(int bytes) {
     if (bytes <= 0) return '0 B';
-    
+
     const suffixes = ['B', 'KB', 'MB', 'GB', 'TB'];
     final i = (log(bytes) / log(1024)).floor();
-    
+
     return '${(bytes / pow(1024, i)).toStringAsFixed(2)} ${suffixes[i]}';
   }
 
   /// Create a directory if it doesn't exist
-  static Future<Directory> createDirectoryIfNotExists(String directoryPath) async {
+  static Future<Directory> createDirectoryIfNotExists(
+    String directoryPath,
+  ) async {
     final directory = Directory(directoryPath);
-    
+
     if (await directory.exists()) {
       return directory;
     }
-    
+
     return await directory.create(recursive: true);
   }
 
   /// List all files in a directory
   static Future<List<FileSystemEntity>> listFiles(String directoryPath) async {
     final directory = Directory(directoryPath);
-    
+
     if (!await directory.exists()) {
       return [];
     }
-    
+
     return directory.listSync();
   }
 
   /// Copy a file to a new location
-  static Future<File> copyFile(String sourcePath, String destinationPath) async {
+  static Future<File> copyFile(
+    String sourcePath,
+    String destinationPath,
+  ) async {
     final sourceFile = File(sourcePath);
     return sourceFile.copy(destinationPath);
   }

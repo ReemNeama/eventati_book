@@ -5,11 +5,7 @@ class BudgetCategory {
   final String name;
   final IconData icon;
 
-  BudgetCategory({
-    required this.id,
-    required this.name,
-    required this.icon,
-  });
+  BudgetCategory({required this.id, required this.name, required this.icon});
 }
 
 class BudgetItem {

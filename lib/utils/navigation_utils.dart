@@ -11,7 +11,10 @@ class NavigationUtils {
   }
 
   /// Navigate to a screen and replace the current screen
-  static Future<T?> navigateToReplacement<T>(BuildContext context, Widget screen) {
+  static Future<T?> navigateToReplacement<T>(
+    BuildContext context,
+    Widget screen,
+  ) {
     return Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => screen),
@@ -19,7 +22,10 @@ class NavigationUtils {
   }
 
   /// Navigate to a screen and remove all previous screens
-  static Future<T?> navigateAndRemoveUntil<T>(BuildContext context, Widget screen) {
+  static Future<T?> navigateAndRemoveUntil<T>(
+    BuildContext context,
+    Widget screen,
+  ) {
     return Navigator.pushAndRemoveUntil<T>(
       context,
       MaterialPageRoute(builder: (context) => screen),
@@ -28,16 +34,20 @@ class NavigationUtils {
   }
 
   /// Navigate to a named route
-  static Future<T?> navigateToNamed<T>(BuildContext context, String routeName, {Object? arguments}) {
-    return Navigator.pushNamed<T>(
-      context,
-      routeName,
-      arguments: arguments,
-    );
+  static Future<T?> navigateToNamed<T>(
+    BuildContext context,
+    String routeName, {
+    Object? arguments,
+  }) {
+    return Navigator.pushNamed<T>(context, routeName, arguments: arguments);
   }
 
   /// Navigate to a named route and replace the current screen
-  static Future<T?> navigateToNamedReplacement<T>(BuildContext context, String routeName, {Object? arguments}) {
+  static Future<T?> navigateToNamedReplacement<T>(
+    BuildContext context,
+    String routeName, {
+    Object? arguments,
+  }) {
     return Navigator.pushReplacementNamed<T, dynamic>(
       context,
       routeName,
@@ -46,7 +56,11 @@ class NavigationUtils {
   }
 
   /// Navigate to a named route and remove all previous screens
-  static Future<T?> navigateToNamedAndRemoveUntil<T>(BuildContext context, String routeName, {Object? arguments}) {
+  static Future<T?> navigateToNamedAndRemoveUntil<T>(
+    BuildContext context,
+    String routeName, {
+    Object? arguments,
+  }) {
     return Navigator.pushNamedAndRemoveUntil<T>(
       context,
       routeName,

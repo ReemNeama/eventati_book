@@ -7,13 +7,13 @@ import 'package:eventati_book/utils/utils.dart';
 class ErrorScreen extends StatelessWidget {
   /// The error message to display
   final String message;
-  
+
   /// Optional error details
   final String? details;
-  
+
   /// Optional retry callback
   final VoidCallback? onRetry;
-  
+
   /// Optional home navigation callback
   final VoidCallback? onGoHome;
 
@@ -31,7 +31,7 @@ class ErrorScreen extends StatelessWidget {
     final errorColor = isDarkMode ? AppColorsDark.error : AppColors.error;
     final primaryColor = isDarkMode ? AppColorsDark.primary : AppColors.primary;
     final backgroundColor = isDarkMode ? Colors.grey[900] : Colors.grey[100];
-    
+
     return Scaffold(
       backgroundColor: backgroundColor,
       body: SafeArea(

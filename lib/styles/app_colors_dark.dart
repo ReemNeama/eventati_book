@@ -15,6 +15,7 @@ class AppColorsDark {
     0xFF1E1E1E,
   ); // Slightly lighter than background
   static const Color card = Color(0xFF252525); // Card background
+  static const Color cardBackground = Color(0xFF252525); // Card background
 
   // Text colors
   static const Color textPrimary = Color(

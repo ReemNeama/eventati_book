@@ -30,9 +30,14 @@ class MilestoneFactory {
   }
 
   /// Create milestone instances for an event
-  static List<Milestone> createMilestonesForEvent(String eventId, String eventType) {
+  static List<Milestone> createMilestonesForEvent(
+    String eventId,
+    String eventType,
+  ) {
     final templates = getTemplatesForEventType(eventType);
-    return templates.map((template) => Milestone.fromTemplate(template, eventId)).toList();
+    return templates
+        .map((template) => Milestone.fromTemplate(template, eventId))
+        .toList();
   }
 
   /// Get common milestone templates applicable to all event types

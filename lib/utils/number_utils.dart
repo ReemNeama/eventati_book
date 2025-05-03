@@ -3,7 +3,11 @@ import 'package:intl/intl.dart';
 /// Utility functions for number operations
 class NumberUtils {
   /// Format a number as currency
-  static String formatCurrency(double amount, {String symbol = '\$', int decimalPlaces = 2}) {
+  static String formatCurrency(
+    double amount, {
+    String symbol = '\$',
+    int decimalPlaces = 2,
+  }) {
     final formatter = NumberFormat.currency(
       symbol: symbol,
       decimalDigits: decimalPlaces,
@@ -46,12 +50,16 @@ class NumberUtils {
     if (number % 100 >= 11 && number % 100 <= 13) {
       return '${number}th';
     }
-    
+
     switch (number % 10) {
-      case 1: return '${number}st';
-      case 2: return '${number}nd';
-      case 3: return '${number}rd';
-      default: return '${number}th';
+      case 1:
+        return '${number}st';
+      case 2:
+        return '${number}nd';
+      case 3:
+        return '${number}rd';
+      default:
+        return '${number}th';
     }
   }
 }

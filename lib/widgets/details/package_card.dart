@@ -31,9 +31,8 @@ class PackageCard extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(
-          color: isSelected 
-              ? Theme.of(context).primaryColor 
-              : Colors.transparent,
+          color:
+              isSelected ? Theme.of(context).primaryColor : Colors.transparent,
           width: 2,
         ),
       ),
@@ -76,39 +75,39 @@ class PackageCard extends StatelessWidget {
               const SizedBox(height: 16),
               const Text(
                 'Included Services:',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
-              ...includedItems.map((item) => Padding(
-                    padding: const EdgeInsets.only(bottom: 4),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.check_circle, size: 16),
-                        const SizedBox(width: 8),
-                        Expanded(child: Text(item)),
-                      ],
-                    ),
-                  )),
+              ...includedItems.map(
+                (item) => Padding(
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.check_circle, size: 16),
+                      const SizedBox(width: 8),
+                      Expanded(child: Text(item)),
+                    ],
+                  ),
+                ),
+              ),
               const SizedBox(height: 16),
               const Text(
                 'Additional Features:',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
-              ...additionalFeatures.map((feature) => Padding(
-                    padding: const EdgeInsets.only(bottom: 4),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.add_circle, size: 16),
-                        const SizedBox(width: 8),
-                        Expanded(child: Text(feature)),
-                      ],
-                    ),
-                  )),
+              ...additionalFeatures.map(
+                (feature) => Padding(
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.add_circle, size: 16),
+                      const SizedBox(width: 8),
+                      Expanded(child: Text(feature)),
+                    ],
+                  ),
+                ),
+              ),
               const SizedBox(height: 16),
               if (isSelected)
                 Container(

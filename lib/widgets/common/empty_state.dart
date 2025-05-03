@@ -7,10 +7,10 @@ import 'package:eventati_book/utils/utils.dart';
 enum EmptyStateDisplayType {
   /// Standard empty state with icon, title, and message
   standard,
-  
+
   /// Compact empty state with smaller icon and message
   compact,
-  
+
   /// Minimal empty state with just text
   minimal,
 }
@@ -19,22 +19,22 @@ enum EmptyStateDisplayType {
 class EmptyState extends StatelessWidget {
   /// The title to display
   final String title;
-  
+
   /// The message to display
   final String message;
-  
+
   /// The icon to display
   final IconData icon;
-  
+
   /// Optional action button text
   final String? actionText;
-  
+
   /// Optional action callback
   final VoidCallback? onAction;
-  
+
   /// Display type for the empty state
   final EmptyStateDisplayType displayType;
-  
+
   /// Optional custom illustration widget
   final Widget? illustration;
 
@@ -55,12 +55,22 @@ class EmptyState extends StatelessWidget {
     final primaryColor = isDarkMode ? AppColorsDark.primary : AppColors.primary;
     final textColor = isDarkMode ? Colors.white70 : Colors.black87;
     final secondaryTextColor = isDarkMode ? Colors.white54 : Colors.black54;
-    
+
     switch (displayType) {
       case EmptyStateDisplayType.standard:
-        return _buildStandardEmptyState(context, primaryColor, textColor, secondaryTextColor);
+        return _buildStandardEmptyState(
+          context,
+          primaryColor,
+          textColor,
+          secondaryTextColor,
+        );
       case EmptyStateDisplayType.compact:
-        return _buildCompactEmptyState(context, primaryColor, textColor, secondaryTextColor);
+        return _buildCompactEmptyState(
+          context,
+          primaryColor,
+          textColor,
+          secondaryTextColor,
+        );
       case EmptyStateDisplayType.minimal:
         return _buildMinimalEmptyState(context, textColor, secondaryTextColor);
     }
@@ -84,7 +94,10 @@ class EmptyState extends StatelessWidget {
               Icon(
                 icon,
                 size: 80,
-                color: UIUtils.isDarkMode(context) ? Colors.grey[600] : Colors.grey[400],
+                color:
+                    UIUtils.isDarkMode(context)
+                        ? Colors.grey[600]
+                        : Colors.grey[400],
                 semanticLabel: '$title icon',
               ),
             const SizedBox(height: 24),
@@ -100,10 +113,7 @@ class EmptyState extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               message,
-              style: TextStyle(
-                fontSize: 16,
-                color: secondaryTextColor,
-              ),
+              style: TextStyle(fontSize: 16, color: secondaryTextColor),
               textAlign: TextAlign.center,
             ),
             if (actionText != null && onAction != null) ...[
@@ -142,7 +152,10 @@ class EmptyState extends StatelessWidget {
             Icon(
               icon,
               size: 40,
-              color: UIUtils.isDarkMode(context) ? Colors.grey[600] : Colors.grey[400],
+              color:
+                  UIUtils.isDarkMode(context)
+                      ? Colors.grey[600]
+                      : Colors.grey[400],
               semanticLabel: '$title icon',
             ),
             const SizedBox(width: 16),
@@ -162,10 +175,7 @@ class EmptyState extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     message,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: secondaryTextColor,
-                    ),
+                    style: TextStyle(fontSize: 14, color: secondaryTextColor),
                   ),
                   if (actionText != null && onAction != null) ...[
                     const SizedBox(height: 8),
@@ -199,10 +209,7 @@ class EmptyState extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Text(
           message,
-          style: TextStyle(
-            fontSize: 14,
-            color: secondaryTextColor,
-          ),
+          style: TextStyle(fontSize: 14, color: secondaryTextColor),
           textAlign: TextAlign.center,
         ),
       ),

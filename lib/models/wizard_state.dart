@@ -5,52 +5,52 @@ import 'package:eventati_book/models/event_template.dart';
 class WizardState {
   /// The template for the event type
   final EventTemplate template;
-  
+
   /// Current step in the wizard
   final int currentStep;
-  
+
   /// Total number of steps in the wizard
   final int totalSteps;
-  
+
   /// Event name
   final String eventName;
-  
+
   /// Selected event subtype
   final String? selectedEventType;
-  
+
   /// Event date
   final DateTime? eventDate;
-  
+
   /// Expected number of guests
   final int? guestCount;
-  
+
   /// Selected services
   final Map<String, bool> selectedServices;
-  
+
   /// For business events: event duration in days
   final int eventDuration;
-  
+
   /// For business events: daily start time
   final TimeOfDay? dailyStartTime;
-  
+
   /// For business events: daily end time
   final TimeOfDay? dailyEndTime;
-  
+
   /// For business events: whether setup time is needed
   final bool needsSetup;
-  
+
   /// For business events: setup hours needed
   final int setupHours;
-  
+
   /// For business events: whether teardown time is needed
   final bool needsTeardown;
-  
+
   /// For business events: teardown hours needed
   final int teardownHours;
-  
+
   /// Whether the wizard has been completed
   final bool isCompleted;
-  
+
   /// When the wizard was last updated
   final DateTime lastUpdated;
 
@@ -72,9 +72,8 @@ class WizardState {
     this.teardownHours = 2,
     this.isCompleted = false,
     DateTime? lastUpdated,
-  }) : 
-    selectedServices = selectedServices ?? template.defaultServices,
-    lastUpdated = lastUpdated ?? DateTime.now();
+  }) : selectedServices = selectedServices ?? template.defaultServices,
+       lastUpdated = lastUpdated ?? DateTime.now();
 
   /// Create a copy of this state with modified fields
   WizardState copyWith({
@@ -150,12 +149,14 @@ class WizardState {
       'guestCount': guestCount,
       'selectedServices': selectedServices,
       'eventDuration': eventDuration,
-      'dailyStartTime': dailyStartTime != null 
-          ? '${dailyStartTime!.hour}:${dailyStartTime!.minute}' 
-          : null,
-      'dailyEndTime': dailyEndTime != null 
-          ? '${dailyEndTime!.hour}:${dailyEndTime!.minute}' 
-          : null,
+      'dailyStartTime':
+          dailyStartTime != null
+              ? '${dailyStartTime!.hour}:${dailyStartTime!.minute}'
+              : null,
+      'dailyEndTime':
+          dailyEndTime != null
+              ? '${dailyEndTime!.hour}:${dailyEndTime!.minute}'
+              : null,
       'needsSetup': needsSetup,
       'setupHours': setupHours,
       'needsTeardown': needsTeardown,
@@ -169,50 +170,52 @@ class WizardState {
   static WizardState? fromJson(Map<String, dynamic> json) {
     final templateId = json['templateId'];
     final template = EventTemplates.findById(templateId);
-    
+
     if (template == null) return null;
-    
+
     return WizardState(
       template: template,
       currentStep: json['currentStep'] ?? 0,
       totalSteps: json['totalSteps'] ?? 4,
       eventName: json['eventName'] ?? '',
       selectedEventType: json['selectedEventType'],
-      eventDate: json['eventDate'] != null 
-          ? DateTime.parse(json['eventDate']) 
-          : null,
+      eventDate:
+          json['eventDate'] != null ? DateTime.parse(json['eventDate']) : null,
       guestCount: json['guestCount'],
       selectedServices: Map<String, bool>.from(json['selectedServices'] ?? {}),
       eventDuration: json['eventDuration'] ?? 1,
-      dailyStartTime: json['dailyStartTime'] != null 
-          ? _timeOfDayFromString(json['dailyStartTime']) 
-          : null,
-      dailyEndTime: json['dailyEndTime'] != null 
-          ? _timeOfDayFromString(json['dailyEndTime']) 
-          : null,
+      dailyStartTime:
+          json['dailyStartTime'] != null
+              ? _timeOfDayFromString(json['dailyStartTime'])
+              : null,
+      dailyEndTime:
+          json['dailyEndTime'] != null
+              ? _timeOfDayFromString(json['dailyEndTime'])
+              : null,
       needsSetup: json['needsSetup'] ?? false,
       setupHours: json['setupHours'] ?? 2,
       needsTeardown: json['needsTeardown'] ?? false,
       teardownHours: json['teardownHours'] ?? 2,
       isCompleted: json['isCompleted'] ?? false,
-      lastUpdated: json['lastUpdated'] != null 
-          ? DateTime.parse(json['lastUpdated']) 
-          : DateTime.now(),
+      lastUpdated:
+          json['lastUpdated'] != null
+              ? DateTime.parse(json['lastUpdated'])
+              : DateTime.now(),
     );
   }
 
   /// Helper method to convert a string to TimeOfDay
   static TimeOfDay? _timeOfDayFromString(String? timeString) {
     if (timeString == null) return null;
-    
+
     final parts = timeString.split(':');
     if (parts.length != 2) return null;
-    
+
     final hour = int.tryParse(parts[0]);
     final minute = int.tryParse(parts[1]);
-    
+
     if (hour == null || minute == null) return null;
-    
+
     return TimeOfDay(hour: hour, minute: minute);
   }
 }

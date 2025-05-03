@@ -93,7 +93,10 @@ void main() {
       expect(fromJson.email, equals(user.email));
       expect(fromJson.phoneNumber, equals(user.phoneNumber));
       expect(fromJson.profileImageUrl, equals(user.profileImageUrl));
-      expect(fromJson.createdAt.toIso8601String(), equals(user.createdAt.toIso8601String()));
+      expect(
+        fromJson.createdAt.toIso8601String(),
+        equals(user.createdAt.toIso8601String()),
+      );
       expect(fromJson.favoriteVenues, equals(user.favoriteVenues));
       expect(fromJson.favoriteServices, equals(user.favoriteServices));
     });

@@ -25,19 +25,22 @@ class MessagingProvider extends ChangeNotifier {
   // Get all conversations
   List<Conversation> get conversations {
     return _vendors.map((vendor) {
-      final vendorMessages = getMessagesForVendor(vendor.id);
-      final hasUnread = vendorMessages.any((m) => !m.isRead && !m.isFromUser);
-      final lastMessageTime = vendorMessages.isNotEmpty 
-        ? vendorMessages.map((m) => m.timestamp).reduce((a, b) => a.isAfter(b) ? a : b)
-        : DateTime.now();
-      
-      return Conversation(
-        vendorId: vendor.id,
-        messages: vendorMessages,
-        lastMessageTime: lastMessageTime,
-        hasUnreadMessages: hasUnread,
-      );
-    }).toList()
+        final vendorMessages = getMessagesForVendor(vendor.id);
+        final hasUnread = vendorMessages.any((m) => !m.isRead && !m.isFromUser);
+        final lastMessageTime =
+            vendorMessages.isNotEmpty
+                ? vendorMessages
+                    .map((m) => m.timestamp)
+                    .reduce((a, b) => a.isAfter(b) ? a : b)
+                : DateTime.now();
+
+        return Conversation(
+          vendorId: vendor.id,
+          messages: vendorMessages,
+          lastMessageTime: lastMessageTime,
+          hasUnreadMessages: hasUnread,
+        );
+      }).toList()
       ..sort((a, b) => b.lastMessageTime.compareTo(a.lastMessageTime));
   }
 
@@ -60,14 +63,18 @@ class MessagingProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> sendMessage(String vendorId, String content, List<String>? attachments) async {
+  Future<void> sendMessage(
+    String vendorId,
+    String content,
+    List<String>? attachments,
+  ) async {
     _isLoading = true;
     notifyListeners();
 
     try {
       // In a real app, this would save to a database or API
       await Future.delayed(const Duration(milliseconds: 300));
-      
+
       final message = Message(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         vendorId: vendorId,
@@ -77,13 +84,13 @@ class MessagingProvider extends ChangeNotifier {
         attachments: attachments,
         isRead: true,
       );
-      
+
       if (_messages.containsKey(vendorId)) {
         _messages[vendorId]!.add(message);
       } else {
         _messages[vendorId] = [message];
       }
-      
+
       _isLoading = false;
       notifyListeners();
     } catch (e) {
@@ -95,23 +102,24 @@ class MessagingProvider extends ChangeNotifier {
 
   Future<void> markMessagesAsRead(String vendorId) async {
     if (!_messages.containsKey(vendorId)) return;
-    
-    final updatedMessages = _messages[vendorId]!.map((message) {
-      if (!message.isRead && !message.isFromUser) {
-        // Create a new message with isRead set to true
-        return Message(
-          id: message.id,
-          vendorId: message.vendorId,
-          content: message.content,
-          timestamp: message.timestamp,
-          isFromUser: message.isFromUser,
-          attachments: message.attachments,
-          isRead: true,
-        );
-      }
-      return message;
-    }).toList();
-    
+
+    final updatedMessages =
+        _messages[vendorId]!.map((message) {
+          if (!message.isRead && !message.isFromUser) {
+            // Create a new message with isRead set to true
+            return Message(
+              id: message.id,
+              vendorId: message.vendorId,
+              content: message.content,
+              timestamp: message.timestamp,
+              isFromUser: message.isFromUser,
+              attachments: message.attachments,
+              isRead: true,
+            );
+          }
+          return message;
+        }).toList();
+
     _messages[vendorId] = updatedMessages;
     notifyListeners();
   }
@@ -146,7 +154,7 @@ class MessagingProvider extends ChangeNotifier {
     ];
 
     final now = DateTime.now();
-    
+
     _messages = {
       '1': [
         Message(
@@ -160,7 +168,8 @@ class MessagingProvider extends ChangeNotifier {
         Message(
           id: '2',
           vendorId: '1',
-          content: 'Thank you for your interest! We\'d be happy to host your event. What date are you considering?',
+          content:
+              'Thank you for your interest! We\'d be happy to host your event. What date are you considering?',
           timestamp: now.subtract(const Duration(days: 5, hours: 2)),
           isFromUser: false,
           isRead: true,
@@ -176,7 +185,8 @@ class MessagingProvider extends ChangeNotifier {
         Message(
           id: '4',
           vendorId: '1',
-          content: 'Yes, June 15th is available. Would you like to schedule a tour?',
+          content:
+              'Yes, June 15th is available. Would you like to schedule a tour?',
           timestamp: now.subtract(const Duration(days: 4, hours: 23)),
           isFromUser: false,
           isRead: false,
@@ -194,7 +204,8 @@ class MessagingProvider extends ChangeNotifier {
         Message(
           id: '6',
           vendorId: '2',
-          content: 'Hello! We offer a variety of menu options. How many guests are you expecting?',
+          content:
+              'Hello! We offer a variety of menu options. How many guests are you expecting?',
           timestamp: now.subtract(const Duration(days: 3, hours: 4)),
           isFromUser: false,
           isRead: true,

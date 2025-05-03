@@ -48,10 +48,10 @@ class ResponsiveGridView extends StatelessWidget {
         // Calculate the number of columns based on available width
         final width = constraints.maxWidth;
         final crossAxisCount = (width / minItemWidth).floor();
-        
+
         // Ensure at least 1 column
         final columns = crossAxisCount > 0 ? crossAxisCount : 1;
-        
+
         return GridView.builder(
           padding: padding,
           shrinkWrap: shrinkWrap,

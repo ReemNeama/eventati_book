@@ -27,7 +27,10 @@ class ErrorHandlingUtils {
               },
               child: const Text(
                 'RETRY',
-                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ],
@@ -113,20 +116,20 @@ class ErrorHandlingUtils {
     if (exception is String) {
       return exception;
     }
-    
+
     // Handle common exceptions
     if (exception is FormatException) {
       return 'Invalid format: ${exception.message}';
     }
-    
+
     if (exception is TimeoutException) {
       return 'The operation timed out. Please try again.';
     }
-    
+
     if (exception is NetworkException) {
       return 'Network error: ${exception.message}';
     }
-    
+
     // Default message
     return exception?.toString() ?? 'An unknown error occurred';
   }
@@ -165,9 +168,9 @@ class ErrorHandlingUtils {
 /// Exception for network-related errors
 class NetworkException implements Exception {
   final String message;
-  
+
   NetworkException(this.message);
-  
+
   @override
   String toString() => 'NetworkException: $message';
 }
@@ -175,9 +178,9 @@ class NetworkException implements Exception {
 /// Exception for timeout errors
 class TimeoutException implements Exception {
   final String message;
-  
+
   TimeoutException(this.message);
-  
+
   @override
   String toString() => 'TimeoutException: $message';
 }

@@ -34,32 +34,32 @@ class ResponsiveLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    
+
     // Desktop layout
     if (size.shortestSide >= desktopBreakpoint && desktop != null) {
       return desktop!;
     }
-    
+
     // Tablet layout
     if (size.shortestSide >= tabletBreakpoint && tablet != null) {
       return tablet!;
     }
-    
+
     // Mobile layout (default)
     return mobile;
   }
-  
+
   /// Check if the current device is a mobile device.
   static bool isMobile(BuildContext context) {
     return MediaQuery.of(context).size.shortestSide < 600;
   }
-  
+
   /// Check if the current device is a tablet.
   static bool isTablet(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return size.shortestSide >= 600 && size.shortestSide < 900;
   }
-  
+
   /// Check if the current device is a desktop.
   static bool isDesktop(BuildContext context) {
     return MediaQuery.of(context).size.shortestSide >= 900;

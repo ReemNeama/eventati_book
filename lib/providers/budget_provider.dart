@@ -19,9 +19,13 @@ class BudgetProvider extends ChangeNotifier {
   String? get error => _error;
 
   // Calculated properties
-  double get totalEstimated => _items.fold(0, (sum, item) => sum + item.estimatedCost);
-  double get totalActual => _items.fold(0, (sum, item) => sum + (item.actualCost ?? 0));
-  double get totalPaid => _items.where((item) => item.isPaid).fold(0, (sum, item) => sum + (item.actualCost ?? 0));
+  double get totalEstimated =>
+      _items.fold(0, (sum, item) => sum + item.estimatedCost);
+  double get totalActual =>
+      _items.fold(0, (sum, item) => sum + (item.actualCost ?? 0));
+  double get totalPaid => _items
+      .where((item) => item.isPaid)
+      .fold(0, (sum, item) => sum + (item.actualCost ?? 0));
   double get totalRemaining => totalEstimated - totalPaid;
 
   // Get items by category
@@ -34,7 +38,10 @@ class BudgetProvider extends ChangeNotifier {
     final Map<String, double> totals = {};
     for (final category in _categories) {
       final categoryItems = getItemsByCategory(category.id);
-      totals[category.id] = categoryItems.fold(0, (sum, item) => sum + item.estimatedCost);
+      totals[category.id] = categoryItems.fold(
+        0,
+        (sum, item) => sum + item.estimatedCost,
+      );
     }
     return totals;
   }
@@ -122,7 +129,11 @@ class BudgetProvider extends ChangeNotifier {
       BudgetCategory(id: '4', name: 'Decoration', icon: Icons.celebration),
       BudgetCategory(id: '5', name: 'Entertainment', icon: Icons.music_note),
       BudgetCategory(id: '6', name: 'Attire', icon: Icons.checkroom),
-      BudgetCategory(id: '7', name: 'Transportation', icon: Icons.directions_car),
+      BudgetCategory(
+        id: '7',
+        name: 'Transportation',
+        icon: Icons.directions_car,
+      ),
       BudgetCategory(id: '8', name: 'Miscellaneous', icon: Icons.more_horiz),
     ];
 

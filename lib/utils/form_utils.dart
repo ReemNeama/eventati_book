@@ -130,4 +130,35 @@ class FormUtils {
   }) {
     return (value) => ValidationUtils.validateNumber(value, message: message);
   }
+
+  /// Direct validator for required fields
+  static String? validateRequired(String? value) {
+    return ValidationUtils.validateRequired(value);
+  }
+
+  /// Direct validator for email fields
+  static String? validateEmail(String? value) {
+    return ValidationUtils.validateEmail(value);
+  }
+
+  /// Direct validator for phone number fields
+  static String? validatePhone(String? value) {
+    return ValidationUtils.validatePhoneNumber(value);
+  }
+
+  /// Direct validator for number fields
+  static String? validateNumber(String? value) {
+    return ValidationUtils.validateNumber(value);
+  }
+
+  /// Direct validator for integer fields
+  static String? validateInteger(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'This field is required';
+    }
+    if (int.tryParse(value) == null) {
+      return 'Please enter a valid integer';
+    }
+    return null;
+  }
 }

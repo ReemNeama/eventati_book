@@ -6,15 +6,18 @@ import 'package:flutter/material.dart';
 /// different builder functions for different screen sizes.
 class ResponsiveBuilder extends StatelessWidget {
   /// Builder function for mobile devices (small screens).
-  final Widget Function(BuildContext context, BoxConstraints constraints) mobileBuilder;
+  final Widget Function(BuildContext context, BoxConstraints constraints)
+  mobileBuilder;
 
   /// Builder function for tablet devices (medium screens).
   /// If null, the mobile builder will be used.
-  final Widget Function(BuildContext context, BoxConstraints constraints)? tabletBuilder;
+  final Widget Function(BuildContext context, BoxConstraints constraints)?
+  tabletBuilder;
 
   /// Builder function for desktop devices (large screens).
   /// If null, the tablet builder will be used if available, otherwise the mobile builder.
-  final Widget Function(BuildContext context, BoxConstraints constraints)? desktopBuilder;
+  final Widget Function(BuildContext context, BoxConstraints constraints)?
+  desktopBuilder;
 
   /// The breakpoint for mobile to tablet transition (default: 600).
   final double tabletBreakpoint;
@@ -36,15 +39,16 @@ class ResponsiveBuilder extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         // Desktop layout
-        if (constraints.maxWidth >= desktopBreakpoint && desktopBuilder != null) {
+        if (constraints.maxWidth >= desktopBreakpoint &&
+            desktopBuilder != null) {
           return desktopBuilder!(context, constraints);
         }
-        
+
         // Tablet layout
         if (constraints.maxWidth >= tabletBreakpoint && tabletBuilder != null) {
           return tabletBuilder!(context, constraints);
         }
-        
+
         // Mobile layout (default)
         return mobileBuilder(context, constraints);
       },
@@ -58,11 +62,13 @@ class ResponsiveBuilder extends StatelessWidget {
 /// different builder functions for portrait and landscape orientations.
 class OrientationResponsiveBuilder extends StatelessWidget {
   /// Builder function for portrait orientation.
-  final Widget Function(BuildContext context, BoxConstraints constraints) portraitBuilder;
+  final Widget Function(BuildContext context, BoxConstraints constraints)
+  portraitBuilder;
 
   /// Builder function for landscape orientation.
   /// If null, the portrait builder will be used.
-  final Widget Function(BuildContext context, BoxConstraints constraints)? landscapeBuilder;
+  final Widget Function(BuildContext context, BoxConstraints constraints)?
+  landscapeBuilder;
 
   const OrientationResponsiveBuilder({
     super.key,
@@ -76,10 +82,11 @@ class OrientationResponsiveBuilder extends StatelessWidget {
       builder: (context, orientation) {
         return LayoutBuilder(
           builder: (context, constraints) {
-            if (orientation == Orientation.landscape && landscapeBuilder != null) {
+            if (orientation == Orientation.landscape &&
+                landscapeBuilder != null) {
               return landscapeBuilder!(context, constraints);
             }
-            
+
             return portraitBuilder(context, constraints);
           },
         );

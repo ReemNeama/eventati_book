@@ -43,7 +43,9 @@ class BudgetOverviewScreen extends StatelessWidget {
         body: Consumer<BudgetProvider>(
           builder: (context, budgetProvider, _) {
             if (budgetProvider.isLoading) {
-              return const Center(child: CircularProgressIndicator(color: Colors.white));
+              return const Center(
+                child: CircularProgressIndicator(color: Colors.white),
+              );
             }
 
             if (budgetProvider.error != null) {
@@ -79,10 +81,14 @@ class BudgetOverviewScreen extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => BudgetItemFormScreen(
-                  eventId: eventId,
-                  budgetProvider: Provider.of<BudgetProvider>(context, listen: false),
-                ),
+                builder:
+                    (context) => BudgetItemFormScreen(
+                      eventId: eventId,
+                      budgetProvider: Provider.of<BudgetProvider>(
+                        context,
+                        listen: false,
+                      ),
+                    ),
               ),
             );
           },
@@ -91,7 +97,10 @@ class BudgetOverviewScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildBudgetSummary(BuildContext context, BudgetProvider budgetProvider) {
+  Widget _buildBudgetSummary(
+    BuildContext context,
+    BudgetProvider budgetProvider,
+  ) {
     final isDarkMode = UIUtils.isDarkMode(context);
     final textColor = isDarkMode ? Colors.white : Colors.black;
     final primaryColor = isDarkMode ? AppColorsDark.primary : AppColors.primary;
@@ -106,14 +115,20 @@ class BudgetOverviewScreen extends StatelessWidget {
               _buildSummaryCard(
                 context,
                 'Estimated',
-                ServiceUtils.formatPrice(budgetProvider.totalEstimated, decimalPlaces: 0),
+                ServiceUtils.formatPrice(
+                  budgetProvider.totalEstimated,
+                  decimalPlaces: 0,
+                ),
                 Icons.calculate,
                 primaryColor,
               ),
               _buildSummaryCard(
                 context,
                 'Actual',
-                ServiceUtils.formatPrice(budgetProvider.totalActual, decimalPlaces: 0),
+                ServiceUtils.formatPrice(
+                  budgetProvider.totalActual,
+                  decimalPlaces: 0,
+                ),
                 Icons.receipt_long,
                 Colors.orange,
               ),
@@ -126,14 +141,20 @@ class BudgetOverviewScreen extends StatelessWidget {
               _buildSummaryCard(
                 context,
                 'Paid',
-                ServiceUtils.formatPrice(budgetProvider.totalPaid, decimalPlaces: 0),
+                ServiceUtils.formatPrice(
+                  budgetProvider.totalPaid,
+                  decimalPlaces: 0,
+                ),
                 Icons.check_circle,
                 Colors.green,
               ),
               _buildSummaryCard(
                 context,
                 'Remaining',
-                ServiceUtils.formatPrice(budgetProvider.totalRemaining, decimalPlaces: 0),
+                ServiceUtils.formatPrice(
+                  budgetProvider.totalRemaining,
+                  decimalPlaces: 0,
+                ),
                 Icons.pending,
                 Colors.red,
               ),
@@ -158,10 +179,11 @@ class BudgetOverviewScreen extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => BudgetDetailsScreen(
-                        eventId: eventId,
-                        eventName: eventName,
-                      ),
+                      builder:
+                          (context) => BudgetDetailsScreen(
+                            eventId: eventId,
+                            eventName: eventName,
+                          ),
                     ),
                   );
                 },
@@ -229,7 +251,10 @@ class BudgetOverviewScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildCategoryList(BuildContext context, BudgetProvider budgetProvider) {
+  Widget _buildCategoryList(
+    BuildContext context,
+    BudgetProvider budgetProvider,
+  ) {
     final isDarkMode = UIUtils.isDarkMode(context);
     final textColor = isDarkMode ? Colors.white : Colors.black;
     final categoryTotals = budgetProvider.getCategoryTotals();
@@ -242,11 +267,11 @@ class BudgetOverviewScreen extends StatelessWidget {
           final category = budgetProvider.categories[index];
           final categoryItems = budgetProvider.getItemsByCategory(category.id);
           final categoryTotal = categoryTotals[category.id] ?? 0;
-          
+
           if (categoryItems.isEmpty) {
             return const SizedBox.shrink();
           }
-          
+
           return Card(
             margin: const EdgeInsets.only(bottom: 12),
             elevation: 2,
@@ -259,15 +284,13 @@ class BudgetOverviewScreen extends StatelessWidget {
                 vertical: 8,
               ),
               leading: CircleAvatar(
-                backgroundColor: isDarkMode ? AppColorsDark.primary : AppColors.primary,
+                backgroundColor:
+                    isDarkMode ? AppColorsDark.primary : AppColors.primary,
                 child: Icon(category.icon, color: Colors.white, size: 20),
               ),
               title: Text(
                 category.name,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: textColor,
-                ),
+                style: TextStyle(fontWeight: FontWeight.bold, color: textColor),
               ),
               subtitle: Text(
                 '${categoryItems.length} items',
@@ -299,11 +322,12 @@ class BudgetOverviewScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => BudgetDetailsScreen(
-                      eventId: eventId,
-                      eventName: eventName,
-                      initialCategoryId: category.id,
-                    ),
+                    builder:
+                        (context) => BudgetDetailsScreen(
+                          eventId: eventId,
+                          eventName: eventName,
+                          initialCategoryId: category.id,
+                        ),
                   ),
                 );
               },

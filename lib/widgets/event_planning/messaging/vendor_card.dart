@@ -22,13 +22,14 @@ class VendorCard extends StatelessWidget {
     final cardColor = isDarkMode ? Colors.grey[800] : Colors.white;
     final textColor = isDarkMode ? Colors.white : Colors.black87;
     final subtitleColor = isDarkMode ? Colors.white70 : Colors.black54;
-    
+
     // Format the last message time
     final formatter = DateFormat('MMM d, h:mm a');
-    final timeString = conversation.messages.isNotEmpty
-        ? formatter.format(conversation.lastMessageTime)
-        : 'No messages';
-    
+    final timeString =
+        conversation.messages.isNotEmpty
+            ? formatter.format(conversation.lastMessageTime)
+            : 'No messages';
+
     return Card(
       margin: const EdgeInsets.only(bottom: 12.0),
       elevation: 2.0,
@@ -50,19 +51,13 @@ class VendorCard extends StatelessWidget {
         ),
         title: Text(
           vendor.name,
-          style: TextStyle(
-            color: textColor,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: textColor, fontWeight: FontWeight.bold),
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 4.0),
-            Text(
-              vendor.serviceType,
-              style: TextStyle(color: subtitleColor),
-            ),
+            Text(vendor.serviceType, style: TextStyle(color: subtitleColor)),
             if (vendor.contactPerson != null) ...[
               const SizedBox(height: 2.0),
               Text(
@@ -78,10 +73,7 @@ class VendorCard extends StatelessWidget {
           children: [
             Text(
               timeString,
-              style: TextStyle(
-                color: subtitleColor,
-                fontSize: 12.0,
-              ),
+              style: TextStyle(color: subtitleColor, fontSize: 12.0),
             ),
             const SizedBox(height: 4.0),
             if (conversation.hasUnreadMessages)

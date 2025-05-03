@@ -9,13 +9,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 enum AuthStatus {
   /// User is currently authenticating (logging in or registering)
   authenticating,
-  
+
   /// User is authenticated (logged in)
   authenticated,
-  
+
   /// User is not authenticated (logged out)
   unauthenticated,
-  
+
   /// Authentication error occurred
   error,
 }
@@ -24,28 +24,31 @@ enum AuthStatus {
 class AuthProvider with ChangeNotifier {
   /// Current authentication status
   AuthStatus _status = AuthStatus.unauthenticated;
-  
+
   /// Current user
   User? _user;
-  
+
   /// Authentication token
   String? _token;
-  
+
   /// Error message if authentication fails
   String? _errorMessage;
 
   /// Get current authentication status
   AuthStatus get status => _status;
-  
+
   /// Get current user
   User? get user => _user;
-  
+
+  /// Get current user (alias for user)
+  User? get currentUser => _user;
+
   /// Get authentication token
   String? get token => _token;
-  
+
   /// Get error message
   String? get errorMessage => _errorMessage;
-  
+
   /// Check if user is authenticated
   bool get isAuthenticated => _status == AuthStatus.authenticated;
 
@@ -53,7 +56,7 @@ class AuthProvider with ChangeNotifier {
   Future<void> initialize() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      
+
       // Check if token exists
       final token = prefs.getString(AppConstants.tokenKey);
       if (token == null) {
@@ -61,7 +64,7 @@ class AuthProvider with ChangeNotifier {
         notifyListeners();
         return;
       }
-      
+
       // Check if user data exists
       final userData = prefs.getString(AppConstants.userDataKey);
       if (userData == null) {
@@ -69,7 +72,7 @@ class AuthProvider with ChangeNotifier {
         notifyListeners();
         return;
       }
-      
+
       // Parse user data
       _user = User.fromJson(jsonDecode(userData));
       _token = token;
@@ -88,11 +91,11 @@ class AuthProvider with ChangeNotifier {
       _status = AuthStatus.authenticating;
       _errorMessage = null;
       notifyListeners();
-      
+
       // TODO: Replace with actual API call
       // Simulate API call delay
       await Future.delayed(const Duration(seconds: 1));
-      
+
       // For demo purposes, accept any email with a password length >= 6
       if (password.length < 6) {
         _status = AuthStatus.error;
@@ -100,7 +103,7 @@ class AuthProvider with ChangeNotifier {
         notifyListeners();
         return false;
       }
-      
+
       // Create mock user and token
       final user = User(
         id: 'user_${DateTime.now().millisecondsSinceEpoch}',
@@ -108,20 +111,23 @@ class AuthProvider with ChangeNotifier {
         email: email,
         createdAt: DateTime.now(),
       );
-      
+
       final token = 'mock_token_${DateTime.now().millisecondsSinceEpoch}';
-      
+
       // Save to shared preferences
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(AppConstants.tokenKey, token);
-      await prefs.setString(AppConstants.userDataKey, jsonEncode(user.toJson()));
-      
+      await prefs.setString(
+        AppConstants.userDataKey,
+        jsonEncode(user.toJson()),
+      );
+
       // Update state
       _user = user;
       _token = token;
       _status = AuthStatus.authenticated;
       notifyListeners();
-      
+
       return true;
     } catch (e) {
       _status = AuthStatus.error;
@@ -137,11 +143,11 @@ class AuthProvider with ChangeNotifier {
       _status = AuthStatus.authenticating;
       _errorMessage = null;
       notifyListeners();
-      
+
       // TODO: Replace with actual API call
       // Simulate API call delay
       await Future.delayed(const Duration(seconds: 1));
-      
+
       // Create mock user and token
       final user = User(
         id: 'user_${DateTime.now().millisecondsSinceEpoch}',
@@ -149,20 +155,23 @@ class AuthProvider with ChangeNotifier {
         email: email,
         createdAt: DateTime.now(),
       );
-      
+
       final token = 'mock_token_${DateTime.now().millisecondsSinceEpoch}';
-      
+
       // Save to shared preferences
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(AppConstants.tokenKey, token);
-      await prefs.setString(AppConstants.userDataKey, jsonEncode(user.toJson()));
-      
+      await prefs.setString(
+        AppConstants.userDataKey,
+        jsonEncode(user.toJson()),
+      );
+
       // Update state
       _user = user;
       _token = token;
       _status = AuthStatus.authenticated;
       notifyListeners();
-      
+
       return true;
     } catch (e) {
       _status = AuthStatus.error;
@@ -179,7 +188,7 @@ class AuthProvider with ChangeNotifier {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove(AppConstants.tokenKey);
       await prefs.remove(AppConstants.userDataKey);
-      
+
       // Update state
       _user = null;
       _token = null;
@@ -198,7 +207,7 @@ class AuthProvider with ChangeNotifier {
       // TODO: Replace with actual API call
       // Simulate API call delay
       await Future.delayed(const Duration(seconds: 1));
-      
+
       // For demo purposes, always return success
       return true;
     } catch (e) {
@@ -220,26 +229,29 @@ class AuthProvider with ChangeNotifier {
         notifyListeners();
         return false;
       }
-      
+
       // TODO: Replace with actual API call
       // Simulate API call delay
       await Future.delayed(const Duration(seconds: 1));
-      
+
       // Update user
       final updatedUser = _user!.copyWith(
         name: name,
         phoneNumber: phoneNumber,
         profileImageUrl: profileImageUrl,
       );
-      
+
       // Save to shared preferences
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(AppConstants.userDataKey, jsonEncode(updatedUser.toJson()));
-      
+      await prefs.setString(
+        AppConstants.userDataKey,
+        jsonEncode(updatedUser.toJson()),
+      );
+
       // Update state
       _user = updatedUser;
       notifyListeners();
-      
+
       return true;
     } catch (e) {
       _errorMessage = 'Profile update failed: ${e.toString()}';
@@ -256,24 +268,28 @@ class AuthProvider with ChangeNotifier {
         notifyListeners();
         return false;
       }
-      
+
       // Check if already in favorites
       if (_user!.favoriteVenues.contains(venueId)) {
         return true;
       }
-      
+
       // Add to favorites
-      final updatedFavorites = List<String>.from(_user!.favoriteVenues)..add(venueId);
+      final updatedFavorites = List<String>.from(_user!.favoriteVenues)
+        ..add(venueId);
       final updatedUser = _user!.copyWith(favoriteVenues: updatedFavorites);
-      
+
       // Save to shared preferences
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(AppConstants.userDataKey, jsonEncode(updatedUser.toJson()));
-      
+      await prefs.setString(
+        AppConstants.userDataKey,
+        jsonEncode(updatedUser.toJson()),
+      );
+
       // Update state
       _user = updatedUser;
       notifyListeners();
-      
+
       return true;
     } catch (e) {
       _errorMessage = 'Failed to add favorite: ${e.toString()}';
@@ -290,20 +306,23 @@ class AuthProvider with ChangeNotifier {
         notifyListeners();
         return false;
       }
-      
+
       // Remove from favorites
       final updatedFavorites = List<String>.from(_user!.favoriteVenues)
         ..removeWhere((id) => id == venueId);
       final updatedUser = _user!.copyWith(favoriteVenues: updatedFavorites);
-      
+
       // Save to shared preferences
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(AppConstants.userDataKey, jsonEncode(updatedUser.toJson()));
-      
+      await prefs.setString(
+        AppConstants.userDataKey,
+        jsonEncode(updatedUser.toJson()),
+      );
+
       // Update state
       _user = updatedUser;
       notifyListeners();
-      
+
       return true;
     } catch (e) {
       _errorMessage = 'Failed to remove favorite: ${e.toString()}';
@@ -320,24 +339,28 @@ class AuthProvider with ChangeNotifier {
         notifyListeners();
         return false;
       }
-      
+
       // Check if already in favorites
       if (_user!.favoriteServices.contains(serviceId)) {
         return true;
       }
-      
+
       // Add to favorites
-      final updatedFavorites = List<String>.from(_user!.favoriteServices)..add(serviceId);
+      final updatedFavorites = List<String>.from(_user!.favoriteServices)
+        ..add(serviceId);
       final updatedUser = _user!.copyWith(favoriteServices: updatedFavorites);
-      
+
       // Save to shared preferences
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(AppConstants.userDataKey, jsonEncode(updatedUser.toJson()));
-      
+      await prefs.setString(
+        AppConstants.userDataKey,
+        jsonEncode(updatedUser.toJson()),
+      );
+
       // Update state
       _user = updatedUser;
       notifyListeners();
-      
+
       return true;
     } catch (e) {
       _errorMessage = 'Failed to add favorite: ${e.toString()}';
@@ -354,20 +377,23 @@ class AuthProvider with ChangeNotifier {
         notifyListeners();
         return false;
       }
-      
+
       // Remove from favorites
       final updatedFavorites = List<String>.from(_user!.favoriteServices)
         ..removeWhere((id) => id == serviceId);
       final updatedUser = _user!.copyWith(favoriteServices: updatedFavorites);
-      
+
       // Save to shared preferences
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(AppConstants.userDataKey, jsonEncode(updatedUser.toJson()));
-      
+      await prefs.setString(
+        AppConstants.userDataKey,
+        jsonEncode(updatedUser.toJson()),
+      );
+
       // Update state
       _user = updatedUser;
       notifyListeners();
-      
+
       return true;
     } catch (e) {
       _errorMessage = 'Failed to remove favorite: ${e.toString()}';

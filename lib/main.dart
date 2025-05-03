@@ -45,6 +45,9 @@ void main() {
           create: (_) => TaskProvider(eventId: 'default'),
           lazy: true,
         ),
+
+        // Booking provider
+        ChangeNotifierProvider(create: (_) => BookingProvider(), lazy: true),
       ],
       child: const MyApp(),
     ),
@@ -73,6 +76,9 @@ class _MyAppState extends State<MyApp> {
 
         // Initialize suggestion provider
         Provider.of<SuggestionProvider>(context, listen: false).initialize();
+
+        // Initialize booking provider
+        Provider.of<BookingProvider>(context, listen: false).initialize();
       }
     });
   }
@@ -103,6 +109,7 @@ class _MyAppState extends State<MyApp> {
         '/event-wizard/suggestions': (context) => const SuggestionScreen(),
         '/event-wizard/create-suggestion':
             (context) => const CreateSuggestionScreen(),
+        '/bookings': (context) => const BookingHistoryScreen(),
       },
       // Use onGenerateRoute for routes that need parameters
       onGenerateRoute: (settings) {
@@ -110,6 +117,26 @@ class _MyAppState extends State<MyApp> {
           final args = settings.arguments as Map<String, dynamic>;
           return MaterialPageRoute(
             builder: (context) => VerificationScreen(email: args['email']),
+          );
+        } else if (settings.name == '/bookings/details') {
+          final args = settings.arguments as Map<String, dynamic>;
+          return MaterialPageRoute(
+            builder:
+                (context) => BookingDetailsScreen(bookingId: args['bookingId']),
+          );
+        } else if (settings.name == '/bookings/form') {
+          final args = settings.arguments as Map<String, dynamic>;
+          return MaterialPageRoute(
+            builder:
+                (context) => BookingFormScreen(
+                  serviceId: args['serviceId'],
+                  serviceType: args['serviceType'],
+                  serviceName: args['serviceName'],
+                  basePrice: args['basePrice'],
+                  bookingId: args['bookingId'],
+                  eventId: args['eventId'],
+                  eventName: args['eventName'],
+                ),
           );
         }
         return null;

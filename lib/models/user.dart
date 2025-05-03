@@ -8,6 +8,12 @@ class User {
   final List<String> favoriteVenues;
   final List<String> favoriteServices;
 
+  /// Alias for id (for Firebase compatibility)
+  String get uid => id;
+
+  /// Alias for name (for compatibility)
+  String get displayName => name;
+
   User({
     required this.id,
     required this.name,

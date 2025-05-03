@@ -29,27 +29,29 @@ class MultiSelectChipGroup extends StatelessWidget {
         Wrap(
           spacing: 8,
           runSpacing: 8,
-          children: options.map((option) {
-            final isSelected = selectedOptions.contains(option);
-            return FilterChip(
-              label: Text(
-                option,
-                style: TextStyle(
-                  color: isSelected ? Colors.white : Theme.of(context).primaryColor,
-                ),
-              ),
-              selected: isSelected,
-              selectedColor: Theme.of(context).primaryColor,
-              backgroundColor: Colors.white,
-              checkmarkColor: Colors.white,
-              side: BorderSide(
-                color: Theme.of(context).primaryColor,
-              ),
-              onSelected: (bool selected) {
-                onOptionSelected(option, selected);
-              },
-            );
-          }).toList(),
+          children:
+              options.map((option) {
+                final isSelected = selectedOptions.contains(option);
+                return FilterChip(
+                  label: Text(
+                    option,
+                    style: TextStyle(
+                      color:
+                          isSelected
+                              ? Colors.white
+                              : Theme.of(context).primaryColor,
+                    ),
+                  ),
+                  selected: isSelected,
+                  selectedColor: Theme.of(context).primaryColor,
+                  backgroundColor: Colors.white,
+                  checkmarkColor: Colors.white,
+                  side: BorderSide(color: Theme.of(context).primaryColor),
+                  onSelected: (bool selected) {
+                    onOptionSelected(option, selected);
+                  },
+                );
+              }).toList(),
         ),
       ],
     );

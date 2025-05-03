@@ -5,16 +5,16 @@ import 'package:eventati_book/styles/wizard_styles.dart';
 class WizardProgressIndicator extends StatelessWidget {
   /// Current step in the wizard
   final int currentStep;
-  
+
   /// Total number of steps in the wizard
   final int totalSteps;
-  
+
   /// Whether to show the percentage
   final bool showPercentage;
-  
+
   /// Whether to show step labels
   final bool showStepLabels;
-  
+
   /// Labels for each step
   final List<String>? stepLabels;
 
@@ -53,9 +53,9 @@ class WizardProgressIndicator extends StatelessWidget {
             ],
           ),
         ),
-        
+
         const SizedBox(height: 8),
-        
+
         // Progress text and step indicators
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -70,70 +70,67 @@ class WizardProgressIndicator extends StatelessWidget {
                   color: Theme.of(context).primaryColor,
                 ),
               ),
-            
+
             // Step indicator
             Text(
               'Step ${currentStep + 1} of $totalSteps',
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey[600],
-              ),
+              style: TextStyle(fontSize: 12, color: Colors.grey[600]),
             ),
           ],
         ),
-        
+
         // Step labels
         if (showStepLabels && stepLabels != null && stepLabels!.isNotEmpty)
           Padding(
             padding: const EdgeInsets.only(top: 16),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: List.generate(
-                totalSteps,
-                (index) {
-                  final isActive = index <= currentStep;
-                  return Expanded(
-                    child: Column(
-                      children: [
-                        // Step circle
-                        Container(
-                          width: 24,
-                          height: 24,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: isActive
-                                ? Theme.of(context).primaryColor
-                                : Colors.grey[300],
-                          ),
-                          child: Center(
-                            child: Text(
-                              '${index + 1}',
-                              style: TextStyle(
-                                color: isActive ? Colors.white : Colors.grey[600],
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                              ),
+              children: List.generate(totalSteps, (index) {
+                final isActive = index <= currentStep;
+                return Expanded(
+                  child: Column(
+                    children: [
+                      // Step circle
+                      Container(
+                        width: 24,
+                        height: 24,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color:
+                              isActive
+                                  ? Theme.of(context).primaryColor
+                                  : Colors.grey[300],
+                        ),
+                        child: Center(
+                          child: Text(
+                            '${index + 1}',
+                            style: TextStyle(
+                              color: isActive ? Colors.white : Colors.grey[600],
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
-                        const SizedBox(height: 4),
-                        // Step label
-                        Text(
-                          index < stepLabels!.length ? stepLabels![index] : '',
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: isActive
-                                ? Theme.of(context).primaryColor
-                                : Colors.grey[600],
-                            fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-                          ),
-                          textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 4),
+                      // Step label
+                      Text(
+                        index < stepLabels!.length ? stepLabels![index] : '',
+                        style: TextStyle(
+                          fontSize: 10,
+                          color:
+                              isActive
+                                  ? Theme.of(context).primaryColor
+                                  : Colors.grey[600],
+                          fontWeight:
+                              isActive ? FontWeight.bold : FontWeight.normal,
                         ),
-                      ],
-                    ),
-                  );
-                },
-              ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                );
+              }),
             ),
           ),
       ],

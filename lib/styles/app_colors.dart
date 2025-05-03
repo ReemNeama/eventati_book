@@ -28,6 +28,7 @@ class AppColors {
   static const Color background = canvasColor;
   static const Color surface = Colors.white;
   static const Color card = Colors.white;
+  static const Color cardBackground = Colors.white;
 
   // Text colors
   static const Color textPrimary = Colors.black87;

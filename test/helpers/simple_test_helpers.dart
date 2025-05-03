@@ -9,9 +9,7 @@ class MockAuthProvider extends Mock implements AuthProvider {}
 
 /// Helper function to wrap a widget with MaterialApp for testing
 Widget wrapWithMaterialApp(Widget child) {
-  return MaterialApp(
-    home: child,
-  );
+  return MaterialApp(home: child);
 }
 
 /// Helper function to wrap a widget with auth provider for testing

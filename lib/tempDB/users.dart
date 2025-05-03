@@ -65,7 +65,7 @@ class UserDB {
     if (password.length < 6) {
       return null;
     }
-    
+
     return getUserByEmail(email);
   }
 }

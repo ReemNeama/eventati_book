@@ -13,14 +13,17 @@ class DateTimeUtils {
   }
 
   /// Format a DateTime object to a readable date and time string
-  static String formatDateTime(DateTime dateTime, {String format = 'MMM dd, yyyy - h:mm a'}) {
+  static String formatDateTime(
+    DateTime dateTime, {
+    String format = 'MMM dd, yyyy - h:mm a',
+  }) {
     return DateFormat(format).format(dateTime);
   }
 
   /// Get a readable string representing the difference between two dates
   static String getDateDifference(DateTime date1, DateTime date2) {
     final difference = date1.difference(date2);
-    
+
     if (difference.inDays > 365) {
       return '${(difference.inDays / 365).floor()} years';
     } else if (difference.inDays > 30) {
@@ -45,7 +48,16 @@ class DateTimeUtils {
   /// Check if a date is today
   static bool isToday(DateTime date) {
     final now = DateTime.now();
-    return date.year == now.year && date.month == now.month && date.day == now.day;
+    return date.year == now.year &&
+        date.month == now.month &&
+        date.day == now.day;
+  }
+
+  /// Check if two dates are on the same day
+  static bool isSameDay(DateTime date1, DateTime date2) {
+    return date1.year == date2.year &&
+        date1.month == date2.month &&
+        date1.day == date2.day;
   }
 
   /// Get a list of dates between two dates
@@ -53,11 +65,8 @@ class DateTimeUtils {
     final days = endDate.difference(startDate).inDays + 1;
     return List.generate(
       days,
-      (index) => DateTime(
-        startDate.year,
-        startDate.month,
-        startDate.day + index,
-      ),
+      (index) =>
+          DateTime(startDate.year, startDate.month, startDate.day + index),
     );
   }
 }

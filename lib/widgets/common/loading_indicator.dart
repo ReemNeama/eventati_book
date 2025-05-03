@@ -6,21 +6,17 @@ import 'package:eventati_book/styles/app_colors_dark.dart';
 class LoadingIndicator extends StatelessWidget {
   /// Optional message to display below the indicator
   final String? message;
-  
+
   /// Size of the indicator
   final double size;
 
-  const LoadingIndicator({
-    super.key,
-    this.message,
-    this.size = 40.0,
-  });
+  const LoadingIndicator({super.key, this.message, this.size = 40.0});
 
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final primaryColor = isDarkMode ? AppColorsDark.primary : AppColors.primary;
-    
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -38,7 +34,10 @@ class LoadingIndicator extends StatelessWidget {
             Text(
               message!,
               style: TextStyle(
-                color: isDarkMode ? AppColorsDark.textSecondary : AppColors.textSecondary,
+                color:
+                    isDarkMode
+                        ? AppColorsDark.textSecondary
+                        : AppColors.textSecondary,
                 fontSize: 16,
               ),
               textAlign: TextAlign.center,
