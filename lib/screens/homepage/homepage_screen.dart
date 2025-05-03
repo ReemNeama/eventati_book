@@ -162,15 +162,8 @@ class _HomepageScreenState extends State<HomepageScreen> {
                   // Landscape mode: grid view
                   return SizedBox(
                     height: 200,
-                    child: GridView.builder(
+                    child: ListView.builder(
                       scrollDirection: Axis.horizontal,
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 8,
-                            mainAxisSpacing: 8,
-                            childAspectRatio: 0.8,
-                          ),
                       itemCount: _recommendedVenues.length,
                       itemBuilder: (context, index) {
                         final venue = _recommendedVenues[index];
@@ -307,7 +300,9 @@ class _HomepageScreenState extends State<HomepageScreen> {
         // Determine card width based on available space
         final double cardWidth =
             isLandscape
-                ? constraints.maxWidth
+                ? constraints.maxWidth.isFinite
+                    ? constraints.maxWidth
+                    : 300.0 // Use 300.0 as fallback if maxWidth is infinite
                 : UIUtils.isTablet(context)
                 ? screenWidth *
                     0.3 // Tablet: 30% of screen width
@@ -347,10 +342,14 @@ class _HomepageScreenState extends State<HomepageScreen> {
                 Expanded(
                   flex: 2, // 40% of card height
                   child: Padding(
-                    padding: const EdgeInsets.all(12.0),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12.0,
+                      vertical: 8.0,
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
                           venue['name'],
@@ -361,6 +360,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
+                        const SizedBox(height: 4),
                         Row(
                           children: [
                             const Icon(
@@ -375,6 +375,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
                             ),
                           ],
                         ),
+                        const SizedBox(height: 4),
                         Text(
                           venue['price'],
                           style: TextStyle(
@@ -382,6 +383,8 @@ class _HomepageScreenState extends State<HomepageScreen> {
                             color: Theme.of(context).primaryColor,
                             fontWeight: FontWeight.bold,
                           ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ],
                     ),
@@ -454,7 +457,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
         crossAxisCount: crossAxisCount,
         crossAxisSpacing: 16,
         mainAxisSpacing: 16,
-        childAspectRatio: 1.5,
+        childAspectRatio: 1.6, // Increased from 1.5 to give more height
       ),
       itemCount: quickLinks.length,
       itemBuilder: (context, index) {
@@ -467,18 +470,24 @@ class _HomepageScreenState extends State<HomepageScreen> {
               borderRadius: BorderRadius.circular(12),
             ),
             child: Padding(
-              padding: const EdgeInsets.all(12.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 12.0,
+                vertical: 10.0,
+              ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(link['icon'], size: 32, color: link['color']),
-                  const SizedBox(height: 8),
+                  Icon(link['icon'], size: 28, color: link['color']),
+                  const SizedBox(height: 6),
                   Text(
                     link['title'],
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),

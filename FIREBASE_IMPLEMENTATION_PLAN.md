@@ -61,6 +61,7 @@ This will ensure a smooth transition to Firebase when the project is ready for b
 - `lib/providers/budget_provider.dart` - Update to use Firestore for budget items
 - `lib/providers/task_provider.dart` - Update to use Firestore for tasks
 - `lib/providers/vendor_message_provider.dart` - Update to use Firestore for messages
+- `lib/providers/suggestion_provider.dart` - Update to use Firestore for suggestions
 - Replace all `lib/tempDB/*.dart` files with Firestore implementations
 
 ### 3. Firebase Storage
@@ -200,6 +201,22 @@ users/
   {userId}/
     profile: { name, email, ... }
     settings: { theme, notifications, ... }
+    custom_suggestions/
+      {suggestionId}: {
+        id: string,
+        title: string,
+        description: string,
+        category: string,
+        priority: string,
+        baseRelevanceScore: number,
+        conditions: array,
+        applicableEventTypes: array,
+        imageUrl: string (optional),
+        actionUrl: string (optional),
+        isCustom: boolean,
+        createdAt: timestamp,
+        updatedAt: timestamp
+      }
 
 events/
   {eventId}/
@@ -214,6 +231,8 @@ events/
       {taskId}: { ... }
     messages/
       {messageId}: { ... }
+    suggestions/
+      {suggestionId}: { ... }
 
 services/
   venues/
@@ -379,8 +398,9 @@ As new files are added to the project, record them here if they will need Fireba
 
 | File Path | Firebase Service Needed | Description |
 |-----------|------------------------|-------------|
-| | | |
-| | | |
+| lib/screens/event_wizard/create_suggestion_screen.dart | Firestore | Screen for creating custom suggestions |
+| lib/widgets/event_wizard/suggestion_card.dart | Firestore | Card widget for displaying suggestions with custom indicator |
+| lib/providers/suggestion_provider.dart | Firestore | Provider for managing suggestions, including custom suggestions persistence |
 | | | |
 
 This table helps track new files that will need Firebase integration but aren't yet included in the main sections above.
@@ -408,7 +428,8 @@ Keep track of significant updates to this plan:
 | Date | Description of Change | Updated By |
 |------|----------------------|------------|
 | June 10, 2023 | Initial creation of Firebase implementation plan | Eventati Book Team |
-| | | |
+| July 15, 2023 | Added custom suggestion creation files | Eventati Book Team |
+| July 16, 2023 | Updated Firestore structure to include custom suggestions at user level | Eventati Book Team |
 | | | |
 
 This change log helps track the evolution of the Firebase implementation plan and ensures everyone is aware of the latest changes.

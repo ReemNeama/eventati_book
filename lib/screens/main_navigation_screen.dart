@@ -3,6 +3,7 @@ import 'package:eventati_book/screens/homepage/homepage_screen.dart';
 import 'package:eventati_book/screens/services/services_screen.dart';
 import 'package:eventati_book/screens/events/user_events_screen.dart';
 import 'package:eventati_book/screens/profile/profile_screen.dart';
+import 'package:eventati_book/screens/event_wizard/suggestion_screen.dart';
 
 /// Main navigation screen that hosts the bottom navigation bar
 /// and manages switching between the main app sections
@@ -27,6 +28,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
       const HomepageScreen(),
       const ServicesScreen(),
       const UserEventsScreen(),
+      const SuggestionScreen(),
       ProfileScreen(toggleTheme: widget.toggleTheme),
     ];
   }
@@ -83,6 +85,11 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
               icon: Icon(Icons.event_outlined),
               activeIcon: Icon(Icons.event),
               label: 'My Events',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.lightbulb_outline),
+              activeIcon: Icon(Icons.lightbulb),
+              label: 'Suggestions',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.person_outline),

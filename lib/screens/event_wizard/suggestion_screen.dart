@@ -9,6 +9,7 @@ import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/widgets/event_wizard/suggestion_card.dart';
 import 'package:eventati_book/widgets/common/loading_indicator.dart';
 import 'package:eventati_book/widgets/common/error_message.dart';
+import 'package:eventati_book/screens/event_wizard/create_suggestion_screen.dart';
 
 /// Screen to display suggestions based on the wizard state
 class SuggestionScreen extends StatefulWidget {
@@ -41,11 +42,19 @@ class _SuggestionScreenState extends State<SuggestionScreen> {
     // Initialize the suggestion provider if needed
     if (suggestionProvider.allSuggestions.isEmpty) {
       await suggestionProvider.initialize();
+    } else {
+      // Force a refresh of the suggestions
+      await suggestionProvider.initialize();
     }
 
     // Filter suggestions based on the wizard state
     if (wizardProvider.state != null) {
       suggestionProvider.filterSuggestions(wizardProvider.state!);
+    }
+
+    // Reset category filter if any
+    if (_selectedCategory != null) {
+      _filterByCategory(_selectedCategory);
     }
   }
 
@@ -59,13 +68,11 @@ class _SuggestionScreenState extends State<SuggestionScreen> {
       context,
       listen: false,
     );
+
+    // Apply the category filter
     suggestionProvider.setCategoryFilter(category);
 
-    // Re-filter suggestions
-    final wizardProvider = Provider.of<WizardProvider>(context, listen: false);
-    if (wizardProvider.state != null) {
-      suggestionProvider.filterSuggestions(wizardProvider.state!);
-    }
+    // No need to call filterSuggestions again as setCategoryFilter now handles this
   }
 
   @override
@@ -79,6 +86,24 @@ class _SuggestionScreenState extends State<SuggestionScreen> {
       appBar: AppBar(
         title: const Text('Suggestions for You'),
         backgroundColor: primaryColor,
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          // Navigate to create suggestion screen
+          final result = await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const CreateSuggestionScreen(),
+            ),
+          );
+
+          // Refresh suggestions if a new suggestion was added
+          if (result == true) {
+            _initializeSuggestions();
+          }
+        },
+        backgroundColor: primaryColor,
+        child: const Icon(Icons.add),
       ),
       body: Container(
         color: backgroundColor,

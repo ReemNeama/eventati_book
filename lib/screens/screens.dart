@@ -22,4 +22,5 @@ export 'profile/profile_screen.dart';
 // Event wizard screens
 export 'event_wizard/event_wizard_screen.dart';
 export 'event_wizard/suggestion_screen.dart';
+export 'event_wizard/create_suggestion_screen.dart';
 export 'event_wizard/wizard_factory.dart';

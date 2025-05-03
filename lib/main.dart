@@ -65,10 +65,14 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    // Initialize the auth provider when the app starts
+    // Initialize providers when the app starts
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
+        // Initialize auth provider
         Provider.of<AuthProvider>(context, listen: false).initialize();
+
+        // Initialize suggestion provider
+        Provider.of<SuggestionProvider>(context, listen: false).initialize();
       }
     });
   }
@@ -97,6 +101,8 @@ class _MyAppState extends State<MyApp> {
         '/register': (context) => const RegisterScreen(),
         '/forgot-password': (context) => const ForgetpasswordScreen(),
         '/event-wizard/suggestions': (context) => const SuggestionScreen(),
+        '/event-wizard/create-suggestion':
+            (context) => const CreateSuggestionScreen(),
       },
       // Use onGenerateRoute for routes that need parameters
       onGenerateRoute: (settings) {

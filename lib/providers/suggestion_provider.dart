@@ -5,6 +5,10 @@ import 'package:eventati_book/models/suggestion.dart';
 import 'package:eventati_book/models/wizard_state.dart';
 
 /// Provider to manage suggestions based on the wizard state
+///
+/// Note: The current implementation uses SharedPreferences for local storage,
+/// which has limitations for complex data structures. This will be replaced
+/// with Firebase Firestore in the future for better persistence and synchronization.
 class SuggestionProvider extends ChangeNotifier {
   /// All available suggestions (predefined + custom)
   List<Suggestion> _allSuggestions = [];
@@ -103,10 +107,37 @@ class SuggestionProvider extends ChangeNotifier {
     }
   }
 
-  /// Set the category filter
+  /// Set the category filter and apply it
   void setCategoryFilter(SuggestionCategory? category) {
     _selectedCategory = category;
+
+    // Apply the filter to the current suggestions
+    applyCurrentCategoryFilter();
+
     notifyListeners();
+  }
+
+  /// Apply the current category filter to all suggestions
+  void applyCurrentCategoryFilter() {
+    try {
+      if (_selectedCategory != null) {
+        // Filter by selected category
+        _filteredSuggestions =
+            _allSuggestions
+                .where((suggestion) => suggestion.category == _selectedCategory)
+                .toList();
+      } else {
+        // No category filter, show all suggestions
+        _filteredSuggestions = List.from(_allSuggestions);
+      }
+
+      // Sort by relevance score (highest first)
+      _filteredSuggestions.sort(
+        (a, b) => b.baseRelevanceScore.compareTo(a.baseRelevanceScore),
+      );
+    } catch (e) {
+      _error = 'Failed to apply category filter: $e';
+    }
   }
 
   /// Add a custom suggestion
@@ -114,6 +145,19 @@ class SuggestionProvider extends ChangeNotifier {
     try {
       // Add to all suggestions
       _allSuggestions.add(suggestion);
+
+      // Add to filtered suggestions if it matches the current category filter
+      if (_selectedCategory == null ||
+          suggestion.category == _selectedCategory) {
+        _filteredSuggestions.add(suggestion);
+
+        // Sort filtered suggestions by relevance score (if we have a wizard state)
+        if (_filteredSuggestions.isNotEmpty) {
+          _filteredSuggestions.sort(
+            (a, b) => b.baseRelevanceScore.compareTo(a.baseRelevanceScore),
+          );
+        }
+      }
 
       // Save custom suggestions
       await _saveCustomSuggestions();
@@ -197,13 +241,21 @@ class SuggestionProvider extends ChangeNotifier {
       final prefs = await SharedPreferences.getInstance();
       final jsonData = prefs.getString('custom_suggestions');
 
-      if (jsonData == null) return [];
+      if (jsonData == null) {
+        return [];
+      }
 
       final jsonList = jsonDecode(jsonData) as List;
-      return jsonList
-          .map((json) => Suggestion.fromJson(json))
-          .where((s) => s.isCustom) // Ensure only custom suggestions are loaded
-          .toList();
+
+      final suggestions =
+          jsonList
+              .map((json) => Suggestion.fromJson(json))
+              .where(
+                (s) => s.isCustom,
+              ) // Ensure only custom suggestions are loaded
+              .toList();
+
+      return suggestions;
     } catch (e) {
       _error = 'Failed to load custom suggestions: $e';
       notifyListeners();

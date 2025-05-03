@@ -114,14 +114,48 @@ class SuggestionCard extends StatelessWidget {
 
               const SizedBox(height: 16),
 
-              // Title
-              Text(
-                suggestion.title,
-                style: TextStyle(
-                  color: textColor,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+              // Title with custom badge if applicable
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      suggestion.title,
+                      style: TextStyle(
+                        color: textColor,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+
+                  // Custom badge
+                  if (suggestion.isCustom)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.purple.withAlpha(25),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.edit, color: Colors.purple, size: 12),
+                          SizedBox(width: 4),
+                          Text(
+                            'Custom',
+                            style: TextStyle(
+                              color: Colors.purple,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                ],
               ),
 
               const SizedBox(height: 8),
