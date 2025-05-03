@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:eventati_book/models/booking.dart';
+import 'package:eventati_book/models/service_options/service_options.dart';
 import 'package:eventati_book/providers/booking_provider.dart';
 import 'package:eventati_book/screens/booking/booking_form_screen.dart';
 import 'package:eventati_book/utils/ui_utils.dart';
@@ -201,6 +202,13 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
                                 ],
                               ),
                             ),
+                          ),
+
+                          // Service-specific options
+                          _buildServiceOptionsSection(
+                            booking,
+                            primaryColor,
+                            textColor,
                           ),
 
                           // Booking details
@@ -498,6 +506,301 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
       const SnackBar(
         content: Text('Booking cancelled successfully'),
         backgroundColor: Colors.green,
+      ),
+    );
+  }
+
+  /// Build service-specific options section
+  Widget _buildServiceOptionsSection(
+    Booking booking,
+    Color primaryColor,
+    Color textColor,
+  ) {
+    // If no service options, don't show the section
+    if (booking.serviceOptions.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    // Get the appropriate options based on service type
+    Widget optionsContent;
+
+    switch (booking.serviceType) {
+      case 'venue':
+        final venueOptions = booking.getVenueOptions();
+        if (venueOptions == null) {
+          return const SizedBox.shrink();
+        }
+
+        optionsContent = Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Setup Time: ${venueOptions.setupTimeMinutes} minutes',
+              style: TextStyles.bodyMedium.copyWith(color: textColor),
+            ),
+            Text(
+              'Teardown Time: ${venueOptions.teardownTimeMinutes} minutes',
+              style: TextStyles.bodyMedium.copyWith(color: textColor),
+            ),
+            Text(
+              'Layout: ${venueOptions.layout.displayName}',
+              style: TextStyles.bodyMedium.copyWith(color: textColor),
+            ),
+            if (venueOptions.layout == VenueLayout.custom &&
+                venueOptions.customLayoutDescription != null)
+              Text(
+                'Custom Layout: ${venueOptions.customLayoutDescription}',
+                style: TextStyles.bodyMedium.copyWith(color: textColor),
+              ),
+            if (venueOptions.equipmentNeeds.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Text(
+                'Equipment Needs:',
+                style: TextStyles.bodyMedium.copyWith(
+                  color: textColor,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              ...venueOptions.equipmentNeeds.map(
+                (equipment) => Padding(
+                  padding: const EdgeInsets.only(left: 16.0),
+                  child: Text(
+                    '• $equipment',
+                    style: TextStyles.bodyMedium.copyWith(color: textColor),
+                  ),
+                ),
+              ),
+            ],
+          ],
+        );
+        break;
+
+      case 'catering':
+        final cateringOptions = booking.getCateringOptions();
+        if (cateringOptions == null) {
+          return const SizedBox.shrink();
+        }
+
+        optionsContent = Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Meal Service: ${cateringOptions.mealServiceStyle.displayName}',
+              style: TextStyles.bodyMedium.copyWith(color: textColor),
+            ),
+            if (cateringOptions.mealServiceStyle == MealServiceStyle.custom &&
+                cateringOptions.customMealServiceDescription != null)
+              Text(
+                'Custom Meal Service: ${cateringOptions.customMealServiceDescription}',
+                style: TextStyles.bodyMedium.copyWith(color: textColor),
+              ),
+            Text(
+              'Beverage Service: ${cateringOptions.beverageOption.displayName}',
+              style: TextStyles.bodyMedium.copyWith(color: textColor),
+            ),
+            if (cateringOptions.beverageOption == BeverageOption.custom &&
+                cateringOptions.customBeverageDescription != null)
+              Text(
+                'Custom Beverage Service: ${cateringOptions.customBeverageDescription}',
+                style: TextStyles.bodyMedium.copyWith(color: textColor),
+              ),
+            Text(
+              'Staff Service: ${cateringOptions.includeStaffService ? 'Yes' : 'No'}',
+              style: TextStyles.bodyMedium.copyWith(color: textColor),
+            ),
+            if (cateringOptions.includeStaffService &&
+                cateringOptions.staffCount != null)
+              Text(
+                'Staff Count: ${cateringOptions.staffCount}',
+                style: TextStyles.bodyMedium.copyWith(color: textColor),
+              ),
+            if (cateringOptions.dietaryRestrictions.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Text(
+                'Dietary Restrictions:',
+                style: TextStyles.bodyMedium.copyWith(
+                  color: textColor,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              ...cateringOptions.dietaryRestrictions.map(
+                (restriction) => Padding(
+                  padding: const EdgeInsets.only(left: 16.0),
+                  child: Text(
+                    '• $restriction',
+                    style: TextStyles.bodyMedium.copyWith(color: textColor),
+                  ),
+                ),
+              ),
+            ],
+          ],
+        );
+        break;
+
+      case 'photography':
+        final photographyOptions = booking.getPhotographyOptions();
+        if (photographyOptions == null) {
+          return const SizedBox.shrink();
+        }
+
+        optionsContent = Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (photographyOptions.sessionTypes.isNotEmpty) ...[
+              Text(
+                'Session Types:',
+                style: TextStyles.bodyMedium.copyWith(
+                  color: textColor,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              ...photographyOptions.sessionTypes.map(
+                (type) => Padding(
+                  padding: const EdgeInsets.only(left: 16.0),
+                  child: Text(
+                    '• ${type.displayName}',
+                    style: TextStyles.bodyMedium.copyWith(color: textColor),
+                  ),
+                ),
+              ),
+            ],
+            if (photographyOptions.sessionTypes.contains(
+                  PhotoSessionType.custom,
+                ) &&
+                photographyOptions.customSessionTypeDescription != null)
+              Text(
+                'Custom Session: ${photographyOptions.customSessionTypeDescription}',
+                style: TextStyles.bodyMedium.copyWith(color: textColor),
+              ),
+            const SizedBox(height: 8),
+            Text(
+              'Location: ${photographyOptions.locationPreference.displayName}',
+              style: TextStyles.bodyMedium.copyWith(color: textColor),
+            ),
+            if ((photographyOptions.locationPreference ==
+                        PhotoLocationPreference.specificLocation ||
+                    photographyOptions.locationPreference ==
+                        PhotoLocationPreference.custom) &&
+                photographyOptions.specificLocationDescription != null)
+              Text(
+                'Location Details: ${photographyOptions.specificLocationDescription}',
+                style: TextStyles.bodyMedium.copyWith(color: textColor),
+              ),
+            Text(
+              'Second Photographer: ${photographyOptions.includeSecondPhotographer ? 'Yes' : 'No'}',
+              style: TextStyles.bodyMedium.copyWith(color: textColor),
+            ),
+            Text(
+              'Videography: ${photographyOptions.includeVideography ? 'Yes' : 'No'}',
+              style: TextStyles.bodyMedium.copyWith(color: textColor),
+            ),
+            if (photographyOptions.equipmentRequests.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Text(
+                'Equipment Requests:',
+                style: TextStyles.bodyMedium.copyWith(
+                  color: textColor,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              ...photographyOptions.equipmentRequests.map(
+                (equipment) => Padding(
+                  padding: const EdgeInsets.only(left: 16.0),
+                  child: Text(
+                    '• $equipment',
+                    style: TextStyles.bodyMedium.copyWith(color: textColor),
+                  ),
+                ),
+              ),
+            ],
+          ],
+        );
+        break;
+
+      case 'planner':
+        final plannerOptions = booking.getPlannerOptions();
+        if (plannerOptions == null) {
+          return const SizedBox.shrink();
+        }
+
+        optionsContent = Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Consultation: ${plannerOptions.consultationPreference.displayName}',
+              style: TextStyles.bodyMedium.copyWith(color: textColor),
+            ),
+            if (plannerOptions.consultationPreference ==
+                    ConsultationPreference.custom &&
+                plannerOptions.customConsultationDescription != null)
+              Text(
+                'Custom Consultation: ${plannerOptions.customConsultationDescription}',
+                style: TextStyles.bodyMedium.copyWith(color: textColor),
+              ),
+            Text(
+              'Package Type: ${plannerOptions.packageType.displayName}',
+              style: TextStyles.bodyMedium.copyWith(color: textColor),
+            ),
+            if (plannerOptions.packageType == PlanningPackageType.custom &&
+                plannerOptions.customPackageDescription != null)
+              Text(
+                'Custom Package: ${plannerOptions.customPackageDescription}',
+                style: TextStyles.bodyMedium.copyWith(color: textColor),
+              ),
+            Text(
+              'Vendor Coordination: ${plannerOptions.includeVendorCoordination ? 'Yes' : 'No'}',
+              style: TextStyles.bodyMedium.copyWith(color: textColor),
+            ),
+            Text(
+              'Budget Management: ${plannerOptions.includeBudgetManagement ? 'Yes' : 'No'}',
+              style: TextStyles.bodyMedium.copyWith(color: textColor),
+            ),
+            if (plannerOptions.specificPlanningNeeds.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Text(
+                'Planning Needs:',
+                style: TextStyles.bodyMedium.copyWith(
+                  color: textColor,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              ...plannerOptions.specificPlanningNeeds.map(
+                (need) => Padding(
+                  padding: const EdgeInsets.only(left: 16.0),
+                  child: Text(
+                    '• $need',
+                    style: TextStyles.bodyMedium.copyWith(color: textColor),
+                  ),
+                ),
+              ),
+            ],
+          ],
+        );
+        break;
+
+      default:
+        return const SizedBox.shrink();
+    }
+
+    final isDarkMode = UIUtils.isDarkMode(context);
+    return Card(
+      elevation: 2,
+      color:
+          isDarkMode ? AppColorsDark.cardBackground : AppColors.cardBackground,
+      margin: const EdgeInsets.only(bottom: 16),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Service Options',
+              style: TextStyles.sectionTitle.copyWith(color: primaryColor),
+            ),
+            const SizedBox(height: 8),
+            optionsContent,
+          ],
+        ),
       ),
     );
   }

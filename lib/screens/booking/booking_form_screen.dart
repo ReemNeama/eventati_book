@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 import 'package:eventati_book/models/booking.dart';
+import 'package:eventati_book/models/service_options/service_options.dart';
 import 'package:eventati_book/providers/booking_provider.dart';
 import 'package:eventati_book/providers/auth_provider.dart';
 import 'package:eventati_book/utils/date_utils.dart' as date_utils;
 import 'package:eventati_book/utils/form_utils.dart';
 import 'package:eventati_book/utils/ui_utils.dart';
+import 'package:eventati_book/utils/service_options_factory.dart';
 import 'package:eventati_book/widgets/common/loading_indicator.dart';
 import 'package:eventati_book/widgets/common/error_message.dart';
 import 'package:eventati_book/styles/app_colors.dart';
@@ -72,6 +74,9 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
   double _duration = 2.0; // Default 2 hours
   int _guestCount = 50; // Default 50 guests
   bool _isEventRelated = false;
+
+  // Service options
+  Map<String, dynamic> _serviceOptions = {};
 
   // Loading state
   bool _isLoading = false;
@@ -154,6 +159,9 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
           _contactNameController.text = booking.contactName;
           _contactEmailController.text = booking.contactEmail;
           _contactPhoneController.text = booking.contactPhone;
+
+          // Load service options
+          _serviceOptions = booking.serviceOptions;
         }
       }
 
@@ -337,6 +345,7 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
           contactPhone: _contactPhoneController.text,
           eventId: _isEventRelated ? widget.eventId : null,
           eventName: _isEventRelated ? widget.eventName : null,
+          serviceOptions: _serviceOptions,
         );
 
         final success = await bookingProvider.updateBooking(updatedBooking);
@@ -365,6 +374,7 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
           contactPhone: _contactPhoneController.text,
           eventId: _isEventRelated ? widget.eventId : null,
           eventName: _isEventRelated ? widget.eventName : null,
+          serviceOptions: _serviceOptions,
         );
 
         final success = await bookingProvider.createBooking(newBooking);
@@ -574,6 +584,28 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
                             border: OutlineInputBorder(),
                           ),
                           maxLines: 3,
+                        ),
+                        const SizedBox(height: 24),
+
+                        // Service-specific options
+                        Text(
+                          'Service-Specific Options',
+                          style: TextStyles.sectionTitle.copyWith(
+                            color: primaryColor,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+
+                        // Generate service-specific options based on service type
+                        ...ServiceOptionsFactory.generateServiceOptionsFields(
+                          context: context,
+                          serviceType: widget.serviceType,
+                          initialOptions: _serviceOptions,
+                          onOptionsChanged: (newOptions) {
+                            setState(() {
+                              _serviceOptions = newOptions;
+                            });
+                          },
                         ),
                         const SizedBox(height: 16),
 

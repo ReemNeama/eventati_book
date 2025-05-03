@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:eventati_book/models/service_options/service_options.dart';
 
 /// Enum representing the status of a booking
 enum BookingStatus { pending, confirmed, cancelled, completed, noShow }
@@ -89,6 +90,9 @@ class Booking {
   /// Total price of the booking
   final double totalPrice;
 
+  /// Service-specific options for the booking
+  final Map<String, dynamic> serviceOptions;
+
   /// Date and time when the booking was created
   final DateTime createdAt;
 
@@ -126,6 +130,7 @@ class Booking {
     required this.contactPhone,
     this.eventId,
     this.eventName,
+    this.serviceOptions = const {},
   });
 
   /// Create a copy of this booking with modified fields
@@ -148,6 +153,7 @@ class Booking {
     String? contactPhone,
     String? eventId,
     String? eventName,
+    Map<String, dynamic>? serviceOptions,
   }) {
     return Booking(
       id: id ?? this.id,
@@ -168,6 +174,7 @@ class Booking {
       contactPhone: contactPhone ?? this.contactPhone,
       eventId: eventId ?? this.eventId,
       eventName: eventName ?? this.eventName,
+      serviceOptions: serviceOptions ?? this.serviceOptions,
     );
   }
 
@@ -192,6 +199,7 @@ class Booking {
       'contactPhone': contactPhone,
       'eventId': eventId,
       'eventName': eventName,
+      'serviceOptions': serviceOptions,
     };
   }
 
@@ -216,6 +224,7 @@ class Booking {
       contactPhone: json['contactPhone'],
       eventId: json['eventId'],
       eventName: json['eventName'],
+      serviceOptions: json['serviceOptions'] ?? {},
     );
   }
 
@@ -260,4 +269,65 @@ class Booking {
 
   /// Get the formatted price
   String get formattedPrice => '\$${totalPrice.toStringAsFixed(2)}';
+
+  /// Get venue options for this booking
+  VenueOptions? getVenueOptions() {
+    if (serviceType != 'venue' || !serviceOptions.containsKey('venue')) {
+      return null;
+    }
+    return VenueOptions.fromJson(serviceOptions['venue']);
+  }
+
+  /// Get catering options for this booking
+  CateringOptions? getCateringOptions() {
+    if (serviceType != 'catering' || !serviceOptions.containsKey('catering')) {
+      return null;
+    }
+    return CateringOptions.fromJson(serviceOptions['catering']);
+  }
+
+  /// Get photography options for this booking
+  PhotographyOptions? getPhotographyOptions() {
+    if (serviceType != 'photography' ||
+        !serviceOptions.containsKey('photography')) {
+      return null;
+    }
+    return PhotographyOptions.fromJson(serviceOptions['photography']);
+  }
+
+  /// Get planner options for this booking
+  PlannerOptions? getPlannerOptions() {
+    if (serviceType != 'planner' || !serviceOptions.containsKey('planner')) {
+      return null;
+    }
+    return PlannerOptions.fromJson(serviceOptions['planner']);
+  }
+
+  /// Set venue options for this booking
+  Booking withVenueOptions(VenueOptions options) {
+    final newOptions = Map<String, dynamic>.from(serviceOptions);
+    newOptions['venue'] = options.toJson();
+    return copyWith(serviceOptions: newOptions);
+  }
+
+  /// Set catering options for this booking
+  Booking withCateringOptions(CateringOptions options) {
+    final newOptions = Map<String, dynamic>.from(serviceOptions);
+    newOptions['catering'] = options.toJson();
+    return copyWith(serviceOptions: newOptions);
+  }
+
+  /// Set photography options for this booking
+  Booking withPhotographyOptions(PhotographyOptions options) {
+    final newOptions = Map<String, dynamic>.from(serviceOptions);
+    newOptions['photography'] = options.toJson();
+    return copyWith(serviceOptions: newOptions);
+  }
+
+  /// Set planner options for this booking
+  Booking withPlannerOptions(PlannerOptions options) {
+    final newOptions = Map<String, dynamic>.from(serviceOptions);
+    newOptions['planner'] = options.toJson();
+    return copyWith(serviceOptions: newOptions);
+  }
 }
