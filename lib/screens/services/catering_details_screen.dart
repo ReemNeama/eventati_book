@@ -9,6 +9,7 @@ import 'package:eventati_book/widgets/details/package_card.dart';
 import 'package:eventati_book/widgets/details/info_card.dart';
 import 'package:eventati_book/widgets/details/detail_tab_bar.dart';
 import 'package:eventati_book/widgets/details/image_placeholder.dart';
+import 'package:eventati_book/screens/booking/booking_form_screen.dart';
 
 class CateringDetailsScreen extends StatefulWidget {
   final CateringService cateringService;
@@ -160,6 +161,47 @@ class _CateringDetailsScreenState extends State<CateringDetailsScreen>
       body: TabBarView(
         controller: _tabController,
         children: [_buildPackagesTab(), _buildMenuTab()],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed:
+            _selectedPackageIndex >= 0 ? () => _navigateToBookingForm() : null,
+        backgroundColor:
+            _selectedPackageIndex >= 0
+                ? primaryColor
+                : isDarkMode
+                ? Colors.grey[700]
+                : Colors.grey[400],
+        label: const Text('Book Now'),
+        icon: const Icon(Icons.calendar_today),
+        tooltip:
+            _selectedPackageIndex >= 0
+                ? 'Book this catering service'
+                : 'Select a package first',
+      ),
+    );
+  }
+
+  /// Navigate to the booking form screen with the selected package details
+  void _navigateToBookingForm() {
+    if (_selectedPackageIndex < 0 ||
+        _selectedPackageIndex >= _packages.length) {
+      return;
+    }
+
+    final selectedPackage = _packages[_selectedPackageIndex];
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder:
+            (context) => BookingFormScreen(
+              serviceId:
+                  widget.cateringService.name, // Using name as ID for now
+              serviceType: 'catering',
+              serviceName: widget.cateringService.name,
+              basePrice: selectedPackage.price,
+              // Optional event parameters can be added here if available
+            ),
       ),
     );
   }

@@ -11,6 +11,7 @@ import 'package:eventati_book/widgets/details/detail_tab_bar.dart';
 import 'package:eventati_book/widgets/details/image_placeholder.dart';
 import 'package:eventati_book/widgets/details/chip_group.dart';
 import 'package:eventati_book/providers/service_recommendation_provider.dart';
+import 'package:eventati_book/screens/booking/booking_form_screen.dart';
 import 'package:provider/provider.dart';
 
 class VenueDetailsScreen extends StatefulWidget {
@@ -144,6 +145,46 @@ class _VenueDetailsScreenState extends State<VenueDetailsScreen>
       body: TabBarView(
         controller: _tabController,
         children: [_buildPackagesTab(), _buildVenueDetailsTab()],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed:
+            _selectedPackageIndex >= 0 ? () => _navigateToBookingForm() : null,
+        backgroundColor:
+            _selectedPackageIndex >= 0
+                ? primaryColor
+                : isDarkMode
+                ? Colors.grey[700]
+                : Colors.grey[400],
+        label: const Text('Book Now'),
+        icon: const Icon(Icons.calendar_today),
+        tooltip:
+            _selectedPackageIndex >= 0
+                ? 'Book this venue'
+                : 'Select a package first',
+      ),
+    );
+  }
+
+  /// Navigate to the booking form screen with the selected package details
+  void _navigateToBookingForm() {
+    if (_selectedPackageIndex < 0 ||
+        _selectedPackageIndex >= _packages.length) {
+      return;
+    }
+
+    final selectedPackage = _packages[_selectedPackageIndex];
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder:
+            (context) => BookingFormScreen(
+              serviceId: widget.venue.name, // Using name as ID for now
+              serviceType: 'venue',
+              serviceName: widget.venue.name,
+              basePrice: selectedPackage.price,
+              // Optional event parameters can be added here if available
+            ),
       ),
     );
   }
