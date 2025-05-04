@@ -84,14 +84,29 @@ lib/providers/
    - Updated to export from subfolder barrel files
    - Added export for barrel_provider.dart for backward compatibility
 
+## Progress
+
+1. ✅ Removed provider files from root directory and updated imports:
+   - ✅ auth_provider.dart
+   - ✅ wizard_provider.dart
+   - ✅ milestone_provider.dart
+   - ⬜ suggestion_provider.dart
+   - ⬜ service_recommendation_provider.dart
+   - ⬜ comparison_provider.dart
+   - ⬜ comparison_saving_provider.dart
+   - ⬜ budget_provider.dart
+   - ⬜ guest_list_provider.dart
+   - ⬜ messaging_provider.dart
+   - ⬜ task_provider.dart
+   - ⬜ booking_provider.dart
+
 ## Next Steps
 
-1. Gradually update imports throughout the codebase to use the providers.dart barrel file
+1. Continue removing provider files from the root directory one by one and updating imports
    - This needs to be done in a coordinated way to avoid type conflicts
    - All files that reference a specific provider type need to be updated together
 
 2. Once all imports have been updated to use the providers.dart barrel file:
-   - Remove the re-export files from the root providers directory
    - Remove the barrel_provider directory and barrel_provider.dart file
 
 ## Migration Strategy
