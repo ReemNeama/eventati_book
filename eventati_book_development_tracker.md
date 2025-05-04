@@ -266,11 +266,13 @@
   5. [ ] Implement comparison sharing (PDF export, email, etc.)
   6. [x] Add comparison notes and annotations
 
-- [ ] Create barrel files for modules with 4 or more imports:
-  1. [ ] Identify remaining modules that need barrel files
-  2. [ ] Create barrel files for these modules
-  3. [ ] Update imports throughout the codebase
-  4. [ ] Add comments in barrel files to clarify exports
+- [x] Create barrel files for modules with 4 or more imports:
+  1. [x] Identify remaining modules that need barrel files
+  2. [x] Create barrel files for these modules
+     - [x] Created event_planning_screens.dart for all event planning screens
+     - [x] Created event_wizard_screens.dart for all event wizard screens
+  3. [x] Update imports throughout the codebase
+  4. [x] Add comments in barrel files to clarify exports
 
 - [ ] Implement Feature Enhancements:
   1. [ ] Onboarding Flow
@@ -362,7 +364,7 @@
       - [x] Make sure every page is responsive across different screen sizes
       - [x] When naming conflicts occur, use the more descriptive name
       - [x] Add clear comments to all code sections
-      - [ ] Create barrel files for modules with 4 or more imports
+      - [x] Create barrel files for modules with 4 or more imports
 
 - UI/UX Polish (Current Priority)
   - [x] Consistent Error Handling

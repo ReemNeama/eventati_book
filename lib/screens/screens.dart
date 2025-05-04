@@ -9,6 +9,7 @@ export 'authentications/auth_screens.dart';
 export 'services/service_listing_screens.dart';
 export 'services/service_comparison_screen.dart';
 export 'services/saved_comparisons_screen.dart';
+export 'event_planning/event_planning_screens.dart';
 
 // Homepage screens
 export 'homepage/homepage_screen.dart';
@@ -22,10 +23,7 @@ export 'events/user_events_screen.dart';
 export 'profile/profile_screen.dart';
 
 // Event wizard screens
-export 'event_wizard/event_wizard_screen.dart';
-export 'event_wizard/suggestion_screen.dart';
-export 'event_wizard/create_suggestion_screen.dart';
-export 'event_wizard/wizard_factory.dart';
+export 'event_wizard/event_wizard_screens.dart';
 
 // Booking screens
 export 'booking/booking_screens.dart';
