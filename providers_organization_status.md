@@ -97,7 +97,7 @@ lib/providers/
    - ✅ budget_provider.dart
    - ✅ guest_list_provider.dart
    - ✅ messaging_provider.dart
-   - ⬜ task_provider.dart
+   - ✅ task_provider.dart
    - ⬜ booking_provider.dart
 
 ## Next Steps
