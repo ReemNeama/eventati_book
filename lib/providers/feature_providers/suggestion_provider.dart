@@ -3,43 +3,106 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:eventati_book/models/models.dart';
 
-/// Provider to manage suggestions based on the wizard state
+/// Provider for managing event planning suggestions based on the wizard state.
+///
+/// The SuggestionProvider is responsible for:
+/// * Managing predefined and custom suggestions for event planning
+/// * Filtering suggestions based on the current wizard state
+/// * Calculating relevance scores for suggestions
+/// * Allowing users to create, update, and delete custom suggestions
+/// * Persisting custom suggestions between app sessions
+///
+/// Suggestions are filtered and sorted based on their relevance to the current
+/// event being planned. The provider also supports filtering by category to help
+/// users find specific types of suggestions.
 ///
 /// Note: The current implementation uses SharedPreferences for local storage,
 /// which has limitations for complex data structures. This will be replaced
 /// with Firebase Firestore in the future for better persistence and synchronization.
+///
+/// Usage example:
+/// ```dart
+/// // Access the provider from the widget tree
+/// final suggestionProvider = Provider.of<SuggestionProvider>(context);
+///
+/// // Initialize the provider (typically done in main.dart or when entering the suggestions screen)
+/// await suggestionProvider.initialize();
+///
+/// // Filter suggestions based on the current wizard state
+/// final wizardProvider = Provider.of<WizardProvider>(context, listen: false);
+/// if (wizardProvider.state != null) {
+///   suggestionProvider.filterSuggestions(wizardProvider.state!);
+/// }
+///
+/// // Filter suggestions by category
+/// suggestionProvider.setCategoryFilter(SuggestionCategory.venue);
+///
+/// // Get filtered suggestions
+/// final suggestions = suggestionProvider.filteredSuggestions;
+///
+/// // Add a custom suggestion
+/// final newSuggestion = Suggestion(
+///   id: 'custom_${DateTime.now().millisecondsSinceEpoch}',
+///   title: 'My Custom Suggestion',
+///   description: 'This is a custom suggestion I created',
+///   category: SuggestionCategory.venue,
+///   priority: SuggestionPriority.medium,
+///   baseRelevanceScore: 70,
+///   conditions: [],
+///   applicableEventTypes: ['wedding', 'business', 'celebration'],
+///   isCustom: true,
+/// );
+/// await suggestionProvider.addCustomSuggestion(newSuggestion);
+/// ```
 class SuggestionProvider extends ChangeNotifier {
-  /// All available suggestions (predefined + custom)
+  /// Complete list of all available suggestions, including both predefined and custom
   List<Suggestion> _allSuggestions = [];
 
-  /// Filtered suggestions based on the current wizard state
+  /// List of suggestions filtered based on the current wizard state and category filter
   List<Suggestion> _filteredSuggestions = [];
 
-  /// Whether the provider is loading data
+  /// Flag indicating if the provider is currently loading data
   bool _isLoading = false;
 
-  /// Error message if any
+  /// Error message if an operation fails
   String? _error;
 
-  /// Selected category filter (null means all categories)
+  /// The currently selected category filter, or null if no category filter is applied
   SuggestionCategory? _selectedCategory;
 
-  /// Get all available suggestions
+  /// Returns the complete list of all available suggestions
+  ///
+  /// This includes both predefined suggestions from SuggestionTemplates and
+  /// custom suggestions created by the user.
   List<Suggestion> get allSuggestions => _allSuggestions;
 
-  /// Get filtered suggestions
+  /// Returns the list of suggestions filtered by the current wizard state and category
+  ///
+  /// These suggestions are filtered based on their relevance to the current
+  /// wizard state and the selected category filter (if any). They are sorted
+  /// by relevance score in descending order (most relevant first).
   List<Suggestion> get filteredSuggestions => _filteredSuggestions;
 
-  /// Check if the provider is loading
+  /// Indicates if the provider is currently loading data
   bool get isLoading => _isLoading;
 
-  /// Get the error message if any
+  /// Returns the error message if an operation has failed, null otherwise
   String? get error => _error;
 
-  /// Get the selected category filter
+  /// Returns the currently selected category filter, or null if no filter is applied
+  ///
+  /// When null, suggestions from all categories are shown (subject to wizard state filtering).
+  /// When set to a specific category, only suggestions from that category are shown.
   SuggestionCategory? get selectedCategory => _selectedCategory;
 
-  /// Initialize the provider
+  /// Initializes the provider by loading predefined and custom suggestions
+  ///
+  /// This method loads all predefined suggestions from SuggestionTemplates and
+  /// all custom suggestions from SharedPreferences, combines them into a single list,
+  /// and initializes both the allSuggestions and filteredSuggestions lists.
+  ///
+  /// This should be called when the app starts or when entering the suggestions screen.
+  /// Notifies listeners when the operation completes.
   Future<void> initialize() async {
     _isLoading = true;
     _error = null;
@@ -66,7 +129,18 @@ class SuggestionProvider extends ChangeNotifier {
     }
   }
 
-  /// Filter suggestions based on the wizard state
+  /// Filters suggestions based on their relevance to the current wizard state
+  ///
+  /// [wizardState] The current state of the event wizard
+  ///
+  /// This method filters the complete list of suggestions to include only those
+  /// that are relevant for the current wizard state, sorts them by relevance score
+  /// (highest first), and then applies any category filter that may be set.
+  ///
+  /// Each suggestion's relevance is determined by its isRelevantFor method, which
+  /// checks if the suggestion's conditions are met by the wizard state.
+  ///
+  /// Notifies listeners when the operation completes.
   void filterSuggestions(WizardState wizardState) {
     _isLoading = true;
     notifyListeners();
@@ -77,8 +151,6 @@ class SuggestionProvider extends ChangeNotifier {
           _allSuggestions
               .where((suggestion) => suggestion.isRelevantFor(wizardState))
               .toList();
-
-      // We'll sort based on the calculated score later, no need to calculate here
 
       // Sort by relevance score (highest first)
       relevantSuggestions.sort((a, b) {
@@ -106,7 +178,16 @@ class SuggestionProvider extends ChangeNotifier {
     }
   }
 
-  /// Set the category filter and apply it
+  /// Sets the category filter and applies it to the current suggestions
+  ///
+  /// [category] The category to filter by, or null to show all categories
+  ///
+  /// This method updates the selected category filter and then applies it to
+  /// the current list of suggestions. When category is null, all suggestions
+  /// are shown (subject to wizard state filtering). When category is set to a
+  /// specific value, only suggestions from that category are shown.
+  ///
+  /// Notifies listeners when the operation completes.
   void setCategoryFilter(SuggestionCategory? category) {
     _selectedCategory = category;
 
@@ -116,7 +197,14 @@ class SuggestionProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Apply the current category filter to all suggestions
+  /// Applies the current category filter to the list of suggestions
+  ///
+  /// This method filters the list of suggestions based on the currently selected
+  /// category filter. If no category filter is selected, all suggestions are shown.
+  /// The filtered suggestions are then sorted by their base relevance score.
+  ///
+  /// This method is called internally by setCategoryFilter and does not notify listeners.
+  /// If an error occurs, it is stored in the error property but no exception is thrown.
   void applyCurrentCategoryFilter() {
     try {
       if (_selectedCategory != null) {
@@ -139,7 +227,16 @@ class SuggestionProvider extends ChangeNotifier {
     }
   }
 
-  /// Add a custom suggestion
+  /// Adds a custom suggestion to the list of suggestions
+  ///
+  /// [suggestion] The custom suggestion to add
+  ///
+  /// This method adds a custom suggestion to the list of all suggestions and,
+  /// if it matches the current category filter, to the list of filtered suggestions.
+  /// It then saves the updated list of custom suggestions to SharedPreferences.
+  ///
+  /// Returns true if the suggestion was successfully added, false otherwise.
+  /// Notifies listeners when the operation completes.
   Future<bool> addCustomSuggestion(Suggestion suggestion) async {
     try {
       // Add to all suggestions
@@ -170,7 +267,16 @@ class SuggestionProvider extends ChangeNotifier {
     }
   }
 
-  /// Update a suggestion
+  /// Updates an existing suggestion with new information
+  ///
+  /// [updatedSuggestion] The updated suggestion (must have the same ID as an existing suggestion)
+  ///
+  /// This method updates an existing suggestion with new information. If the
+  /// suggestion is a custom suggestion, it also saves the updated list of custom
+  /// suggestions to SharedPreferences.
+  ///
+  /// Returns true if the suggestion was successfully updated, false otherwise.
+  /// Notifies listeners when the operation completes.
   Future<bool> updateSuggestion(Suggestion updatedSuggestion) async {
     try {
       // Find the suggestion index
@@ -201,7 +307,16 @@ class SuggestionProvider extends ChangeNotifier {
     }
   }
 
-  /// Delete a suggestion
+  /// Deletes a suggestion from the list of suggestions
+  ///
+  /// [suggestionId] The ID of the suggestion to delete
+  ///
+  /// This method removes a suggestion from the list of all suggestions and,
+  /// if present, from the list of filtered suggestions. Only custom suggestions
+  /// can be deleted; predefined suggestions cannot be deleted.
+  ///
+  /// Returns true if the suggestion was successfully deleted, false otherwise.
+  /// Notifies listeners when the operation completes.
   Future<bool> deleteSuggestion(String suggestionId) async {
     try {
       // Find the suggestion
@@ -234,7 +349,14 @@ class SuggestionProvider extends ChangeNotifier {
     }
   }
 
-  /// Load custom suggestions from shared preferences
+  /// Loads custom suggestions from SharedPreferences
+  ///
+  /// This private method retrieves the saved custom suggestions from SharedPreferences,
+  /// deserializes them from JSON, and returns them as a list of Suggestion objects.
+  /// It ensures that only suggestions with isCustom=true are loaded.
+  ///
+  /// Returns an empty list if no custom suggestions are found or if an error occurs.
+  /// If an error occurs, it is stored in the error property and listeners are notified.
   Future<List<Suggestion>> _loadCustomSuggestions() async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -262,7 +384,15 @@ class SuggestionProvider extends ChangeNotifier {
     }
   }
 
-  /// Save custom suggestions to shared preferences
+  /// Saves custom suggestions to SharedPreferences
+  ///
+  /// This private method filters the list of all suggestions to include only
+  /// those with isCustom=true, serializes them to JSON, and saves them to
+  /// SharedPreferences.
+  ///
+  /// If an error occurs, it is stored in the error property and listeners are notified.
+  /// Note: This method is called automatically by addCustomSuggestion, updateSuggestion,
+  /// and deleteSuggestion, so there's no need to call it directly.
   Future<void> _saveCustomSuggestions() async {
     try {
       final prefs = await SharedPreferences.getInstance();
