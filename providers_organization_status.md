@@ -90,7 +90,7 @@ lib/providers/
    - ✅ auth_provider.dart
    - ✅ wizard_provider.dart
    - ✅ milestone_provider.dart
-   - ⬜ suggestion_provider.dart
+   - ✅ suggestion_provider.dart
    - ⬜ service_recommendation_provider.dart
    - ⬜ comparison_provider.dart
    - ⬜ comparison_saving_provider.dart
