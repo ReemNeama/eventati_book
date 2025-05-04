@@ -9,7 +9,7 @@ import 'package:eventati_book/widgets/details/info_card.dart';
 import 'package:eventati_book/widgets/details/detail_tab_bar.dart';
 import 'package:eventati_book/widgets/details/image_placeholder.dart';
 import 'package:eventati_book/widgets/details/chip_group.dart';
-import 'package:eventati_book/providers/service_recommendation_provider.dart';
+import 'package:eventati_book/providers/providers.dart';
 import 'package:eventati_book/screens/booking/booking_form_screen.dart';
 import 'package:provider/provider.dart';
 

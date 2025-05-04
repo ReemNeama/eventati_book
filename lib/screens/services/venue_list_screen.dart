@@ -8,8 +8,7 @@ import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/screens/services/venue_details_screen.dart';
 import 'package:eventati_book/screens/services/service_comparison_screen.dart';
-import 'package:eventati_book/providers/service_recommendation_provider.dart';
-import 'package:eventati_book/providers/comparison_provider.dart';
+import 'package:eventati_book/providers/providers.dart';
 import 'package:provider/provider.dart';
 
 class VenueListScreen extends StatefulWidget {
