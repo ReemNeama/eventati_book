@@ -4,35 +4,94 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/utils/date_utils.dart' as date_utils;
 
-/// Provider to manage bookings
+/// Provider for managing service bookings and appointments.
+///
+/// The BookingProvider is responsible for:
+/// * Creating, updating, and canceling service bookings
+/// * Tracking booking status and history
+/// * Checking service availability for specific dates and times
+/// * Filtering bookings by service, event, or date
+/// * Persisting booking data using SharedPreferences
+///
+/// Unlike other providers, BookingProvider is not tied to a specific event
+/// and manages bookings across all events. It uses SharedPreferences for
+/// persistent storage rather than mock data.
+///
+/// Usage example:
+/// ```dart
+/// // Access the provider from the widget tree
+/// final bookingProvider = Provider.of<BookingProvider>(context);
+///
+/// // Initialize the provider (typically done in main.dart)
+/// await bookingProvider.initialize();
+///
+/// // Get upcoming bookings
+/// final upcomingBookings = bookingProvider.upcomingBookings;
+///
+/// // Check if a service is available at a specific time
+/// final isAvailable = await bookingProvider.isServiceAvailable(
+///   'service123',
+///   DateTime(2023, 6, 15, 14, 0), // June 15, 2023, 2:00 PM
+///   2.5, // 2.5 hours duration
+/// );
+///
+/// // Create a new booking
+/// final newBooking = Booking(
+///   id: 'booking123',
+///   serviceId: 'service123',
+///   eventId: 'event123',
+///   bookingDateTime: DateTime(2023, 6, 15, 14, 0),
+///   duration: 2.5, // 2.5 hours
+///   status: BookingStatus.confirmed,
+///   createdAt: DateTime.now(),
+/// );
+/// await bookingProvider.createBooking(newBooking);
+///
+/// // Cancel a booking
+/// await bookingProvider.cancelBooking('booking123');
+/// ```
 class BookingProvider extends ChangeNotifier {
-  /// List of all bookings
+  /// List of all bookings across all events and services
   List<Booking> _bookings = [];
 
-  /// Loading state
+  /// Flag indicating if the provider is currently loading data
   bool _isLoading = false;
 
-  /// Error message
+  /// Error message if an operation fails
   String? _error;
 
-  /// Get all bookings
+  /// Returns the complete list of all bookings
+  ///
+  /// This includes bookings for all events, services, and statuses.
   List<Booking> get bookings => _bookings;
 
-  /// Get loading state
+  /// Indicates if the provider is currently loading data
   bool get isLoading => _isLoading;
 
-  /// Get error message
+  /// Returns the error message if an operation has failed, null otherwise
   String? get error => _error;
 
-  /// Get upcoming bookings
+  /// Returns all bookings with future dates
+  ///
+  /// A booking is considered upcoming if its date and time are in the future
+  /// and it has not been cancelled. This is determined by the [isUpcoming]
+  /// property on the Booking model.
   List<Booking> get upcomingBookings =>
       _bookings.where((booking) => booking.isUpcoming).toList();
 
-  /// Get past bookings
+  /// Returns all bookings with past dates
+  ///
+  /// A booking is considered past if its date and time (plus duration) have already
+  /// passed. This is determined by the [isPast] property on the Booking model.
   List<Booking> get pastBookings =>
       _bookings.where((booking) => booking.isPast).toList();
 
-  /// Initialize the provider
+  /// Initializes the provider by loading all bookings from SharedPreferences
+  ///
+  /// This method should be called when the app starts, typically in main.dart
+  /// or when the provider is first created. It loads all saved bookings from
+  /// persistent storage and updates the provider's state.
+  /// Notifies listeners when the operation completes.
   Future<void> initialize() async {
     _isLoading = true;
     _error = null;
@@ -52,7 +111,13 @@ class BookingProvider extends ChangeNotifier {
     }
   }
 
-  /// Create a new booking
+  /// Creates a new booking and adds it to the booking list
+  ///
+  /// [booking] The booking to create
+  ///
+  /// Returns true if the booking was successfully created, false otherwise.
+  /// The booking is added to the list and persisted to SharedPreferences.
+  /// Notifies listeners when the operation completes.
   Future<bool> createBooking(Booking booking) async {
     _isLoading = true;
     _error = null;
@@ -76,7 +141,14 @@ class BookingProvider extends ChangeNotifier {
     }
   }
 
-  /// Update an existing booking
+  /// Updates an existing booking with new information
+  ///
+  /// [booking] The updated booking (must have the same ID as an existing booking)
+  ///
+  /// Returns true if the booking was successfully updated, false otherwise.
+  /// Throws an exception if the booking with the specified ID is not found.
+  /// The updated booking is persisted to SharedPreferences.
+  /// Notifies listeners when the operation completes.
   Future<bool> updateBooking(Booking booking) async {
     _isLoading = true;
     _error = null;
@@ -106,7 +178,16 @@ class BookingProvider extends ChangeNotifier {
     }
   }
 
-  /// Cancel a booking
+  /// Cancels an existing booking by changing its status to cancelled
+  ///
+  /// [bookingId] The ID of the booking to cancel
+  ///
+  /// Returns true if the booking was successfully cancelled, false otherwise.
+  /// Throws an exception if the booking with the specified ID is not found.
+  /// This method does not remove the booking from the list, but updates its status
+  /// to BookingStatus.cancelled and sets the updatedAt timestamp to the current time.
+  /// The updated booking is persisted to SharedPreferences.
+  /// Notifies listeners when the operation completes.
   Future<bool> cancelBooking(String bookingId) async {
     _isLoading = true;
     _error = null;
@@ -140,7 +221,14 @@ class BookingProvider extends ChangeNotifier {
     }
   }
 
-  /// Delete a booking
+  /// Permanently removes a booking from the list
+  ///
+  /// [bookingId] The ID of the booking to delete
+  ///
+  /// Returns true if the booking was successfully deleted, false otherwise.
+  /// Unlike cancelBooking, this method completely removes the booking from the list.
+  /// The updated booking list is persisted to SharedPreferences.
+  /// Notifies listeners when the operation completes.
   Future<bool> deleteBooking(String bookingId) async {
     _isLoading = true;
     _error = null;
@@ -164,7 +252,12 @@ class BookingProvider extends ChangeNotifier {
     }
   }
 
-  /// Get a booking by ID
+  /// Finds and returns a booking with the specified ID
+  ///
+  /// [bookingId] The ID of the booking to find
+  ///
+  /// Returns the booking if found, null otherwise.
+  /// This method does not modify the booking list or notify listeners.
   Booking? getBookingById(String bookingId) {
     try {
       return _bookings.firstWhere((b) => b.id == bookingId);
@@ -173,17 +266,34 @@ class BookingProvider extends ChangeNotifier {
     }
   }
 
-  /// Get bookings for a specific service
+  /// Returns all bookings for a specific service
+  ///
+  /// [serviceId] The ID of the service to filter by
+  ///
+  /// Returns a list of bookings that match the specified service ID.
+  /// This method does not modify the booking list or notify listeners.
   List<Booking> getBookingsForService(String serviceId) {
     return _bookings.where((b) => b.serviceId == serviceId).toList();
   }
 
-  /// Get bookings for a specific event
+  /// Returns all bookings for a specific event
+  ///
+  /// [eventId] The ID of the event to filter by
+  ///
+  /// Returns a list of bookings that match the specified event ID.
+  /// This method does not modify the booking list or notify listeners.
   List<Booking> getBookingsForEvent(String eventId) {
     return _bookings.where((b) => b.eventId == eventId).toList();
   }
 
-  /// Get bookings for a specific date
+  /// Returns all bookings for a specific date
+  ///
+  /// [date] The date to filter by
+  ///
+  /// Returns a list of bookings that occur on the specified date,
+  /// regardless of the time of day. Uses DateTimeUtils.isSameDay to
+  /// compare dates, which ignores the time component.
+  /// This method does not modify the booking list or notify listeners.
   List<Booking> getBookingsForDate(DateTime date) {
     return _bookings
         .where(
@@ -192,7 +302,16 @@ class BookingProvider extends ChangeNotifier {
         .toList();
   }
 
-  /// Check if a service is available at a specific date and time
+  /// Checks if a service is available at a specific date and time
+  ///
+  /// [serviceId] The ID of the service to check availability for
+  /// [dateTime] The date and time to check
+  /// [duration] The duration of the booking in hours
+  ///
+  /// Returns true if the service is available at the specified time, false otherwise.
+  /// A service is considered available if there are no other non-cancelled bookings
+  /// for the same service that overlap with the requested time period.
+  /// This method does not modify the booking list or notify listeners.
   Future<bool> isServiceAvailable(
     String serviceId,
     DateTime dateTime,
@@ -236,7 +355,11 @@ class BookingProvider extends ChangeNotifier {
     return true; // No overlap, service is available
   }
 
-  /// Load bookings from shared preferences
+  /// Loads bookings from SharedPreferences
+  ///
+  /// Returns a list of Booking objects deserialized from JSON stored in SharedPreferences.
+  /// If no bookings are found or an error occurs, returns an empty list.
+  /// Updates the error message if an error occurs.
   Future<List<Booking>> _loadBookings() async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -253,7 +376,10 @@ class BookingProvider extends ChangeNotifier {
     }
   }
 
-  /// Save bookings to shared preferences
+  /// Saves bookings to SharedPreferences
+  ///
+  /// Serializes all bookings to JSON and stores them in SharedPreferences.
+  /// Updates the error message if an error occurs.
   Future<void> _saveBookings() async {
     try {
       final prefs = await SharedPreferences.getInstance();
