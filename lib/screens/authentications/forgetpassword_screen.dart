@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:eventati_book/providers/auth_provider.dart';
+import 'package:eventati_book/providers/providers.dart';
 import 'package:eventati_book/screens/authentications/verification_screen.dart';
 import 'package:eventati_book/widgets/auth/auth_title_widget.dart';
 import 'package:eventati_book/widgets/auth/auth_text_field.dart';

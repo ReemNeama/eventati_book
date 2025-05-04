@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
-import 'package:eventati_book/providers/auth_provider.dart';
+import 'package:eventati_book/providers/providers.dart';
 import 'package:mocktail/mocktail.dart';
 
 // Mock classes for providers

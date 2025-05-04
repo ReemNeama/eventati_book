@@ -11,6 +11,18 @@ lib/providers/
 ├── README.md
 ├── providers.dart (main barrel file)
 ├── barrel_provider.dart (exports all re-export files)
+├── auth_provider.dart (re-exports from core_providers)
+├── wizard_provider.dart (re-exports from core_providers)
+├── milestone_provider.dart (re-exports from feature_providers)
+├── suggestion_provider.dart (re-exports from feature_providers)
+├── service_recommendation_provider.dart (re-exports from feature_providers)
+├── comparison_provider.dart (re-exports from feature_providers)
+├── comparison_saving_provider.dart (re-exports from feature_providers)
+├── budget_provider.dart (re-exports from planning_providers)
+├── guest_list_provider.dart (re-exports from planning_providers)
+├── messaging_provider.dart (re-exports from planning_providers)
+├── task_provider.dart (re-exports from planning_providers)
+├── booking_provider.dart (re-exports from planning_providers)
 ├── core_providers/
 │   ├── core_providers.dart (barrel file)
 │   ├── auth_provider.dart
@@ -63,7 +75,8 @@ lib/providers/
    - Moved budget_provider.dart, guest_list_provider.dart, messaging_provider.dart, task_provider.dart, and booking_provider.dart to planning_providers/
 
 4. ✅ Created backward compatibility system
-   - Created barrel_provider/ directory for re-export files
+   - Created re-export files in the root providers directory
+   - Created barrel_provider/ directory for additional re-export files
    - Created re-export files for each provider in the barrel_provider/ directory
    - Created barrel_provider.dart to export all re-export files
 
@@ -77,10 +90,9 @@ lib/providers/
    - This needs to be done in a coordinated way to avoid type conflicts
    - All files that reference a specific provider type need to be updated together
 
-2. Update the main.dart file to use only the providers.dart barrel file
-   - Remove direct imports of individual providers
-
-3. Consider removing the barrel_provider directory and barrel_provider.dart file once all imports have been thoroughly tested and updated to use the providers.dart barrel file directly
+2. Once all imports have been updated to use the providers.dart barrel file:
+   - Remove the re-export files from the root providers directory
+   - Remove the barrel_provider directory and barrel_provider.dart file
 
 ## Migration Strategy
 

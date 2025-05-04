@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:eventati_book/models/models.dart';
-import 'package:eventati_book/providers/budget_provider.dart';
-import 'package:eventati_book/providers/guest_list_provider.dart';
-import 'package:eventati_book/providers/task_provider.dart';
-import 'package:eventati_book/providers/service_recommendation_provider.dart';
+import 'package:eventati_book/providers/providers.dart';
 import 'package:eventati_book/services/task_template_service.dart';
 
 /// Service to connect the wizard with other planning tools
