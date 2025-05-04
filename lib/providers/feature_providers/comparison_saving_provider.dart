@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:eventati_book/models/models.dart';
-import 'package:eventati_book/providers/core_providers/auth_provider.dart';
+import 'package:eventati_book/providers/providers.dart';
 import 'package:eventati_book/utils/constants.dart';
 
 /// Provider to manage saved comparisons

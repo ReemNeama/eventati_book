@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:eventati_book/providers/auth_provider.dart';
+import 'package:eventati_book/providers/providers.dart';
 import 'package:provider/provider.dart';
 
 /// Profile screen that displays user information and settings
