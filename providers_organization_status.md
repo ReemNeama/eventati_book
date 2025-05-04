@@ -121,10 +121,10 @@ lib/providers/
    - messaging_provider.dart
    - booking_provider.dart
    - milestone_provider.dart
+   - suggestion_provider.dart
 
 4. Next steps:
    - Continue adding documentation to remaining provider classes:
-     - suggestion_provider.dart
      - service_recommendation_provider.dart
      - comparison_provider.dart
      - comparison_saving_provider.dart
