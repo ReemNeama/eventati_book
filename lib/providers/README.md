@@ -35,6 +35,6 @@ import 'package:eventati_book/providers/providers.dart';
 final authProvider = Provider.of<AuthProvider>(context);
 ```
 
-## Backward Compatibility
+## Usage Guidelines
 
-For backward compatibility, re-export files are available in the `barrel_provider` directory. However, we recommend using the main barrel file for imports.
+Always use the main barrel file for imports to ensure consistent access to providers throughout the application.

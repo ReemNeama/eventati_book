@@ -12,6 +12,3 @@ export 'feature_providers/feature_providers.dart';
 
 // Planning tool providers
 export 'planning_providers/planning_providers.dart';
-
-// Backward compatibility re-exports
-export 'barrel_provider.dart';
