@@ -1,19 +1,17 @@
 // Barrel file for providers
 // This file exports all providers to simplify imports
 
+// Note: We've organized providers into subfolders for better maintainability
+// We recommend using this barrel file for imports to benefit from the new organization
+
 // Core providers
-export 'auth_provider.dart';
-export 'wizard_provider.dart';
+export 'core_providers/core_providers.dart';
 
 // Feature providers
-export 'milestone_provider.dart';
-export 'suggestion_provider.dart';
-export 'service_recommendation_provider.dart';
-export 'comparison_provider.dart';
+export 'feature_providers/feature_providers.dart';
 
 // Planning tool providers
-export 'budget_provider.dart';
-export 'guest_list_provider.dart';
-export 'messaging_provider.dart';
-export 'task_provider.dart';
-export 'booking_provider.dart';
+export 'planning_providers/planning_providers.dart';
+
+// Backward compatibility re-exports
+export 'barrel_provider.dart';

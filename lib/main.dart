@@ -1,6 +1,5 @@
 // Import providers using barrel file
 import 'package:eventati_book/providers/providers.dart';
-import 'package:eventati_book/providers/comparison_saving_provider.dart';
 
 // Import screens using barrel files
 import 'package:eventati_book/screens/screens.dart';

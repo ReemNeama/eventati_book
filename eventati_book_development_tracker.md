@@ -320,6 +320,14 @@
      - [x] Updated the export paths in the re-export files to correctly point to their respective model files
      - [x] Created a barrel_model.dart file in the models directory that exports all the files from the barrel_model directory
      - [x] Updated the models.dart file to export the barrel_model.dart file and directly export the model files
+  12. [x] Reorganize providers into subfolders
+     - [x] Created core_providers/ directory for fundamental providers
+     - [x] Created feature_providers/ directory for feature-specific providers
+     - [x] Created planning_providers/ directory for event planning tool providers
+     - [x] Created barrel files for each subfolder
+     - [x] Moved provider files to their respective subfolders
+     - [x] Created backward compatibility system with barrel_provider directory
+     - [x] Updated the main providers.dart barrel file
 
 - [ ] Implement Feature Enhancements:
   1. [ ] Onboarding Flow
