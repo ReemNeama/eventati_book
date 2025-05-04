@@ -29,3 +29,4 @@ export 'venue_package.dart';
 
 // Feature models
 export 'suggestion.dart';
+export 'saved_comparison.dart';

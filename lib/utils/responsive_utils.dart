@@ -105,6 +105,12 @@ class ResponsiveUtils {
     return getScreenWidth(context) * (percentage / 100);
   }
 
+  /// Check if the device is a tablet or larger
+  static bool isTabletOrLarger(BuildContext context) {
+    final deviceType = getDeviceType(context);
+    return deviceType == DeviceType.tablet || deviceType == DeviceType.desktop;
+  }
+
   /// Calculate a responsive height based on screen height percentage
   static double getHeightPercentage(BuildContext context, double percentage) {
     return getScreenHeight(context) * (percentage / 100);

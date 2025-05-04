@@ -1,5 +1,6 @@
 // Import providers using barrel file
 import 'package:eventati_book/providers/providers.dart';
+import 'package:eventati_book/providers/comparison_saving_provider.dart';
 
 // Import screens using barrel files
 import 'package:eventati_book/screens/screens.dart';
@@ -27,7 +28,7 @@ void main() {
         ),
         ChangeNotifierProvider(create: (_) => SuggestionProvider()),
         ChangeNotifierProvider(create: (_) => ServiceRecommendationProvider()),
-        ChangeNotifierProvider(create: (_) => ComparisonProvider()),
+        // ChangeNotifierProvider(create: (_) => ComparisonProvider()),
 
         // Event planning tool providers
         ChangeNotifierProvider(
@@ -49,6 +50,19 @@ void main() {
 
         // Booking provider
         ChangeNotifierProvider(create: (_) => BookingProvider(), lazy: true),
+
+        // Comparison providers
+        ChangeNotifierProvider(create: (_) => ComparisonProvider()),
+        ChangeNotifierProxyProvider<AuthProvider, ComparisonSavingProvider>(
+          create:
+              (context) => ComparisonSavingProvider(
+                Provider.of<AuthProvider>(context, listen: false),
+              ),
+          update:
+              (context, authProvider, previous) =>
+                  previous ?? ComparisonSavingProvider(authProvider),
+          lazy: true,
+        ),
       ],
       child: const MyApp(),
     ),
@@ -111,6 +125,7 @@ class _MyAppState extends State<MyApp> {
         '/event-wizard/create-suggestion':
             (context) => const CreateSuggestionScreen(),
         '/bookings': (context) => const BookingHistoryScreen(),
+        '/comparisons/saved': (context) => const SavedComparisonsScreen(),
       },
       // Use onGenerateRoute for routes that need parameters
       onGenerateRoute: (settings) {

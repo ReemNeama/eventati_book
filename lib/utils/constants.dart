@@ -15,6 +15,7 @@ class AppConstants {
   static const String userIdKey = 'user_id';
   static const String userDataKey = 'user_data';
   static const String themeKey = 'app_theme';
+  static const String savedComparisonsKey = 'saved_comparisons';
 
   // Timeouts
   static const Duration connectionTimeout = Duration(seconds: 30);

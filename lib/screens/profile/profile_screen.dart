@@ -116,6 +116,14 @@ class ProfileScreen extends StatelessWidget {
                 const SizedBox(height: 8),
                 _buildSettingItem(
                   context,
+                  icon: Icons.compare_arrows,
+                  title: 'Saved Comparisons',
+                  onTap: () {
+                    Navigator.pushNamed(context, '/comparisons/saved');
+                  },
+                ),
+                _buildSettingItem(
+                  context,
                   icon: Icons.help_outline,
                   title: 'Help & Support',
                   onTap: () {
