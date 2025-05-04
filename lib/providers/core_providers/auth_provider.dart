@@ -20,7 +20,44 @@ enum AuthStatus {
   error,
 }
 
-/// Provider for managing authentication state
+/// Provider for managing authentication state in the application.
+///
+/// The AuthProvider is responsible for:
+/// * User authentication (login, registration, logout)
+/// * Storing and retrieving user data
+/// * Managing authentication tokens
+/// * Tracking authentication status
+/// * Handling user profile updates
+/// * Managing user favorites
+///
+/// This provider uses SharedPreferences for persistent storage of authentication data.
+/// In a production environment, this would be replaced with secure API calls to a backend.
+///
+/// Usage example:
+/// ```dart
+/// // Access the provider
+/// final authProvider = Provider.of<AuthProvider>(context);
+///
+/// // Check authentication status
+/// if (authProvider.isAuthenticated) {
+///   // User is logged in
+///   final user = authProvider.user;
+///   print('Logged in as ${user?.name}');
+/// } else {
+///   // User is not logged in
+///   Navigator.of(context).pushNamed('/login');
+/// }
+///
+/// // Login a user
+/// final success = await authProvider.login('user@example.com', 'password');
+/// if (success) {
+///   Navigator.of(context).pushReplacementNamed('/home');
+/// } else {
+///   ScaffoldMessenger.of(context).showSnackBar(
+///     SnackBar(content: Text(authProvider.errorMessage ?? 'Login failed')),
+///   );
+/// }
+/// ```
 class AuthProvider with ChangeNotifier {
   /// Current authentication status
   AuthStatus _status = AuthStatus.unauthenticated;

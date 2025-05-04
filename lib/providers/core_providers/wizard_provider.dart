@@ -4,7 +4,41 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/services/wizard_connection_service.dart';
 
-/// Provider to manage the state of the event wizard
+/// Provider to manage the state of the event wizard throughout the application.
+///
+/// The WizardProvider is responsible for:
+/// * Initializing the event wizard with a template
+/// * Managing the wizard's state as users progress through steps
+/// * Storing and retrieving wizard state data
+/// * Validating user inputs at each step
+/// * Connecting wizard data to other planning tools upon completion
+/// * Persisting wizard state between app sessions
+///
+/// This provider uses SharedPreferences for persistent storage of wizard state.
+/// When a wizard is completed, it connects the collected data to other planning tools
+/// like budget, guest list, and timeline through the WizardConnectionService.
+///
+/// Usage example:
+/// ```dart
+/// // Access the provider
+/// final wizardProvider = Provider.of<WizardProvider>(context, listen: false);
+///
+/// // Initialize with a template
+/// await wizardProvider.initializeWizard(eventTemplate);
+///
+/// // Update wizard data
+/// wizardProvider.updateEventName('My Wedding');
+/// wizardProvider.updateEventDate(DateTime(2023, 6, 15));
+/// wizardProvider.updateGuestCount(150);
+///
+/// // Navigate through steps
+/// if (wizardProvider.nextStep()) {
+///   // Move to next screen or update UI
+/// }
+///
+/// // Complete the wizard
+/// wizardProvider.completeWizard(context);
+/// ```
 class WizardProvider extends ChangeNotifier {
   /// Current state of the wizard
   WizardState? _state;
