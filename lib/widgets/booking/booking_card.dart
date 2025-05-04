@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:eventati_book/models/booking.dart';
+import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/utils/ui_utils.dart';
 import 'package:eventati_book/utils/date_utils.dart' as date_utils;
 import 'package:eventati_book/styles/app_colors.dart';

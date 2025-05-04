@@ -1,4 +1,4 @@
-import 'package:eventati_book/models/catering_service.dart';
+import 'package:eventati_book/models/models.dart';
 import 'package:flutter/material.dart';
 import 'package:eventati_book/widgets/services/service_filter_bar.dart';
 import 'package:eventati_book/widgets/services/service_card.dart';

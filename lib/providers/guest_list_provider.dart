@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:eventati_book/models/guest.dart';
+import 'package:eventati_book/models/models.dart';
 
 class GuestListProvider extends ChangeNotifier {
   final String eventId;

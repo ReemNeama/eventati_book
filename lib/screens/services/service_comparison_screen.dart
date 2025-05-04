@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:eventati_book/models/venue.dart';
-import 'package:eventati_book/models/catering_service.dart';
-import 'package:eventati_book/models/photographer.dart';
-import 'package:eventati_book/models/planner.dart';
+import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/providers/comparison_provider.dart';
 import 'package:eventati_book/providers/comparison_saving_provider.dart';
 import 'package:eventati_book/screens/services/saved_comparisons_screen.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/providers/budget_provider.dart';
-import 'package:eventati_book/models/budget_item.dart';
+import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';

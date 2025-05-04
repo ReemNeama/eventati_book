@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:eventati_book/models/venue.dart';
-import 'package:eventati_book/models/catering_service.dart';
-import 'package:eventati_book/models/photographer.dart';
-import 'package:eventati_book/models/planner.dart';
+import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/screens/services/venue_details_screen.dart';
 import 'package:eventati_book/screens/services/catering_details_screen.dart';
 import 'package:eventati_book/screens/services/photographer_details_screen.dart';

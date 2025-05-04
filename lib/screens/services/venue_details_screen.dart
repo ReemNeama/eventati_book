@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:eventati_book/models/venue.dart';
-import 'package:eventati_book/models/venue_package.dart';
+import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';

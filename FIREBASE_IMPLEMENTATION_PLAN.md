@@ -414,9 +414,23 @@ As new files are added to the project, record them here if they will need Fireba
 | lib/screens/event_wizard/create_suggestion_screen.dart | Firestore | Screen for creating custom suggestions |
 | lib/widgets/event_wizard/suggestion_card.dart | Firestore | Card widget for displaying suggestions with custom indicator |
 | lib/providers/suggestion_provider.dart | Firestore | Provider for managing suggestions, including custom suggestions persistence |
-| lib/models/saved_comparison.dart | Firestore | Model for saved service comparisons |
+| lib/models/feature_models/saved_comparison.dart | Firestore | Model for saved service comparisons |
 | lib/providers/comparison_saving_provider.dart | Firestore | Provider for managing saved comparisons |
 | lib/screens/services/saved_comparisons_screen.dart | Firestore | Screen for viewing and managing saved comparisons |
+| lib/models/event_models/event_template.dart | Firestore | Model for event templates |
+| lib/models/event_models/wizard_state.dart | Firestore | Model for wizard state |
+| lib/models/user_models/user.dart | Firestore, Auth | Model for user data |
+| lib/models/planning_models/budget_item.dart | Firestore | Model for budget items |
+| lib/models/planning_models/guest.dart | Firestore | Model for guest list |
+| lib/models/planning_models/milestone.dart | Firestore | Model for milestones |
+| lib/models/planning_models/task.dart | Firestore | Model for tasks |
+| lib/models/planning_models/vendor_message.dart | Firestore | Model for vendor messages |
+| lib/models/service_models/booking.dart | Firestore | Model for service bookings |
+| lib/models/service_models/venue.dart | Firestore | Model for venues |
+| lib/models/service_models/catering_service.dart | Firestore | Model for catering services |
+| lib/models/service_models/photographer.dart | Firestore | Model for photographers |
+| lib/models/service_models/planner.dart | Firestore | Model for planners |
+| lib/models/feature_models/suggestion.dart | Firestore | Model for suggestions |
 | | | |
 
 This table helps track new files that will need Firebase integration but aren't yet included in the main sections above.
@@ -447,6 +461,7 @@ Keep track of significant updates to this plan:
 | July 15, 2023 | Added custom suggestion creation files | Eventati Book Team |
 | July 16, 2023 | Updated Firestore structure to include custom suggestions at user level | Eventati Book Team |
 | July 20, 2023 | Added saved comparison feature files | Eventati Book Team |
+| May 4, 2025 | Updated model file paths to reflect new subfolder organization | Eventati Book Team |
 | | | |
 
 This change log helps track the evolution of the Firebase implementation plan and ensures everyone is aware of the latest changes.

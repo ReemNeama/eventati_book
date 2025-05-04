@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:eventati_book/models/wizard_state.dart';
+import 'package:eventati_book/models/event_models/wizard_state.dart';
 
 /// Categories for different types of suggestions
 enum SuggestionCategory {

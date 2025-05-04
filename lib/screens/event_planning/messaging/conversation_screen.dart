@@ -4,7 +4,7 @@ import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/providers/messaging_provider.dart';
-import 'package:eventati_book/models/vendor_message.dart';
+import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/widgets/event_planning/messaging/message_bubble.dart';
 import 'package:eventati_book/widgets/event_planning/messaging/message_input.dart';
 import 'package:eventati_book/widgets/event_planning/messaging/date_separator.dart';

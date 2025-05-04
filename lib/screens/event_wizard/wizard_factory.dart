@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:eventati_book/models/event_template.dart';
+import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/screens/event_wizard/event_wizard_screen.dart';
 import 'package:eventati_book/screens/event_planning/timeline/timeline_screen.dart';
 import 'package:eventati_book/services/wizard_connection_service.dart';

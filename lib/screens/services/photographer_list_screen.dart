@@ -1,5 +1,5 @@
-import 'package:eventati_book/models/photographer.dart';
 import 'package:flutter/material.dart';
+import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/widgets/services/service_filter_bar.dart';
 import 'package:eventati_book/widgets/services/service_card.dart';
 import 'package:eventati_book/widgets/services/multi_select_chip_group.dart';

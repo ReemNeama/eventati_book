@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:eventati_book/models/task.dart';
+import 'package:eventati_book/models/models.dart';
 
 class TaskProvider extends ChangeNotifier {
   final String eventId;

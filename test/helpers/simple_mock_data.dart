@@ -1,5 +1,4 @@
-import 'package:eventati_book/models/user.dart';
-import 'package:eventati_book/models/vendor_message.dart';
+import 'package:eventati_book/models/models.dart';
 
 /// Simple mock data for testing
 class SimpleMockData {

@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:eventati_book/models/vendor_message.dart';
+import 'package:eventati_book/models/models.dart';
 
 void main() {
   group('Vendor Model Tests', () {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:eventati_book/models/milestone.dart';
+import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/widgets/milestones/milestone_card.dart';
 
 /// A grid of milestones

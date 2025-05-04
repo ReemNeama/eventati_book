@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:eventati_book/models/vendor_message.dart';
+import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:intl/intl.dart';
 

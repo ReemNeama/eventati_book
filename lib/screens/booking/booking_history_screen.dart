@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:eventati_book/models/booking.dart';
+import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/providers/booking_provider.dart';
 import 'package:eventati_book/screens/booking/booking_details_screen.dart';
 import 'package:eventati_book/utils/ui_utils.dart';

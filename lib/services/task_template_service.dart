@@ -1,4 +1,4 @@
-import 'package:eventati_book/models/task.dart';
+import 'package:eventati_book/models/models.dart';
 
 /// Service to provide task templates for different event types
 class TaskTemplateService {

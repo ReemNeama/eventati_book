@@ -1,5 +1,5 @@
-import 'package:eventati_book/models/planner.dart';
 import 'package:flutter/material.dart';
+import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/widgets/services/service_filter_bar.dart';
 import 'package:eventati_book/widgets/services/service_card.dart';
 import 'package:eventati_book/widgets/services/filter_dialog.dart';

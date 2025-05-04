@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:eventati_book/models/user.dart';
+import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/utils/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

@@ -204,10 +204,11 @@
 - None at the moment
 
 ### Current Development Focus
-- Create barrel files for modules with 4 or more imports
-  - This is the next immediate development priority
-  - Will improve code organization and maintainability
-  - Will reduce import clutter in files with many dependencies
+- Continue improving code organization and quality
+  - Focus on UI/UX polish and responsiveness
+  - Ensure all screens follow the established design patterns
+  - Prepare for Firebase implementation
+  - Gradually update imports to use barrel files instead of direct imports
 
 ### Next Steps (For Next Conversation)
 - ✅ Improve code organization:
@@ -273,6 +274,52 @@
      - [x] Created event_wizard_screens.dart for all event wizard screens
   3. [x] Update imports throughout the codebase
   4. [x] Add comments in barrel files to clarify exports
+
+- [x] Organize models folder into subfolders:
+  1. [x] Create logical subfolder structure for models:
+     - [x] event_models/ for event-related models
+     - [x] user_models/ for user-related models
+     - [x] planning_models/ for planning tool models
+     - [x] service_models/ for service-related models
+     - [x] feature_models/ for feature-specific models
+  2. [x] Copy model files to their respective subfolders
+  3. [x] Create barrel files for each subfolder
+  4. [x] Update main models.dart barrel file
+  5. [x] Add README.md with documentation on the new structure
+
+- [x] Begin migrating imports to use the new subfolder structure:
+  1. [x] Update venue.dart to re-export from service_models/venue.dart (now removed)
+  2. [x] Update venue_package.dart to re-export from service_models/venue_package.dart (now removed)
+  3. [x] Update photographer.dart to re-export from service_models/photographer.dart (now removed)
+  4. [x] Update photographer_package.dart to re-export from service_models/photographer_package.dart (now removed)
+  5. [x] Update planner.dart to re-export from service_models/planner.dart (now removed)
+  6. [x] Update planner_package.dart to re-export from service_models/planner_package.dart (now removed)
+  7. [x] Update menu_item.dart to re-export from service_models/menu_item.dart (now removed)
+  8. [x] Update booking.dart to re-export from service_models/booking.dart (now removed)
+  9. [x] Continue updating remaining model files to re-export from their respective subfolders
+     - [x] Updated user.dart to re-export from user_models/user.dart
+     - [x] Updated event_template.dart to re-export from event_models/event_template.dart
+     - [x] Updated wizard_state.dart to re-export from event_models/wizard_state.dart
+     - [x] Updated budget_item.dart to re-export from planning_models/budget_item.dart
+     - [x] Updated guest.dart to re-export from planning_models/guest.dart
+     - [x] Updated milestone.dart to re-export from planning_models/milestone.dart
+     - [x] Updated milestone_factory.dart to re-export from planning_models/milestone_factory.dart
+     - [x] Updated task.dart to re-export from planning_models/task.dart
+     - [x] Updated vendor_message.dart to re-export from planning_models/vendor_message.dart
+     - [x] Updated suggestion.dart to re-export from feature_models/suggestion.dart
+     - [x] Updated saved_comparison.dart to re-export from feature_models/saved_comparison.dart
+  10. [x] Update imports throughout the codebase to use the models.dart barrel file
+     - [x] Updated all event planning screens to use models.dart
+     - [x] Updated all providers to use models.dart
+     - [x] Updated all widgets to use models.dart
+     - [x] Updated all services to use models.dart
+     - [x] Updated all tests to use models.dart
+  11. [x] Reorganize barrel files into a dedicated directory
+     - [x] Created a new directory called "barrel_model" inside the models directory
+     - [x] Moved all the re-export files from the root models directory to the new barrel_model directory
+     - [x] Updated the export paths in the re-export files to correctly point to their respective model files
+     - [x] Created a barrel_model.dart file in the models directory that exports all the files from the barrel_model directory
+     - [x] Updated the models.dart file to export the barrel_model.dart file and directly export the model files
 
 - [ ] Implement Feature Enhancements:
   1. [ ] Onboarding Flow

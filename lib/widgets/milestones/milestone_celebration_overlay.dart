@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:eventati_book/models/milestone.dart';
+import 'package:eventati_book/models/models.dart';
 
 /// An overlay to celebrate milestone completion
 class MilestoneCelebrationOverlay extends StatefulWidget {

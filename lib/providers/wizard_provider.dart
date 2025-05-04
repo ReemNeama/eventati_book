@@ -1,8 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:eventati_book/models/event_template.dart';
-import 'package:eventati_book/models/wizard_state.dart';
+import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/services/wizard_connection_service.dart';
 
 /// Provider to manage the state of the event wizard

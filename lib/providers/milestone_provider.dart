@@ -1,8 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:eventati_book/models/milestone.dart';
-import 'package:eventati_book/models/milestone_factory.dart';
+import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/providers/wizard_provider.dart';
 
 /// Provider to manage milestones and achievements

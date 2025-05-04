@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:eventati_book/models/booking.dart';
+import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/utils/date_utils.dart' as date_utils;
 
 /// Provider to manage bookings

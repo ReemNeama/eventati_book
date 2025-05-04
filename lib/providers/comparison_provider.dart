@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:eventati_book/models/venue.dart';
-import 'package:eventati_book/models/catering_service.dart';
-import 'package:eventati_book/models/photographer.dart';
-import 'package:eventati_book/models/planner.dart';
+import 'package:eventati_book/models/models.dart';
 
 /// Provider to manage services selected for comparison
 class ComparisonProvider extends ChangeNotifier {
@@ -18,12 +15,13 @@ class ComparisonProvider extends ChangeNotifier {
   static const int maxComparisonItems = 3;
 
   // Getters for selected services
-  List<Venue> get selectedVenues => List<Venue>.from(_selectedServices['Venue']!);
-  List<CateringService> get selectedCateringServices => 
+  List<Venue> get selectedVenues =>
+      List<Venue>.from(_selectedServices['Venue']!);
+  List<CateringService> get selectedCateringServices =>
       List<CateringService>.from(_selectedServices['Catering']!);
-  List<Photographer> get selectedPhotographers => 
+  List<Photographer> get selectedPhotographers =>
       List<Photographer>.from(_selectedServices['Photographer']!);
-  List<Planner> get selectedPlanners => 
+  List<Planner> get selectedPlanners =>
       List<Planner>.from(_selectedServices['Planner']!);
 
   /// Check if a service is selected for comparison
@@ -32,10 +30,12 @@ class ComparisonProvider extends ChangeNotifier {
       return selectedVenues.any((venue) => venue.name == service.name);
     } else if (service is CateringService) {
       return selectedCateringServices.any(
-          (cateringService) => cateringService.name == service.name);
+        (cateringService) => cateringService.name == service.name,
+      );
     } else if (service is Photographer) {
       return selectedPhotographers.any(
-          (photographer) => photographer.name == service.name);
+        (photographer) => photographer.name == service.name,
+      );
     } else if (service is Planner) {
       return selectedPlanners.any((planner) => planner.name == service.name);
     }
@@ -58,23 +58,29 @@ class ComparisonProvider extends ChangeNotifier {
   /// Helper method to toggle selection
   void _toggleSelection(String serviceType, dynamic service) {
     final List<dynamic> selectedList = _selectedServices[serviceType]!;
-    
+
     if (isServiceSelected(service)) {
       // Remove service if already selected
       if (serviceType == 'Venue') {
         selectedList.removeWhere(
-            (venue) => (venue as Venue).name == (service as Venue).name);
+          (venue) => (venue as Venue).name == (service as Venue).name,
+        );
       } else if (serviceType == 'Catering') {
-        selectedList.removeWhere((cateringService) => 
-            (cateringService as CateringService).name == 
-            (service as CateringService).name);
+        selectedList.removeWhere(
+          (cateringService) =>
+              (cateringService as CateringService).name ==
+              (service as CateringService).name,
+        );
       } else if (serviceType == 'Photographer') {
-        selectedList.removeWhere((photographer) => 
-            (photographer as Photographer).name == 
-            (service as Photographer).name);
+        selectedList.removeWhere(
+          (photographer) =>
+              (photographer as Photographer).name ==
+              (service as Photographer).name,
+        );
       } else if (serviceType == 'Planner') {
-        selectedList.removeWhere((planner) => 
-            (planner as Planner).name == (service as Planner).name);
+        selectedList.removeWhere(
+          (planner) => (planner as Planner).name == (service as Planner).name,
+        );
       }
     } else {
       // Add service if not already selected and under max limit
@@ -82,7 +88,7 @@ class ComparisonProvider extends ChangeNotifier {
         selectedList.add(service);
       }
     }
-    
+
     notifyListeners();
   }
 
@@ -104,13 +110,14 @@ class ComparisonProvider extends ChangeNotifier {
 
   /// Check if comparison is available for a service type (at least 2 items selected)
   bool canCompare(String serviceType) {
-    return _selectedServices.containsKey(serviceType) && 
-           _selectedServices[serviceType]!.length >= 2;
+    return _selectedServices.containsKey(serviceType) &&
+        _selectedServices[serviceType]!.length >= 2;
   }
 
   /// Get the count of selected services by type
   int getSelectedCount(String serviceType) {
-    return _selectedServices.containsKey(serviceType) ? 
-           _selectedServices[serviceType]!.length : 0;
+    return _selectedServices.containsKey(serviceType)
+        ? _selectedServices[serviceType]!.length
+        : 0;
   }
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:eventati_book/models/budget_item.dart';
+import 'package:eventati_book/models/models.dart';
 
 class BudgetProvider extends ChangeNotifier {
   final String eventId;

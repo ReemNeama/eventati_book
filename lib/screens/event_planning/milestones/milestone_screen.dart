@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:eventati_book/models/milestone.dart';
+import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/providers/milestone_provider.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';

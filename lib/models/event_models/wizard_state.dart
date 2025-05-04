@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:eventati_book/models/event_template.dart';
+import 'event_template.dart';
 
 /// Represents the current state of the event wizard
 class WizardState {

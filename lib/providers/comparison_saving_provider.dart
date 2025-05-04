@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
-import 'package:eventati_book/models/saved_comparison.dart';
+import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/providers/auth_provider.dart';
 import 'package:eventati_book/utils/constants.dart';
 

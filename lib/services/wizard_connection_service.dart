@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:eventati_book/models/budget_item.dart';
-import 'package:eventati_book/models/guest.dart';
-import 'package:eventati_book/models/task.dart';
+import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/providers/budget_provider.dart';
 import 'package:eventati_book/providers/guest_list_provider.dart';
 import 'package:eventati_book/providers/task_provider.dart';

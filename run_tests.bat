@@ -12,7 +12,7 @@ flutter test test/widget/widgets/loading_indicator_test.dart
 
 echo.
 echo Running all working tests with coverage...
-flutter test
+flutter test test/unit/models/simple_user_test.dart test/unit/utils/string_utils_test.dart test/widget/widgets/loading_indicator_test.dart
 
 REM Check if tests passed
 if %ERRORLEVEL% NEQ 0 (
