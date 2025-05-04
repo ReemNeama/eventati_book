@@ -119,10 +119,10 @@ lib/providers/
    - guest_list_provider.dart
    - task_provider.dart
    - messaging_provider.dart
+   - booking_provider.dart
 
 4. Next steps:
    - Continue adding documentation to remaining provider classes:
-     - booking_provider.dart
      - milestone_provider.dart
      - suggestion_provider.dart
      - service_recommendation_provider.dart
