@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:eventati_book/models/models.dart';
-import 'package:eventati_book/providers/core_providers/wizard_provider.dart';
+import 'package:eventati_book/providers/providers.dart';
 
 /// Provider to manage milestones and achievements
 class MilestoneProvider extends ChangeNotifier {

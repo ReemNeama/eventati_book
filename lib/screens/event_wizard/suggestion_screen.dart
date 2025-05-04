@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:eventati_book/models/models.dart';
-import 'package:eventati_book/providers/suggestion_provider.dart';
-import 'package:eventati_book/providers/wizard_provider.dart';
+import 'package:eventati_book/providers/providers.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 

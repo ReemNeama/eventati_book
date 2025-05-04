@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:eventati_book/models/models.dart';
-import 'package:eventati_book/providers/milestone_provider.dart';
-import 'package:eventati_book/providers/wizard_provider.dart';
+import 'package:eventati_book/providers/providers.dart';
 import 'package:eventati_book/screens/event_planning/milestones/milestone_screen.dart';
 import 'package:eventati_book/styles/wizard_styles.dart';
 import 'package:eventati_book/utils/utils.dart';
