@@ -92,8 +92,8 @@ lib/providers/
    - ✅ milestone_provider.dart
    - ✅ suggestion_provider.dart
    - ✅ service_recommendation_provider.dart
-   - ⬜ comparison_provider.dart
-   - ⬜ comparison_saving_provider.dart
+   - ✅ comparison_provider.dart
+   - ✅ comparison_saving_provider.dart
    - ⬜ budget_provider.dart
    - ⬜ guest_list_provider.dart
    - ⬜ messaging_provider.dart

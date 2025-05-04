@@ -9,7 +9,7 @@ import 'package:eventati_book/widgets/services/price_range_filter.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/screens/services/photographer_details_screen.dart';
 import 'package:eventati_book/screens/services/service_comparison_screen.dart';
-import 'package:eventati_book/providers/comparison_provider.dart';
+import 'package:eventati_book/providers/providers.dart';
 import 'package:provider/provider.dart';
 
 class PhotographerListScreen extends StatefulWidget {
