@@ -117,10 +117,10 @@ lib/providers/
    - wizard_provider.dart
    - budget_provider.dart
    - guest_list_provider.dart
+   - task_provider.dart
 
 4. Next steps:
    - Continue adding documentation to remaining provider classes:
-     - task_provider.dart
      - messaging_provider.dart
      - booking_provider.dart
      - milestone_provider.dart
