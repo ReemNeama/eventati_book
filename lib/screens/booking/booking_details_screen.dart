@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:eventati_book/models/models.dart';
-import 'package:eventati_book/providers/booking_provider.dart';
+import 'package:eventati_book/providers/providers.dart';
 import 'package:eventati_book/screens/booking/booking_form_screen.dart';
 import 'package:eventati_book/utils/ui_utils.dart';
 import 'package:eventati_book/utils/date_utils.dart' as date_utils;
