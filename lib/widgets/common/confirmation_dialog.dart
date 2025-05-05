@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/styles/text_styles.dart';
-import 'package:eventati_book/utils/ui_utils.dart';
+import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 

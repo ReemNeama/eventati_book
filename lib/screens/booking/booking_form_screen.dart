@@ -3,10 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/providers/providers.dart';
-import 'package:eventati_book/utils/date_utils.dart' as date_utils;
-import 'package:eventati_book/utils/form_utils.dart';
-import 'package:eventati_book/utils/ui_utils.dart';
-import 'package:eventati_book/utils/service_options_factory.dart';
+import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/widgets/common/loading_indicator.dart';
 import 'package:eventati_book/widgets/common/error_message.dart';
 import 'package:eventati_book/styles/app_colors.dart';
@@ -147,9 +144,7 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
           _guestCount = booking.guestCount;
           _isEventRelated = booking.eventId != null;
 
-          _dateController.text = date_utils.DateTimeUtils.formatDate(
-            _selectedDate!,
-          );
+          _dateController.text = DateTimeUtils.formatDate(_selectedDate!);
           _timeController.text = _selectedTime!.format(context);
           _durationController.text = _duration.toString();
           _guestCountController.text = _guestCount.toString();
@@ -205,7 +200,7 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
     if (picked != null && picked != _selectedDate) {
       setState(() {
         _selectedDate = picked;
-        _dateController.text = date_utils.DateTimeUtils.formatDate(picked);
+        _dateController.text = DateTimeUtils.formatDate(picked);
       });
 
       // Check availability

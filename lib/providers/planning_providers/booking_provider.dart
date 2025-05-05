@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:eventati_book/models/models.dart';
-import 'package:eventati_book/utils/date_utils.dart' as date_utils;
+import 'package:eventati_book/utils/utils.dart';
 
 /// Provider for managing service bookings and appointments.
 ///
@@ -296,9 +296,7 @@ class BookingProvider extends ChangeNotifier {
   /// This method does not modify the booking list or notify listeners.
   List<Booking> getBookingsForDate(DateTime date) {
     return _bookings
-        .where(
-          (b) => date_utils.DateTimeUtils.isSameDay(b.bookingDateTime, date),
-        )
+        .where((b) => DateTimeUtils.isSameDay(b.bookingDateTime, date))
         .toList();
   }
 
@@ -325,10 +323,7 @@ class BookingProvider extends ChangeNotifier {
         serviceBookings
             .where(
               (b) =>
-                  date_utils.DateTimeUtils.isSameDay(
-                    b.bookingDateTime,
-                    dateTime,
-                  ) &&
+                  DateTimeUtils.isSameDay(b.bookingDateTime, dateTime) &&
                   b.status != BookingStatus.cancelled,
             )
             .toList();

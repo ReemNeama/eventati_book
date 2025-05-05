@@ -3,8 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/providers/providers.dart';
 import 'package:eventati_book/screens/booking/booking_details_screen.dart';
-import 'package:eventati_book/utils/ui_utils.dart';
-import 'package:eventati_book/utils/date_utils.dart' as date_utils;
+import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/widgets/common/loading_indicator.dart';
 import 'package:eventati_book/widgets/common/error_message.dart';
 import 'package:eventati_book/widgets/common/empty_state.dart';
@@ -246,18 +245,14 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen>
                   Icon(Icons.calendar_today, size: 16, color: primaryColor),
                   const SizedBox(width: 4),
                   Text(
-                    date_utils.DateTimeUtils.formatDate(
-                      booking.bookingDateTime,
-                    ),
+                    DateTimeUtils.formatDate(booking.bookingDateTime),
                     style: TextStyles.bodyMedium.copyWith(color: textColor),
                   ),
                   const SizedBox(width: 16),
                   Icon(Icons.access_time, size: 16, color: primaryColor),
                   const SizedBox(width: 4),
                   Text(
-                    date_utils.DateTimeUtils.formatTime(
-                      booking.bookingDateTime,
-                    ),
+                    DateTimeUtils.formatTime(booking.bookingDateTime),
                     style: TextStyles.bodyMedium.copyWith(color: textColor),
                   ),
                 ],

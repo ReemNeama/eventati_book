@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:eventati_book/utils/service_utils.dart';
+import 'package:eventati_book/utils/utils.dart';
 
 void main() {
   group('ServiceUtils Tests', () {

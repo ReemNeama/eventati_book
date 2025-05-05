@@ -31,32 +31,11 @@ The utils are organized into the following subfolders for better maintainability
   - responsive_utils.dart: Responsive design utilities
   - ui_utils.dart: General UI utilities
 
-## Root Utils (Legacy)
+## Special Utilities in Root Directory
 
-Some utility files still exist in the root utils directory for backward compatibility:
-- accessibility_utils.dart
-- analytics_utils.dart
-- constants.dart
-- date_utils.dart
-- empty_state_utils.dart
-- error_handling_utils.dart
-- extensions.dart
-- file_utils.dart
-- form_utils.dart
-- navigation_utils.dart
-- number_utils.dart
-- responsive_constants.dart
-- responsive_utils.dart
-- service_options_factory.dart
-- service_utils.dart
-- string_utils.dart
-- ui_utils.dart
-- validation_utils.dart
-
-## Special Utilities
-
-- **service_options_factory.dart**: Factory for creating service options
-- **utils.dart**: Main barrel file that exports all utilities
+Only the following utility files exist in the root utils directory:
+- service_options_factory.dart: Factory for creating service options (will be moved to an appropriate subfolder in the future)
+- utils.dart: Main barrel file that exports all utilities
 
 ## Usage
 
@@ -92,4 +71,4 @@ final formattedPrice = NumberUtils.formatCurrency(100);
 
 ## Migration Progress
 
-We are gradually migrating utility functions from the root directory to their respective subfolders. When adding new utility functions, please add them directly to the appropriate subfolder rather than the root directory.
+All utility functions have been migrated from the root directory to their respective subfolders, except for service_options_factory.dart which will be moved in the future. When adding new utility functions, please add them directly to the appropriate subfolder rather than the root directory.

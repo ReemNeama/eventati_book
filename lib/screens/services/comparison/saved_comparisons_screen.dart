@@ -4,10 +4,7 @@ import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/providers/providers.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
-import 'package:eventati_book/utils/constants.dart';
-import 'package:eventati_book/utils/responsive_constants.dart';
-import 'package:eventati_book/utils/responsive_utils.dart';
-import 'package:eventati_book/utils/ui_utils.dart';
+import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/widgets/common/empty_state.dart';
 import 'package:eventati_book/widgets/common/error_message.dart';
 

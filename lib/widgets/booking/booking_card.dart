@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/models/models.dart';
-import 'package:eventati_book/utils/ui_utils.dart';
-import 'package:eventati_book/utils/date_utils.dart' as date_utils;
+import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/styles/text_styles.dart';
@@ -110,18 +109,14 @@ class BookingCard extends StatelessWidget {
                   Icon(Icons.calendar_today, size: 16, color: primaryColor),
                   const SizedBox(width: 4),
                   Text(
-                    date_utils.DateTimeUtils.formatDate(
-                      booking.bookingDateTime,
-                    ),
+                    DateTimeUtils.formatDate(booking.bookingDateTime),
                     style: TextStyles.bodyMedium.copyWith(color: textColor),
                   ),
                   const SizedBox(width: 16),
                   Icon(Icons.access_time, size: 16, color: primaryColor),
                   const SizedBox(width: 4),
                   Text(
-                    date_utils.DateTimeUtils.formatTime(
-                      booking.bookingDateTime,
-                    ),
+                    DateTimeUtils.formatTime(booking.bookingDateTime),
                     style: TextStyles.bodyMedium.copyWith(color: textColor),
                   ),
                 ],

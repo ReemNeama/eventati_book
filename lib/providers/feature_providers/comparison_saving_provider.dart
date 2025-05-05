@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/providers/providers.dart';
-import 'package:eventati_book/utils/constants.dart';
+import 'package:eventati_book/utils/utils.dart';
 
 /// Provider for managing saved service comparisons.
 ///

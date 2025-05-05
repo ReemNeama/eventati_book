@@ -3,8 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/providers/providers.dart';
 import 'package:eventati_book/screens/booking/booking_form_screen.dart';
-import 'package:eventati_book/utils/ui_utils.dart';
-import 'package:eventati_book/utils/date_utils.dart' as date_utils;
+import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/widgets/common/loading_indicator.dart';
 import 'package:eventati_book/widgets/common/error_message.dart';
 import 'package:eventati_book/widgets/common/confirmation_dialog.dart';
@@ -145,14 +144,14 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
                                     ),
                                   ),
                                   Text(
-                                    'Created: ${date_utils.DateTimeUtils.formatDateTime(booking.createdAt)}',
+                                    'Created: ${DateTimeUtils.formatDateTime(booking.createdAt)}',
                                     style: TextStyles.bodySmall.copyWith(
                                       color: textColor,
                                     ),
                                   ),
                                   if (booking.createdAt != booking.updatedAt)
                                     Text(
-                                      'Last Updated: ${date_utils.DateTimeUtils.formatDateTime(booking.updatedAt)}',
+                                      'Last Updated: ${DateTimeUtils.formatDateTime(booking.updatedAt)}',
                                       style: TextStyles.bodySmall.copyWith(
                                         color: textColor,
                                       ),
@@ -236,7 +235,7 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
                                       ),
                                       const SizedBox(width: 8),
                                       Text(
-                                        'Date: ${date_utils.DateTimeUtils.formatDate(booking.bookingDateTime)}',
+                                        'Date: ${DateTimeUtils.formatDate(booking.bookingDateTime)}',
                                         style: TextStyles.bodyMedium.copyWith(
                                           color: textColor,
                                         ),
@@ -253,7 +252,7 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
                                       ),
                                       const SizedBox(width: 8),
                                       Text(
-                                        'Time: ${date_utils.DateTimeUtils.formatTime(booking.bookingDateTime)}',
+                                        'Time: ${DateTimeUtils.formatTime(booking.bookingDateTime)}',
                                         style: TextStyles.bodyMedium.copyWith(
                                           color: textColor,
                                         ),
