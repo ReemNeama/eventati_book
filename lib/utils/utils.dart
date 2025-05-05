@@ -1,26 +1,41 @@
 // Export all utility files for easy importing
 
 // Core utilities
-export 'constants.dart';
-export 'extensions.dart';
+export 'core/index.dart';
 
 // Data formatting utilities
-export 'date_utils.dart';
-export 'number_utils.dart';
-export 'string_utils.dart';
+export 'formatting/index.dart';
 
 // UI and interaction utilities
-export 'ui_utils.dart';
-export 'responsive_utils.dart';
-export 'responsive_constants.dart';
-export 'form_utils.dart';
-export 'navigation_utils.dart';
-export 'error_handling_utils.dart';
-export 'empty_state_utils.dart';
-export 'accessibility_utils.dart';
+export 'ui/index.dart';
 
 // Service utilities
-export 'service_utils.dart';
-export 'file_utils.dart';
-export 'validation_utils.dart';
-export 'analytics_utils.dart';
+export 'service/index.dart';
+
+// For backward compatibility, re-export individual files
+// These can be removed once all imports are updated to use the new structure
+
+// Core utilities
+export 'core/constants.dart';
+export 'core/extensions.dart';
+
+// Data formatting utilities
+export 'formatting/date_utils.dart';
+export 'formatting/number_utils.dart';
+export 'formatting/string_utils.dart';
+
+// UI and interaction utilities
+export 'ui/ui_utils.dart';
+export 'ui/responsive_utils.dart';
+export 'ui/responsive_constants.dart';
+export 'ui/form_utils.dart';
+export 'ui/navigation_utils.dart';
+export 'ui/error_handling_utils.dart';
+export 'ui/empty_state_utils.dart';
+export 'ui/accessibility_utils.dart';
+
+// Service utilities
+export 'service/service_utils.dart';
+export 'service/file_utils.dart';
+export 'service/validation_utils.dart';
+export 'service/analytics_utils.dart';
