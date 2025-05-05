@@ -77,11 +77,21 @@ The pre-push hook runs before each push and checks:
 
 ### Setup Git Hooks
 
-To set up the Git hooks, run:
+The project uses custom Git hooks to enforce code quality before commits and pushes. To set up the Git hooks, run:
 
 ```bash
 dart run tool/git_hooks.dart
 ```
+
+This script will:
+1. Create a pre-commit hook that runs:
+   - Code formatting check
+   - Dart analyzer
+   - Dart Code Metrics
+2. Create a pre-push hook that runs:
+   - Tests
+
+The hooks are installed in the `.git/hooks` directory and are automatically executed when you commit or push code.
 
 ## Continuous Integration
 
