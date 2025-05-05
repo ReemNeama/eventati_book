@@ -61,6 +61,12 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
 
+  # Additional code quality tools
+  dart_code_metrics: ^5.7.6
+  git_hooks_dart: ^0.0.1
+  flutter_coverage_badge: ^0.0.1+1
+  test_cov_console: ^0.2.2
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
