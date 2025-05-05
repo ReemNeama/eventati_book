@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/screens/homepage/homepage_screen.dart';
-import 'package:eventati_book/screens/services/services_screen.dart';
+import 'package:eventati_book/screens/services/common/services_screen.dart';
 import 'package:eventati_book/screens/events/user_events_screen.dart';
 import 'package:eventati_book/screens/profile/profile_screen.dart';
 import 'package:eventati_book/screens/event_wizard/suggestion_screen.dart';

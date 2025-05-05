@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/models/models.dart';
-import 'package:eventati_book/screens/services/venue_details_screen.dart';
-import 'package:eventati_book/screens/services/catering_details_screen.dart';
-import 'package:eventati_book/screens/services/photographer_details_screen.dart';
-import 'package:eventati_book/screens/services/planner_details_screen.dart';
+import 'package:eventati_book/screens/services/venue/venue_details_screen.dart';
+import 'package:eventati_book/screens/services/catering/catering_details_screen.dart';
+import 'package:eventati_book/screens/services/photographer/photographer_details_screen.dart';
+import 'package:eventati_book/screens/services/planner/planner_details_screen.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/utils.dart';

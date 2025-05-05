@@ -7,8 +7,8 @@ export 'main_navigation_screen.dart';
 // Feature-specific screens
 export 'authentications/auth_screens.dart';
 export 'services/service_listing_screens.dart';
-export 'services/service_comparison_screen.dart';
-export 'services/saved_comparisons_screen.dart';
+export 'services/comparison/service_comparison_screen.dart';
+export 'services/comparison/saved_comparisons_screen.dart';
 export 'event_planning/event_planning_screens.dart';
 
 // Homepage screens
