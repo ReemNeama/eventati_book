@@ -44,7 +44,7 @@ These issues have a moderate impact on code quality and should be addressed afte
 
 ### Missing Blank Lines Before Return Statements
 
-- [ ] Implement automatic fix using `tool/style_guide_fixer.dart`
+- [x] Implement automatic fix using `tool/fix_blank_lines.dart`
 
 ### Non-null Assertions
 
@@ -107,14 +107,14 @@ These issues have a lower impact on code quality and can be addressed after the 
 | ALARM Level Issues | 4 | 0 | 4 | 0% |
 | High Cyclomatic Complexity | 4 | 0 | 4 | 0% |
 | Long Methods | 15 | 0 | 15 | 0% |
-| Missing Blank Lines | ~100 | 0 | ~100 | 0% |
+| Missing Blank Lines | ~649 | 649 | 0 | 100% |
 | Non-null Assertions | 41 | 0 | 41 | 0% |
 | Unused Parameters | 13 | 0 | 13 | 0% |
 | Nested Conditional Expressions | 6 | 0 | 6 | 0% |
 | Prefer Conditional Expressions | 4 | 0 | 4 | 0% |
 | Use First/Last | 3 | 0 | 3 | 0% |
 | Avoid Late Keyword | 4 | 0 | 4 | 0% |
-| **Total** | **~194** | **0** | **~194** | **0%** |
+| **Total** | **~743** | **649** | **~94** | **87%** |
 
 ## Refactoring Plan
 
