@@ -1,37 +1,66 @@
-// Barrel file for models
-// This file exports all models to simplify imports
+// =========================================================
+// EVENTATI BOOK MODELS BARREL FILE
+// =========================================================
+// This file exports all models to simplify imports throughout the application.
+// Models are organized into logical categories for better maintainability.
+//
+// USAGE:
+//   import 'package:eventati_book/models/models.dart';
+//
+// ORGANIZATION:
+//   Models are organized into subfolders by domain/feature area
+// =========================================================
 
-// Note: We've organized models into subfolders for better maintainability
-// We recommend using this barrel file for imports to benefit from the new organization
+// -------------------------
+// EVENT MODELS
+// -------------------------
+// Models related to events and the event creation wizard
+export 'event_models/event_models.dart'; // Barrel file for event models
+export 'event_models/event_template.dart'; // Template for creating events
+export 'event_models/wizard_state.dart'; // State management for the event wizard
 
-// Event-related models
-export 'event_models/event_models.dart';
-export 'event_models/event_template.dart';
-export 'event_models/wizard_state.dart';
+// -------------------------
+// USER MODELS
+// -------------------------
+// Models related to user data and authentication
+export 'user_models/user_models.dart'; // Barrel file for user models
+export 'user_models/user.dart'; // User profile and authentication data
 
-// User-related models
-export 'user_models/user_models.dart';
-export 'user_models/user.dart';
+// -------------------------
+// PLANNING TOOL MODELS
+// -------------------------
+// Models used in event planning tools (budget, guest list, etc.)
+export 'planning_models/planning_models.dart'; // Barrel file for planning models
+export 'planning_models/budget_item.dart'; // Budget item for financial planning
+export 'planning_models/guest.dart'; // Guest information for guest lists
+export 'planning_models/milestone.dart'; // Milestone tracking
+export 'planning_models/milestone_factory.dart'; // Factory for creating milestones
+export 'planning_models/task.dart'; // Tasks for checklists and timelines
+export 'planning_models/vendor_message.dart'; // Messages exchanged with vendors
 
-// Planning tool models
-export 'planning_models/planning_models.dart';
-export 'planning_models/budget_item.dart';
-export 'planning_models/guest.dart';
-export 'planning_models/milestone.dart';
-export 'planning_models/milestone_factory.dart';
-export 'planning_models/task.dart';
-export 'planning_models/vendor_message.dart';
+// -------------------------
+// SERVICE MODELS
+// -------------------------
+// Models for various services (venues, catering, etc.)
+export 'service_models/service_models.dart'; // Barrel file for all service models
+// Individual service models are exported through service_models.dart
 
-// Service models
-export 'service_models/service_models.dart';
+// -------------------------
+// FEATURE MODELS
+// -------------------------
+// Models for specific features like comparisons and suggestions
+export 'feature_models/feature_models.dart'; // Barrel file for feature models
+export 'feature_models/saved_comparison.dart'; // Saved service comparisons
+export 'feature_models/suggestion.dart'; // Suggestions based on user preferences
 
-// Feature models
-export 'feature_models/feature_models.dart';
-export 'feature_models/saved_comparison.dart';
-export 'feature_models/suggestion.dart';
+// -------------------------
+// SERVICE OPTIONS MODELS
+// -------------------------
+// Models for service filtering and configuration options
+export 'service_options/service_options.dart'; // Barrel file for service options
 
-// Service options models
-export 'service_options/service_options.dart';
-
-// Backward compatibility re-exports
-export 'barrel_model.dart';
+// -------------------------
+// LEGACY EXPORTS
+// -------------------------
+// Backward compatibility re-exports (will be removed in future)
+export 'barrel_model.dart'; // Legacy barrel file

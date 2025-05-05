@@ -38,11 +38,25 @@ lib/
 ├── models/         # Data models
 ├── providers/      # State management
 ├── screens/        # UI screens
+├── services/       # Business logic services
 ├── styles/         # Theme and styling
+├── tempDB/         # Temporary mock data
 ├── utils/          # Utility functions
 ├── widgets/        # Reusable UI components
 └── main.dart       # Application entry point
 ```
+
+For a more detailed overview of the project structure, see [DIRECTORY_STRUCTURE.md](DIRECTORY_STRUCTURE.md).
+
+## Documentation
+
+Comprehensive documentation is available in the `docs/` directory:
+
+- **[Application Architecture](docs/app_architecture.md)**: Overall application architecture
+- **[Services Flow](docs/services_flow.md)**: Service screens flow and components
+- **[Booking Integration](docs/booking_integration.md)**: Booking system integration with services
+- **[Event Planning Tools](docs/event_planning_tools.md)**: Event planning tools flow and components
+- **[Event Wizard Flow](docs/event_wizard_flow.md)**: Event wizard flow and components
 
 ## Development Recommendations
 
