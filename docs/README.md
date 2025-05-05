@@ -9,6 +9,13 @@ Welcome to the Eventati Book documentation. This directory contains comprehensiv
 - **[app_architecture.md](app_architecture.md)**: Overall application architecture including layers, components, and data flow
 - **[DIRECTORY_STRUCTURE.md](../DIRECTORY_STRUCTURE.md)**: Explanation of the project's directory structure and organization
 
+### Architecture Diagrams
+
+- **[state_management.md](architecture_diagrams/state_management.md)**: Detailed state management architecture with provider patterns
+- **[dependency_diagram.md](architecture_diagrams/dependency_diagram.md)**: Component dependencies and relationships
+- **[navigation_flow.md](architecture_diagrams/navigation_flow.md)**: Navigation architecture and screen flows
+- **[deployment_architecture.md](architecture_diagrams/deployment_architecture.md)**: Deployment architecture with Firebase backend
+
 ### Core Features
 
 - **[booking_system.md](booking_system.md)**: Comprehensive documentation of the booking system, including flow, components, and integration
