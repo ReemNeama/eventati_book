@@ -8,24 +8,24 @@ These issues have the highest impact on code quality and should be addressed fir
 
 ### ALARM Level Issues (Very Low Maintainability Index)
 
-- [ ] `ServiceOptionsFactory.generateCateringOptionsFields` (MI: 23)
-- [ ] `ServiceOptionsFactory.generatePhotographyOptionsFields` (MI: 23)
-- [ ] `ServiceOptionsFactory.generatePlannerOptionsFields` (MI: 24)
-- [ ] `_PricingComparisonTableState.build` (MI: 17)
+- [x] `ServiceOptionsFactory.generateCateringOptionsFields` (MI: 23)
+- [x] `ServiceOptionsFactory.generatePhotographyOptionsFields` (MI: 23)
+- [x] `ServiceOptionsFactory.generatePlannerOptionsFields` (MI: 24)
+- [x] `_PricingComparisonTableState.build` (MI: 17)
 
 ### High Cyclomatic Complexity
 
 - [ ] `FeatureComparisonTable._buildFeatureValue` (CC: 39)
-- [ ] `_PricingComparisonTableState.build` (CC: 25)
+- [x] `_PricingComparisonTableState.build` (CC: 25)
 - [ ] `FeatureComparisonTable._getValueFromObject` (CC: 26)
 - [ ] `_VenueListScreenState.filteredVenues` (CC: 20)
 
 ### Long Methods (>100 lines)
 
-- [ ] `ServiceOptionsFactory.generateVenueOptionsFields` (139 lines)
-- [ ] `ServiceOptionsFactory.generateCateringOptionsFields` (206 lines)
-- [ ] `ServiceOptionsFactory.generatePhotographyOptionsFields` (211 lines)
-- [ ] `ServiceOptionsFactory.generatePlannerOptionsFields` (197 lines)
+- [x] `ServiceOptionsFactory.generateVenueOptionsFields` (139 lines)
+- [x] `ServiceOptionsFactory.generateCateringOptionsFields` (206 lines)
+- [x] `ServiceOptionsFactory.generatePhotographyOptionsFields` (211 lines)
+- [x] `ServiceOptionsFactory.generatePlannerOptionsFields` (197 lines)
 - [ ] `AppTheme.lightTheme` (95 lines)
 - [ ] `AppTheme.darkTheme` (104 lines)
 - [ ] `ServiceDB.getCateringServices` (247 lines)
@@ -104,9 +104,9 @@ These issues have a lower impact on code quality and can be addressed after the 
 
 | Category | Total Issues | Fixed | Remaining | Progress |
 |----------|--------------|-------|-----------|----------|
-| ALARM Level Issues | 4 | 0 | 4 | 0% |
-| High Cyclomatic Complexity | 4 | 0 | 4 | 0% |
-| Long Methods | 15 | 0 | 15 | 0% |
+| ALARM Level Issues | 4 | 4 | 0 | 100% |
+| High Cyclomatic Complexity | 4 | 1 | 3 | 25% |
+| Long Methods | 15 | 4 | 11 | 27% |
 | Missing Blank Lines | ~649 | 649 | 0 | 100% |
 | Non-null Assertions | 41 | 0 | 41 | 0% |
 | Unused Parameters | 13 | 0 | 13 | 0% |
@@ -114,7 +114,7 @@ These issues have a lower impact on code quality and can be addressed after the 
 | Prefer Conditional Expressions | 4 | 0 | 4 | 0% |
 | Use First/Last | 3 | 0 | 3 | 0% |
 | Avoid Late Keyword | 4 | 0 | 4 | 0% |
-| **Total** | **~743** | **649** | **~94** | **87%** |
+| **Total** | **~743** | **658** | **~85** | **89%** |
 
 ## Refactoring Plan
 
