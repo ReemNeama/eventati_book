@@ -10,6 +10,7 @@ import 'package:eventati_book/screens/services/venue/venue_details_screen.dart';
 import 'package:eventati_book/screens/services/comparison/service_comparison_screen.dart';
 import 'package:eventati_book/providers/providers.dart';
 import 'package:provider/provider.dart';
+import 'package:eventati_book/widgets/services/venue_filter.dart';
 
 class VenueListScreen extends StatefulWidget {
   const VenueListScreen({super.key});
@@ -72,60 +73,24 @@ class _VenueListScreenState extends State<VenueListScreen> {
     final serviceRecommendationProvider =
         Provider.of<ServiceRecommendationProvider>(context, listen: false);
 
-    return _venues.where((venue) {
-        final matchesSearch =
-            venue.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-            venue.description.toLowerCase().contains(
-              _searchQuery.toLowerCase(),
-            );
+    // Filter venues based on search query, venue types, price range, capacity range, and recommendation
+    final filteredList = VenueFilter.filterVenues(
+      venues: _venues,
+      searchQuery: _searchQuery,
+      selectedVenueTypes: _selectedVenueTypes,
+      priceRange: _priceRange,
+      capacityRange: _capacityRange,
+      showRecommendedOnly: _showRecommendedOnly,
+      recommendationProvider: serviceRecommendationProvider,
+    );
 
-        final matchesType =
-            _selectedVenueTypes.isEmpty ||
-            venue.venueTypes.any((type) => _selectedVenueTypes.contains(type));
-
-        final matchesPrice =
-            venue.pricePerEvent >= _priceRange.start &&
-            venue.pricePerEvent <= _priceRange.end;
-
-        final matchesCapacity =
-            venue.maxCapacity >= _capacityRange.start &&
-            venue.minCapacity <= _capacityRange.end;
-
-        final matchesRecommended =
-            !_showRecommendedOnly ||
-            serviceRecommendationProvider.isVenueRecommended(venue);
-
-        return matchesSearch &&
-            matchesType &&
-            matchesPrice &&
-            matchesCapacity &&
-            matchesRecommended;
-      }).toList()
-      ..sort((a, b) {
-        // If showing recommended only, sort recommended venues first
-        if (_showRecommendedOnly) {
-          final aIsRecommended = serviceRecommendationProvider
-              .isVenueRecommended(a);
-          final bIsRecommended = serviceRecommendationProvider
-              .isVenueRecommended(b);
-
-          if (aIsRecommended && !bIsRecommended) return -1;
-          if (!aIsRecommended && bIsRecommended) return 1;
-        }
-
-        switch (_selectedSortOption) {
-          case 'Price (Low to High)':
-            return a.pricePerEvent.compareTo(b.pricePerEvent);
-          case 'Price (High to Low)':
-            return b.pricePerEvent.compareTo(a.pricePerEvent);
-          case 'Rating':
-            return b.rating.compareTo(a.rating);
-          case 'Capacity':
-            return b.maxCapacity.compareTo(a.maxCapacity);
-          default:
-            return b.rating.compareTo(a.rating);
-        }
-      });
+    // Sort venues based on sort option and recommendation status
+    return VenueFilter.sortVenues(
+      venues: filteredList,
+      sortOption: _selectedSortOption,
+      showRecommendedOnly: _showRecommendedOnly,
+      recommendationProvider: serviceRecommendationProvider,
+    );
   }
 
   @override

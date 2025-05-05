@@ -15,10 +15,10 @@ These issues have the highest impact on code quality and should be addressed fir
 
 ### High Cyclomatic Complexity
 
-- [ ] `FeatureComparisonTable._buildFeatureValue` (CC: 39)
+- [x] `FeatureComparisonTable._buildFeatureValue` (CC: 39)
 - [x] `_PricingComparisonTableState.build` (CC: 25)
-- [ ] `FeatureComparisonTable._getValueFromObject` (CC: 26)
-- [ ] `_VenueListScreenState.filteredVenues` (CC: 20)
+- [x] `FeatureComparisonTable._getValueFromObject` (CC: 26)
+- [x] `_VenueListScreenState.filteredVenues` (CC: 20)
 
 ### Long Methods (>100 lines)
 
@@ -35,8 +35,8 @@ These issues have the highest impact on code quality and should be addressed fir
 - [ ] `WizardConnectionService._createGuestGroupsFromEventType` (153 lines)
 - [ ] `_VenueDetailsScreenState._buildPackagesTab` (112 lines)
 - [ ] `_VenueDetailsScreenState._buildVenueDetailsTab` (133 lines)
-- [ ] `FeatureComparisonTable._getFeaturesToCompare` (122 lines)
-- [ ] `FeatureComparisonTable._buildFeatureValue` (117 lines)
+- [x] `FeatureComparisonTable._getFeaturesToCompare` (122 lines)
+- [x] `FeatureComparisonTable._buildFeatureValue` (117 lines)
 
 ## Medium Priority Issues
 
@@ -105,8 +105,8 @@ These issues have a lower impact on code quality and can be addressed after the 
 | Category | Total Issues | Fixed | Remaining | Progress |
 |----------|--------------|-------|-----------|----------|
 | ALARM Level Issues | 4 | 4 | 0 | 100% |
-| High Cyclomatic Complexity | 4 | 1 | 3 | 25% |
-| Long Methods | 15 | 4 | 11 | 27% |
+| High Cyclomatic Complexity | 4 | 4 | 0 | 100% |
+| Long Methods | 15 | 6 | 9 | 40% |
 | Missing Blank Lines | ~649 | 649 | 0 | 100% |
 | Non-null Assertions | 41 | 0 | 41 | 0% |
 | Unused Parameters | 13 | 0 | 13 | 0% |
@@ -114,7 +114,7 @@ These issues have a lower impact on code quality and can be addressed after the 
 | Prefer Conditional Expressions | 4 | 0 | 4 | 0% |
 | Use First/Last | 3 | 0 | 3 | 0% |
 | Avoid Late Keyword | 4 | 0 | 4 | 0% |
-| **Total** | **~743** | **658** | **~85** | **89%** |
+| **Total** | **~743** | **663** | **~80** | **89%** |
 
 ## Refactoring Plan
 
