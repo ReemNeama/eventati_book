@@ -268,6 +268,7 @@ class _GuestListScreenState extends State<GuestListScreen>
                     final groupGuests = guestListProvider.getGuestsByGroup(
                       group.id,
                     );
+
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 8),
                       child: Row(

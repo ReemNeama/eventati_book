@@ -50,6 +50,7 @@ class MilestoneGrid extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       itemBuilder: (context, index) {
         final milestone = filteredMilestones[index];
+
         return MilestoneCard(
           milestone: milestone,
           onTap: () {

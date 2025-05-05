@@ -160,6 +160,7 @@ class _PlannerListScreenState extends State<PlannerListScreen> {
               itemCount: filteredPlanners.length,
               itemBuilder: (context, index) {
                 final planner = filteredPlanners[index];
+
                 return ServiceCard(
                   name: planner.name,
                   description: planner.description,

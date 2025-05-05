@@ -194,6 +194,7 @@ class _ServiceComparisonScreenState extends State<ServiceComparisonScreen>
           content: Text('Select at least 2 services to save a comparison'),
         ),
       );
+
       return;
     }
 
@@ -236,6 +237,7 @@ class _ServiceComparisonScreenState extends State<ServiceComparisonScreen>
                       if (value == null || value.trim().isEmpty) {
                         return 'Please enter a title';
                       }
+
                       return null;
                     },
                   ),

@@ -511,6 +511,7 @@ class ServiceDB {
       services =
           services.where((service) {
             final serviceFeatures = List<String>.from(service['features']);
+
             return features.every(
               (feature) => serviceFeatures.contains(feature),
             );

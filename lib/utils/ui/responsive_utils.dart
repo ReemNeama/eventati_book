@@ -6,6 +6,7 @@ class ResponsiveUtils {
   /// Get the device type based on screen width
   static DeviceType getDeviceType(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
+
     return getDeviceTypeFromWidth(width);
   }
 
@@ -108,6 +109,7 @@ class ResponsiveUtils {
   /// Check if the device is a tablet or larger
   static bool isTabletOrLarger(BuildContext context) {
     final deviceType = getDeviceType(context);
+
     return deviceType == DeviceType.tablet || deviceType == DeviceType.desktop;
   }
 

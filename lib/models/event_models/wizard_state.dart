@@ -118,6 +118,7 @@ class WizardState {
   /// Calculate the completion percentage of the wizard
   double get completionPercentage {
     if (totalSteps == 0) return 0.0;
+
     return (currentStep / totalSteps) * 100;
   }
 
@@ -125,12 +126,16 @@ class WizardState {
   bool isStepValid(int step) {
     switch (step) {
       case 0: // Event Details
+
         return eventName.isNotEmpty && selectedEventType != null;
       case 1: // Date & Guests
+
         return eventDate != null && (guestCount != null && guestCount! > 0);
       case 2: // Required Services
+
         return selectedServices.values.any((selected) => selected);
       case 3: // Review
+
         return true;
       default:
         return false;

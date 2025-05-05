@@ -781,6 +781,7 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
     }
 
     final isDarkMode = UIUtils.isDarkMode(context);
+
     return Card(
       elevation: 2,
       color:
@@ -813,6 +814,7 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
       setState(() {
         _error = 'Failed to access booking provider: $e';
       });
+
       return;
     }
 

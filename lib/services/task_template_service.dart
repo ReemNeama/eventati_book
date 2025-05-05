@@ -35,6 +35,7 @@ class TaskTemplateService {
     final filteredTemplates =
         templates.where((template) {
           final service = template['service'] as String;
+
           return selectedServices[service] == true || service == 'General';
         }).toList();
 

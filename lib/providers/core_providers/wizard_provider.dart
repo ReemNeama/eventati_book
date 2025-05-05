@@ -210,6 +210,7 @@ class WizardProvider extends ChangeNotifier {
       _state = _state!.copyWith(isCompleted: true);
       _saveState();
       notifyListeners();
+
       return true;
     }
 
@@ -217,6 +218,7 @@ class WizardProvider extends ChangeNotifier {
     _state = _state!.copyWith(currentStep: _state!.currentStep + 1);
     _saveState();
     notifyListeners();
+
     return true;
   }
 
@@ -233,6 +235,7 @@ class WizardProvider extends ChangeNotifier {
     _state = _state!.copyWith(currentStep: _state!.currentStep - 1);
     _saveState();
     notifyListeners();
+
     return true;
   }
 
@@ -249,6 +252,7 @@ class WizardProvider extends ChangeNotifier {
     _state = _state!.copyWith(currentStep: step);
     _saveState();
     notifyListeners();
+
     return true;
   }
 
@@ -326,10 +330,12 @@ class WizardProvider extends ChangeNotifier {
       if (jsonData == null) return null;
 
       final jsonMap = jsonDecode(jsonData) as Map<String, dynamic>;
+
       return WizardState.fromJson(jsonMap);
     } catch (e) {
       _error = 'Failed to load wizard state: $e';
       notifyListeners();
+
       return null;
     }
   }

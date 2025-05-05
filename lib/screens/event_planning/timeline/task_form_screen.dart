@@ -117,6 +117,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                 if (value == null || value.isEmpty) {
                   return 'Please select a category';
                 }
+
                 return null;
               },
             ),
@@ -133,6 +134,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                 if (value == null || value.isEmpty) {
                   return 'Please enter a title';
                 }
+
                 return null;
               },
             ),

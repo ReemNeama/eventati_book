@@ -284,6 +284,7 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
       setState(() {
         _error = 'Please select a date and time for the booking.';
       });
+
       return;
     }
 

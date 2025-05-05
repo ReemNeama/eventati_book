@@ -92,6 +92,7 @@ class UIUtils {
   /// Check if the device is a tablet
   static bool isTablet(BuildContext context) {
     final size = getScreenSize(context);
+
     return size.shortestSide >= 600;
   }
 

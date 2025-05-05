@@ -164,6 +164,7 @@ class WizardConnectionService {
         debugPrint(
           'Task provider not found, will be created by the TimelineScreen',
         );
+
         return;
       }
 

@@ -156,6 +156,7 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen>
       itemCount: bookings.length,
       itemBuilder: (context, index) {
         final booking = bookings[index];
+
         return _buildBookingCard(
           booking,
           cardBackground,

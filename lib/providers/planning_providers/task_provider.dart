@@ -139,6 +139,7 @@ class TaskProvider extends ChangeNotifier {
   List<Task> getUpcomingTasks(int days) {
     final now = DateTime.now();
     final end = now.add(Duration(days: days));
+
     return _tasks
         .where(
           (task) =>
@@ -155,6 +156,7 @@ class TaskProvider extends ChangeNotifier {
   /// have a due date in the past.
   List<Task> getOverdueTasks() {
     final now = DateTime.now();
+
     return _tasks
         .where(
           (task) =>

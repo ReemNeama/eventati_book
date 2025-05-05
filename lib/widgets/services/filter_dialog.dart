@@ -70,6 +70,7 @@ class FilterDialog extends StatelessWidget {
               children:
                   filterOptions.map((option) {
                     final isSelected = selectedOptions.contains(option);
+
                     return FilterChip(
                       label: Text(
                         option,

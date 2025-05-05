@@ -172,6 +172,7 @@ class _SavedComparisonsScreenState extends State<SavedComparisonsScreen> {
       itemCount: comparisons.length,
       itemBuilder: (context, index) {
         final comparison = comparisons[index];
+
         return _buildComparisonCard(
           comparison,
           cardColor,
@@ -202,6 +203,7 @@ class _SavedComparisonsScreenState extends State<SavedComparisonsScreen> {
       itemCount: comparisons.length,
       itemBuilder: (context, index) {
         final comparison = comparisons[index];
+
         return _buildComparisonCard(
           comparison,
           cardColor,
@@ -565,6 +567,7 @@ class _EditComparisonDialogState extends State<_EditComparisonDialog> {
                 if (value == null || value.trim().isEmpty) {
                   return 'Please enter a title';
                 }
+
                 return null;
               },
             ),
@@ -595,6 +598,7 @@ class _EditComparisonDialogState extends State<_EditComparisonDialog> {
                   content: Text('Please enter a title for the comparison'),
                 ),
               );
+
               return;
             }
 

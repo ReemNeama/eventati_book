@@ -86,12 +86,15 @@ class MilestoneCondition {
           // Special handling for service-related checks
           if (value == 'FIVE_OR_MORE_SERVICES') {
             final services = fieldValue as Map<String, bool>;
+
             return services.values.where((selected) => selected).length >= 5;
           } else if (value is String) {
             final services = fieldValue as Map<String, bool>;
+
             return services[value] == true;
           } else if (value == true) {
             final services = fieldValue as Map<String, bool>;
+
             return services.values.contains(true);
           }
         }
@@ -104,6 +107,7 @@ class MilestoneCondition {
           return fieldValue.containsKey(value) ||
               fieldValue.containsValue(value);
         }
+
         return false;
       case MilestoneConditionOperator.notContains:
         if (fieldValue is List) {
@@ -114,6 +118,7 @@ class MilestoneCondition {
           return !fieldValue.containsKey(value) &&
               !fieldValue.containsValue(value);
         }
+
         return true;
       case MilestoneConditionOperator.isTrue:
         return fieldValue == true;
@@ -127,6 +132,7 @@ class MilestoneCondition {
         if (value is Function) {
           return value(fieldValue);
         }
+
         return false;
     }
   }
@@ -319,6 +325,7 @@ class Milestone {
     if (criteria.isMet(wizardState)) {
       status = MilestoneStatus.completed;
       completedDate = DateTime.now();
+
       return true;
     }
 

@@ -153,6 +153,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
                       itemCount: _recommendedVenues.length,
                       itemBuilder: (context, index) {
                         final venue = _recommendedVenues[index];
+
                         return _buildVenueCard(venue);
                       },
                     ),
@@ -167,6 +168,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
                       itemCount: _recommendedVenues.length,
                       itemBuilder: (context, index) {
                         final venue = _recommendedVenues[index];
+
                         return _buildVenueCard(venue);
                       },
                     ),
@@ -231,6 +233,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
       itemCount: _upcomingEvents.length,
       itemBuilder: (context, index) {
         final event = _upcomingEvents[index];
+
         return Card(
           margin: const EdgeInsets.only(bottom: 16),
           elevation: 2,
@@ -462,6 +465,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
       itemCount: quickLinks.length,
       itemBuilder: (context, index) {
         final link = quickLinks[index];
+
         return InkWell(
           onTap: link['onTap'],
           child: Card(

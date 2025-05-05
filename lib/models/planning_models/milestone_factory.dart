@@ -83,6 +83,7 @@ class MilestoneFactory {
     String eventType,
   ) {
     final templates = getTemplatesForEventType(eventType);
+
     return templates
         .map((template) => Milestone.fromTemplate(template, eventId))
         .toList();

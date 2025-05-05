@@ -113,6 +113,7 @@ class _BudgetItemFormScreenState extends State<BudgetItemFormScreen> {
                 if (value == null || value.isEmpty) {
                   return 'Please select a category';
                 }
+
                 return null;
               },
             ),
@@ -129,6 +130,7 @@ class _BudgetItemFormScreenState extends State<BudgetItemFormScreen> {
                 if (value == null || value.isEmpty) {
                   return 'Please enter a description';
                 }
+
                 return null;
               },
             ),
@@ -150,6 +152,7 @@ class _BudgetItemFormScreenState extends State<BudgetItemFormScreen> {
                 if (double.tryParse(value) == null) {
                   return 'Please enter a valid number';
                 }
+
                 return null;
               },
             ),
@@ -170,6 +173,7 @@ class _BudgetItemFormScreenState extends State<BudgetItemFormScreen> {
                     return 'Please enter a valid number';
                   }
                 }
+
                 return null;
               },
             ),

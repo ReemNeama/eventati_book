@@ -3,12 +3,14 @@ class StringUtils {
   /// Capitalize the first letter of a string
   static String capitalize(String text) {
     if (text.isEmpty) return text;
+
     return text[0].toUpperCase() + text.substring(1);
   }
 
   /// Capitalize each word in a string
   static String capitalizeEachWord(String text) {
     if (text.isEmpty) return text;
+
     return text.split(' ').map((word) => capitalize(word)).join(' ');
   }
 
@@ -19,6 +21,7 @@ class StringUtils {
     String ellipsis = '...',
   }) {
     if (text.length <= maxLength) return text;
+
     return '${text.substring(0, maxLength)}$ellipsis';
   }
 
@@ -30,12 +33,14 @@ class StringUtils {
   /// Check if a string is a valid email
   static bool isValidEmail(String email) {
     final emailRegExp = RegExp(r'^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+');
+
     return emailRegExp.hasMatch(email);
   }
 
   /// Check if a string is a valid phone number
   static bool isValidPhoneNumber(String phoneNumber) {
     final phoneRegExp = RegExp(r'^\+?[0-9]{10,15}$');
+
     return phoneRegExp.hasMatch(phoneNumber);
   }
 

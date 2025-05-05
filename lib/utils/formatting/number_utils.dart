@@ -12,12 +12,14 @@ class NumberUtils {
       symbol: symbol,
       decimalDigits: decimalPlaces,
     );
+
     return formatter.format(amount);
   }
 
   /// Format a number with commas for thousands
   static String formatWithCommas(num number) {
     final formatter = NumberFormat('#,###');
+
     return formatter.format(number);
   }
 
@@ -25,18 +27,21 @@ class NumberUtils {
   static String formatPercentage(double percentage, {int decimalPlaces = 0}) {
     final formatter = NumberFormat.percentPattern();
     formatter.maximumFractionDigits = decimalPlaces;
+
     return formatter.format(percentage / 100);
   }
 
   /// Calculate the percentage of a value from a total
   static double calculatePercentage(num value, num total) {
     if (total == 0) return 0;
+
     return (value / total) * 100;
   }
 
   /// Round a double to a specific number of decimal places
   static double roundToDecimalPlaces(double value, int places) {
     final mod = 10.0 * places;
+
     return (value * mod).round() / mod;
   }
 

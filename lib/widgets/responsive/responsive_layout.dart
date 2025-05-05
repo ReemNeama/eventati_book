@@ -57,6 +57,7 @@ class ResponsiveLayout extends StatelessWidget {
   /// Check if the current device is a tablet.
   static bool isTablet(BuildContext context) {
     final size = MediaQuery.of(context).size;
+
     return size.shortestSide >= 600 && size.shortestSide < 900;
   }
 

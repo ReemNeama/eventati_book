@@ -156,6 +156,7 @@ class SuggestionProvider extends ChangeNotifier {
       relevantSuggestions.sort((a, b) {
         final scoreA = a.calculateRelevanceScore(wizardState);
         final scoreB = b.calculateRelevanceScore(wizardState);
+
         return scoreB.compareTo(scoreA);
       });
 
@@ -259,10 +260,12 @@ class SuggestionProvider extends ChangeNotifier {
       await _saveCustomSuggestions();
 
       notifyListeners();
+
       return true;
     } catch (e) {
       _error = 'Failed to add custom suggestion: $e';
       notifyListeners();
+
       return false;
     }
   }
@@ -287,6 +290,7 @@ class SuggestionProvider extends ChangeNotifier {
       if (index == -1) {
         _error = 'Suggestion not found';
         notifyListeners();
+
         return false;
       }
 
@@ -299,10 +303,12 @@ class SuggestionProvider extends ChangeNotifier {
       }
 
       notifyListeners();
+
       return true;
     } catch (e) {
       _error = 'Failed to update suggestion: $e';
       notifyListeners();
+
       return false;
     }
   }
@@ -328,6 +334,7 @@ class SuggestionProvider extends ChangeNotifier {
       if (!suggestion.isCustom) {
         _error = 'Only custom suggestions can be deleted';
         notifyListeners();
+
         return false;
       }
 
@@ -341,10 +348,12 @@ class SuggestionProvider extends ChangeNotifier {
       await _saveCustomSuggestions();
 
       notifyListeners();
+
       return true;
     } catch (e) {
       _error = 'Failed to delete suggestion: $e';
       notifyListeners();
+
       return false;
     }
   }
@@ -380,6 +389,7 @@ class SuggestionProvider extends ChangeNotifier {
     } catch (e) {
       _error = 'Failed to load custom suggestions: $e';
       notifyListeners();
+
       return [];
     }
   }

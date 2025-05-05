@@ -159,6 +159,7 @@ class FormUtils {
     if (int.tryParse(value) == null) {
       return 'Please enter a valid integer';
     }
+
     return null;
   }
 }

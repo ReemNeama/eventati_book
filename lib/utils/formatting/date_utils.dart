@@ -42,12 +42,14 @@ class DateTimeUtils {
   /// Check if a date is in the future
   static bool isFutureDate(DateTime date) {
     final now = DateTime.now();
+
     return date.isAfter(now);
   }
 
   /// Check if a date is today
   static bool isToday(DateTime date) {
     final now = DateTime.now();
+
     return date.year == now.year &&
         date.month == now.month &&
         date.day == now.day;
@@ -63,6 +65,7 @@ class DateTimeUtils {
   /// Get a list of dates between two dates
   static List<DateTime> getDatesBetween(DateTime startDate, DateTime endDate) {
     final days = endDate.difference(startDate).inDays + 1;
+
     return List.generate(
       days,
       (index) =>

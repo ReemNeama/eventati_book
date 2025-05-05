@@ -8,6 +8,7 @@ class ValidationUtils {
     if (value == null || value.isEmpty) {
       return message;
     }
+
     return null;
   }
 
@@ -134,6 +135,7 @@ class ValidationUtils {
     if (password != confirmPassword) {
       return 'Passwords do not match';
     }
+
     return null;
   }
 }

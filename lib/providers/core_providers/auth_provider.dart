@@ -99,6 +99,7 @@ class AuthProvider with ChangeNotifier {
       if (token == null) {
         _status = AuthStatus.unauthenticated;
         notifyListeners();
+
         return;
       }
 
@@ -107,6 +108,7 @@ class AuthProvider with ChangeNotifier {
       if (userData == null) {
         _status = AuthStatus.unauthenticated;
         notifyListeners();
+
         return;
       }
 
@@ -138,6 +140,7 @@ class AuthProvider with ChangeNotifier {
         _status = AuthStatus.error;
         _errorMessage = 'Invalid credentials';
         notifyListeners();
+
         return false;
       }
 
@@ -170,6 +173,7 @@ class AuthProvider with ChangeNotifier {
       _status = AuthStatus.error;
       _errorMessage = 'Login failed: ${e.toString()}';
       notifyListeners();
+
       return false;
     }
   }
@@ -214,6 +218,7 @@ class AuthProvider with ChangeNotifier {
       _status = AuthStatus.error;
       _errorMessage = 'Registration failed: ${e.toString()}';
       notifyListeners();
+
       return false;
     }
   }
@@ -250,6 +255,7 @@ class AuthProvider with ChangeNotifier {
     } catch (e) {
       _errorMessage = 'Password reset failed: ${e.toString()}';
       notifyListeners();
+
       return false;
     }
   }
@@ -264,6 +270,7 @@ class AuthProvider with ChangeNotifier {
       if (_user == null) {
         _errorMessage = 'No user is logged in';
         notifyListeners();
+
         return false;
       }
 
@@ -293,6 +300,7 @@ class AuthProvider with ChangeNotifier {
     } catch (e) {
       _errorMessage = 'Profile update failed: ${e.toString()}';
       notifyListeners();
+
       return false;
     }
   }
@@ -303,6 +311,7 @@ class AuthProvider with ChangeNotifier {
       if (_user == null) {
         _errorMessage = 'No user is logged in';
         notifyListeners();
+
         return false;
       }
 
@@ -331,6 +340,7 @@ class AuthProvider with ChangeNotifier {
     } catch (e) {
       _errorMessage = 'Failed to add favorite: ${e.toString()}';
       notifyListeners();
+
       return false;
     }
   }
@@ -341,6 +351,7 @@ class AuthProvider with ChangeNotifier {
       if (_user == null) {
         _errorMessage = 'No user is logged in';
         notifyListeners();
+
         return false;
       }
 
@@ -364,6 +375,7 @@ class AuthProvider with ChangeNotifier {
     } catch (e) {
       _errorMessage = 'Failed to remove favorite: ${e.toString()}';
       notifyListeners();
+
       return false;
     }
   }
@@ -374,6 +386,7 @@ class AuthProvider with ChangeNotifier {
       if (_user == null) {
         _errorMessage = 'No user is logged in';
         notifyListeners();
+
         return false;
       }
 
@@ -402,6 +415,7 @@ class AuthProvider with ChangeNotifier {
     } catch (e) {
       _errorMessage = 'Failed to add favorite: ${e.toString()}';
       notifyListeners();
+
       return false;
     }
   }
@@ -412,6 +426,7 @@ class AuthProvider with ChangeNotifier {
       if (_user == null) {
         _errorMessage = 'No user is logged in';
         notifyListeners();
+
         return false;
       }
 
@@ -435,6 +450,7 @@ class AuthProvider with ChangeNotifier {
     } catch (e) {
       _errorMessage = 'Failed to remove favorite: ${e.toString()}';
       notifyListeners();
+
       return false;
     }
   }

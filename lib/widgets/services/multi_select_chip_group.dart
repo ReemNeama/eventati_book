@@ -32,6 +32,7 @@ class MultiSelectChipGroup extends StatelessWidget {
           children:
               options.map((option) {
                 final isSelected = selectedOptions.contains(option);
+
                 return FilterChip(
                   label: Text(
                     option,

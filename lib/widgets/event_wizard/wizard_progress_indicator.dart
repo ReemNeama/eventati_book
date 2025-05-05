@@ -87,6 +87,7 @@ class WizardProgressIndicator extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: List.generate(totalSteps, (index) {
                 final isActive = index <= currentStep;
+
                 return Expanded(
                   child: Column(
                     children: [

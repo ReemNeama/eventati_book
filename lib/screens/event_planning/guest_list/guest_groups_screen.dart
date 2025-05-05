@@ -48,6 +48,7 @@ class _GuestGroupsScreenState extends State<GuestGroupsScreen> {
                   final groupGuests = widget.guestListProvider.getGuestsByGroup(
                     group.id,
                   );
+
                   return _buildGroupCard(context, group, groupGuests.length);
                 },
               ),
@@ -197,6 +198,7 @@ class _GuestGroupsScreenState extends State<GuestGroupsScreen> {
                         content: Text('Group name cannot be empty'),
                       ),
                     );
+
                     return;
                   }
 

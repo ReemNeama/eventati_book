@@ -113,6 +113,7 @@ class BudgetProvider extends ChangeNotifier {
         (sum, item) => sum + item.estimatedCost,
       );
     }
+
     return totals;
   }
 

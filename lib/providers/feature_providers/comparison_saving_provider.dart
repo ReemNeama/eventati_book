@@ -195,11 +195,13 @@ class ComparisonSavingProvider extends ChangeNotifier {
 
       _isLoading = false;
       notifyListeners();
+
       return true;
     } catch (e) {
       _error = 'Failed to save comparison: $e';
       _isLoading = false;
       notifyListeners();
+
       return false;
     }
   }
@@ -228,6 +230,7 @@ class ComparisonSavingProvider extends ChangeNotifier {
         _error = 'Comparison not found';
         _isLoading = false;
         notifyListeners();
+
         return false;
       }
 
@@ -239,11 +242,13 @@ class ComparisonSavingProvider extends ChangeNotifier {
 
       _isLoading = false;
       notifyListeners();
+
       return true;
     } catch (e) {
       _error = 'Failed to update comparison: $e';
       _isLoading = false;
       notifyListeners();
+
       return false;
     }
   }
@@ -270,11 +275,13 @@ class ComparisonSavingProvider extends ChangeNotifier {
 
       _isLoading = false;
       notifyListeners();
+
       return true;
     } catch (e) {
       _error = 'Failed to delete comparison: $e';
       _isLoading = false;
       notifyListeners();
+
       return false;
     }
   }
@@ -300,11 +307,13 @@ class ComparisonSavingProvider extends ChangeNotifier {
 
       _isLoading = false;
       notifyListeners();
+
       return true;
     } catch (e) {
       _error = 'Failed to delete all comparisons: $e';
       _isLoading = false;
       notifyListeners();
+
       return false;
     }
   }

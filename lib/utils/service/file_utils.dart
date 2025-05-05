@@ -17,12 +17,14 @@ class FileUtils {
   /// Get a file from the application documents directory
   static Future<File> getFile(String fileName) async {
     final directory = await getAppDirectory();
+
     return File(path.join(directory.path, fileName));
   }
 
   /// Save a string to a file in the application documents directory
   static Future<File> saveStringToFile(String content, String fileName) async {
     final file = await getFile(fileName);
+
     return file.writeAsString(content);
   }
 
@@ -30,6 +32,7 @@ class FileUtils {
   static Future<String> readStringFromFile(String fileName) async {
     try {
       final file = await getFile(fileName);
+
       return await file.readAsString();
     } catch (e) {
       return '';
@@ -39,6 +42,7 @@ class FileUtils {
   /// Check if a file exists in the application documents directory
   static Future<bool> fileExists(String fileName) async {
     final file = await getFile(fileName);
+
     return file.exists();
   }
 
@@ -68,12 +72,14 @@ class FileUtils {
   /// Get the file size in bytes
   static Future<int> getFileSize(String filePath) async {
     final file = File(filePath);
+
     return await file.length();
   }
 
   /// Get a human-readable file size string
   static Future<String> getHumanReadableFileSize(String filePath) async {
     final bytes = await getFileSize(filePath);
+
     return formatBytes(bytes);
   }
 
@@ -117,6 +123,7 @@ class FileUtils {
     String destinationPath,
   ) async {
     final sourceFile = File(sourcePath);
+
     return sourceFile.copy(destinationPath);
   }
 }

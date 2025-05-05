@@ -189,6 +189,7 @@ class EventPlanningToolsScreen extends StatelessWidget {
 
   int _getDaysUntil(DateTime date) {
     final now = DateTime.now();
+
     return date.difference(now).inDays;
   }
 

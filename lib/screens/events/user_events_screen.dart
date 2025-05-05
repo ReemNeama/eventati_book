@@ -90,6 +90,7 @@ class _UserEventsScreenState extends State<UserEventsScreen> {
       itemCount: _mockEvents.length,
       itemBuilder: (context, index) {
         final event = _mockEvents[index];
+
         return Card(
           margin: const EdgeInsets.only(bottom: 16),
           elevation: 2,

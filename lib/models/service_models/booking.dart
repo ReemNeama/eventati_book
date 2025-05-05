@@ -275,6 +275,7 @@ class Booking {
     if (serviceType != 'venue' || !serviceOptions.containsKey('venue')) {
       return null;
     }
+
     return VenueOptions.fromJson(serviceOptions['venue']);
   }
 
@@ -283,6 +284,7 @@ class Booking {
     if (serviceType != 'catering' || !serviceOptions.containsKey('catering')) {
       return null;
     }
+
     return CateringOptions.fromJson(serviceOptions['catering']);
   }
 
@@ -292,6 +294,7 @@ class Booking {
         !serviceOptions.containsKey('photography')) {
       return null;
     }
+
     return PhotographyOptions.fromJson(serviceOptions['photography']);
   }
 
@@ -300,6 +303,7 @@ class Booking {
     if (serviceType != 'planner' || !serviceOptions.containsKey('planner')) {
       return null;
     }
+
     return PlannerOptions.fromJson(serviceOptions['planner']);
   }
 
@@ -307,6 +311,7 @@ class Booking {
   Booking withVenueOptions(VenueOptions options) {
     final newOptions = Map<String, dynamic>.from(serviceOptions);
     newOptions['venue'] = options.toJson();
+
     return copyWith(serviceOptions: newOptions);
   }
 
@@ -314,6 +319,7 @@ class Booking {
   Booking withCateringOptions(CateringOptions options) {
     final newOptions = Map<String, dynamic>.from(serviceOptions);
     newOptions['catering'] = options.toJson();
+
     return copyWith(serviceOptions: newOptions);
   }
 
@@ -321,6 +327,7 @@ class Booking {
   Booking withPhotographyOptions(PhotographyOptions options) {
     final newOptions = Map<String, dynamic>.from(serviceOptions);
     newOptions['photography'] = options.toJson();
+
     return copyWith(serviceOptions: newOptions);
   }
 
@@ -328,6 +335,7 @@ class Booking {
   Booking withPlannerOptions(PlannerOptions options) {
     final newOptions = Map<String, dynamic>.from(serviceOptions);
     newOptions['planner'] = options.toJson();
+
     return copyWith(serviceOptions: newOptions);
   }
 }

@@ -108,6 +108,7 @@ class _VendorListScreenState extends State<VendorListScreen> {
                               _searchQuery,
                             ) ??
                             false;
+
                         return nameMatch || serviceMatch || contactMatch;
                       }).toList();
 

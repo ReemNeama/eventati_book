@@ -132,11 +132,13 @@ class BookingProvider extends ChangeNotifier {
 
       _isLoading = false;
       notifyListeners();
+
       return true;
     } catch (e) {
       _isLoading = false;
       _error = 'Failed to create booking: $e';
       notifyListeners();
+
       return false;
     }
   }
@@ -169,11 +171,13 @@ class BookingProvider extends ChangeNotifier {
 
       _isLoading = false;
       notifyListeners();
+
       return true;
     } catch (e) {
       _isLoading = false;
       _error = 'Failed to update booking: $e';
       notifyListeners();
+
       return false;
     }
   }
@@ -212,11 +216,13 @@ class BookingProvider extends ChangeNotifier {
 
       _isLoading = false;
       notifyListeners();
+
       return true;
     } catch (e) {
       _isLoading = false;
       _error = 'Failed to cancel booking: $e';
       notifyListeners();
+
       return false;
     }
   }
@@ -243,11 +249,13 @@ class BookingProvider extends ChangeNotifier {
 
       _isLoading = false;
       notifyListeners();
+
       return true;
     } catch (e) {
       _isLoading = false;
       _error = 'Failed to delete booking: $e';
       notifyListeners();
+
       return false;
     }
   }
@@ -363,10 +371,12 @@ class BookingProvider extends ChangeNotifier {
       if (jsonData == null) return [];
 
       final jsonList = jsonDecode(jsonData) as List;
+
       return jsonList.map((json) => Booking.fromJson(json)).toList();
     } catch (e) {
       _error = 'Failed to load bookings: $e';
       notifyListeners();
+
       return [];
     }
   }

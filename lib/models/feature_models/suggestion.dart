@@ -140,6 +140,7 @@ class SuggestionCondition {
         } else if (fieldValue is List) {
           return fieldValue.contains(value);
         }
+
         return false;
       case ConditionOperator.notContains:
         if (fieldValue is Map && value is String) {
@@ -149,6 +150,7 @@ class SuggestionCondition {
         } else if (fieldValue is List) {
           return !fieldValue.contains(value);
         }
+
         return true;
       case ConditionOperator.isTrue:
         return fieldValue == true;

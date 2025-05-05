@@ -68,6 +68,7 @@ class _CreateSuggestionScreenState extends State<CreateSuggestionScreen> {
                             if (value == null || value.isEmpty) {
                               return 'Please enter a title';
                             }
+
                             return null;
                           },
                           onSaved: (value) => _title = value!,
@@ -87,6 +88,7 @@ class _CreateSuggestionScreenState extends State<CreateSuggestionScreen> {
                             if (value == null || value.isEmpty) {
                               return 'Please enter a description';
                             }
+
                             return null;
                           },
                           onSaved: (value) => _description = value!,

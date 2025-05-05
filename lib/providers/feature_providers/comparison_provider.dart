@@ -124,6 +124,7 @@ class ComparisonProvider extends ChangeNotifier {
     } else if (service is Planner) {
       return selectedPlanners.any((planner) => planner.name == service.name);
     }
+
     return false;
   }
 

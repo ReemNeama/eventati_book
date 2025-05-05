@@ -101,6 +101,7 @@ class _GuestFormScreenState extends State<GuestFormScreen> {
                 if (value == null || value.isEmpty) {
                   return 'Please enter a first name';
                 }
+
                 return null;
               },
             ),
@@ -117,6 +118,7 @@ class _GuestFormScreenState extends State<GuestFormScreen> {
                 if (value == null || value.isEmpty) {
                   return 'Please enter a last name';
                 }
+
                 return null;
               },
             ),
@@ -137,6 +139,7 @@ class _GuestFormScreenState extends State<GuestFormScreen> {
                     return 'Please enter a valid email address';
                   }
                 }
+
                 return null;
               },
             ),
@@ -275,6 +278,7 @@ class _GuestFormScreenState extends State<GuestFormScreen> {
                       value: _plusOneCount,
                       items: List.generate(5, (index) {
                         final count = index + 1;
+
                         return DropdownMenuItem<int>(
                           value: count,
                           child: Text(count.toString()),

@@ -132,6 +132,7 @@ class GuestListProvider extends ChangeNotifier {
   int? get daysUntilRsvpDeadline {
     if (_rsvpDeadline == null) return null;
     final now = DateTime.now();
+
     return _rsvpDeadline!.difference(now).inDays;
   }
 

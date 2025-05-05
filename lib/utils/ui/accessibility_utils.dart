@@ -54,6 +54,7 @@ class AccessibilityUtils {
     final hour = time.hourOfPeriod == 0 ? 12 : time.hourOfPeriod;
     final minute = time.minute.toString().padLeft(2, '0');
     final period = time.period == DayPeriod.am ? 'AM' : 'PM';
+
     return '$hour:$minute $period';
   }
 
@@ -108,8 +109,10 @@ class AccessibilityUtils {
   static String getProgressLabel(String action, {double? progress}) {
     if (progress != null) {
       final percentage = (progress * 100).toInt();
+
       return '$action, $percentage percent complete';
     }
+
     return '$action in progress';
   }
 
@@ -149,6 +152,7 @@ class AccessibilityUtils {
       'November',
       'December',
     ];
+
     return months[month - 1];
   }
 

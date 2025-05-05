@@ -148,6 +148,7 @@ class _CateringListScreenState extends State<CateringListScreen> {
               itemCount: filteredServices.length,
               itemBuilder: (context, index) {
                 final service = filteredServices[index];
+
                 return ServiceCard(
                   name: service.name,
                   description: service.description,

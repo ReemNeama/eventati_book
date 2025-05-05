@@ -211,6 +211,7 @@ class MessagingProvider extends ChangeNotifier {
               isRead: true,
             );
           }
+
           return message;
         }).toList();
 

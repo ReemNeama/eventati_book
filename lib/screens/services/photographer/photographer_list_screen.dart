@@ -139,6 +139,7 @@ class _PhotographerListScreenState extends State<PhotographerListScreen> {
               itemCount: filteredPhotographers.length,
               itemBuilder: (context, index) {
                 final photographer = filteredPhotographers[index];
+
                 return ServiceCard(
                   name: photographer.name,
                   description: photographer.description,

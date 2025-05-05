@@ -83,6 +83,7 @@ class ServiceUtils {
   ) {
     return services.where((service) {
       final price = getPrice(service);
+
       return price >= priceRange.start && price <= priceRange.end;
     }).toList();
   }
@@ -97,6 +98,7 @@ class ServiceUtils {
     return services.where((service) {
       final maxCapacity = getMaxCapacity(service);
       final minCapacity = getMinCapacity(service);
+
       return maxCapacity >= capacityRange.start &&
           minCapacity <= capacityRange.end;
     }).toList();
@@ -112,9 +114,11 @@ class ServiceUtils {
     if (searchQuery.isEmpty) return services;
 
     final query = searchQuery.toLowerCase();
+
     return services.where((service) {
       final name = getName(service).toLowerCase();
       final description = getDescription(service).toLowerCase();
+
       return name.contains(query) || description.contains(query);
     }).toList();
   }
@@ -129,6 +133,7 @@ class ServiceUtils {
 
     return services.where((service) {
       final tags = getTags(service);
+
       return tags.any((tag) => selectedTags.contains(tag));
     }).toList();
   }

@@ -8,12 +8,14 @@ extension StringExtensions on String {
   /// Capitalize the first letter of the string
   String capitalize() {
     if (isEmpty) return this;
+
     return '${this[0].toUpperCase()}${substring(1)}';
   }
 
   /// Capitalize each word in the string
   String capitalizeEachWord() {
     if (isEmpty) return this;
+
     return split(' ').map((word) => word.capitalize()).join(' ');
   }
 
@@ -42,6 +44,7 @@ extension StringExtensions on String {
   /// Truncate the string to a maximum length and add ellipsis if needed
   String truncate(int maxLength, {String ellipsis = '...'}) {
     if (length <= maxLength) return this;
+
     return '${substring(0, maxLength)}$ellipsis';
   }
 }
@@ -56,12 +59,14 @@ extension DateTimeExtensions on DateTime {
   /// Check if the date is today
   bool get isToday {
     final now = DateTime.now();
+
     return year == now.year && month == now.month && day == now.day;
   }
 
   /// Check if the date is yesterday
   bool get isYesterday {
     final yesterday = DateTime.now().subtract(const Duration(days: 1));
+
     return year == yesterday.year &&
         month == yesterday.month &&
         day == yesterday.day;
@@ -70,6 +75,7 @@ extension DateTimeExtensions on DateTime {
   /// Check if the date is tomorrow
   bool get isTomorrow {
     final tomorrow = DateTime.now().add(const Duration(days: 1));
+
     return year == tomorrow.year &&
         month == tomorrow.month &&
         day == tomorrow.day;
@@ -177,6 +183,7 @@ extension ListExtensions<T> on List<T> {
     if (isEmpty) {
       throw Exception('Cannot get a random item from an empty list');
     }
+
     return this[DateTime.now().millisecondsSinceEpoch % length];
   }
 
@@ -201,12 +208,14 @@ extension NumExtensions on num {
       symbol: symbol,
       decimalDigits: decimalPlaces,
     );
+
     return formatter.format(this);
   }
 
   /// Format the number with commas for thousands
   String toFormattedString() {
     final formatter = NumberFormat('#,###');
+
     return formatter.format(this);
   }
 
@@ -214,6 +223,7 @@ extension NumExtensions on num {
   String toPercentage({int decimalPlaces = 0}) {
     final formatter = NumberFormat.percentPattern();
     formatter.maximumFractionDigits = decimalPlaces;
+
     return formatter.format(this / 100);
   }
 

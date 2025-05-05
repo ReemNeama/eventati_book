@@ -190,6 +190,7 @@ class VenueDB {
       venues =
           venues.where((venue) {
             final venueFeatures = List<String>.from(venue['features']);
+
             return features.every((feature) => venueFeatures.contains(feature));
           }).toList();
     }

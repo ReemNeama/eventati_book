@@ -130,17 +130,20 @@ class _MyAppState extends State<MyApp> {
       onGenerateRoute: (settings) {
         if (settings.name == '/verification') {
           final args = settings.arguments as Map<String, dynamic>;
+
           return MaterialPageRoute(
             builder: (context) => VerificationScreen(email: args['email']),
           );
         } else if (settings.name == '/bookings/details') {
           final args = settings.arguments as Map<String, dynamic>;
+
           return MaterialPageRoute(
             builder:
                 (context) => BookingDetailsScreen(bookingId: args['bookingId']),
           );
         } else if (settings.name == '/bookings/form') {
           final args = settings.arguments as Map<String, dynamic>;
+
           return MaterialPageRoute(
             builder:
                 (context) => BookingFormScreen(
@@ -154,6 +157,7 @@ class _MyAppState extends State<MyApp> {
                 ),
           );
         }
+
         return null;
       },
       home: Consumer<AuthProvider>(

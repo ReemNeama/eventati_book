@@ -105,8 +105,10 @@ class NavigationUtils {
   static Future<bool> handleBackButton(BuildContext context) async {
     if (Navigator.canPop(context)) {
       Navigator.pop(context);
+
       return false;
     }
+
     return true;
   }
 }
