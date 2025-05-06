@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the getBusinessEventSuggestions method from the SuggestionTemplates class, for the Dart programming language.">
+  <title>getBusinessEventSuggestions method - SuggestionTemplates class - suggestion library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">eventati_book</a></li>
+    <li><a href="../../models_feature_models_suggestion">models\feature_models\suggestion.dart</a></li>
+    <li><a href="../../models_feature_models_suggestion/SuggestionTemplates-class.html">SuggestionTemplates</a></li>
+    <li class="self-crumb">getBusinessEventSuggestions static method</li>
+  </ol>
+  <div class="self-name">getBusinessEventSuggestions</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <div class="toggle" id="theme-button" title="Toggle brightness">
+    <label for="theme">
+      <input type="checkbox" id="theme" value="light-theme">
+      <span id="dark-theme-button" class="material-symbols-outlined">
+        dark_mode
+      </span>
+      <span id="light-theme-button" class="material-symbols-outlined">
+        light_mode
+      </span>
+    </label>
+  </div>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="models_feature_models_suggestion&#47;SuggestionTemplates-class-sidebar.html"
+    data-below-sidebar="">
+    <div>
+<h1><span class="kind-method">getBusinessEventSuggestions</span> static method 
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../../models_feature_models_suggestion/Suggestion-class.html">Suggestion</a></span>&gt;</span></span>
+<span class="name ">getBusinessEventSuggestions</span>(<wbr>)
+
+      
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Get business event-specific suggestions</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">static List&lt;Suggestion&gt; getBusinessEventSuggestions() {
+  return [
+    &#47;&#47; Venue suggestions
+    const Suggestion(
+      id: &#39;business_venue&#39;,
+      title: &#39;Book an appropriate business venue&#39;,
+      description:
+          &#39;Choose a venue that matches your event type and has the necessary facilities for presentations, networking, and breakout sessions.&#39;,
+      category: SuggestionCategory.venue,
+      priority: SuggestionPriority.high,
+      baseRelevanceScore: 90,
+      conditions: [
+        SuggestionCondition(
+          field: &#39;templateId&#39;,
+          operator: ConditionOperator.equals,
+          value: &#39;business&#39;,
+        ),
+        SuggestionCondition(
+          field: &#39;selectedServices&#39;,
+          operator: ConditionOperator.contains,
+          value: &#39;Venue&#39;,
+        ),
+      ],
+      applicableEventTypes: [&#39;business&#39;],
+      actionUrl: &#39;&#47;services&#47;venues&#39;,
+    ),
+
+    &#47;&#47; AV equipment suggestions
+    const Suggestion(
+      id: &#39;business_av_equipment&#39;,
+      title: &#39;Arrange audio&#47;visual equipment&#39;,
+      description:
+          &#39;Ensure your venue has the necessary A&#47;V equipment or arrange for rental. Test all equipment before the event to avoid technical issues.&#39;,
+      category: SuggestionCategory.entertainment,
+      priority: SuggestionPriority.high,
+      baseRelevanceScore: 85,
+      conditions: [
+        SuggestionCondition(
+          field: &#39;templateId&#39;,
+          operator: ConditionOperator.equals,
+          value: &#39;business&#39;,
+        ),
+        SuggestionCondition(
+          field: &#39;selectedServices&#39;,
+          operator: ConditionOperator.contains,
+          value: &#39;Audio&#47;Visual Equipment&#39;,
+        ),
+      ],
+      applicableEventTypes: [&#39;business&#39;],
+    ),
+
+    &#47;&#47; Catering suggestions
+    const Suggestion(
+      id: &#39;business_catering&#39;,
+      title: &#39;Arrange business-appropriate catering&#39;,
+      description:
+          &#39;Select catering that fits your event schedule. Consider options like buffet for networking events or plated meals for formal dinners.&#39;,
+      category: SuggestionCategory.catering,
+      priority: SuggestionPriority.medium,
+      baseRelevanceScore: 75,
+      conditions: [
+        SuggestionCondition(
+          field: &#39;templateId&#39;,
+          operator: ConditionOperator.equals,
+          value: &#39;business&#39;,
+        ),
+        SuggestionCondition(
+          field: &#39;selectedServices&#39;,
+          operator: ConditionOperator.contains,
+          value: &#39;Catering&#39;,
+        ),
+      ],
+      applicableEventTypes: [&#39;business&#39;],
+      actionUrl: &#39;&#47;services&#47;catering&#39;,
+    ),
+
+    &#47;&#47; Registration suggestions
+    const Suggestion(
+      id: &#39;business_registration&#39;,
+      title: &#39;Set up event registration&#39;,
+      description:
+          &#39;Create a registration system for attendees. Consider using digital check-in to streamline the process and collect valuable data.&#39;,
+      category: SuggestionCategory.guestList,
+      priority: SuggestionPriority.high,
+      baseRelevanceScore: 85,
+      conditions: [
+        SuggestionCondition(
+          field: &#39;templateId&#39;,
+          operator: ConditionOperator.equals,
+          value: &#39;business&#39;,
+        ),
+      ],
+      applicableEventTypes: [&#39;business&#39;],
+      actionUrl: &#39;&#47;event-planning&#47;guest-list&#39;,
+    ),
+
+    &#47;&#47; Budget suggestions
+    const Suggestion(
+      id: &#39;business_budget&#39;,
+      title: &#39;Create a business event budget&#39;,
+      description:
+          &#39;Develop a comprehensive budget that includes venue, catering, equipment, marketing, and staff costs. Include a contingency fund for unexpected expenses.&#39;,
+      category: SuggestionCategory.budget,
+      priority: SuggestionPriority.high,
+      baseRelevanceScore: 90,
+      conditions: [
+        SuggestionCondition(
+          field: &#39;templateId&#39;,
+          operator: ConditionOperator.equals,
+          value: &#39;business&#39;,
+        ),
+      ],
+      applicableEventTypes: [&#39;business&#39;],
+      actionUrl: &#39;&#47;event-planning&#47;budget&#39;,
+    ),
+
+    &#47;&#47; Timeline suggestions
+    const Suggestion(
+      id: &#39;business_agenda&#39;,
+      title: &#39;Create a detailed event agenda&#39;,
+      description:
+          &#39;Develop a minute-by-minute schedule for your event. Include setup time, registration, presentations, breaks, and networking opportunities.&#39;,
+      category: SuggestionCategory.timeline,
+      priority: SuggestionPriority.high,
+      baseRelevanceScore: 90,
+      conditions: [
+        SuggestionCondition(
+          field: &#39;templateId&#39;,
+          operator: ConditionOperator.equals,
+          value: &#39;business&#39;,
+        ),
+      ],
+      applicableEventTypes: [&#39;business&#39;],
+      actionUrl: &#39;&#47;event-planning&#47;timeline&#39;,
+    ),
+  ];
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../../index.html">eventati_book</a></li>
+    <li><a href="../../models_feature_models_suggestion">suggestion</a></li>
+    <li><a href="../../models_feature_models_suggestion/SuggestionTemplates-class.html">SuggestionTemplates</a></li>
+    <li class="self-crumb">getBusinessEventSuggestions static method</li>
+</ol>
+
+    <h5>SuggestionTemplates class</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+</div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    eventati_book
+      1.0.0+1
+  </span>
+  
+</footer>
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the buildLocationPreferenceSection method from the PhotographyOptionsBuilder class, for the Dart programming language.">
+  <title>buildLocationPreferenceSection method - PhotographyOptionsBuilder class - photography_options_builder library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">eventati_book</a></li>
+    <li><a href="../../utils_service_photography_options_builder">utils\service\photography_options_builder.dart</a></li>
+    <li><a href="../../utils_service_photography_options_builder/PhotographyOptionsBuilder-class.html">PhotographyOptionsBuilder</a></li>
+    <li class="self-crumb">buildLocationPreferenceSection static method</li>
+  </ol>
+  <div class="self-name">buildLocationPreferenceSection</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <div class="toggle" id="theme-button" title="Toggle brightness">
+    <label for="theme">
+      <input type="checkbox" id="theme" value="light-theme">
+      <span id="dark-theme-button" class="material-symbols-outlined">
+        dark_mode
+      </span>
+      <span id="light-theme-button" class="material-symbols-outlined">
+        light_mode
+      </span>
+    </label>
+  </div>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="utils_service_photography_options_builder&#47;PhotographyOptionsBuilder-class-sidebar.html"
+    data-below-sidebar="">
+    <div>
+<h1><span class="kind-method">buildLocationPreferenceSection</span> static method 
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/widgets/Widget-class.html">Widget</a></span>&gt;</span></span>
+<span class="name ">buildLocationPreferenceSection</span>(<wbr>{<ol class="parameter-list"> <li><span class="parameter" id="buildLocationPreferenceSection-param-selectedLocationPreference"><span>required</span> <span class="type-annotation"><a href="../../models_service_options_photography_options/PhotoLocationPreference.html">PhotoLocationPreference</a></span> <span class="parameter-name">selectedLocationPreference</span>, </span></li>
+<li><span class="parameter" id="buildLocationPreferenceSection-param-specificLocationController"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/widgets/TextEditingController-class.html">TextEditingController</a></span> <span class="parameter-name">specificLocationController</span>, </span></li>
+<li><span class="parameter" id="buildLocationPreferenceSection-param-onLocationPreferenceChanged"><span>required</span> <span class="type-annotation">dynamic</span> <span class="parameter-name">onLocationPreferenceChanged</span>(<ol class="parameter-list single-line"> <li><span class="parameter" id="param-"><span class="type-annotation"><a href="../../models_service_options_photography_options/PhotoLocationPreference.html">PhotoLocationPreference</a></span></span></li>
+</ol>), </span></li>
+<li><span class="parameter" id="buildLocationPreferenceSection-param-onSpecificLocationChanged"><span>required</span> <span class="type-annotation">dynamic</span> <span class="parameter-name">onSpecificLocationChanged</span>(<ol class="parameter-list single-line"> <li><span class="parameter" id="param-"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span></span></li>
+</ol>), </span></li>
+</ol>})
+
+      
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Build the location preference section</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">static List&lt;Widget&gt; buildLocationPreferenceSection({
+  required PhotoLocationPreference selectedLocationPreference,
+  required TextEditingController specificLocationController,
+  required Function(PhotoLocationPreference) onLocationPreferenceChanged,
+  required Function(String) onSpecificLocationChanged,
+}) {
+  return [
+    const Text(
+      &#39;Location Preference&#39;,
+      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+    ),
+    const SizedBox(height: 8),
+
+    &#47;&#47; Location preference options
+    StatefulBuilder(
+      builder: (context, setState) {
+        return Column(
+          children: [
+            ...PhotoLocationPreference.values.map((preference) {
+              return RadioListTile&lt;PhotoLocationPreference&gt;(
+                title: Text(preference.displayName),
+                value: preference,
+                groupValue: selectedLocationPreference,
+                onChanged: (value) {
+                  if (value != null) {
+                    setState(() {
+                      onLocationPreferenceChanged(value);
+                    });
+                  }
+                },
+              );
+            }),
+
+            &#47;&#47; Specific location description
+            if (selectedLocationPreference ==
+                    PhotoLocationPreference.specificLocation ||
+                selectedLocationPreference == PhotoLocationPreference.custom)
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: TextField(
+                  controller: specificLocationController,
+                  decoration: const InputDecoration(
+                    labelText: &#39;Location Details&#39;,
+                    hintText: &#39;Describe your preferred location&#39;,
+                    border: OutlineInputBorder(),
+                  ),
+                  onChanged: onSpecificLocationChanged,
+                ),
+              ),
+          ],
+        );
+      },
+    ),
+    const SizedBox(height: 16),
+  ];
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../../index.html">eventati_book</a></li>
+    <li><a href="../../utils_service_photography_options_builder">photography_options_builder</a></li>
+    <li><a href="../../utils_service_photography_options_builder/PhotographyOptionsBuilder-class.html">PhotographyOptionsBuilder</a></li>
+    <li class="self-crumb">buildLocationPreferenceSection static method</li>
+</ol>
+
+    <h5>PhotographyOptionsBuilder class</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+</div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    eventati_book
+      1.0.0+1
+  </span>
+  
+</footer>
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

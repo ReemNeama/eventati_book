@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the createBudgetItemsFromServices method from the BudgetItemsBuilder class, for the Dart programming language.">
+  <title>createBudgetItemsFromServices method - BudgetItemsBuilder class - budget_items_builder library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">eventati_book</a></li>
+    <li><a href="../../services_wizard_budget_items_builder">services\wizard\budget_items_builder.dart</a></li>
+    <li><a href="../../services_wizard_budget_items_builder/BudgetItemsBuilder-class.html">BudgetItemsBuilder</a></li>
+    <li class="self-crumb">createBudgetItemsFromServices static method</li>
+  </ol>
+  <div class="self-name">createBudgetItemsFromServices</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <div class="toggle" id="theme-button" title="Toggle brightness">
+    <label for="theme">
+      <input type="checkbox" id="theme" value="light-theme">
+      <span id="dark-theme-button" class="material-symbols-outlined">
+        dark_mode
+      </span>
+      <span id="light-theme-button" class="material-symbols-outlined">
+        light_mode
+      </span>
+    </label>
+  </div>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="services_wizard_budget_items_builder&#47;BudgetItemsBuilder-class-sidebar.html"
+    data-below-sidebar="">
+    <div>
+<h1><span class="kind-method">createBudgetItemsFromServices</span> static method 
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../../models_planning_models_budget_item/BudgetItem-class.html">BudgetItem</a></span>&gt;</span></span>
+<span class="name ">createBudgetItemsFromServices</span>(<wbr>{<ol class="parameter-list"> <li><span class="parameter" id="createBudgetItemsFromServices-param-selectedServices"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>&gt;</span></span> <span class="parameter-name">selectedServices</span>, </span></li>
+<li><span class="parameter" id="createBudgetItemsFromServices-param-guestCount"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">guestCount</span>, </span></li>
+<li><span class="parameter" id="createBudgetItemsFromServices-param-eventType"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">eventType</span>, </span></li>
+<li><span class="parameter" id="createBudgetItemsFromServices-param-eventDuration"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">eventDuration</span>, </span></li>
+<li><span class="parameter" id="createBudgetItemsFromServices-param-needsSetup"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">needsSetup</span>, </span></li>
+<li><span class="parameter" id="createBudgetItemsFromServices-param-setupHours"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">setupHours</span>, </span></li>
+<li><span class="parameter" id="createBudgetItemsFromServices-param-needsTeardown"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">needsTeardown</span>, </span></li>
+<li><span class="parameter" id="createBudgetItemsFromServices-param-teardownHours"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">teardownHours</span>, </span></li>
+</ol>})
+
+      
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Create budget items based on selected services</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">static List&lt;BudgetItem&gt; createBudgetItemsFromServices({
+  required Map&lt;String, bool&gt; selectedServices,
+  required int guestCount,
+  required String eventType,
+  required int eventDuration,
+  required bool needsSetup,
+  required int setupHours,
+  required bool needsTeardown,
+  required int teardownHours,
+}) {
+  final List&lt;BudgetItem&gt; budgetItems = [];
+
+  &#47;&#47; Add venue budget items if selected
+  if (selectedServices[&#39;Venue&#39;] == true) {
+    budgetItems.addAll(
+      _createVenueBudgetItems(
+        guestCount: guestCount,
+        eventType: eventType,
+        eventDuration: eventDuration,
+        needsSetup: needsSetup,
+        setupHours: setupHours,
+        needsTeardown: needsTeardown,
+        teardownHours: teardownHours,
+      ),
+    );
+  }
+
+  &#47;&#47; Add catering budget items if selected
+  if (selectedServices[&#39;Catering&#39;] == true) {
+    budgetItems.addAll(
+      _createCateringBudgetItems(
+        guestCount: guestCount,
+        eventType: eventType,
+        eventDuration: eventDuration,
+      ),
+    );
+  }
+
+  &#47;&#47; Add photography budget items if selected
+  if (selectedServices[&#39;Photography&#39;] == true ||
+      selectedServices[&#39;Photography&#47;Videography&#39;] == true) {
+    budgetItems.addAll(
+      _createPhotographyBudgetItems(eventDuration: eventDuration),
+    );
+  }
+
+  &#47;&#47; Add videography budget items if selected
+  if (selectedServices[&#39;Videography&#39;] == true ||
+      selectedServices[&#39;Photography&#47;Videography&#39;] == true) {
+    budgetItems.addAll(
+      _createVideographyBudgetItems(eventDuration: eventDuration),
+    );
+  }
+
+  &#47;&#47; Add entertainment budget items if selected
+  if (selectedServices[&#39;Entertainment&#39;] == true) {
+    budgetItems.addAll(_createEntertainmentBudgetItems());
+  }
+
+  &#47;&#47; Add decor budget items if selected
+  if (selectedServices[&#39;Decor&#39;] == true) {
+    budgetItems.addAll(_createDecorBudgetItems(guestCount: guestCount));
+  }
+
+  &#47;&#47; Add transportation budget items if selected
+  if (selectedServices[&#39;Transportation&#39;] == true) {
+    budgetItems.addAll(
+      _createTransportationBudgetItems(guestCount: guestCount),
+    );
+  }
+
+  &#47;&#47; Add flowers budget items if selected
+  if (selectedServices[&#39;Flowers&#39;] == true) {
+    budgetItems.addAll(_createFlowersBudgetItems());
+  }
+
+  &#47;&#47; Add planner budget items if selected
+  if (selectedServices[&#39;Wedding Planner&#39;] == true ||
+      selectedServices[&#39;Event Staff&#39;] == true) {
+    budgetItems.addAll(_createPlannerBudgetItems());
+  }
+
+  return budgetItems;
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../../index.html">eventati_book</a></li>
+    <li><a href="../../services_wizard_budget_items_builder">budget_items_builder</a></li>
+    <li><a href="../../services_wizard_budget_items_builder/BudgetItemsBuilder-class.html">BudgetItemsBuilder</a></li>
+    <li class="self-crumb">createBudgetItemsFromServices static method</li>
+</ol>
+
+    <h5>BudgetItemsBuilder class</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+</div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    eventati_book
+      1.0.0+1
+  </span>
+  
+</footer>
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

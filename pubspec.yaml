@@ -65,6 +65,8 @@ dev_dependencies:
   dart_code_metrics: ^4.19.2
   test_cov_console: ^0.2.2
 
+  # Documentation generation tools
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the getWeddingTemplates method from the MilestoneFactory class, for the Dart programming language.">
+  <title>getWeddingTemplates method - MilestoneFactory class - milestone_factory library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">eventati_book</a></li>
+    <li><a href="../../models_planning_models_milestone_factory">models\planning_models\milestone_factory.dart</a></li>
+    <li><a href="../../models_planning_models_milestone_factory/MilestoneFactory-class.html">MilestoneFactory</a></li>
+    <li class="self-crumb">getWeddingTemplates static method</li>
+  </ol>
+  <div class="self-name">getWeddingTemplates</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <div class="toggle" id="theme-button" title="Toggle brightness">
+    <label for="theme">
+      <input type="checkbox" id="theme" value="light-theme">
+      <span id="dark-theme-button" class="material-symbols-outlined">
+        dark_mode
+      </span>
+      <span id="light-theme-button" class="material-symbols-outlined">
+        light_mode
+      </span>
+    </label>
+  </div>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="models_planning_models_milestone_factory&#47;MilestoneFactory-class-sidebar.html"
+    data-below-sidebar="">
+    <div>
+<h1><span class="kind-method">getWeddingTemplates</span> static method 
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../../models_planning_models_milestone/Milestone-class.html">Milestone</a></span>&gt;</span></span>
+<span class="name ">getWeddingTemplates</span>(<wbr>)
+
+      
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Get wedding-specific milestone templates</p>
+<p>Returns a list of milestone templates that are specifically designed for wedding events.
+These milestones represent achievements related to wedding planning and services.</p>
+<p>Wedding-specific milestones include:</p>
+<ul>
+<li>Wedding Planner: Starting to plan a wedding</li>
+<li>Venue Selector: Selecting a venue for the wedding</li>
+<li>Catering Connoisseur: Selecting catering services</li>
+<li>Memory Maker: Selecting photography/videography services</li>
+</ul>
+<p>All wedding milestones use the 'wedding' applicableEventTypes value and include
+criteria that check if the event template is a wedding.</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">static List&lt;Milestone&gt; getWeddingTemplates() {
+  return [
+    &#47;&#47; Wedding Planner
+    Milestone(
+      id: &#39;wedding_planner&#39;,
+      title: &#39;Wedding Planner&#39;,
+      description: &#39;Start planning your wedding&#39;,
+      category: MilestoneCategory.planning,
+      icon: Icons.favorite,
+      points: 20,
+      applicableEventTypes: [&#39;wedding&#39;],
+      criteria: const MilestoneCriteria(
+        completionConditions: [
+          MilestoneCondition(
+            field: &#39;templateId&#39;,
+            operator: MilestoneConditionOperator.equals,
+            value: &#39;wedding&#39;,
+          ),
+          MilestoneCondition(
+            field: &#39;currentStep&#39;,
+            operator: MilestoneConditionOperator.greaterThan,
+            value: 0,
+          ),
+        ],
+      ),
+      rewardText:
+          &#39;You\&#39;ve started planning your wedding! Exciting times ahead!&#39;,
+      isTemplate: true,
+    ),
+
+    &#47;&#47; Venue Selector
+    Milestone(
+      id: &#39;wedding_venue&#39;,
+      title: &#39;Venue Selector&#39;,
+      description: &#39;Select a venue for your wedding&#39;,
+      category: MilestoneCategory.services,
+      icon: Icons.location_on,
+      points: 20,
+      applicableEventTypes: [&#39;wedding&#39;],
+      criteria: const MilestoneCriteria(
+        completionConditions: [
+          MilestoneCondition(
+            field: &#39;templateId&#39;,
+            operator: MilestoneConditionOperator.equals,
+            value: &#39;wedding&#39;,
+          ),
+          MilestoneCondition(
+            field: &#39;selectedServices&#39;,
+            operator: MilestoneConditionOperator.contains,
+            value: &#39;Venue&#39;,
+          ),
+        ],
+      ),
+      rewardText:
+          &#39;You\&#39;ve selected a venue for your wedding! A perfect place to say &quot;I do&quot;!&#39;,
+      isTemplate: true,
+    ),
+
+    &#47;&#47; Catering Connoisseur
+    Milestone(
+      id: &#39;wedding_catering&#39;,
+      title: &#39;Catering Connoisseur&#39;,
+      description: &#39;Select catering for your wedding&#39;,
+      category: MilestoneCategory.services,
+      icon: Icons.restaurant,
+      points: 15,
+      applicableEventTypes: [&#39;wedding&#39;],
+      criteria: const MilestoneCriteria(
+        completionConditions: [
+          MilestoneCondition(
+            field: &#39;templateId&#39;,
+            operator: MilestoneConditionOperator.equals,
+            value: &#39;wedding&#39;,
+          ),
+          MilestoneCondition(
+            field: &#39;selectedServices&#39;,
+            operator: MilestoneConditionOperator.contains,
+            value: &#39;Catering&#39;,
+          ),
+        ],
+      ),
+      rewardText:
+          &#39;You\&#39;ve selected catering for your wedding! Delicious food for your special day!&#39;,
+      isTemplate: true,
+    ),
+
+    &#47;&#47; Memory Maker
+    Milestone(
+      id: &#39;wedding_photography&#39;,
+      title: &#39;Memory Maker&#39;,
+      description: &#39;Select photography&#47;videography for your wedding&#39;,
+      category: MilestoneCategory.services,
+      icon: Icons.camera_alt,
+      points: 15,
+      applicableEventTypes: [&#39;wedding&#39;],
+      criteria: const MilestoneCriteria(
+        completionConditions: [
+          MilestoneCondition(
+            field: &#39;templateId&#39;,
+            operator: MilestoneConditionOperator.equals,
+            value: &#39;wedding&#39;,
+          ),
+          MilestoneCondition(
+            field: &#39;selectedServices&#39;,
+            operator: MilestoneConditionOperator.contains,
+            value: &#39;Photography&#47;Videography&#39;,
+          ),
+        ],
+      ),
+      rewardText:
+          &#39;You\&#39;ve selected photography for your wedding! Capturing memories that last a lifetime!&#39;,
+      isTemplate: true,
+    ),
+  ];
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../../index.html">eventati_book</a></li>
+    <li><a href="../../models_planning_models_milestone_factory">milestone_factory</a></li>
+    <li><a href="../../models_planning_models_milestone_factory/MilestoneFactory-class.html">MilestoneFactory</a></li>
+    <li class="self-crumb">getWeddingTemplates static method</li>
+</ol>
+
+    <h5>MilestoneFactory class</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+</div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    eventati_book
+      1.0.0+1
+  </span>
+  
+</footer>
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

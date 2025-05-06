@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the getCateringServices method from the CateringData class, for the Dart programming language.">
+  <title>getCateringServices method - CateringData class - catering_data library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">eventati_book</a></li>
+    <li><a href="../../tempDB_data_catering_data">tempDB\data\catering_data.dart</a></li>
+    <li><a href="../../tempDB_data_catering_data/CateringData-class.html">CateringData</a></li>
+    <li class="self-crumb">getCateringServices static method</li>
+  </ol>
+  <div class="self-name">getCateringServices</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <div class="toggle" id="theme-button" title="Toggle brightness">
+    <label for="theme">
+      <input type="checkbox" id="theme" value="light-theme">
+      <span id="dark-theme-button" class="material-symbols-outlined">
+        dark_mode
+      </span>
+      <span id="light-theme-button" class="material-symbols-outlined">
+        light_mode
+      </span>
+    </label>
+  </div>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="tempDB_data_catering_data&#47;CateringData-class-sidebar.html"
+    data-below-sidebar="">
+    <div>
+<h1><span class="kind-method">getCateringServices</span> static method 
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter">dynamic</span>&gt;</span></span>&gt;</span></span>
+<span class="name ">getCateringServices</span>(<wbr>)
+
+      
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Get all catering services data</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">static List&lt;Map&lt;String, dynamic&gt;&gt; getCateringServices() {
+  return [
+    {
+      &#39;id&#39;: &#39;1&#39;,
+      &#39;name&#39;: &#39;Gourmet Delights Catering&#39;,
+      &#39;description&#39;:
+          &#39;Premium catering service specializing in gourmet cuisine.&#39;,
+      &#39;priceRange&#39;: &#39;\$\$\$&#39;,
+      &#39;rating&#39;: 4.8,
+      &#39;features&#39;: [
+        &#39;Custom Menus&#39;,
+        &#39;Dietary Accommodations&#39;,
+        &#39;Staff Included&#39;,
+        &#39;Bar Service&#39;,
+      ],
+      &#39;imageUrls&#39;: [],
+      &#39;contactEmail&#39;: &#39;info@gourmetdelights.com&#39;,
+      &#39;contactPhone&#39;: &#39;555-123-4567&#39;,
+      &#39;packages&#39;: [
+        {
+          &#39;id&#39;: &#39;1&#39;,
+          &#39;name&#39;: &#39;Bronze Package&#39;,
+          &#39;description&#39;:
+              &#39;Basic catering package with appetizers and main course.&#39;,
+          &#39;price&#39;: 45.0, &#47;&#47; per person
+          &#39;items&#39;: [
+            &#39;3 appetizer options&#39;,
+            &#39;2 main course options&#39;,
+            &#39;1 dessert option&#39;,
+            &#39;Non-alcoholic beverages&#39;,
+          ],
+        },
+        {
+          &#39;id&#39;: &#39;2&#39;,
+          &#39;name&#39;: &#39;Silver Package&#39;,
+          &#39;description&#39;: &#39;Mid-tier catering package with more options.&#39;,
+          &#39;price&#39;: 65.0, &#47;&#47; per person
+          &#39;items&#39;: [
+            &#39;5 appetizer options&#39;,
+            &#39;3 main course options&#39;,
+            &#39;2 dessert options&#39;,
+            &#39;Non-alcoholic beverages&#39;,
+            &#39;Basic bar service (beer and wine)&#39;,
+          ],
+        },
+        {
+          &#39;id&#39;: &#39;3&#39;,
+          &#39;name&#39;: &#39;Gold Package&#39;,
+          &#39;description&#39;: &#39;Premium catering package with extensive options.&#39;,
+          &#39;price&#39;: 85.0, &#47;&#47; per person
+          &#39;items&#39;: [
+            &#39;7 appetizer options&#39;,
+            &#39;4 main course options&#39;,
+            &#39;3 dessert options&#39;,
+            &#39;Non-alcoholic beverages&#39;,
+            &#39;Full bar service&#39;,
+            &#39;Coffee and tea station&#39;,
+            &#39;Late night snack&#39;,
+          ],
+        },
+      ],
+      &#39;menu&#39;: {
+        &#39;appetizers&#39;: [
+          &#39;Bruschetta&#39;,
+          &#39;Stuffed Mushrooms&#39;,
+          &#39;Shrimp Cocktail&#39;,
+          &#39;Mini Quiches&#39;,
+          &#39;Chicken Satay&#39;,
+          &#39;Vegetable Spring Rolls&#39;,
+          &#39;Smoked Salmon Canapés&#39;,
+        ],
+        &#39;mainCourses&#39;: [
+          &#39;Grilled Salmon with Dill Sauce&#39;,
+          &#39;Beef Tenderloin with Red Wine Reduction&#39;,
+          &#39;Chicken Marsala&#39;,
+          &#39;Vegetable Lasagna&#39;,
+          &#39;Eggplant Parmesan&#39;,
+          &#39;Roasted Pork Loin with Apple Chutney&#39;,
+        ],
+        &#39;desserts&#39;: [
+          &#39;Chocolate Mousse&#39;,
+          &#39;Tiramisu&#39;,
+          &#39;Cheesecake&#39;,
+          &#39;Fruit Tart&#39;,
+          &#39;Crème Brûlée&#39;,
+        ],
+      },
+    },
+    {
+      &#39;id&#39;: &#39;2&#39;,
+      &#39;name&#39;: &#39;Taste of Elegance&#39;,
+      &#39;description&#39;:
+          &#39;Upscale catering service for elegant events and weddings.&#39;,
+      &#39;priceRange&#39;: &#39;\$\$\$\$&#39;,
+      &#39;rating&#39;: 4.9,
+      &#39;features&#39;: [
+        &#39;Custom Menus&#39;,
+        &#39;Dietary Accommodations&#39;,
+        &#39;Staff Included&#39;,
+        &#39;Bar Service&#39;,
+        &#39;Cake Service&#39;,
+      ],
+      &#39;imageUrls&#39;: [],
+      &#39;contactEmail&#39;: &#39;events@tasteofelegance.com&#39;,
+      &#39;contactPhone&#39;: &#39;555-234-5678&#39;,
+      &#39;packages&#39;: [
+        {
+          &#39;id&#39;: &#39;1&#39;,
+          &#39;name&#39;: &#39;Classic Package&#39;,
+          &#39;description&#39;: &#39;Elegant catering package for sophisticated events.&#39;,
+          &#39;price&#39;: 75.0, &#47;&#47; per person
+          &#39;items&#39;: [
+            &#39;4 appetizer options&#39;,
+            &#39;3 main course options&#39;,
+            &#39;2 dessert options&#39;,
+            &#39;Non-alcoholic beverages&#39;,
+            &#39;Basic bar service&#39;,
+          ],
+        },
+        {
+          &#39;id&#39;: &#39;2&#39;,
+          &#39;name&#39;: &#39;Premium Package&#39;,
+          &#39;description&#39;:
+              &#39;Comprehensive catering package with premium options.&#39;,
+          &#39;price&#39;: 95.0, &#47;&#47; per person
+          &#39;items&#39;: [
+            &#39;6 appetizer options&#39;,
+            &#39;4 main course options&#39;,
+            &#39;3 dessert options&#39;,
+            &#39;Non-alcoholic beverages&#39;,
+            &#39;Full bar service&#39;,
+            &#39;Coffee and tea station&#39;,
+          ],
+        },
+        {
+          &#39;id&#39;: &#39;3&#39;,
+          &#39;name&#39;: &#39;Luxury Package&#39;,
+          &#39;description&#39;:
+              &#39;All-inclusive catering package with top-tier service.&#39;,
+          &#39;price&#39;: 125.0, &#47;&#47; per person
+          &#39;items&#39;: [
+            &#39;8 appetizer options&#39;,
+            &#39;5 main course options&#39;,
+            &#39;4 dessert options&#39;,
+            &#39;Non-alcoholic beverages&#39;,
+            &#39;Premium bar service&#39;,
+            &#39;Coffee and tea station&#39;,
+            &#39;Late night snack&#39;,
+            &#39;Champagne toast&#39;,
+          ],
+        },
+      ],
+      &#39;menu&#39;: {
+        &#39;appetizers&#39;: [
+          &#39;Tuna Tartare&#39;,
+          &#39;Beef Carpaccio&#39;,
+          &#39;Goat Cheese Crostini&#39;,
+          &#39;Lobster Bisque Shooters&#39;,
+          &#39;Prosciutto-Wrapped Asparagus&#39;,
+          &#39;Mini Crab Cakes&#39;,
+          &#39;Truffle Arancini&#39;,
+          &#39;Oysters on the Half Shell&#39;,
+        ],
+        &#39;mainCourses&#39;: [
+          &#39;Filet Mignon with Truffle Butter&#39;,
+          &#39;Herb-Crusted Rack of Lamb&#39;,
+          &#39;Pan-Seared Sea Bass&#39;,
+          &#39;Duck Breast with Cherry Sauce&#39;,
+          &#39;Lobster Tail with Drawn Butter&#39;,
+          &#39;Wild Mushroom Risotto&#39;,
+        ],
+        &#39;desserts&#39;: [
+          &#39;Chocolate Soufflé&#39;,
+          &#39;Vanilla Bean Panna Cotta&#39;,
+          &#39;Lemon Tart&#39;,
+          &#39;Opera Cake&#39;,
+          &#39;Assorted French Macarons&#39;,
+          &#39;Crème Brûlée&#39;,
+        ],
+      },
+    },
+    {
+      &#39;id&#39;: &#39;3&#39;,
+      &#39;name&#39;: &#39;Fresh &amp; Flavorful&#39;,
+      &#39;description&#39;:
+          &#39;Farm-to-table catering service using locally sourced ingredients.&#39;,
+      &#39;priceRange&#39;: &#39;\$\$&#39;,
+      &#39;rating&#39;: 4.7,
+      &#39;features&#39;: [
+        &#39;Locally Sourced&#39;,
+        &#39;Seasonal Menus&#39;,
+        &#39;Organic Options&#39;,
+        &#39;Dietary Accommodations&#39;,
+      ],
+      &#39;imageUrls&#39;: [],
+      &#39;contactEmail&#39;: &#39;info@freshandflavorful.com&#39;,
+      &#39;contactPhone&#39;: &#39;555-345-6789&#39;,
+      &#39;packages&#39;: [
+        {
+          &#39;id&#39;: &#39;1&#39;,
+          &#39;name&#39;: &#39;Seasonal Package&#39;,
+          &#39;description&#39;: &#39;Seasonal menu using locally sourced ingredients.&#39;,
+          &#39;price&#39;: 55.0, &#47;&#47; per person
+          &#39;items&#39;: [
+            &#39;3 seasonal appetizer options&#39;,
+            &#39;2 seasonal main course options&#39;,
+            &#39;1 seasonal dessert option&#39;,
+            &#39;Infused water and lemonade&#39;,
+          ],
+        },
+        {
+          &#39;id&#39;: &#39;2&#39;,
+          &#39;name&#39;: &#39;Farm-to-Table Package&#39;,
+          &#39;description&#39;: &#39;Comprehensive farm-to-table dining experience.&#39;,
+          &#39;price&#39;: 75.0, &#47;&#47; per person
+          &#39;items&#39;: [
+            &#39;5 seasonal appetizer options&#39;,
+            &#39;3 seasonal main course options&#39;,
+            &#39;2 seasonal dessert options&#39;,
+            &#39;Organic beverages&#39;,
+            &#39;Local wine and beer options&#39;,
+          ],
+        },
+      ],
+      &#39;menu&#39;: {
+        &#39;appetizers&#39;: [
+          &#39;Seasonal Vegetable Crudité&#39;,
+          &#39;Local Cheese Board&#39;,
+          &#39;Heirloom Tomato Bruschetta&#39;,
+          &#39;Roasted Beet Salad&#39;,
+          &#39;Stuffed Squash Blossoms&#39;,
+          &#39;Deviled Farm Eggs&#39;,
+        ],
+        &#39;mainCourses&#39;: [
+          &#39;Grass-Fed Beef Tenderloin&#39;,
+          &#39;Free-Range Chicken with Herbs&#39;,
+          &#39;Locally Caught Fish&#39;,
+          &#39;Seasonal Vegetable Risotto&#39;,
+          &#39;Heirloom Tomato Pasta&#39;,
+        ],
+        &#39;desserts&#39;: [
+          &#39;Seasonal Fruit Crisp&#39;,
+          &#39;Local Honey Panna Cotta&#39;,
+          &#39;Organic Chocolate Cake&#39;,
+          &#39;Berry Shortcake&#39;,
+        ],
+      },
+    },
+  ];
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../../index.html">eventati_book</a></li>
+    <li><a href="../../tempDB_data_catering_data">catering_data</a></li>
+    <li><a href="../../tempDB_data_catering_data/CateringData-class.html">CateringData</a></li>
+    <li class="self-crumb">getCateringServices static method</li>
+</ol>
+
+    <h5>CateringData class</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+</div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    eventati_book
+      1.0.0+1
+  </span>
+  
+</footer>
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

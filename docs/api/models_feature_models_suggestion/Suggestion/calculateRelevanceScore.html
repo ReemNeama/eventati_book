@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the calculateRelevanceScore method from the Suggestion class, for the Dart programming language.">
+  <title>calculateRelevanceScore method - Suggestion class - suggestion library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">eventati_book</a></li>
+    <li><a href="../../models_feature_models_suggestion">models\feature_models\suggestion.dart</a></li>
+    <li><a href="../../models_feature_models_suggestion/Suggestion-class.html">Suggestion</a></li>
+    <li class="self-crumb">calculateRelevanceScore method</li>
+  </ol>
+  <div class="self-name">calculateRelevanceScore</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <div class="toggle" id="theme-button" title="Toggle brightness">
+    <label for="theme">
+      <input type="checkbox" id="theme" value="light-theme">
+      <span id="dark-theme-button" class="material-symbols-outlined">
+        dark_mode
+      </span>
+      <span id="light-theme-button" class="material-symbols-outlined">
+        light_mode
+      </span>
+    </label>
+  </div>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="models_feature_models_suggestion&#47;Suggestion-class-sidebar.html"
+    data-below-sidebar="">
+    <div>
+<h1><span class="kind-method">calculateRelevanceScore</span> method 
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>
+<span class="name ">calculateRelevanceScore</span>(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="calculateRelevanceScore-param-state"><span class="type-annotation"><a href="../../models_event_models_wizard_state/WizardState-class.html">WizardState</a></span> <span class="parameter-name">state</span></span></li>
+</ol>)
+
+      
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Calculate the final relevance score based on the wizard state</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">int calculateRelevanceScore(WizardState state) {
+  if (!isRelevantFor(state)) {
+    return 0;
+  }
+
+  &#47;&#47; Start with the base score
+  int score = baseRelevanceScore;
+
+  &#47;&#47; Adjust score based on various factors
+
+  &#47;&#47; 1. Adjust based on event date proximity (if applicable)
+  if (state.eventDate != null) {
+    final daysUntilEvent = state.eventDate!.difference(DateTime.now()).inDays;
+
+    &#47;&#47; Higher relevance for suggestions that should be done soon
+    if (daysUntilEvent &lt; 30) {
+      score += 20; &#47;&#47; Very soon, high priority
+    } else if (daysUntilEvent &lt; 90) {
+      score += 10; &#47;&#47; Soon, medium priority
+    }
+  }
+
+  &#47;&#47; 2. Adjust based on guest count (if applicable)
+  if (state.guestCount != null) {
+    &#47;&#47; Some suggestions are more important for larger events
+    if (category == SuggestionCategory.venue ||
+        category == SuggestionCategory.catering) {
+      if (state.guestCount! &gt; 100) {
+        score += 15; &#47;&#47; Large event, these categories are more important
+      } else if (state.guestCount! &gt; 50) {
+        score += 10; &#47;&#47; Medium event
+      }
+    }
+  }
+
+  &#47;&#47; 3. Adjust based on selected services
+  if (category == SuggestionCategory.venue &amp;&amp;
+      state.selectedServices.containsKey(&#39;Venue&#39;) &amp;&amp;
+      state.selectedServices[&#39;Venue&#39;] == true) {
+    score +=
+        15; &#47;&#47; Venue is selected as a service, so venue suggestions are more relevant
+  }
+
+  &#47;&#47; Cap the score at 100
+  return score &gt; 100 ? 100 : score;
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../../index.html">eventati_book</a></li>
+    <li><a href="../../models_feature_models_suggestion">suggestion</a></li>
+    <li><a href="../../models_feature_models_suggestion/Suggestion-class.html">Suggestion</a></li>
+    <li class="self-crumb">calculateRelevanceScore method</li>
+</ol>
+
+    <h5>Suggestion class</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+</div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    eventati_book
+      1.0.0+1
+  </span>
+  
+</footer>
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

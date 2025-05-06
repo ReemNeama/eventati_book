@@ -101,6 +101,7 @@ To maintain code quality and consistency, please follow the guidelines in these 
 
 - [Development Guidelines](DEVELOPMENT_GUIDELINES.md) - Comprehensive coding standards and best practices
 - [Code Review Checklist](CODE_REVIEW_CHECKLIST.md) - Quick checklist to use before committing code
+- [Documentation Standards](docs/DOCUMENTATION_STANDARDS.md) - Guidelines for documenting code
 
 ### Code Quality Tools
 
@@ -114,6 +115,20 @@ Run the code quality check script before committing:
 chmod +x check_code.sh
 ./check_code.sh
 ```
+
+### Documentation
+
+Generate documentation for the project:
+
+```
+# Generate documentation
+dart run tool/generate_docs.dart
+
+# Clean and regenerate documentation
+dart run tool/generate_docs.dart --clean
+```
+
+View the generated documentation in the [docs](docs/documentation.md) directory.
 
 ## Development Progress
 

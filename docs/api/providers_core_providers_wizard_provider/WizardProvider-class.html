@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the WizardProvider class from the wizard_provider library, for the Dart programming language.">
+  <title>WizardProvider class - wizard_provider library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../static-assets/styles.css?v1">
+  <link rel="icon" href="../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../index.html">eventati_book</a></li>
+    <li><a href="../providers_core_providers_wizard_provider">providers\core_providers\wizard_provider.dart</a></li>
+    <li class="self-crumb">WizardProvider class</li>
+  </ol>
+  <div class="self-name">WizardProvider</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <div class="toggle" id="theme-button" title="Toggle brightness">
+    <label for="theme">
+      <input type="checkbox" id="theme" value="light-theme">
+      <span id="dark-theme-button" class="material-symbols-outlined">
+        dark_mode
+      </span>
+      <span id="light-theme-button" class="material-symbols-outlined">
+        light_mode
+      </span>
+    </label>
+  </div>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="providers_core_providers_wizard_provider&#47;providers_core_providers_wizard_provider-library-sidebar.html"
+    data-below-sidebar="providers_core_providers_wizard_provider&#47;WizardProvider-class-sidebar.html">
+    <div>
+<h1><span class="kind-class">WizardProvider</span> class 
+ 
+</h1></div>
+
+    
+<section class="desc markdown">
+  <p>Provider to manage the state of the event wizard throughout the application.</p>
+<p>The WizardProvider is responsible for:</p>
+<ul>
+<li>Initializing the event wizard with a template</li>
+<li>Managing the wizard's state as users progress through steps</li>
+<li>Storing and retrieving wizard state data</li>
+<li>Validating user inputs at each step</li>
+<li>Connecting wizard data to other planning tools upon completion</li>
+<li>Persisting wizard state between app sessions</li>
+</ul>
+<p>This provider uses SharedPreferences for persistent storage of wizard state.
+When a wizard is completed, it connects the collected data to other planning tools
+like budget, guest list, and timeline through the WizardConnectionService.</p>
+<p>Usage example:</p>
+<pre class="language-dart"><code class="language-dart">// Access the provider
+final wizardProvider = Provider.of&lt;WizardProvider&gt;(context, listen: false);
+
+// Initialize with a template
+await wizardProvider.initializeWizard(eventTemplate);
+
+// Update wizard data
+wizardProvider.updateEventName('My Wedding');
+wizardProvider.updateEventDate(DateTime(2023, 6, 15));
+wizardProvider.updateGuestCount(150);
+
+// Navigate through steps
+if (wizardProvider.nextStep()) {
+  // Move to next screen or update UI
+}
+
+// Complete the wizard
+wizardProvider.completeWizard(context);
+</code></pre>
+</section>
+
+
+    <section>
+      <dl class="dl-horizontal">
+        
+  <dt>Inheritance</dt>
+  <dd>
+    <ul class="gt-separated dark clazz-relationships">
+      <li><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></li>
+        <li><a href="https://api.flutter.dev/flutter/foundation/ChangeNotifier-class.html">ChangeNotifier</a></li>
+      <li>WizardProvider</li>
+    </ul>
+  </dd>
+
+        
+        
+
+
+        
+        
+
+
+      </dl>
+    </section>
+
+    
+  <section class="summary offset-anchor" id="constructors">
+    <h2>Constructors</h2>
+    <dl class="constructor-summary-list">
+        <dt id="WizardProvider" class="callable">
+          <span class="name"><a href="../providers_core_providers_wizard_provider/WizardProvider/WizardProvider.html">WizardProvider</a></span><span class="signature">()</span>
+        </dt>
+        <dd>
+          
+        </dd>
+    </dl>
+  </section>
+    
+  <section
+      class="summary offset-anchor"
+      id="instance-properties">
+    <h2>Properties</h2>
+    <dl class="properties">
+        <dt id="error" class="property">
+  <span class="name"><a href="../providers_core_providers_wizard_provider/WizardProvider/error.html">error</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span>
+  
+
+</dt>
+<dd>
+  Get the error message if any
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="hashCode" class="property inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>
+  
+
+</dt>
+<dd class="inherited">
+  The hash code for this object.
+  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="hasListeners" class="property inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/foundation/ChangeNotifier/hasListeners.html">hasListeners</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  
+
+</dt>
+<dd class="inherited">
+  Whether any listeners are currently registered.
+  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="isLoading" class="property">
+  <span class="name"><a href="../providers_core_providers_wizard_provider/WizardProvider/isLoading.html">isLoading</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  
+
+</dt>
+<dd>
+  Check if the provider is loading
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="runtimeType" class="property inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Type-class.html">Type</a></span>
+  
+
+</dt>
+<dd class="inherited">
+  A representation of the runtime type of the object.
+  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="state" class="property">
+  <span class="name"><a href="../providers_core_providers_wizard_provider/WizardProvider/state.html">state</a></span>
+  <span class="signature">&#8594; <a href="../models_event_models_wizard_state/WizardState-class.html">WizardState</a>?</span>
+  
+
+</dt>
+<dd>
+  Get the current wizard state
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+
+    
+  <section
+      class="summary offset-anchor"
+      id="instance-methods">
+    <h2>Methods</h2>
+    <dl class="callables">
+        <dt id="addListener" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/foundation/ChangeNotifier/addListener.html">addListener</a></span><span class="signature">(<wbr><span class="parameter" id="addListener-param-listener"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-ui/VoidCallback.html">VoidCallback</a></span> <span class="parameter-name">listener</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Register a closure to be called when the object changes.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="clearWizard" class="callable">
+  <span class="name"><a href="../providers_core_providers_wizard_provider/WizardProvider/clearWizard.html">clearWizard</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Clear the wizard state
+  
+
+</dd>
+
+        <dt id="completeWizard" class="callable">
+  <span class="name"><a href="../providers_core_providers_wizard_provider/WizardProvider/completeWizard.html">completeWizard</a></span><span class="signature">(<wbr><span class="parameter" id="completeWizard-param-context"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/widgets/BuildContext-class.html">BuildContext</a></span> <span class="parameter-name">context</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Complete the wizard
+  
+
+</dd>
+
+        <dt id="dispose" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/foundation/ChangeNotifier/dispose.html">dispose</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Discards any resources used by the object. After this is called, the
+object is not in a usable state and should be discarded (calls to
+<a href="https://api.flutter.dev/flutter/foundation/ChangeNotifier/addListener.html">addListener</a> will throw after the object is disposed).
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="goToStep" class="callable">
+  <span class="name"><a href="../providers_core_providers_wizard_provider/WizardProvider/goToStep.html">goToStep</a></span><span class="signature">(<wbr><span class="parameter" id="goToStep-param-step"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">step</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Go to a specific step in the wizard
+  
+
+</dd>
+
+        <dt id="initializeWizard" class="callable">
+  <span class="name"><a href="../providers_core_providers_wizard_provider/WizardProvider/initializeWizard.html">initializeWizard</a></span><span class="signature">(<wbr><span class="parameter" id="initializeWizard-param-template"><span class="type-annotation"><a href="../models_event_models_event_template/EventTemplate-class.html">EventTemplate</a></span> <span class="parameter-name">template</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Initialize the wizard with a template
+  
+
+</dd>
+
+        <dt id="nextStep" class="callable">
+  <span class="name"><a href="../providers_core_providers_wizard_provider/WizardProvider/nextStep.html">nextStep</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Move to the next step in the wizard
+  
+
+</dd>
+
+        <dt id="noSuchMethod" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></span><span class="signature">(<wbr><span class="parameter" id="noSuchMethod-param-invocation"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Invocation-class.html">Invocation</a></span> <span class="parameter-name">invocation</span></span>)
+    <span class="returntype parameter">&#8594; dynamic</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Invoked when a nonexistent method or property is accessed.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="notifyListeners" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/foundation/ChangeNotifier/notifyListeners.html">notifyListeners</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Call all the registered listeners.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="previousStep" class="callable">
+  <span class="name"><a href="../providers_core_providers_wizard_provider/WizardProvider/previousStep.html">previousStep</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Move to the previous step in the wizard
+  
+
+</dd>
+
+        <dt id="removeListener" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/foundation/ChangeNotifier/removeListener.html">removeListener</a></span><span class="signature">(<wbr><span class="parameter" id="removeListener-param-listener"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-ui/VoidCallback.html">VoidCallback</a></span> <span class="parameter-name">listener</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Remove a previously registered closure from the list of closures that are
+notified when the object changes.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="resetWizard" class="callable">
+  <span class="name"><a href="../providers_core_providers_wizard_provider/WizardProvider/resetWizard.html">resetWizard</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Reset the wizard
+  
+
+</dd>
+
+        <dt id="toString" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  A string representation of this object.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="updateDailyEndTime" class="callable">
+  <span class="name"><a href="../providers_core_providers_wizard_provider/WizardProvider/updateDailyEndTime.html">updateDailyEndTime</a></span><span class="signature">(<wbr><span class="parameter" id="updateDailyEndTime-param-time"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/material/TimeOfDay-class.html">TimeOfDay</a></span> <span class="parameter-name">time</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Update the daily end time (for business events)
+  
+
+</dd>
+
+        <dt id="updateDailyStartTime" class="callable">
+  <span class="name"><a href="../providers_core_providers_wizard_provider/WizardProvider/updateDailyStartTime.html">updateDailyStartTime</a></span><span class="signature">(<wbr><span class="parameter" id="updateDailyStartTime-param-time"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/material/TimeOfDay-class.html">TimeOfDay</a></span> <span class="parameter-name">time</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Update the daily start time (for business events)
+  
+
+</dd>
+
+        <dt id="updateEventDate" class="callable">
+  <span class="name"><a href="../providers_core_providers_wizard_provider/WizardProvider/updateEventDate.html">updateEventDate</a></span><span class="signature">(<wbr><span class="parameter" id="updateEventDate-param-date"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/DateTime-class.html">DateTime</a></span> <span class="parameter-name">date</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Update the event date
+  
+
+</dd>
+
+        <dt id="updateEventDuration" class="callable">
+  <span class="name"><a href="../providers_core_providers_wizard_provider/WizardProvider/updateEventDuration.html">updateEventDuration</a></span><span class="signature">(<wbr><span class="parameter" id="updateEventDuration-param-days"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">days</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Update the event duration (for business events)
+  
+
+</dd>
+
+        <dt id="updateEventName" class="callable">
+  <span class="name"><a href="../providers_core_providers_wizard_provider/WizardProvider/updateEventName.html">updateEventName</a></span><span class="signature">(<wbr><span class="parameter" id="updateEventName-param-name"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">name</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Update the event name
+  
+
+</dd>
+
+        <dt id="updateEventType" class="callable">
+  <span class="name"><a href="../providers_core_providers_wizard_provider/WizardProvider/updateEventType.html">updateEventType</a></span><span class="signature">(<wbr><span class="parameter" id="updateEventType-param-type"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">type</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Update the selected event type
+  
+
+</dd>
+
+        <dt id="updateGuestCount" class="callable">
+  <span class="name"><a href="../providers_core_providers_wizard_provider/WizardProvider/updateGuestCount.html">updateGuestCount</a></span><span class="signature">(<wbr><span class="parameter" id="updateGuestCount-param-count"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">count</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Update the guest count
+  
+
+</dd>
+
+        <dt id="updateServiceSelection" class="callable">
+  <span class="name"><a href="../providers_core_providers_wizard_provider/WizardProvider/updateServiceSelection.html">updateServiceSelection</a></span><span class="signature">(<wbr><span class="parameter" id="updateServiceSelection-param-service"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">service</span>, </span><span class="parameter" id="updateServiceSelection-param-selected"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">selected</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Update a service selection
+  
+
+</dd>
+
+        <dt id="updateSetupHours" class="callable">
+  <span class="name"><a href="../providers_core_providers_wizard_provider/WizardProvider/updateSetupHours.html">updateSetupHours</a></span><span class="signature">(<wbr><span class="parameter" id="updateSetupHours-param-hours"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">hours</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Update setup hours (for business events)
+  
+
+</dd>
+
+        <dt id="updateSetupNeeds" class="callable">
+  <span class="name"><a href="../providers_core_providers_wizard_provider/WizardProvider/updateSetupNeeds.html">updateSetupNeeds</a></span><span class="signature">(<wbr><span class="parameter" id="updateSetupNeeds-param-needsSetup"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">needsSetup</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Update setup needs (for business events)
+  
+
+</dd>
+
+        <dt id="updateTeardownHours" class="callable">
+  <span class="name"><a href="../providers_core_providers_wizard_provider/WizardProvider/updateTeardownHours.html">updateTeardownHours</a></span><span class="signature">(<wbr><span class="parameter" id="updateTeardownHours-param-hours"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">hours</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Update teardown hours (for business events)
+  
+
+</dd>
+
+        <dt id="updateTeardownNeeds" class="callable">
+  <span class="name"><a href="../providers_core_providers_wizard_provider/WizardProvider/updateTeardownNeeds.html">updateTeardownNeeds</a></span><span class="signature">(<wbr><span class="parameter" id="updateTeardownNeeds-param-needsTeardown"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">needsTeardown</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Update teardown needs (for business events)
+  
+
+</dd>
+
+    </dl>
+  </section>
+    
+  <section
+      class="summary offset-anchor inherited"
+      id="operators">
+    <h2>Operators</h2>
+    <dl class="callables">
+        <dt id="operator ==" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></span><span class="signature">(<wbr><span class="parameter" id="==-param-other"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span> <span class="parameter-name">other</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  The equality operator.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+    
+    
+    
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../index.html">eventati_book</a></li>
+    <li><a href="../providers_core_providers_wizard_provider">wizard_provider</a></li>
+    <li class="self-crumb">WizardProvider class</li>
+</ol>
+
+    <h5>wizard_provider library</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div>
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    eventati_book
+      1.0.0+1
+  </span>
+  
+</footer>
+
+
+<script src="../static-assets/highlight.pack.js?v1"></script>
+<script src="../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

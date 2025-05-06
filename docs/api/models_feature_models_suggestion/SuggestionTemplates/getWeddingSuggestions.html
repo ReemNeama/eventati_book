@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the getWeddingSuggestions method from the SuggestionTemplates class, for the Dart programming language.">
+  <title>getWeddingSuggestions method - SuggestionTemplates class - suggestion library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">eventati_book</a></li>
+    <li><a href="../../models_feature_models_suggestion">models\feature_models\suggestion.dart</a></li>
+    <li><a href="../../models_feature_models_suggestion/SuggestionTemplates-class.html">SuggestionTemplates</a></li>
+    <li class="self-crumb">getWeddingSuggestions static method</li>
+  </ol>
+  <div class="self-name">getWeddingSuggestions</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <div class="toggle" id="theme-button" title="Toggle brightness">
+    <label for="theme">
+      <input type="checkbox" id="theme" value="light-theme">
+      <span id="dark-theme-button" class="material-symbols-outlined">
+        dark_mode
+      </span>
+      <span id="light-theme-button" class="material-symbols-outlined">
+        light_mode
+      </span>
+    </label>
+  </div>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="models_feature_models_suggestion&#47;SuggestionTemplates-class-sidebar.html"
+    data-below-sidebar="">
+    <div>
+<h1><span class="kind-method">getWeddingSuggestions</span> static method 
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../../models_feature_models_suggestion/Suggestion-class.html">Suggestion</a></span>&gt;</span></span>
+<span class="name ">getWeddingSuggestions</span>(<wbr>)
+
+      
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Get wedding-specific suggestions</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">static List&lt;Suggestion&gt; getWeddingSuggestions() {
+  return [
+    &#47;&#47; Venue suggestions
+    const Suggestion(
+      id: &#39;wedding_venue_early&#39;,
+      title: &#39;Book your wedding venue early&#39;,
+      description:
+          &#39;Wedding venues often book up 12-18 months in advance. Start looking for venues as soon as possible to secure your preferred date and location.&#39;,
+      category: SuggestionCategory.venue,
+      priority: SuggestionPriority.high,
+      baseRelevanceScore: 90,
+      conditions: [
+        SuggestionCondition(
+          field: &#39;templateId&#39;,
+          operator: ConditionOperator.equals,
+          value: &#39;wedding&#39;,
+        ),
+        SuggestionCondition(
+          field: &#39;selectedServices&#39;,
+          operator: ConditionOperator.contains,
+          value: &#39;Venue&#39;,
+        ),
+      ],
+      applicableEventTypes: [&#39;wedding&#39;],
+      actionUrl: &#39;&#47;services&#47;venues&#39;,
+    ),
+
+    &#47;&#47; Photography suggestions
+    const Suggestion(
+      id: &#39;wedding_photographer&#39;,
+      title: &#39;Book your wedding photographer&#39;,
+      description:
+          &#39;Professional wedding photographers are often booked 8-12 months in advance. Choose a photographer whose style matches your vision for the day.&#39;,
+      category: SuggestionCategory.photography,
+      priority: SuggestionPriority.high,
+      baseRelevanceScore: 85,
+      conditions: [
+        SuggestionCondition(
+          field: &#39;templateId&#39;,
+          operator: ConditionOperator.equals,
+          value: &#39;wedding&#39;,
+        ),
+        SuggestionCondition(
+          field: &#39;selectedServices&#39;,
+          operator: ConditionOperator.contains,
+          value: &#39;Photography&#47;Videography&#39;,
+        ),
+      ],
+      applicableEventTypes: [&#39;wedding&#39;],
+      actionUrl: &#39;&#47;services&#47;photography&#39;,
+    ),
+
+    &#47;&#47; Catering suggestions
+    const Suggestion(
+      id: &#39;wedding_catering&#39;,
+      title: &#39;Arrange wedding catering&#39;,
+      description:
+          &#39;Decide on your wedding menu and book a caterer at least 6-8 months before your wedding. Consider dietary restrictions of your guests.&#39;,
+      category: SuggestionCategory.catering,
+      priority: SuggestionPriority.high,
+      baseRelevanceScore: 80,
+      conditions: [
+        SuggestionCondition(
+          field: &#39;templateId&#39;,
+          operator: ConditionOperator.equals,
+          value: &#39;wedding&#39;,
+        ),
+        SuggestionCondition(
+          field: &#39;selectedServices&#39;,
+          operator: ConditionOperator.contains,
+          value: &#39;Catering&#39;,
+        ),
+      ],
+      applicableEventTypes: [&#39;wedding&#39;],
+      actionUrl: &#39;&#47;services&#47;catering&#39;,
+    ),
+
+    &#47;&#47; Guest list suggestions
+    const Suggestion(
+      id: &#39;wedding_guest_list&#39;,
+      title: &#39;Create your wedding guest list&#39;,
+      description:
+          &#39;Start your guest list early to get an accurate headcount for venue and catering planning. Consider your budget and venue capacity when finalizing the list.&#39;,
+      category: SuggestionCategory.guestList,
+      priority: SuggestionPriority.high,
+      baseRelevanceScore: 85,
+      conditions: [
+        SuggestionCondition(
+          field: &#39;templateId&#39;,
+          operator: ConditionOperator.equals,
+          value: &#39;wedding&#39;,
+        ),
+      ],
+      applicableEventTypes: [&#39;wedding&#39;],
+      actionUrl: &#39;&#47;event-planning&#47;guest-list&#39;,
+    ),
+
+    &#47;&#47; Budget suggestions
+    const Suggestion(
+      id: &#39;wedding_budget&#39;,
+      title: &#39;Set your wedding budget&#39;,
+      description:
+          &#39;Establish a realistic budget early in the planning process. Allocate funds to different categories based on your priorities.&#39;,
+      category: SuggestionCategory.budget,
+      priority: SuggestionPriority.high,
+      baseRelevanceScore: 95,
+      conditions: [
+        SuggestionCondition(
+          field: &#39;templateId&#39;,
+          operator: ConditionOperator.equals,
+          value: &#39;wedding&#39;,
+        ),
+      ],
+      applicableEventTypes: [&#39;wedding&#39;],
+      actionUrl: &#39;&#47;event-planning&#47;budget&#39;,
+    ),
+
+    &#47;&#47; Timeline suggestions
+    const Suggestion(
+      id: &#39;wedding_timeline&#39;,
+      title: &#39;Create a wedding planning timeline&#39;,
+      description:
+          &#39;Develop a month-by-month checklist of tasks to ensure nothing is forgotten. Start with booking vendors and venues, then move to details like decor and attire.&#39;,
+      category: SuggestionCategory.timeline,
+      priority: SuggestionPriority.high,
+      baseRelevanceScore: 90,
+      conditions: [
+        SuggestionCondition(
+          field: &#39;templateId&#39;,
+          operator: ConditionOperator.equals,
+          value: &#39;wedding&#39;,
+        ),
+      ],
+      applicableEventTypes: [&#39;wedding&#39;],
+      actionUrl: &#39;&#47;event-planning&#47;timeline&#39;,
+    ),
+  ];
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../../index.html">eventati_book</a></li>
+    <li><a href="../../models_feature_models_suggestion">suggestion</a></li>
+    <li><a href="../../models_feature_models_suggestion/SuggestionTemplates-class.html">SuggestionTemplates</a></li>
+    <li class="self-crumb">getWeddingSuggestions static method</li>
+</ol>
+
+    <h5>SuggestionTemplates class</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+</div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    eventati_book
+      1.0.0+1
+  </span>
+  
+</footer>
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+
