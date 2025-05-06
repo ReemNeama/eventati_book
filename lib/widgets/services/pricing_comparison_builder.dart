@@ -90,9 +90,7 @@ class PricingComparisonBuilder {
   }
 
   /// Build pricing table header
-  static Widget buildPricingTableHeader({
-    required BuildContext context,
-  }) {
+  static Widget buildPricingTableHeader({required BuildContext context}) {
     final isDarkMode = UIUtils.isDarkMode(context);
     final primaryColor = isDarkMode ? AppColorsDark.primary : AppColors.primary;
 
@@ -186,11 +184,10 @@ class PricingComparisonBuilder {
     } else if (serviceType == 'Photographer' && service is Photographer) {
       // Assuming the base price is for a standard package (e.g., 4 hours)
       // and additional hours are charged at 25% of the base price per hour
-      if (hours <= 4) {
-        return service.pricePerEvent;
-      } else {
-        return service.pricePerEvent + (service.pricePerEvent * 0.25 * (hours - 4));
-      }
+      return hours <= 4
+          ? service.pricePerEvent
+          : service.pricePerEvent +
+              (service.pricePerEvent * 0.25 * (hours - 4));
     } else if (serviceType == 'Planner' && service is Planner) {
       return service.pricePerEvent;
     }
@@ -237,15 +234,16 @@ class PricingComparisonBuilder {
     required int hours,
     required List<dynamic> allServices,
   }) {
-    final name = service is Venue
-        ? service.name
-        : service is CateringService
+    final name =
+        service is Venue
+            ? service.name
+            : service is CateringService
             ? service.name
             : service is Photographer
-                ? service.name
-                : service is Planner
-                    ? service.name
-                    : '';
+            ? service.name
+            : service is Planner
+            ? service.name
+            : '';
 
     final basePrice = calculateBasePrice(
       service: service,
@@ -268,9 +266,7 @@ class PricingComparisonBuilder {
     );
 
     return Padding(
-      padding: const EdgeInsets.only(
-        bottom: AppConstants.mediumPadding,
-      ),
+      padding: const EdgeInsets.only(bottom: AppConstants.mediumPadding),
       child: Row(
         children: [
           // Service name
@@ -278,9 +274,7 @@ class PricingComparisonBuilder {
             width: 120,
             child: Text(
               name,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontWeight: FontWeight.bold),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
@@ -298,14 +292,15 @@ class PricingComparisonBuilder {
           Expanded(
             child: Container(
               padding: const EdgeInsets.all(4),
-              decoration: isLowestCost
-                  ? BoxDecoration(
-                      color: Colors.green.withAlpha(51), // 0.2 * 255 = 51
-                      borderRadius: BorderRadius.circular(
-                        AppConstants.smallBorderRadius,
-                      ),
-                    )
-                  : null,
+              decoration:
+                  isLowestCost
+                      ? BoxDecoration(
+                        color: Colors.green.withAlpha(51), // 0.2 * 255 = 51
+                        borderRadius: BorderRadius.circular(
+                          AppConstants.smallBorderRadius,
+                        ),
+                      )
+                      : null,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -334,14 +329,9 @@ class PricingComparisonBuilder {
   }
 
   /// Build notes section
-  static List<Widget> buildNotes({
-    required String serviceType,
-  }) {
+  static List<Widget> buildNotes({required String serviceType}) {
     return [
-      const Text(
-        'Notes:',
-        style: TextStyle(fontWeight: FontWeight.bold),
-      ),
+      const Text('Notes:', style: TextStyle(fontWeight: FontWeight.bold)),
       const SizedBox(height: AppConstants.smallPadding),
       if (serviceType == 'Venue') ...[
         const Text('• Venue prices are for the entire event.'),
@@ -350,16 +340,12 @@ class PricingComparisonBuilder {
         ),
       ] else if (serviceType == 'Catering') ...[
         const Text('• Catering prices are per person.'),
-        const Text(
-          '• Total cost is calculated based on the guest count.',
-        ),
+        const Text('• Total cost is calculated based on the guest count.'),
         const Text(
           '• Additional fees may apply for special dietary requirements or premium menu items.',
         ),
       ] else if (serviceType == 'Photographer') ...[
-        const Text(
-          '• Photographer prices are for a standard package.',
-        ),
+        const Text('• Photographer prices are for a standard package.'),
         const Text(
           '• Additional hours beyond 4 hours are calculated at 25% of the base price per hour.',
         ),

@@ -18,7 +18,8 @@ class PlannerOptionsBuilder {
     );
 
     // Local state
-    ConsultationPreference selectedConsultationPreference = initialOptions.consultationPreference;
+    ConsultationPreference selectedConsultationPreference =
+        initialOptions.consultationPreference;
     PlanningPackageType selectedPackageType = initialOptions.packageType;
     List<String> selectedPlanningNeeds = List.from(
       initialOptions.specificPlanningNeeds,
@@ -54,7 +55,7 @@ class PlannerOptionsBuilder {
         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
       ),
       const SizedBox(height: 16),
-      
+
       // Build each section of the form
       ...buildConsultationSection(
         selectedConsultationPreference: selectedConsultationPreference,
@@ -65,7 +66,7 @@ class PlannerOptionsBuilder {
         },
         onCustomDescriptionChanged: (_) => updateOptions(),
       ),
-      
+
       ...buildPackageTypeSection(
         selectedPackageType: selectedPackageType,
         customPackageController: customPackageController,
@@ -75,7 +76,7 @@ class PlannerOptionsBuilder {
         },
         onCustomDescriptionChanged: (_) => updateOptions(),
       ),
-      
+
       ...buildPlanningNeedsSection(
         selectedPlanningNeeds: selectedPlanningNeeds,
         onPlanningNeedsChanged: (needs) {
@@ -83,7 +84,7 @@ class PlannerOptionsBuilder {
           updateOptions();
         },
       ),
-      
+
       ...buildAdditionalServicesSection(
         includeVendorCoordination: includeVendorCoordination,
         includeBudgetManagement: includeBudgetManagement,
@@ -134,7 +135,8 @@ class PlannerOptionsBuilder {
               }),
 
               // Custom consultation description
-              if (selectedConsultationPreference == ConsultationPreference.custom)
+              if (selectedConsultationPreference ==
+                  ConsultationPreference.custom)
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0),
                   child: TextField(
@@ -241,25 +243,28 @@ class PlannerOptionsBuilder {
       StatefulBuilder(
         builder: (context, setState) {
           return Column(
-            children: planningNeedsOptions.map((need) {
-              return CheckboxListTile(
-                title: Text(need),
-                value: selectedPlanningNeeds.contains(need),
-                onChanged: (value) {
-                  setState(() {
-                    final newNeeds = List<String>.from(selectedPlanningNeeds);
-                    if (value == true) {
-                      if (!newNeeds.contains(need)) {
-                        newNeeds.add(need);
-                      }
-                    } else {
-                      newNeeds.remove(need);
-                    }
-                    onPlanningNeedsChanged(newNeeds);
-                  });
-                },
-              );
-            }).toList(),
+            children:
+                planningNeedsOptions.map((need) {
+                  return CheckboxListTile(
+                    title: Text(need),
+                    value: selectedPlanningNeeds.contains(need),
+                    onChanged: (value) {
+                      setState(() {
+                        final newNeeds = List<String>.from(
+                          selectedPlanningNeeds,
+                        );
+                        if (value == true) {
+                          if (!newNeeds.contains(need)) {
+                            newNeeds.add(need);
+                          }
+                        } else {
+                          newNeeds.remove(need);
+                        }
+                        onPlanningNeedsChanged(newNeeds);
+                      });
+                    },
+                  );
+                }).toList(),
           );
         },
       ),

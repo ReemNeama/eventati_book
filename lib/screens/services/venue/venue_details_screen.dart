@@ -24,7 +24,7 @@ class VenueDetailsScreen extends StatefulWidget {
 
 class _VenueDetailsScreenState extends State<VenueDetailsScreen>
     with SingleTickerProviderStateMixin {
-  late TabController _tabController;
+  TabController? _tabController;
   int _selectedPackageIndex = -1;
 
   // Sample data for packages
@@ -122,7 +122,7 @@ class _VenueDetailsScreenState extends State<VenueDetailsScreen>
 
   @override
   void dispose() {
-    _tabController.dispose();
+    _tabController?.dispose();
     super.dispose();
   }
 
@@ -137,12 +137,12 @@ class _VenueDetailsScreenState extends State<VenueDetailsScreen>
         title: Text(widget.venue.name),
         backgroundColor: primaryColor,
         bottom: DetailTabBar(
-          tabController: _tabController,
+          tabController: _tabController!,
           tabTitles: const ['Packages', 'Venue Details'],
         ),
       ),
       body: TabBarView(
-        controller: _tabController,
+        controller: _tabController!,
         children: [_buildPackagesTab(), _buildVenueDetailsTab()],
       ),
       floatingActionButton: FloatingActionButton.extended(

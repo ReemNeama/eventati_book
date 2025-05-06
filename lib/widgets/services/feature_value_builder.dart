@@ -16,7 +16,7 @@ class FeatureValueBuilder {
     final value = _getValueFromService(service, feature['key'], serviceType);
 
     // Format the value based on its type
-    Widget valueWidget = _buildValueWidget(value, feature['type']);
+    final Widget valueWidget = _buildValueWidget(value, feature['type']);
 
     // Add comparison indicator if this feature should be compared
     if (feature['compare'] == true && allServices.length > 1) {
@@ -137,21 +137,25 @@ class FeatureValueBuilder {
   static Widget _buildListValue(List<dynamic> items) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: items.map<Widget>((item) {
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 4),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Icon(Icons.check, size: 14),
-              const SizedBox(width: 4),
-              Expanded(
-                child: Text(item.toString(), style: const TextStyle(fontSize: 12)),
+      children:
+          items.map<Widget>((item) {
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 4),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Icon(Icons.check, size: 14),
+                  const SizedBox(width: 4),
+                  Expanded(
+                    child: Text(
+                      item.toString(),
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-        );
-      }).toList(),
+            );
+          }).toList(),
     );
   }
 
@@ -170,7 +174,7 @@ class FeatureValueBuilder {
 
     if (feature['type'] == 'list' && value is List) {
       isBest = _isListFeatureBest(value, feature, allServices, serviceType);
-      
+
       if (isBest) {
         return Stack(
           children: [
@@ -187,19 +191,19 @@ class FeatureValueBuilder {
           ],
         );
       }
-    } else if ((feature['type'] == 'number' || feature['type'] == 'price') && value is num) {
+    } else if ((feature['type'] == 'number' || feature['type'] == 'price') &&
+        value is num) {
       isBest = _isNumberFeatureBest(value, feature, allServices, serviceType);
-      
+
       if (isBest) {
         return Container(
           padding: const EdgeInsets.all(4),
           decoration: BoxDecoration(
-            color: feature['higher_is_better']
-                ? goodColor!.withAlpha(51) // 0.2 * 255 = 51
-                : badColor!.withAlpha(51),
-            borderRadius: BorderRadius.circular(
-              AppConstants.smallBorderRadius,
-            ),
+            color:
+                feature['higher_is_better']
+                    ? goodColor!.withAlpha(51) // 0.2 * 255 = 51
+                    : badColor!.withAlpha(51),
+            borderRadius: BorderRadius.circular(AppConstants.smallBorderRadius),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -236,7 +240,7 @@ class FeatureValueBuilder {
         feature['key'],
         serviceType,
       );
-      
+
       if (serviceValue is List && serviceValue.length > maxItems) {
         maxItems = serviceValue.length;
       }
@@ -263,7 +267,7 @@ class FeatureValueBuilder {
           feature['key'],
           serviceType,
         );
-        
+
         if (serviceValue is num && serviceValue > maxValue) {
           maxValue = serviceValue.toDouble();
         }
@@ -280,7 +284,7 @@ class FeatureValueBuilder {
           feature['key'],
           serviceType,
         );
-        
+
         if (serviceValue is num && serviceValue < minValue) {
           minValue = serviceValue.toDouble();
         }

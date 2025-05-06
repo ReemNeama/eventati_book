@@ -59,7 +59,7 @@ class CateringOptionsBuilder {
         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
       ),
       const SizedBox(height: 16),
-      
+
       // Build each section of the form
       ...buildMealServiceSection(
         selectedMealStyle: selectedMealStyle,
@@ -70,7 +70,7 @@ class CateringOptionsBuilder {
         },
         onCustomDescriptionChanged: (_) => updateOptions(),
       ),
-      
+
       ...buildDietaryRestrictionsSection(
         selectedDietaryRestrictions: selectedDietaryRestrictions,
         onDietaryRestrictionsChanged: (restrictions) {
@@ -78,7 +78,7 @@ class CateringOptionsBuilder {
           updateOptions();
         },
       ),
-      
+
       ...buildBeverageServiceSection(
         selectedBeverageOption: selectedBeverageOption,
         customBeverageController: customBeverageController,
@@ -88,7 +88,7 @@ class CateringOptionsBuilder {
         },
         onCustomDescriptionChanged: (_) => updateOptions(),
       ),
-      
+
       ...buildStaffServiceSection(
         includeStaffService: includeStaffService,
         staffCountController: staffCountController,
@@ -187,25 +187,28 @@ class CateringOptionsBuilder {
       StatefulBuilder(
         builder: (context, setState) {
           return Column(
-            children: dietaryOptions.map((restriction) {
-              return CheckboxListTile(
-                title: Text(restriction),
-                value: selectedDietaryRestrictions.contains(restriction),
-                onChanged: (value) {
-                  setState(() {
-                    final newRestrictions = List<String>.from(selectedDietaryRestrictions);
-                    if (value == true) {
-                      if (!newRestrictions.contains(restriction)) {
-                        newRestrictions.add(restriction);
-                      }
-                    } else {
-                      newRestrictions.remove(restriction);
-                    }
-                    onDietaryRestrictionsChanged(newRestrictions);
-                  });
-                },
-              );
-            }).toList(),
+            children:
+                dietaryOptions.map((restriction) {
+                  return CheckboxListTile(
+                    title: Text(restriction),
+                    value: selectedDietaryRestrictions.contains(restriction),
+                    onChanged: (value) {
+                      setState(() {
+                        final newRestrictions = List<String>.from(
+                          selectedDietaryRestrictions,
+                        );
+                        if (value == true) {
+                          if (!newRestrictions.contains(restriction)) {
+                            newRestrictions.add(restriction);
+                          }
+                        } else {
+                          newRestrictions.remove(restriction);
+                        }
+                        onDietaryRestrictionsChanged(newRestrictions);
+                      });
+                    },
+                  );
+                }).toList(),
           );
         },
       ),

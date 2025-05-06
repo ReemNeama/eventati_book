@@ -19,7 +19,11 @@ class VenueFilter {
           _matchesVenueTypes(venue, selectedVenueTypes) &&
           _matchesPriceRange(venue, priceRange) &&
           _matchesCapacityRange(venue, capacityRange) &&
-          _matchesRecommendation(venue, showRecommendedOnly, recommendationProvider);
+          _matchesRecommendation(
+            venue,
+            showRecommendedOnly,
+            recommendationProvider,
+          );
     }).toList();
   }
 
@@ -61,7 +65,7 @@ class VenueFilter {
   /// Check if a venue matches the search query
   static bool _matchesSearchQuery(Venue venue, String query) {
     if (query.isEmpty) return true;
-    
+
     final lowercaseQuery = query.toLowerCase();
     return venue.name.toLowerCase().contains(lowercaseQuery) ||
         venue.description.toLowerCase().contains(lowercaseQuery);
@@ -70,7 +74,7 @@ class VenueFilter {
   /// Check if a venue matches the selected venue types
   static bool _matchesVenueTypes(Venue venue, List<String> selectedTypes) {
     if (selectedTypes.isEmpty) return true;
-    
+
     return venue.venueTypes.any((type) => selectedTypes.contains(type));
   }
 
@@ -93,7 +97,7 @@ class VenueFilter {
     ServiceRecommendationProvider provider,
   ) {
     if (!showRecommendedOnly) return true;
-    
+
     return provider.isVenueRecommended(venue);
   }
 }

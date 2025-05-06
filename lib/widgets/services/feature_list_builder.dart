@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+// No imports needed for this utility class
 
 /// Builder class for feature comparison lists
 class FeatureListBuilder {

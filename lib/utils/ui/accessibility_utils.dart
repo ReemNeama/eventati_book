@@ -263,23 +263,15 @@ class AccessibilityUtils {
     final HSLColor hslForeground = HSLColor.fromColor(foreground);
     HSLColor adjustedColor = hslForeground;
 
-    // If the background is dark, make the foreground lighter
-    if (background.computeLuminance() < 0.5) {
-      adjustedColor = HSLColor.fromAHSL(
-        hslForeground.alpha,
-        hslForeground.hue,
-        hslForeground.saturation,
-        0.9, // Very light
-      );
-    } else {
-      // If the background is light, make the foreground darker
-      adjustedColor = HSLColor.fromAHSL(
-        hslForeground.alpha,
-        hslForeground.hue,
-        hslForeground.saturation,
-        0.1, // Very dark
-      );
-    }
+    // Adjust color based on background luminance
+    adjustedColor = HSLColor.fromAHSL(
+      hslForeground.alpha,
+      hslForeground.hue,
+      hslForeground.saturation,
+      background.computeLuminance() < 0.5
+          ? 0.9
+          : 0.1, // 0.9 for dark backgrounds (lighter text), 0.1 for light backgrounds (darker text)
+    );
 
     return adjustedColor.toColor();
   }

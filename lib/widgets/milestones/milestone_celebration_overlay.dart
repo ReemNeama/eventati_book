@@ -23,9 +23,9 @@ class MilestoneCelebrationOverlay extends StatefulWidget {
 class _MilestoneCelebrationOverlayState
     extends State<MilestoneCelebrationOverlay>
     with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _scaleAnimation;
-  late Animation<double> _opacityAnimation;
+  AnimationController? _controller;
+  Animation<double>? _scaleAnimation;
+  Animation<double>? _opacityAnimation;
 
   @override
   void initState() {
@@ -40,22 +40,22 @@ class _MilestoneCelebrationOverlayState
     _scaleAnimation = Tween<double>(
       begin: 0.5,
       end: 1.0,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.elasticOut));
+    ).animate(CurvedAnimation(parent: _controller!, curve: Curves.elasticOut));
 
     _opacityAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
-        parent: _controller,
+        parent: _controller!,
         curve: const Interval(0.0, 0.5, curve: Curves.easeIn),
       ),
     );
 
     // Start animation
-    _controller.forward();
+    _controller!.forward();
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _controller?.dispose();
     super.dispose();
   }
 
@@ -67,12 +67,12 @@ class _MilestoneCelebrationOverlayState
         color: Colors.black.withAlpha(150),
         child: Center(
           child: AnimatedBuilder(
-            animation: _controller,
+            animation: _controller!,
             builder: (context, child) {
               return Opacity(
-                opacity: _opacityAnimation.value,
+                opacity: _opacityAnimation!.value,
                 child: Transform.scale(
-                  scale: _scaleAnimation.value,
+                  scale: _scaleAnimation!.value,
                   child: child,
                 ),
               );

@@ -22,9 +22,7 @@ class VenueOptionsBuilder {
 
     // Local state
     VenueLayout selectedLayout = initialOptions.layout;
-    List<String> selectedEquipment = List.from(
-      initialOptions.equipmentNeeds,
-    );
+    List<String> selectedEquipment = List.from(initialOptions.equipmentNeeds);
 
     // Update the options whenever a field changes
     void updateOptions() {
@@ -49,7 +47,7 @@ class VenueOptionsBuilder {
         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
       ),
       const SizedBox(height: 16),
-      
+
       // Build each section of the form
       ...buildSetupTeardownSection(
         setupTimeController: setupTimeController,
@@ -57,7 +55,7 @@ class VenueOptionsBuilder {
         onSetupTimeChanged: (_) => updateOptions(),
         onTeardownTimeChanged: (_) => updateOptions(),
       ),
-      
+
       ...buildLayoutSection(
         selectedLayout: selectedLayout,
         customLayoutController: customLayoutController,
@@ -67,7 +65,7 @@ class VenueOptionsBuilder {
         },
         onCustomDescriptionChanged: (_) => updateOptions(),
       ),
-      
+
       ...buildEquipmentSection(
         selectedEquipment: selectedEquipment,
         onEquipmentChanged: (equipment) {
@@ -206,25 +204,28 @@ class VenueOptionsBuilder {
       StatefulBuilder(
         builder: (context, setState) {
           return Column(
-            children: equipmentOptions.map((equipment) {
-              return CheckboxListTile(
-                title: Text(equipment),
-                value: selectedEquipment.contains(equipment),
-                onChanged: (value) {
-                  setState(() {
-                    final newEquipment = List<String>.from(selectedEquipment);
-                    if (value == true) {
-                      if (!newEquipment.contains(equipment)) {
-                        newEquipment.add(equipment);
-                      }
-                    } else {
-                      newEquipment.remove(equipment);
-                    }
-                    onEquipmentChanged(newEquipment);
-                  });
-                },
-              );
-            }).toList(),
+            children:
+                equipmentOptions.map((equipment) {
+                  return CheckboxListTile(
+                    title: Text(equipment),
+                    value: selectedEquipment.contains(equipment),
+                    onChanged: (value) {
+                      setState(() {
+                        final newEquipment = List<String>.from(
+                          selectedEquipment,
+                        );
+                        if (value == true) {
+                          if (!newEquipment.contains(equipment)) {
+                            newEquipment.add(equipment);
+                          }
+                        } else {
+                          newEquipment.remove(equipment);
+                        }
+                        onEquipmentChanged(newEquipment);
+                      });
+                    },
+                  );
+                }).toList(),
           );
         },
       ),

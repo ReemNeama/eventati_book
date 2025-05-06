@@ -50,11 +50,9 @@ class StringUtils {
     final digitsOnly = phoneNumber.replaceAll(RegExp(r'\D'), '');
 
     // Format based on length
-    if (digitsOnly.length == 10) {
-      return '(${digitsOnly.substring(0, 3)}) ${digitsOnly.substring(3, 6)}-${digitsOnly.substring(6)}';
-    } else {
-      return phoneNumber;
-    }
+    return digitsOnly.length == 10
+        ? '(${digitsOnly.substring(0, 3)}) ${digitsOnly.substring(3, 6)}-${digitsOnly.substring(6)}'
+        : phoneNumber;
   }
 
   /// Get initials from a name
@@ -62,9 +60,8 @@ class StringUtils {
     if (name.isEmpty) return '';
 
     final nameParts = name.split(' ');
-    if (nameParts.length == 1) return nameParts[0][0].toUpperCase();
+    if (nameParts.length == 1) return nameParts.first[0].toUpperCase();
 
-    return nameParts[0][0].toUpperCase() +
-        nameParts[nameParts.length - 1][0].toUpperCase();
+    return nameParts.first[0].toUpperCase() + nameParts.last[0].toUpperCase();
   }
 }

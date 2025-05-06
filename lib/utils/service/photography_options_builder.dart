@@ -21,7 +21,8 @@ class PhotographyOptionsBuilder {
     List<PhotoSessionType> selectedSessionTypes = List.from(
       initialOptions.sessionTypes,
     );
-    PhotoLocationPreference selectedLocationPreference = initialOptions.locationPreference;
+    PhotoLocationPreference selectedLocationPreference =
+        initialOptions.locationPreference;
     List<String> selectedEquipment = List.from(
       initialOptions.equipmentRequests,
     );
@@ -59,7 +60,7 @@ class PhotographyOptionsBuilder {
         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
       ),
       const SizedBox(height: 16),
-      
+
       // Build each section of the form
       ...buildSessionTypesSection(
         selectedSessionTypes: selectedSessionTypes,
@@ -70,7 +71,7 @@ class PhotographyOptionsBuilder {
         },
         onCustomDescriptionChanged: (_) => updateOptions(),
       ),
-      
+
       ...buildLocationPreferenceSection(
         selectedLocationPreference: selectedLocationPreference,
         specificLocationController: specificLocationController,
@@ -80,7 +81,7 @@ class PhotographyOptionsBuilder {
         },
         onSpecificLocationChanged: (_) => updateOptions(),
       ),
-      
+
       ...buildEquipmentRequestsSection(
         selectedEquipment: selectedEquipment,
         onEquipmentChanged: (equipment) {
@@ -88,7 +89,7 @@ class PhotographyOptionsBuilder {
           updateOptions();
         },
       ),
-      
+
       ...buildAdditionalServicesSection(
         includeSecondPhotographer: includeSecondPhotographer,
         includeVideography: includeVideography,
@@ -129,7 +130,9 @@ class PhotographyOptionsBuilder {
                   value: selectedSessionTypes.contains(type),
                   onChanged: (value) {
                     setState(() {
-                      final newTypes = List<PhotoSessionType>.from(selectedSessionTypes);
+                      final newTypes = List<PhotoSessionType>.from(
+                        selectedSessionTypes,
+                      );
                       if (value == true) {
                         if (!newTypes.contains(type)) {
                           newTypes.add(type);
@@ -200,7 +203,8 @@ class PhotographyOptionsBuilder {
               }),
 
               // Specific location description
-              if (selectedLocationPreference == PhotoLocationPreference.specificLocation ||
+              if (selectedLocationPreference ==
+                      PhotoLocationPreference.specificLocation ||
                   selectedLocationPreference == PhotoLocationPreference.custom)
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0),
@@ -248,25 +252,28 @@ class PhotographyOptionsBuilder {
       StatefulBuilder(
         builder: (context, setState) {
           return Column(
-            children: equipmentOptions.map((equipment) {
-              return CheckboxListTile(
-                title: Text(equipment),
-                value: selectedEquipment.contains(equipment),
-                onChanged: (value) {
-                  setState(() {
-                    final newEquipment = List<String>.from(selectedEquipment);
-                    if (value == true) {
-                      if (!newEquipment.contains(equipment)) {
-                        newEquipment.add(equipment);
-                      }
-                    } else {
-                      newEquipment.remove(equipment);
-                    }
-                    onEquipmentChanged(newEquipment);
-                  });
-                },
-              );
-            }).toList(),
+            children:
+                equipmentOptions.map((equipment) {
+                  return CheckboxListTile(
+                    title: Text(equipment),
+                    value: selectedEquipment.contains(equipment),
+                    onChanged: (value) {
+                      setState(() {
+                        final newEquipment = List<String>.from(
+                          selectedEquipment,
+                        );
+                        if (value == true) {
+                          if (!newEquipment.contains(equipment)) {
+                            newEquipment.add(equipment);
+                          }
+                        } else {
+                          newEquipment.remove(equipment);
+                        }
+                        onEquipmentChanged(newEquipment);
+                      });
+                    },
+                  );
+                }).toList(),
           );
         },
       ),

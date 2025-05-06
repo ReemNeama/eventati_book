@@ -73,20 +73,25 @@ class ServiceDB {
     }
 
     if (priceRange != null) {
-      services = services
-          .where((service) => service['priceRange'] == priceRange)
-          .toList();
+      services =
+          services
+              .where((service) => service['priceRange'] == priceRange)
+              .toList();
     }
 
     if (minRating != null) {
-      services = services.where((service) => service['rating'] >= minRating).toList();
+      services =
+          services.where((service) => service['rating'] >= minRating).toList();
     }
 
     if (features != null && features.isNotEmpty) {
-      services = services.where((service) {
-        final serviceFeatures = List<String>.from(service['features']);
-        return features.every((feature) => serviceFeatures.contains(feature));
-      }).toList();
+      services =
+          services.where((service) {
+            final serviceFeatures = List<String>.from(service['features']);
+            return features.every(
+              (feature) => serviceFeatures.contains(feature),
+            );
+          }).toList();
     }
 
     return services;

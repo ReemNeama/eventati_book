@@ -49,22 +49,26 @@ class VenueDB {
     var venues = getVenues();
 
     if (minCapacity != null) {
-      venues = venues.where((venue) => venue['capacity'] >= minCapacity).toList();
+      venues =
+          venues.where((venue) => venue['capacity'] >= minCapacity).toList();
     }
 
     if (maxCapacity != null) {
-      venues = venues.where((venue) => venue['capacity'] <= maxCapacity).toList();
+      venues =
+          venues.where((venue) => venue['capacity'] <= maxCapacity).toList();
     }
 
     if (features != null && features.isNotEmpty) {
-      venues = venues.where((venue) {
-        final venueFeatures = List<String>.from(venue['features']);
-        return features.every((feature) => venueFeatures.contains(feature));
-      }).toList();
+      venues =
+          venues.where((venue) {
+            final venueFeatures = List<String>.from(venue['features']);
+            return features.every((feature) => venueFeatures.contains(feature));
+          }).toList();
     }
 
     if (priceRange != null) {
-      venues = venues.where((venue) => venue['priceRange'] == priceRange).toList();
+      venues =
+          venues.where((venue) => venue['priceRange'] == priceRange).toList();
     }
 
     if (minRating != null) {
