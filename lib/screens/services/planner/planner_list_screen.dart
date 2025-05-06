@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/models/models.dart';
-import 'package:eventati_book/widgets/services/service_filter_bar.dart';
-import 'package:eventati_book/widgets/services/service_card.dart';
-import 'package:eventati_book/widgets/services/filter_dialog.dart';
+import 'package:eventati_book/widgets/services/filter/service_filter_bar.dart';
+import 'package:eventati_book/widgets/services/card/service_card.dart';
+import 'package:eventati_book/widgets/services/filter/filter_dialog.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/utils.dart';

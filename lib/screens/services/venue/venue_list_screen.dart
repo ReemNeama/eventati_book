@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/models/models.dart';
-import 'package:eventati_book/widgets/services/service_filter_bar.dart';
-import 'package:eventati_book/widgets/services/service_card.dart';
-import 'package:eventati_book/widgets/services/filter_dialog.dart';
+import 'package:eventati_book/widgets/services/filter/service_filter_bar.dart';
+import 'package:eventati_book/widgets/services/card/service_card.dart';
+import 'package:eventati_book/widgets/services/filter/filter_dialog.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/utils.dart';
@@ -10,7 +10,7 @@ import 'package:eventati_book/screens/services/venue/venue_details_screen.dart';
 import 'package:eventati_book/screens/services/comparison/service_comparison_screen.dart';
 import 'package:eventati_book/providers/providers.dart';
 import 'package:provider/provider.dart';
-import 'package:eventati_book/widgets/services/venue_filter.dart';
+import 'package:eventati_book/widgets/services/filter/venue_filter.dart';
 
 class VenueListScreen extends StatefulWidget {
   const VenueListScreen({super.key});

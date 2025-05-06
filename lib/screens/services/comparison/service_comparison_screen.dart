@@ -6,9 +6,9 @@ import 'package:eventati_book/screens/services/comparison/saved_comparisons_scre
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/utils.dart';
-import 'package:eventati_book/widgets/services/comparison_item_card.dart';
-import 'package:eventati_book/widgets/services/feature_comparison_table.dart';
-import 'package:eventati_book/widgets/services/pricing_comparison_table.dart';
+import 'package:eventati_book/widgets/services/comparison/comparison_item_card.dart';
+import 'package:eventati_book/widgets/services/comparison/feature_comparison_table.dart';
+import 'package:eventati_book/widgets/services/comparison/pricing_comparison_table.dart';
 
 /// Screen for comparing services side by side
 class ServiceComparisonScreen extends StatefulWidget {

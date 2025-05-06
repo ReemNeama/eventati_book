@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/models/models.dart';
-import 'package:eventati_book/widgets/services/service_filter_bar.dart';
-import 'package:eventati_book/widgets/services/service_card.dart';
-import 'package:eventati_book/widgets/services/multi_select_chip_group.dart';
+import 'package:eventati_book/widgets/services/filter/service_filter_bar.dart';
+import 'package:eventati_book/widgets/services/card/service_card.dart';
+import 'package:eventati_book/widgets/services/filter/multi_select_chip_group.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
-import 'package:eventati_book/widgets/services/price_range_filter.dart';
+import 'package:eventati_book/widgets/services/filter/price_range_filter.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/screens/services/photographer/photographer_details_screen.dart';
 import 'package:eventati_book/screens/services/comparison/service_comparison_screen.dart';
