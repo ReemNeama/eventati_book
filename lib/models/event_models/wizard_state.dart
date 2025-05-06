@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'event_template.dart';
 
@@ -205,6 +206,75 @@ class WizardState {
       lastUpdated:
           json['lastUpdated'] != null
               ? DateTime.parse(json['lastUpdated'])
+              : DateTime.now(),
+    );
+  }
+
+  /// Convert to Firestore
+  Map<String, dynamic> toFirestore() {
+    return {
+      'templateId': template.id,
+      'currentStep': currentStep,
+      'totalSteps': totalSteps,
+      'eventName': eventName,
+      'selectedEventType': selectedEventType,
+      'eventDate': eventDate != null ? Timestamp.fromDate(eventDate!) : null,
+      'guestCount': guestCount,
+      'selectedServices': selectedServices,
+      'eventDuration': eventDuration,
+      'dailyStartTime':
+          dailyStartTime != null
+              ? '${dailyStartTime!.hour}:${dailyStartTime!.minute}'
+              : null,
+      'dailyEndTime':
+          dailyEndTime != null
+              ? '${dailyEndTime!.hour}:${dailyEndTime!.minute}'
+              : null,
+      'needsSetup': needsSetup,
+      'setupHours': setupHours,
+      'needsTeardown': needsTeardown,
+      'teardownHours': teardownHours,
+      'isCompleted': isCompleted,
+      'lastUpdated': Timestamp.fromDate(lastUpdated),
+    };
+  }
+
+  /// Create from Firestore
+  static WizardState? fromFirestore(Map<String, dynamic> data, String eventId) {
+    final templateId = data['templateId'];
+    final template = EventTemplates.findById(templateId);
+
+    if (template == null) return null;
+
+    return WizardState(
+      template: template,
+      currentStep: data['currentStep'] ?? 0,
+      totalSteps: data['totalSteps'] ?? 4,
+      eventName: data['eventName'] ?? '',
+      selectedEventType: data['selectedEventType'],
+      eventDate:
+          data['eventDate'] != null
+              ? (data['eventDate'] as Timestamp).toDate()
+              : null,
+      guestCount: data['guestCount'],
+      selectedServices: Map<String, bool>.from(data['selectedServices'] ?? {}),
+      eventDuration: data['eventDuration'] ?? 1,
+      dailyStartTime:
+          data['dailyStartTime'] != null
+              ? _timeOfDayFromString(data['dailyStartTime'])
+              : null,
+      dailyEndTime:
+          data['dailyEndTime'] != null
+              ? _timeOfDayFromString(data['dailyEndTime'])
+              : null,
+      needsSetup: data['needsSetup'] ?? false,
+      setupHours: data['setupHours'] ?? 2,
+      needsTeardown: data['needsTeardown'] ?? false,
+      teardownHours: data['teardownHours'] ?? 2,
+      isCompleted: data['isCompleted'] ?? false,
+      lastUpdated:
+          data['lastUpdated'] != null
+              ? (data['lastUpdated'] as Timestamp).toDate()
               : DateTime.now(),
     );
   }

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:eventati_book/models/event_models/wizard_state.dart';
 
@@ -335,6 +336,60 @@ class Suggestion {
       imageUrl: json['imageUrl'],
       actionUrl: json['actionUrl'],
       isCustom: json['isCustom'] ?? false,
+    );
+  }
+
+  /// Convert to Firestore
+  Map<String, dynamic> toFirestore() {
+    return {
+      'title': title,
+      'description': description,
+      'category': category.name,
+      'priority': priority.name,
+      'baseRelevanceScore': baseRelevanceScore,
+      'conditions': conditions.map((c) => c.toJson()).toList(),
+      'applicableEventTypes': applicableEventTypes,
+      'imageUrl': imageUrl,
+      'actionUrl': actionUrl,
+      'isCustom': isCustom,
+      'createdAt': FieldValue.serverTimestamp(),
+      'updatedAt': FieldValue.serverTimestamp(),
+    };
+  }
+
+  /// Create from Firestore
+  factory Suggestion.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>?;
+    if (data == null) {
+      throw Exception('Document data was null');
+    }
+
+    return Suggestion(
+      id: doc.id,
+      title: data['title'] ?? '',
+      description: data['description'] ?? '',
+      category: SuggestionCategory.values.firstWhere(
+        (c) => c.name == data['category'],
+        orElse: () => SuggestionCategory.other,
+      ),
+      priority: SuggestionPriority.values.firstWhere(
+        (p) => p.name == data['priority'],
+        orElse: () => SuggestionPriority.medium,
+      ),
+      baseRelevanceScore: data['baseRelevanceScore'] ?? 50,
+      conditions:
+          data['conditions'] != null
+              ? (data['conditions'] as List)
+                  .map((c) => SuggestionCondition.fromJson(c))
+                  .toList()
+              : [],
+      applicableEventTypes:
+          data['applicableEventTypes'] != null
+              ? List<String>.from(data['applicableEventTypes'])
+              : ['all'],
+      imageUrl: data['imageUrl'],
+      actionUrl: data['actionUrl'],
+      isCustom: data['isCustom'] ?? false,
     );
   }
 

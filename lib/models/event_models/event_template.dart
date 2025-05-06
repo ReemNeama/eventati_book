@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 /// Defines a template for an event type with predefined services and subtypes
@@ -9,6 +10,10 @@ class EventTemplate {
   final List<String> subtypes;
   final Map<String, bool> defaultServices;
   final List<String> suggestedTasks;
+  final String? userId; // Owner of the event
+  final DateTime? createdAt; // When the event was created
+  final DateTime? updatedAt; // When the event was last updated
+  final String? status; // Status of the event (draft, active, completed, etc.)
 
   const EventTemplate({
     required this.id,
@@ -18,6 +23,10 @@ class EventTemplate {
     required this.subtypes,
     required this.defaultServices,
     required this.suggestedTasks,
+    this.userId,
+    this.createdAt,
+    this.updatedAt,
+    this.status,
   });
 
   /// Create a copy of this template with modified fields
@@ -29,6 +38,10 @@ class EventTemplate {
     List<String>? subtypes,
     Map<String, bool>? defaultServices,
     List<String>? suggestedTasks,
+    String? userId,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    String? status,
   }) {
     return EventTemplate(
       id: id ?? this.id,
@@ -38,6 +51,114 @@ class EventTemplate {
       subtypes: subtypes ?? this.subtypes,
       defaultServices: defaultServices ?? this.defaultServices,
       suggestedTasks: suggestedTasks ?? this.suggestedTasks,
+      userId: userId ?? this.userId,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      status: status ?? this.status,
+    );
+  }
+
+  /// Convert IconData to a map
+  static Map<String, dynamic> _iconDataToMap(IconData icon) {
+    return {
+      'codePoint': icon.codePoint,
+      'fontFamily': icon.fontFamily,
+      'fontPackage': icon.fontPackage,
+    };
+  }
+
+  /// Create IconData from a map
+  static IconData _iconDataFromMap(Map<String, dynamic> map) {
+    return IconData(
+      map['codePoint'],
+      fontFamily: map['fontFamily'],
+      fontPackage: map['fontPackage'],
+    );
+  }
+
+  /// Convert to JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'description': description,
+      'icon': _iconDataToMap(icon),
+      'subtypes': subtypes,
+      'defaultServices': defaultServices,
+      'suggestedTasks': suggestedTasks,
+      'userId': userId,
+      'createdAt': createdAt?.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
+      'status': status,
+    };
+  }
+
+  /// Create from JSON
+  factory EventTemplate.fromJson(Map<String, dynamic> json) {
+    return EventTemplate(
+      id: json['id'],
+      name: json['name'],
+      description: json['description'],
+      icon: json['icon'] is Map ? _iconDataFromMap(json['icon']) : Icons.event,
+      subtypes: List<String>.from(json['subtypes'] ?? []),
+      defaultServices: Map<String, bool>.from(json['defaultServices'] ?? {}),
+      suggestedTasks: List<String>.from(json['suggestedTasks'] ?? []),
+      userId: json['userId'],
+      createdAt:
+          json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
+      updatedAt:
+          json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
+      status: json['status'],
+    );
+  }
+
+  /// Convert to Firestore
+  Map<String, dynamic> toFirestore() {
+    return {
+      'name': name,
+      'description': description,
+      'icon': _iconDataToMap(icon),
+      'subtypes': subtypes,
+      'defaultServices': defaultServices,
+      'suggestedTasks': suggestedTasks,
+      'userId': userId,
+      'createdAt':
+          createdAt != null
+              ? Timestamp.fromDate(createdAt!)
+              : FieldValue.serverTimestamp(),
+      'updatedAt':
+          updatedAt != null
+              ? Timestamp.fromDate(updatedAt!)
+              : FieldValue.serverTimestamp(),
+      'status': status,
+    };
+  }
+
+  /// Create from Firestore
+  factory EventTemplate.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>?;
+    if (data == null) {
+      throw Exception('Document data was null');
+    }
+
+    return EventTemplate(
+      id: doc.id,
+      name: data['name'] ?? '',
+      description: data['description'] ?? '',
+      icon: data['icon'] is Map ? _iconDataFromMap(data['icon']) : Icons.event,
+      subtypes: List<String>.from(data['subtypes'] ?? []),
+      defaultServices: Map<String, bool>.from(data['defaultServices'] ?? {}),
+      suggestedTasks: List<String>.from(data['suggestedTasks'] ?? []),
+      userId: data['userId'],
+      createdAt:
+          data['createdAt'] != null
+              ? (data['createdAt'] as Timestamp).toDate()
+              : null,
+      updatedAt:
+          data['updatedAt'] != null
+              ? (data['updatedAt'] as Timestamp).toDate()
+              : null,
+      status: data['status'],
     );
   }
 }

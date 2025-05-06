@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:eventati_book/models/event_models/wizard_state.dart';
 
@@ -413,6 +414,63 @@ class Milestone {
       rewardText: json['rewardText'] ?? 'Milestone completed!',
       isHidden: json['isHidden'] ?? false,
       isTemplate: json['isTemplate'] ?? false,
+    );
+  }
+
+  /// Convert to Firestore
+  Map<String, dynamic> toFirestore() {
+    return {
+      'title': title,
+      'description': description,
+      'category': category.toString(),
+      'points': points,
+      'applicableEventTypes': applicableEventTypes,
+      'status': status.toString(),
+      'completedDate':
+          completedDate != null ? Timestamp.fromDate(completedDate!) : null,
+      'rewardText': rewardText,
+      'isHidden': isHidden,
+      'isTemplate': isTemplate,
+    };
+  }
+
+  /// Create from Firestore
+  factory Milestone.fromFirestore(
+    DocumentSnapshot doc,
+    MilestoneCriteria criteria,
+  ) {
+    final data = doc.data() as Map<String, dynamic>?;
+    if (data == null) {
+      throw Exception('Document data was null');
+    }
+
+    return Milestone(
+      id: doc.id,
+      title: data['title'] ?? '',
+      description: data['description'] ?? '',
+      category: MilestoneCategory.values.firstWhere(
+        (e) => e.toString() == data['category'],
+        orElse: () => MilestoneCategory.planning,
+      ),
+      icon: Icons.emoji_events, // Default icon, should be mapped properly
+      points: data['points'] ?? 10,
+      applicableEventTypes:
+          (data['applicableEventTypes'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          ['all'],
+      status: MilestoneStatus.values.firstWhere(
+        (e) => e.toString() == data['status'],
+        orElse: () => MilestoneStatus.locked,
+      ),
+      completedDate:
+          data['completedDate'] != null
+              ? (data['completedDate'] as Timestamp).toDate()
+              : null,
+      criteria: criteria,
+      rewardText: data['rewardText'] ?? 'Milestone completed!',
+      isHidden: data['isHidden'] ?? false,
+      isTemplate: data['isTemplate'] ?? false,
     );
   }
 }

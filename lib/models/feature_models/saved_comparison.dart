@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 
 /// Model representing a saved comparison
@@ -115,6 +116,66 @@ class SavedComparison {
       );
     } catch (e) {
       debugPrint('Error parsing SavedComparison from JSON: $e');
+      // Return a default comparison in case of parsing error
+      return SavedComparison(
+        id: '',
+        userId: 'anonymous',
+        serviceType: '',
+        serviceIds: [],
+        serviceNames: [],
+        createdAt: DateTime.now(),
+        title: 'Error: Corrupted Comparison',
+        notes: 'This comparison could not be loaded correctly.',
+      );
+    }
+  }
+
+  /// Convert to Firestore
+  Map<String, dynamic> toFirestore() {
+    return {
+      'userId': userId,
+      'serviceType': serviceType,
+      'serviceIds': serviceIds,
+      'serviceNames': serviceNames,
+      'createdAt': Timestamp.fromDate(createdAt),
+      'title': title,
+      'notes': notes,
+      'eventId': eventId,
+      'eventName': eventName,
+    };
+  }
+
+  /// Create from Firestore
+  factory SavedComparison.fromFirestore(DocumentSnapshot doc) {
+    try {
+      final data = doc.data() as Map<String, dynamic>?;
+      if (data == null) {
+        throw Exception('Document data was null');
+      }
+
+      return SavedComparison(
+        id: doc.id,
+        userId: data['userId'] as String? ?? 'anonymous',
+        serviceType: data['serviceType'] as String? ?? '',
+        serviceIds:
+            data['serviceIds'] != null
+                ? List<String>.from(data['serviceIds'])
+                : <String>[],
+        serviceNames:
+            data['serviceNames'] != null
+                ? List<String>.from(data['serviceNames'])
+                : <String>[],
+        createdAt:
+            data['createdAt'] != null
+                ? (data['createdAt'] as Timestamp).toDate()
+                : DateTime.now(),
+        title: data['title'] as String? ?? 'Untitled Comparison',
+        notes: data['notes'] as String? ?? '',
+        eventId: data['eventId'] as String?,
+        eventName: data['eventName'] as String?,
+      );
+    } catch (e) {
+      debugPrint('Error parsing SavedComparison from Firestore: $e');
       // Return a default comparison in case of parsing error
       return SavedComparison(
         id: '',
