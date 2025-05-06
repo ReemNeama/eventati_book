@@ -8,7 +8,12 @@ import 'package:eventati_book/utils/service/planner_options_builder.dart';
 /// Factory class for generating service-specific form fields
 class ServiceOptionsFactory {
   /// Generate form fields for venue options
+  ///
+  /// Note: The [context] parameter is passed to the builder but not currently used.
+  /// It's kept for future implementation where the context might be needed for
+  /// theme-aware or responsive form fields.
   static List<Widget> generateVenueOptionsFields({
+    // TODO: Use context parameter for theme-aware or responsive form fields
     required BuildContext context,
     required VenueOptions initialOptions,
     required Function(VenueOptions) onOptionsChanged,
@@ -21,7 +26,12 @@ class ServiceOptionsFactory {
   }
 
   /// Generate form fields for catering options
+  ///
+  /// Note: The [context] parameter is passed to the builder but not currently used.
+  /// It's kept for future implementation where the context might be needed for
+  /// theme-aware or responsive form fields.
   static List<Widget> generateCateringOptionsFields({
+    // TODO: Use context parameter for theme-aware or responsive form fields
     required BuildContext context,
     required CateringOptions initialOptions,
     required Function(CateringOptions) onOptionsChanged,
@@ -34,7 +44,12 @@ class ServiceOptionsFactory {
   }
 
   /// Generate form fields for photography options
+  ///
+  /// Note: The [context] parameter is passed to the builder but not currently used.
+  /// It's kept for future implementation where the context might be needed for
+  /// theme-aware or responsive form fields.
   static List<Widget> generatePhotographyOptionsFields({
+    // TODO: Use context parameter for theme-aware or responsive form fields
     required BuildContext context,
     required PhotographyOptions initialOptions,
     required Function(PhotographyOptions) onOptionsChanged,
@@ -47,7 +62,12 @@ class ServiceOptionsFactory {
   }
 
   /// Generate form fields for planner options
+  ///
+  /// Note: The [context] parameter is passed to the builder but not currently used.
+  /// It's kept for future implementation where the context might be needed for
+  /// theme-aware or responsive form fields.
   static List<Widget> generatePlannerOptionsFields({
+    // TODO: Use context parameter for theme-aware or responsive form fields
     required BuildContext context,
     required PlannerOptions initialOptions,
     required Function(PlannerOptions) onOptionsChanged,

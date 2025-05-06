@@ -32,7 +32,8 @@ class LoadingIndicator extends StatelessWidget {
           if (message != null) ...[
             const SizedBox(height: 16),
             Text(
-              message!,
+              // Use null-safe approach with null coalescing operator
+              message ?? '',
               style: TextStyle(
                 color:
                     isDarkMode

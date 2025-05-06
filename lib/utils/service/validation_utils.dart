@@ -114,7 +114,9 @@ class ValidationUtils {
       return numberValidation;
     }
 
-    final number = double.parse(value!);
+    // We've already validated that value is not null and is a valid number
+    // Use null-safe approach with null coalescing operator
+    final number = double.parse(value ?? '0');
 
     if (min != null && number < min) {
       return minMessage ?? 'Value must be at least $min';

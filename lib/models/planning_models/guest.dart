@@ -4,14 +4,30 @@ class GuestGroup {
   final String id;
   final String name;
   final String? description;
+  final String? color;
+  final List<Guest> guests;
 
-  GuestGroup({required this.id, required this.name, this.description});
+  GuestGroup({
+    required this.id,
+    required this.name,
+    this.description,
+    this.color,
+    this.guests = const [],
+  });
 
-  GuestGroup copyWith({String? id, String? name, String? description}) {
+  GuestGroup copyWith({
+    String? id,
+    String? name,
+    String? description,
+    String? color,
+    List<Guest>? guests,
+  }) {
     return GuestGroup(
       id: id ?? this.id,
       name: name ?? this.name,
       description: description ?? this.description,
+      color: color ?? this.color,
+      guests: guests ?? this.guests,
     );
   }
 }

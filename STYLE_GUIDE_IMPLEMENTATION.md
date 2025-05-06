@@ -26,15 +26,15 @@ These issues have the highest impact on code quality and should be addressed fir
 - [x] `ServiceOptionsFactory.generateCateringOptionsFields` (206 lines)
 - [x] `ServiceOptionsFactory.generatePhotographyOptionsFields` (211 lines)
 - [x] `ServiceOptionsFactory.generatePlannerOptionsFields` (197 lines)
-- [ ] `AppTheme.lightTheme` (95 lines)
-- [ ] `AppTheme.darkTheme` (104 lines)
-- [ ] `ServiceDB.getCateringServices` (247 lines)
-- [ ] `ServiceDB.getPhotographyServices` (181 lines)
-- [ ] `VenueDB.getVenues` (131 lines)
-- [ ] `WizardConnectionService._createBudgetItemsFromServices` (165 lines)
-- [ ] `WizardConnectionService._createGuestGroupsFromEventType` (153 lines)
-- [ ] `_VenueDetailsScreenState._buildPackagesTab` (112 lines)
-- [ ] `_VenueDetailsScreenState._buildVenueDetailsTab` (133 lines)
+- [x] `AppTheme.lightTheme` (95 lines)
+- [x] `AppTheme.darkTheme` (104 lines)
+- [x] `ServiceDB.getCateringServices` (247 lines)
+- [x] `ServiceDB.getPhotographyServices` (181 lines)
+- [x] `VenueDB.getVenues` (131 lines)
+- [x] `WizardConnectionService._createBudgetItemsFromServices` (165 lines)
+- [x] `WizardConnectionService._createGuestGroupsFromEventType` (153 lines)
+- [x] `_VenueDetailsScreenState._buildPackagesTab` (112 lines)
+- [x] `_VenueDetailsScreenState._buildVenueDetailsTab` (133 lines)
 - [x] `FeatureComparisonTable._getFeaturesToCompare` (122 lines)
 - [x] `FeatureComparisonTable._buildFeatureValue` (117 lines)
 
@@ -48,38 +48,40 @@ These issues have a moderate impact on code quality and should be addressed afte
 
 ### Non-null Assertions
 
-- [ ] `venue_details_screen.dart` (3 instances)
-- [ ] `empty_state.dart` (3 instances)
-- [ ] `error_message.dart` (2 instances)
-- [ ] `error_screen.dart` (1 instance)
-- [ ] `loading_indicator.dart` (1 instance)
-- [ ] `package_card.dart` (1 instance)
-- [ ] `date_picker_tile.dart` (2 instances)
-- [ ] `wizard_progress_indicator.dart` (4 instances)
-- [ ] `milestone_card.dart` (8 instances)
-- [ ] `milestone_detail_dialog.dart` (6 instances)
-- [ ] `milestone_grid.dart` (1 instance)
-- [ ] `responsive_builder.dart` (3 instances)
-- [ ] `responsive_layout.dart` (2 instances)
-- [ ] `recommended_badge.dart` (1 instance)
-- [ ] `service_card.dart` (2 instances)
-- [ ] `validation_utils.dart` (1 instance)
+- [x] `venue_details_screen.dart` (3 instances)
+- [x] `empty_state.dart` (3 instances)
+- [x] `error_message.dart` (2 instances)
+- [x] `error_screen.dart` (1 instance)
+- [x] `loading_indicator.dart` (1 instance)
+- [x] `package_card.dart` (1 instance)
+- [x] `date_picker_tile.dart` (2 instances)
+- [x] `wizard_progress_indicator.dart` (4 instances)
+- [x] `milestone_card.dart` (8 instances)
+- [x] `milestone_detail_dialog.dart` (6 instances)
+- [x] `milestone_grid.dart` (1 instance)
+- [x] `responsive_builder.dart` (3 instances)
+- [x] `responsive_layout.dart` (2 instances)
+- [x] `recommended_badge.dart` (1 instance)
+- [x] `service_card.dart` (2 instances)
+- [x] `validation_utils.dart` (1 instance)
 
 ### Unused Parameters
 
-- [ ] `wizard_connection_service.dart` (3 instances)
-- [ ] `service_options_factory.dart` (4 instances)
-- [ ] `accessibility_utils.dart` (2 instances)
-- [ ] `ui_utils.dart` (1 instance)
-- [ ] `empty_state.dart` (2 instances)
-- [ ] `error_message.dart` (1 instance)
+- [x] `wizard_connection_service.dart` (3 instances)
+- [x] `service_options_factory.dart` (4 instances)
+- [x] `accessibility_utils.dart` (2 instances)
+- [x] `ui_utils.dart` (1 instance)
+- [x] `empty_state.dart` (2 instances)
+- [x] `error_message.dart` (1 instance)
 
 ### Nested Conditional Expressions
 
-- [ ] `venue_details_screen.dart` (1 instance)
-- [ ] `message_input.dart` (2 instances)
-- [ ] `message_input.dart` (in messaging directory) (2 instances)
-- [ ] `milestone_detail_dialog.dart` (1 instance)
+- [x] `venue_details_screen.dart` (1 instance)
+- [x] `message_input.dart` (2 instances)
+- [x] `message_input.dart` (in messaging directory) (2 instances)
+- [x] `milestone_detail_dialog.dart` (1 instance)
+- [x] `milestone_grid.dart` (1 instance)
+- [x] `checklist_screen.dart` (1 instance in _buildTaskItem method)
 
 ## Low Priority Issues
 
@@ -106,15 +108,15 @@ These issues have a lower impact on code quality and can be addressed after the 
 |----------|--------------|-------|-----------|----------|
 | ALARM Level Issues | 4 | 4 | 0 | 100% |
 | High Cyclomatic Complexity | 4 | 4 | 0 | 100% |
-| Long Methods | 15 | 6 | 9 | 40% |
+| Long Methods | 15 | 15 | 0 | 100% |
 | Missing Blank Lines | ~649 | 649 | 0 | 100% |
-| Non-null Assertions | 41 | 0 | 41 | 0% |
-| Unused Parameters | 13 | 0 | 13 | 0% |
-| Nested Conditional Expressions | 6 | 0 | 6 | 0% |
+| Non-null Assertions | 41 | 41 | 0 | 100% |
+| Unused Parameters | 13 | 13 | 0 | 100% |
+| Nested Conditional Expressions | 6 | 6 | 0 | 100% |
 | Prefer Conditional Expressions | 4 | 0 | 4 | 0% |
 | Use First/Last | 3 | 0 | 3 | 0% |
 | Avoid Late Keyword | 4 | 0 | 4 | 0% |
-| **Total** | **~743** | **663** | **~80** | **89%** |
+| **Total** | **~743** | **734** | **~9** | **99%** |
 
 ## Refactoring Plan
 

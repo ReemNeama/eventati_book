@@ -10,7 +10,14 @@ class AccessibilityUtils {
   }
 
   /// Get semantic label for an icon button
-  static String getIconButtonLabel(IconData icon, String action) {
+  ///
+  /// Note: The [icon] parameter is not currently used but is kept for future
+  /// implementation where the icon type might affect the label.
+  static String getIconButtonLabel(
+    // TODO: Use icon parameter in label generation
+    IconData icon,
+    String action,
+  ) {
     return '$action button';
   }
 
@@ -69,6 +76,10 @@ class AccessibilityUtils {
   }
 
   /// Get semantic label for an image
+  ///
+  /// [subject] is the main subject of the image.
+  /// [description] is an optional detailed description of the image.
+  /// If [description] is provided, it will be included in the label.
   static String getImageLabel(String subject, {String? description}) {
     return description != null
         ? 'Image of $subject, $description'

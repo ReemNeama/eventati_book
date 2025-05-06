@@ -26,7 +26,7 @@ class DatePickerTile extends StatelessWidget {
         title: Text(
           selectedDate == null
               ? label
-              : 'Date: ${DateTimeUtils.formatDate(selectedDate!)}',
+              : 'Date: ${DateTimeUtils.formatDate(selectedDate as DateTime)}',
         ),
         trailing: const Icon(Icons.calendar_today),
         onTap: () async {
@@ -47,7 +47,8 @@ class DatePickerTile extends StatelessWidget {
                     style: TextButton.styleFrom(foregroundColor: primaryColor),
                   ),
                 ),
-                child: child!,
+                // Use null-safe approach with null coalescing operator
+                child: child ?? Container(),
               );
             },
           );

@@ -435,12 +435,11 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
-                            color:
-                                isOverdue && task.status != TaskStatus.completed
-                                    ? Colors.red
-                                    : isDarkMode
-                                    ? Colors.grey[400]
-                                    : Colors.grey[600],
+                            color: _getDueDateTextColor(
+                              isOverdue,
+                              task.status,
+                              isDarkMode,
+                            ),
                           ),
                         ),
                         if (task.status != TaskStatus.completed)
@@ -475,6 +474,21 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
         ),
       ),
     );
+  }
+
+  /// Get the appropriate text color for the due date based on task status and theme
+  Color _getDueDateTextColor(
+    bool isOverdue,
+    TaskStatus status,
+    bool isDarkMode,
+  ) {
+    // If the task is overdue and not completed, show in red
+    if (isOverdue && status != TaskStatus.completed) {
+      return Colors.red;
+    }
+
+    // Otherwise, use theme-appropriate text color
+    return isDarkMode ? Colors.grey[400]! : Colors.grey[600]!;
   }
 
   Widget _buildProgressBar(BuildContext context, TaskProvider taskProvider) {

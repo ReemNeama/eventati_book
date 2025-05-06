@@ -115,7 +115,11 @@ class UIUtils {
   }
 
   /// Get a color with alpha based on the current theme
+  ///
+  /// Note: The [context] parameter is not currently used but is kept for future
+  /// implementation where the theme might affect the alpha calculation.
   static Color getColorWithAlpha(
+    // TODO: Use context parameter for theme-aware alpha calculation
     BuildContext context,
     Color color,
     double opacity,

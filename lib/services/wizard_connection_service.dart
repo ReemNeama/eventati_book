@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/providers/providers.dart';
 import 'package:eventati_book/services/task_template_service.dart';
+import 'package:eventati_book/services/wizard/budget_items_builder.dart';
+import 'package:eventati_book/services/wizard/guest_groups_builder.dart';
 
 /// Service to connect the wizard with other planning tools
 class WizardConnectionService {
@@ -425,7 +427,12 @@ class WizardConnectionService {
   }
 
   /// Create task dependencies and sequences
+  ///
+  /// Note: This is a placeholder method for future implementation.
+  /// The parameters are currently used only for logging but will be used
+  /// to create actual task dependencies in the future.
   static void _createTaskDependencies(
+    // TODO: Implement task dependency creation using these parameters
     TaskProvider taskProvider,
     List<Task> adjustedTasks,
     List<Task> specializedTasks,
@@ -486,231 +493,21 @@ class WizardConnectionService {
     bool needsTeardown,
     int teardownHours,
   ) {
-    // Create budget items based on selected services
-    if (selectedServices['Venue'] == true) {
-      final cost = _calculateEstimatedCost(
-        'Venue',
-        guestCount,
-        eventType,
-        eventDuration,
-      );
+    // Use the BudgetItemsBuilder to create budget items
+    final budgetItems = BudgetItemsBuilder.createBudgetItemsFromServices(
+      selectedServices: selectedServices,
+      guestCount: guestCount,
+      eventType: eventType,
+      eventDuration: eventDuration,
+      needsSetup: needsSetup,
+      setupHours: setupHours,
+      needsTeardown: needsTeardown,
+      teardownHours: teardownHours,
+    );
 
-      budgetProvider.addBudgetItem(
-        BudgetItem(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
-          categoryId: '1', // Venue category
-          description: 'Venue rental',
-          estimatedCost: cost,
-          isPaid: false,
-          notes: 'Based on $guestCount guests and $eventDuration day(s)',
-        ),
-      );
-
-      // Add setup and teardown costs for business events
-      if (eventType.toLowerCase().contains('business')) {
-        if (needsSetup) {
-          budgetProvider.addBudgetItem(
-            BudgetItem(
-              id: DateTime.now().millisecondsSinceEpoch.toString(),
-              categoryId: '1', // Venue category
-              description: 'Venue setup',
-              estimatedCost: setupHours * 100, // $100 per hour
-              isPaid: false,
-              notes: 'Setup costs for $setupHours hour(s)',
-            ),
-          );
-        }
-
-        if (needsTeardown) {
-          budgetProvider.addBudgetItem(
-            BudgetItem(
-              id: DateTime.now().millisecondsSinceEpoch.toString(),
-              categoryId: '1', // Venue category
-              description: 'Venue teardown',
-              estimatedCost: teardownHours * 100, // $100 per hour
-              isPaid: false,
-              notes: 'Teardown costs for $teardownHours hour(s)',
-            ),
-          );
-        }
-      }
-    }
-
-    if (selectedServices['Catering'] == true) {
-      final cost = _calculateEstimatedCost(
-        'Catering',
-        guestCount,
-        eventType,
-        eventDuration,
-      );
-
-      budgetProvider.addBudgetItem(
-        BudgetItem(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
-          categoryId: '2', // Catering category
-          description: 'Catering service',
-          estimatedCost: cost,
-          isPaid: false,
-          notes: 'Based on $guestCount guests',
-        ),
-      );
-
-      // Add beverage costs
-      budgetProvider.addBudgetItem(
-        BudgetItem(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
-          categoryId: '2', // Catering category
-          description: 'Beverages',
-          estimatedCost: guestCount * 15, // $15 per guest
-          isPaid: false,
-          notes: 'Estimated beverage costs',
-        ),
-      );
-    }
-
-    if (selectedServices['Photography'] == true ||
-        selectedServices['Photography/Videography'] == true) {
-      final cost = _calculateEstimatedCost(
-        'Photography',
-        guestCount,
-        eventType,
-        eventDuration,
-      );
-
-      budgetProvider.addBudgetItem(
-        BudgetItem(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
-          categoryId: '3', // Photography category
-          description: 'Photographer',
-          estimatedCost: cost,
-          isPaid: false,
-          notes: 'Photography services for $eventDuration day(s)',
-        ),
-      );
-    }
-
-    if (selectedServices['Videography'] == true ||
-        selectedServices['Photography/Videography'] == true) {
-      budgetProvider.addBudgetItem(
-        BudgetItem(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
-          categoryId: '3', // Photography category
-          description: 'Videographer',
-          estimatedCost: 2500.0 * eventDuration, // $2500 per day
-          isPaid: false,
-          notes: 'Videography services for $eventDuration day(s)',
-        ),
-      );
-    }
-
-    if (selectedServices['Entertainment'] == true) {
-      budgetProvider.addBudgetItem(
-        BudgetItem(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
-          categoryId: '4', // Entertainment category
-          description: 'Entertainment',
-          estimatedCost: 1500, // Base cost
-          isPaid: false,
-          notes: 'Entertainment services',
-        ),
-      );
-    }
-
-    if (selectedServices['Decor'] == true) {
-      budgetProvider.addBudgetItem(
-        BudgetItem(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
-          categoryId: '5', // Decor category
-          description: 'Decorations',
-          estimatedCost: 500 + (guestCount * 5), // Base cost + per guest
-          isPaid: false,
-          notes: 'Decorations for venue and tables',
-        ),
-      );
-    }
-
-    if (selectedServices['Transportation'] == true) {
-      budgetProvider.addBudgetItem(
-        BudgetItem(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
-          categoryId: '7', // Transportation category
-          description: 'Guest transportation',
-          estimatedCost: guestCount * 20, // $20 per guest
-          isPaid: false,
-          notes: 'Transportation for guests',
-        ),
-      );
-    }
-
-    // Add more items based on other selected services
-    if (selectedServices['Flowers'] == true) {
-      budgetProvider.addBudgetItem(
-        BudgetItem(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
-          categoryId: '5', // Decor category
-          description: 'Flowers',
-          estimatedCost: 800, // Base cost
-          isPaid: false,
-          notes: 'Floral arrangements',
-        ),
-      );
-    }
-
-    if (selectedServices['Wedding Planner'] == true ||
-        selectedServices['Event Staff'] == true) {
-      budgetProvider.addBudgetItem(
-        BudgetItem(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
-          categoryId: '10', // Miscellaneous category
-          description: 'Event planner',
-          estimatedCost: 2000, // Base cost
-          isPaid: false,
-          notes: 'Event planning services',
-        ),
-      );
-    }
-  }
-
-  /// Calculate estimated cost based on service type, guest count, and event type
-  static double _calculateEstimatedCost(
-    String serviceType,
-    int guestCount,
-    String eventType,
-    int eventDuration,
-  ) {
-    switch (serviceType) {
-      case 'Venue':
-        // Different base costs and per-guest costs based on event type
-        if (eventType.toLowerCase().contains('wedding')) {
-          return 5000.0 + (guestCount * 15.0) * eventDuration;
-        } else if (eventType.toLowerCase().contains('business')) {
-          return 3000.0 + (guestCount * 10.0) * eventDuration;
-        } else {
-          return 2000.0 + (guestCount * 8.0) * eventDuration;
-        }
-
-      case 'Catering':
-        // Different per-guest costs based on event type
-        if (eventType.toLowerCase().contains('wedding')) {
-          return guestCount * 75.0 * eventDuration; // $75 per guest
-        } else if (eventType.toLowerCase().contains('business')) {
-          return guestCount * 50.0 * eventDuration; // $50 per guest
-        } else {
-          return guestCount * 40.0 * eventDuration; // $40 per guest
-        }
-
-      case 'Photography':
-        // Different base costs based on event type and duration
-        if (eventType.toLowerCase().contains('wedding')) {
-          return 3000.0 * eventDuration; // $3000 per day
-        } else if (eventType.toLowerCase().contains('business')) {
-          return 2000.0 * eventDuration; // $2000 per day
-        } else {
-          return 1500.0 * eventDuration; // $1500 per day
-        }
-
-      default:
-        return 1000.0; // Default cost
+    // Add all budget items to the provider
+    for (final item in budgetItems) {
+      budgetProvider.addBudgetItem(item);
     }
   }
 
@@ -749,170 +546,19 @@ class WizardConnectionService {
     GuestListProvider guestListProvider,
     String eventType,
   ) {
-    // Create guest groups based on event type
-    if (eventType.toLowerCase().contains('wedding')) {
-      // Wedding-specific groups
-      guestListProvider.addGroup(
-        GuestGroup(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
-          name: 'Bride\'s Family',
-          description: 'Family members of the bride',
-        ),
-      );
+    // Use the GuestGroupsBuilder to create guest groups
+    final guestGroups = GuestGroupsBuilder.createGuestGroupsFromEventType(
+      eventType,
+    );
 
+    // Add all guest groups to the provider
+    for (final group in guestGroups) {
       guestListProvider.addGroup(
         GuestGroup(
           id: DateTime.now().millisecondsSinceEpoch.toString(),
-          name: 'Groom\'s Family',
-          description: 'Family members of the groom',
-        ),
-      );
-
-      guestListProvider.addGroup(
-        GuestGroup(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
-          name: 'Bride\'s Friends',
-          description: 'Friends of the bride',
-        ),
-      );
-
-      guestListProvider.addGroup(
-        GuestGroup(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
-          name: 'Groom\'s Friends',
-          description: 'Friends of the groom',
-        ),
-      );
-
-      guestListProvider.addGroup(
-        GuestGroup(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
-          name: 'Colleagues',
-          description: 'Work colleagues',
-        ),
-      );
-
-      guestListProvider.addGroup(
-        GuestGroup(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
-          name: 'Wedding Party',
-          description: 'Bridesmaids, groomsmen, etc.',
-        ),
-      );
-    } else if (eventType.toLowerCase().contains('business')) {
-      // Business event-specific groups
-      guestListProvider.addGroup(
-        GuestGroup(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
-          name: 'Clients',
-          description: 'Business clients',
-        ),
-      );
-
-      guestListProvider.addGroup(
-        GuestGroup(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
-          name: 'Partners',
-          description: 'Business partners',
-        ),
-      );
-
-      guestListProvider.addGroup(
-        GuestGroup(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
-          name: 'Team Members',
-          description: 'Internal team members',
-        ),
-      );
-
-      guestListProvider.addGroup(
-        GuestGroup(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
-          name: 'Executives',
-          description: 'Executive leadership',
-        ),
-      );
-
-      guestListProvider.addGroup(
-        GuestGroup(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
-          name: 'Speakers',
-          description: 'Event speakers and presenters',
-        ),
-      );
-
-      guestListProvider.addGroup(
-        GuestGroup(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
-          name: 'Media',
-          description: 'Press and media representatives',
-        ),
-      );
-    } else if (eventType.toLowerCase().contains('celebration') ||
-        eventType.toLowerCase().contains('party')) {
-      // Celebration/party-specific groups
-      guestListProvider.addGroup(
-        GuestGroup(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
-          name: 'Family',
-          description: 'Family members',
-        ),
-      );
-
-      guestListProvider.addGroup(
-        GuestGroup(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
-          name: 'Close Friends',
-          description: 'Close friends',
-        ),
-      );
-
-      guestListProvider.addGroup(
-        GuestGroup(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
-          name: 'Friends',
-          description: 'Other friends',
-        ),
-      );
-
-      guestListProvider.addGroup(
-        GuestGroup(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
-          name: 'Colleagues',
-          description: 'Work colleagues',
-        ),
-      );
-
-      guestListProvider.addGroup(
-        GuestGroup(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
-          name: 'Neighbors',
-          description: 'Neighbors and community members',
-        ),
-      );
-    } else {
-      // Default groups for other event types
-      guestListProvider.addGroup(
-        GuestGroup(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
-          name: 'Family',
-          description: 'Family members',
-        ),
-      );
-
-      guestListProvider.addGroup(
-        GuestGroup(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
-          name: 'Friends',
-          description: 'Friends',
-        ),
-      );
-
-      guestListProvider.addGroup(
-        GuestGroup(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
-          name: 'Other Guests',
-          description: 'Other invited guests',
+          name: group.name,
+          description: group.description,
+          color: group.color,
         ),
       );
     }
@@ -923,6 +569,7 @@ class WizardConnectionService {
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         name: 'VIP',
         description: 'Very important guests',
+        color: '#FF0000', // Red
       ),
     );
   }

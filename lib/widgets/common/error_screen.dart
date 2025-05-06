@@ -74,7 +74,8 @@ class ErrorScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
-                    details!,
+                    // Use null-safe approach with null coalescing operator
+                    details ?? '',
                     style: TextStyle(
                       color: isDarkMode ? Colors.white60 : Colors.black54,
                       fontSize: 14,

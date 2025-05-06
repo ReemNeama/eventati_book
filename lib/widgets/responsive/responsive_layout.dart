@@ -37,12 +37,14 @@ class ResponsiveLayout extends StatelessWidget {
 
     // Desktop layout
     if (size.shortestSide >= desktopBreakpoint && desktop != null) {
-      return desktop!;
+      // Use the non-null desktop widget directly
+      return desktop ?? mobile;
     }
 
     // Tablet layout
     if (size.shortestSide >= tabletBreakpoint && tablet != null) {
-      return tablet!;
+      // Use the non-null tablet widget directly
+      return tablet ?? mobile;
     }
 
     // Mobile layout (default)

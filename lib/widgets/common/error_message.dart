@@ -108,7 +108,8 @@ class ErrorMessage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
-                  details!,
+                  // Use null-safe approach with null coalescing operator
+                  details ?? '',
                   style: TextStyle(
                     color: isDarkMode ? Colors.white60 : Colors.black54,
                     fontSize: 12,
@@ -178,7 +179,8 @@ class ErrorMessage extends StatelessWidget {
                 if (details != null) ...[
                   const SizedBox(height: 4),
                   Text(
-                    details!,
+                    // Use null-safe approach with null coalescing operator
+                    details ?? '',
                     style: TextStyle(
                       color:
                           isDarkMode
@@ -205,6 +207,10 @@ class ErrorMessage extends StatelessWidget {
     );
   }
 
+  /// Build an inline error message
+  ///
+  /// Note: Unlike the other error display types, the inline error doesn't use
+  /// the primary color since it doesn't have any interactive elements like buttons.
   Widget _buildInlineError(BuildContext context, Color errorColor) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
-import 'package:eventati_book/utils/utils.dart';
+import 'package:eventati_book/utils/core/constants.dart';
 
 /// A class that defines the application's theme using the colors from AppColors.
 /// This provides a consistent look and feel across the entire application.
@@ -117,6 +117,13 @@ class AppTheme {
         labelLarge: TextStyle(color: AppColors.textPrimary),
         labelMedium: TextStyle(color: AppColors.textPrimary),
         labelSmall: TextStyle(color: AppColors.textSecondary),
+      ),
+
+      // Bottom navigation bar theme
+      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+        backgroundColor: AppColors.background,
+        selectedItemColor: AppColors.primary,
+        unselectedItemColor: AppColors.textSecondary,
       ),
     );
   }

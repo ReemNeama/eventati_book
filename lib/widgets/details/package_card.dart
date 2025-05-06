@@ -70,7 +70,8 @@ class PackageCard extends StatelessWidget {
               Text(description),
               if (additionalInfo != null) ...[
                 const SizedBox(height: 8),
-                additionalInfo!,
+                // Use the non-null additionalInfo directly without the assertion
+                additionalInfo ?? const SizedBox.shrink(),
               ],
               const SizedBox(height: 16),
               const Text(

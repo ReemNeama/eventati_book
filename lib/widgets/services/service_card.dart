@@ -112,7 +112,8 @@ class ServiceCard extends StatelessWidget {
                   Text(description),
                   if (additionalInfo != null) ...[
                     const SizedBox(height: AppConstants.smallPadding),
-                    additionalInfo!,
+                    // Use the non-null additionalInfo directly
+                    additionalInfo ?? const SizedBox.shrink(),
                   ],
                   if (showCompareCheckbox && onCompareToggle != null) ...[
                     const SizedBox(height: AppConstants.smallPadding),
@@ -132,8 +133,9 @@ class ServiceCard extends StatelessWidget {
                         Checkbox(
                           value: isCompareSelected,
                           onChanged: (value) {
-                            if (value != null) {
-                              onCompareToggle!(value);
+                            if (value != null && onCompareToggle != null) {
+                              // Use null-aware method invocation operator
+                              onCompareToggle?.call(value);
                             }
                           },
                           activeColor:

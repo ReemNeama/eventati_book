@@ -87,6 +87,8 @@ class WizardProgressIndicator extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: List.generate(totalSteps, (index) {
                 final isActive = index <= currentStep;
+                // Store stepLabels in a local variable to avoid null checks
+                final labels = stepLabels!;
 
                 return Expanded(
                   child: Column(
@@ -116,7 +118,8 @@ class WizardProgressIndicator extends StatelessWidget {
                       const SizedBox(height: 4),
                       // Step label
                       Text(
-                        index < stepLabels!.length ? stepLabels![index] : '',
+                        // Use the local variable to avoid null checks
+                        index < labels.length ? labels[index] : '',
                         style: TextStyle(
                           fontSize: 10,
                           color:

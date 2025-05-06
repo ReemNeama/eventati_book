@@ -53,12 +53,7 @@ class MilestoneDetailDialog extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
-                  color:
-                      milestone.status == MilestoneStatus.completed
-                          ? Colors.white
-                          : isDarkMode
-                          ? Colors.white
-                          : Colors.black87,
+                  color: _getTextColorForStatus(milestone.status, isDarkMode),
                 ),
               ),
             ),
@@ -98,7 +93,8 @@ class MilestoneDetailDialog extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(top: 16),
                 child: Text(
-                  'Completed on ${DateFormat('MMMM d, yyyy').format(milestone.completedDate!)}',
+                  // Use null-safe approach with null coalescing operator
+                  'Completed on ${DateFormat('MMMM d, yyyy').format(milestone.completedDate ?? DateTime.now())}',
                   style: TextStyle(
                     fontSize: 14,
                     color: isDarkMode ? Colors.white70 : Colors.black54,
@@ -138,10 +134,27 @@ class MilestoneDetailDialog extends StatelessWidget {
       case MilestoneStatus.completed:
         return Colors.green;
       case MilestoneStatus.unlocked:
-        return isDarkMode ? Colors.blue[700]! : Colors.blue[100]!;
+        // Use null-safe approach with explicit cast
+        return isDarkMode
+            ? (Colors.blue[700] ?? Colors.blue[600]) as Color
+            : (Colors.blue[100] ?? Colors.blue[200]) as Color;
       case MilestoneStatus.locked:
-        return isDarkMode ? Colors.grey[800]! : Colors.grey[300]!;
+        // Use null-safe approach with explicit cast
+        return isDarkMode
+            ? (Colors.grey[800] ?? Colors.grey[700]) as Color
+            : (Colors.grey[300] ?? Colors.grey[400]) as Color;
     }
+  }
+
+  /// Get text color based on milestone status and theme
+  Color _getTextColorForStatus(MilestoneStatus status, bool isDarkMode) {
+    // If milestone is completed, always use white text
+    if (status == MilestoneStatus.completed) {
+      return Colors.white;
+    }
+
+    // Otherwise, use theme-appropriate text color
+    return isDarkMode ? Colors.white : Colors.black87;
   }
 
   /// Get text for milestone status

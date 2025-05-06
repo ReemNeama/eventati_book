@@ -41,12 +41,20 @@ class ResponsiveBuilder extends StatelessWidget {
         // Desktop layout
         if (constraints.maxWidth >= desktopBreakpoint &&
             desktopBuilder != null) {
-          return desktopBuilder!(context, constraints);
+          // Store the non-null builder in a local variable
+          final builder = desktopBuilder;
+          // Use null-aware method invocation operator
+          return builder?.call(context, constraints) ??
+              mobileBuilder(context, constraints);
         }
 
         // Tablet layout
         if (constraints.maxWidth >= tabletBreakpoint && tabletBuilder != null) {
-          return tabletBuilder!(context, constraints);
+          // Store the non-null builder in a local variable
+          final builder = tabletBuilder;
+          // Use null-aware method invocation operator
+          return builder?.call(context, constraints) ??
+              mobileBuilder(context, constraints);
         }
 
         // Mobile layout (default)
@@ -84,7 +92,11 @@ class OrientationResponsiveBuilder extends StatelessWidget {
           builder: (context, constraints) {
             if (orientation == Orientation.landscape &&
                 landscapeBuilder != null) {
-              return landscapeBuilder!(context, constraints);
+              // Store the non-null builder in a local variable
+              final builder = landscapeBuilder;
+              // Use null-aware method invocation operator
+              return builder?.call(context, constraints) ??
+                  portraitBuilder(context, constraints);
             }
 
             return portraitBuilder(context, constraints);

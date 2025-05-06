@@ -46,6 +46,26 @@ class _MessageInputState extends State<MessageInput> {
     }
   }
 
+  /// Get the appropriate color for the send button based on whether a message can be sent
+  Color _getSendButtonColor(Color primaryColor, bool isDarkMode) {
+    if (_canSend) {
+      return primaryColor;
+    } else {
+      // Use a disabled color based on theme
+      return isDarkMode ? Colors.grey[700]! : Colors.grey[300]!;
+    }
+  }
+
+  /// Get the appropriate color for the send icon based on whether a message can be sent
+  Color _getSendIconColor(bool isDarkMode) {
+    if (_canSend) {
+      return Colors.white;
+    } else {
+      // Use a disabled color based on theme
+      return isDarkMode ? Colors.grey[400]! : Colors.grey[600]!;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDarkMode = UIUtils.isDarkMode(context);
@@ -94,10 +114,7 @@ class _MessageInputState extends State<MessageInput> {
           ),
           const SizedBox(width: 8.0),
           Material(
-            color:
-                _canSend
-                    ? primaryColor
-                    : (isDarkMode ? Colors.grey[700] : Colors.grey[300]),
+            color: _getSendButtonColor(primaryColor, isDarkMode),
             borderRadius: BorderRadius.circular(24.0),
             child: InkWell(
               onTap: _canSend ? _handleSend : null,
@@ -106,10 +123,7 @@ class _MessageInputState extends State<MessageInput> {
                 padding: const EdgeInsets.all(12.0),
                 child: Icon(
                   Icons.send,
-                  color:
-                      _canSend
-                          ? Colors.white
-                          : (isDarkMode ? Colors.grey[400] : Colors.grey[600]),
+                  color: _getSendIconColor(isDarkMode),
                   size: 24.0,
                 ),
               ),

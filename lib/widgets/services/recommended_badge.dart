@@ -45,7 +45,10 @@ class RecommendedBadge extends StatelessWidget {
 
     // If there's a reason and showTooltip is true, wrap the badge in a tooltip
     if (reason != null && showTooltip) {
-      return Tooltip(message: reason!, child: badge);
+      // Store the non-null reason in a local variable
+      final tooltipMessage = reason;
+      // Use the non-null reason directly
+      return Tooltip(message: tooltipMessage ?? '', child: badge);
     }
 
     return badge;

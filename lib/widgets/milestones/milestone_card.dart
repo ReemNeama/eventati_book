@@ -32,14 +32,30 @@ class MilestoneCard extends StatelessWidget {
         iconColor = Colors.white;
         break;
       case MilestoneStatus.unlocked:
-        cardColor = isDarkMode ? Colors.grey[800]! : Colors.white;
+        // Use null-safe approach with explicit cast
+        cardColor =
+            isDarkMode
+                ? (Colors.grey[800] ?? Colors.grey[700]) as Color
+                : Colors.white;
         textColor = isDarkMode ? Colors.white : Colors.black87;
         iconColor = primaryColor;
         break;
       case MilestoneStatus.locked:
-        cardColor = isDarkMode ? Colors.grey[900]! : Colors.grey[200]!;
-        textColor = isDarkMode ? Colors.grey[400]! : Colors.grey[600]!;
-        iconColor = isDarkMode ? Colors.grey[600]! : Colors.grey[400]!;
+        // Use null-safe approach with explicit cast
+        cardColor =
+            isDarkMode
+                ? (Colors.grey[900] ?? Colors.grey[800]) as Color
+                : (Colors.grey[200] ?? Colors.grey[300]) as Color;
+        // Use null-safe approach with explicit cast
+        textColor =
+            isDarkMode
+                ? (Colors.grey[400] ?? Colors.grey[500]) as Color
+                : (Colors.grey[600] ?? Colors.grey[500]) as Color;
+        // Use null-safe approach with explicit cast
+        iconColor =
+            isDarkMode
+                ? (Colors.grey[600] ?? Colors.grey[500]) as Color
+                : (Colors.grey[400] ?? Colors.grey[500]) as Color;
         break;
     }
 
@@ -106,7 +122,8 @@ class MilestoneCard extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(top: 8),
                   child: Text(
-                    'Completed ${DateFormat('MMM d, yyyy').format(milestone.completedDate!)}',
+                    // Use null-safe approach with null coalescing operator
+                    'Completed ${DateFormat('MMM d, yyyy').format(milestone.completedDate ?? DateTime.now())}',
                     style: TextStyle(
                       fontSize: 12,
                       color: textColor.withAlpha(200),

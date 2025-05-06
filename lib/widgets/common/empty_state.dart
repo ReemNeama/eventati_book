@@ -88,7 +88,9 @@ class EmptyState extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // Use the illustration if provided, otherwise use the icon
             if (illustration != null)
+              // Use non-null assertion here since we've already checked it's not null
               illustration!
             else
               Icon(
@@ -128,6 +130,7 @@ class EmptyState extends StatelessWidget {
                     vertical: 12,
                   ),
                 ),
+                // We've already checked that actionText is not null in the if condition
                 child: Text(actionText!),
               ),
             ],
@@ -187,6 +190,7 @@ class EmptyState extends StatelessWidget {
                         minimumSize: const Size(0, 36),
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
+                      // We've already checked that actionText is not null in the if condition
                       child: Text(actionText!),
                     ),
                   ],

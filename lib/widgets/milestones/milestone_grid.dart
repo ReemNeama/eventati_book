@@ -20,15 +20,23 @@ class MilestoneGrid extends StatelessWidget {
     this.showLocked = true,
   });
 
+  /// Get filtered milestones based on showLocked setting
+  List<Milestone> _getFilteredMilestones() {
+    if (showLocked) {
+      // If showLocked is true, return all milestones
+      return milestones;
+    } else {
+      // If showLocked is false, filter out locked and hidden milestones
+      return milestones
+          .where((m) => m.status != MilestoneStatus.locked || !m.isHidden)
+          .toList();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // Filter milestones based on showLocked
-    final filteredMilestones =
-        showLocked
-            ? milestones
-            : milestones
-                .where((m) => m.status != MilestoneStatus.locked || !m.isHidden)
-                .toList();
+    final filteredMilestones = _getFilteredMilestones();
 
     if (filteredMilestones.isEmpty) {
       return Center(
@@ -54,9 +62,8 @@ class MilestoneGrid extends StatelessWidget {
         return MilestoneCard(
           milestone: milestone,
           onTap: () {
-            if (onMilestoneTap != null) {
-              onMilestoneTap!(milestone);
-            }
+            // Use null-aware method invocation operator
+            onMilestoneTap?.call(milestone);
           },
         );
       },
