@@ -13,25 +13,40 @@ class UserFirestoreService {
 
   /// Constructor
   UserFirestoreService({DatabaseServiceInterface? firestoreService})
-      : _firestoreService = firestoreService ?? FirestoreService();
+    : _firestoreService = firestoreService ?? FirestoreService();
 
   /// Get a user by ID
   Future<User?> getUserById(String userId) async {
     try {
       final userData = await _firestoreService.getDocument(_collection, userId);
       if (userData == null) return null;
-      return User.fromFirestore(
-        DocumentSnapshot.fromJson({
-          'data': userData,
-          'id': userId,
-          'exists': true,
-          'metadata': {'hasPendingWrites': false, 'isFromCache': false},
-          'reference': {
-            'id': userId,
-            'path': '$_collection/$userId',
-            'parent': {'id': '', 'path': _collection}
-          }
-        }),
+
+      // Create a User object from the Firestore data
+      return User(
+        id: userId,
+        name: userData['name'] ?? '',
+        email: userData['email'] ?? '',
+        phoneNumber: userData['phoneNumber'],
+        profileImageUrl: userData['profileImageUrl'],
+        createdAt:
+            userData['createdAt'] != null
+                ? (userData['createdAt'] as Timestamp).toDate()
+                : DateTime.now(),
+        favoriteVenues:
+            userData['favoriteVenues'] != null
+                ? List<String>.from(userData['favoriteVenues'])
+                : [],
+        favoriteServices:
+            userData['favoriteServices'] != null
+                ? List<String>.from(userData['favoriteServices'])
+                : [],
+        role: userData['role'] ?? 'user',
+        hasPremiumSubscription: userData['hasPremiumSubscription'] ?? false,
+        isBetaTester: userData['isBetaTester'] ?? false,
+        subscriptionExpirationDate:
+            userData['subscriptionExpirationDate'] != null
+                ? (userData['subscriptionExpirationDate'] as Timestamp).toDate()
+                : null,
       );
     } catch (e) {
       print('Error getting user by ID: $e');
@@ -43,18 +58,33 @@ class UserFirestoreService {
   Stream<User?> getUserStream(String userId) {
     return _firestoreService.documentStream(_collection, userId).map((data) {
       if (data == null) return null;
-      return User.fromFirestore(
-        DocumentSnapshot.fromJson({
-          'data': data,
-          'id': userId,
-          'exists': true,
-          'metadata': {'hasPendingWrites': false, 'isFromCache': false},
-          'reference': {
-            'id': userId,
-            'path': '$_collection/$userId',
-            'parent': {'id': '', 'path': _collection}
-          }
-        }),
+
+      // Create a User object from the Firestore data
+      return User(
+        id: userId,
+        name: data['name'] ?? '',
+        email: data['email'] ?? '',
+        phoneNumber: data['phoneNumber'],
+        profileImageUrl: data['profileImageUrl'],
+        createdAt:
+            data['createdAt'] != null
+                ? (data['createdAt'] as Timestamp).toDate()
+                : DateTime.now(),
+        favoriteVenues:
+            data['favoriteVenues'] != null
+                ? List<String>.from(data['favoriteVenues'])
+                : [],
+        favoriteServices:
+            data['favoriteServices'] != null
+                ? List<String>.from(data['favoriteServices'])
+                : [],
+        role: data['role'] ?? 'user',
+        hasPremiumSubscription: data['hasPremiumSubscription'] ?? false,
+        isBetaTester: data['isBetaTester'] ?? false,
+        subscriptionExpirationDate:
+            data['subscriptionExpirationDate'] != null
+                ? (data['subscriptionExpirationDate'] as Timestamp).toDate()
+                : null,
       );
     });
   }
@@ -100,13 +130,9 @@ class UserFirestoreService {
   /// Add a venue to favorites
   Future<void> addFavoriteVenue(String userId, String venueId) async {
     try {
-      await _firestoreService.updateDocument(
-        _collection,
-        userId,
-        {
-          'favoriteVenues': FieldValue.arrayUnion([venueId]),
-        },
-      );
+      await _firestoreService.updateDocument(_collection, userId, {
+        'favoriteVenues': FieldValue.arrayUnion([venueId]),
+      });
     } catch (e) {
       print('Error adding favorite venue: $e');
       rethrow;
@@ -116,13 +142,9 @@ class UserFirestoreService {
   /// Remove a venue from favorites
   Future<void> removeFavoriteVenue(String userId, String venueId) async {
     try {
-      await _firestoreService.updateDocument(
-        _collection,
-        userId,
-        {
-          'favoriteVenues': FieldValue.arrayRemove([venueId]),
-        },
-      );
+      await _firestoreService.updateDocument(_collection, userId, {
+        'favoriteVenues': FieldValue.arrayRemove([venueId]),
+      });
     } catch (e) {
       print('Error removing favorite venue: $e');
       rethrow;
@@ -132,13 +154,9 @@ class UserFirestoreService {
   /// Add a service to favorites
   Future<void> addFavoriteService(String userId, String serviceId) async {
     try {
-      await _firestoreService.updateDocument(
-        _collection,
-        userId,
-        {
-          'favoriteServices': FieldValue.arrayUnion([serviceId]),
-        },
-      );
+      await _firestoreService.updateDocument(_collection, userId, {
+        'favoriteServices': FieldValue.arrayUnion([serviceId]),
+      });
     } catch (e) {
       print('Error adding favorite service: $e');
       rethrow;
@@ -148,13 +166,9 @@ class UserFirestoreService {
   /// Remove a service from favorites
   Future<void> removeFavoriteService(String userId, String serviceId) async {
     try {
-      await _firestoreService.updateDocument(
-        _collection,
-        userId,
-        {
-          'favoriteServices': FieldValue.arrayRemove([serviceId]),
-        },
-      );
+      await _firestoreService.updateDocument(_collection, userId, {
+        'favoriteServices': FieldValue.arrayRemove([serviceId]),
+      });
     } catch (e) {
       print('Error removing favorite service: $e');
       rethrow;
@@ -179,7 +193,9 @@ class UserFirestoreService {
 
   /// Add a custom suggestion for a user
   Future<String> addCustomSuggestion(
-      String userId, Suggestion suggestion) async {
+    String userId,
+    Suggestion suggestion,
+  ) async {
     try {
       final suggestionId = await _firestoreService.addSubcollectionDocument(
         _collection,
@@ -196,7 +212,9 @@ class UserFirestoreService {
 
   /// Update a custom suggestion for a user
   Future<void> updateCustomSuggestion(
-      String userId, Suggestion suggestion) async {
+    String userId,
+    Suggestion suggestion,
+  ) async {
     try {
       await _firestoreService.updateSubcollectionDocument(
         _collection,
@@ -213,7 +231,9 @@ class UserFirestoreService {
 
   /// Delete a custom suggestion for a user
   Future<void> deleteCustomSuggestion(
-      String userId, String suggestionId) async {
+    String userId,
+    String suggestionId,
+  ) async {
     try {
       await _firestoreService.deleteSubcollectionDocument(
         _collection,

@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/services/firebase/firestore_service.dart';
 import 'package:eventati_book/services/interfaces/database_service_interface.dart';
@@ -13,13 +12,15 @@ class EventFirestoreService {
 
   /// Constructor
   EventFirestoreService({DatabaseServiceInterface? firestoreService})
-      : _firestoreService = firestoreService ?? FirestoreService();
+    : _firestoreService = firestoreService ?? FirestoreService();
 
   /// Get an event by ID
   Future<EventTemplate?> getEventById(String eventId) async {
     try {
-      final eventData =
-          await _firestoreService.getDocument(_collection, eventId);
+      final eventData = await _firestoreService.getDocument(
+        _collection,
+        eventId,
+      );
       if (eventData == null) return null;
       return EventTemplate.fromJson({'id': eventId, ...eventData});
     } catch (e) {
@@ -31,17 +32,14 @@ class EventFirestoreService {
   /// Get events for a user
   Future<List<EventTemplate>> getEventsForUser(String userId) async {
     try {
-      final events = await _firestoreService.getCollectionWithQueryAs(
-        _collection,
-        [
-          QueryFilter(
-            field: 'userId',
-            operation: FilterOperation.equalTo,
-            value: userId,
-          ),
-        ],
-        (data, id) => EventTemplate.fromJson({'id': id, ...data}),
-      );
+      final events = await _firestoreService
+          .getCollectionWithQueryAs(_collection, [
+            QueryFilter(
+              field: 'userId',
+              operation: FilterOperation.equalTo,
+              value: userId,
+            ),
+          ], (data, id) => EventTemplate.fromJson({'id': id, ...data}));
       return events;
     } catch (e) {
       print('Error getting events for user: $e');
@@ -51,17 +49,13 @@ class EventFirestoreService {
 
   /// Get a stream of events for a user
   Stream<List<EventTemplate>> getEventsForUserStream(String userId) {
-    return _firestoreService.collectionStreamWithQueryAs(
-      _collection,
-      [
-        QueryFilter(
-          field: 'userId',
-          operation: FilterOperation.equalTo,
-          value: userId,
-        ),
-      ],
-      (data, id) => EventTemplate.fromJson({'id': id, ...data}),
-    );
+    return _firestoreService.collectionStreamWithQueryAs(_collection, [
+      QueryFilter(
+        field: 'userId',
+        operation: FilterOperation.equalTo,
+        value: userId,
+      ),
+    ], (data, id) => EventTemplate.fromJson({'id': id, ...data}));
   }
 
   /// Create a new event
@@ -110,7 +104,7 @@ class EventFirestoreService {
         'current',
       );
       if (wizardData == null) return null;
-      return WizardState.fromJson(wizardData);
+      return WizardState.fromFirestore(wizardData, eventId);
     } catch (e) {
       print('Error getting wizard state: $e');
       rethrow;
@@ -138,7 +132,18 @@ class EventFirestoreService {
         _collection,
         eventId,
         'milestones',
-        (data, id) => Milestone.fromJson({'id': id, ...data}),
+        (data, id) {
+          // Create a default criteria for the milestone
+          final criteria = MilestoneCriteria(
+            completionConditions: [
+              MilestoneCondition(
+                field: 'isCompleted',
+                operator: MilestoneConditionOperator.isTrue,
+              ),
+            ],
+          );
+          return Milestone.fromJson({'id': id, ...data}, criteria);
+        },
       );
       return milestones;
     } catch (e) {
@@ -164,8 +169,7 @@ class EventFirestoreService {
   }
 
   /// Update a milestone
-  Future<void> updateMilestone(
-      String eventId, Milestone milestone) async {
+  Future<void> updateMilestone(String eventId, Milestone milestone) async {
     try {
       await _firestoreService.updateSubcollectionDocument(
         _collection,
@@ -228,8 +232,7 @@ class EventFirestoreService {
   }
 
   /// Update a suggestion
-  Future<void> updateSuggestion(
-      String eventId, Suggestion suggestion) async {
+  Future<void> updateSuggestion(String eventId, Suggestion suggestion) async {
     try {
       await _firestoreService.updateSubcollectionDocument(
         _collection,
@@ -277,7 +280,9 @@ class EventFirestoreService {
 
   /// Add a saved comparison to an event
   Future<String> addSavedComparison(
-      String eventId, SavedComparison comparison) async {
+    String eventId,
+    SavedComparison comparison,
+  ) async {
     try {
       final comparisonId = await _firestoreService.addSubcollectionDocument(
         _collection,
@@ -294,7 +299,9 @@ class EventFirestoreService {
 
   /// Update a saved comparison
   Future<void> updateSavedComparison(
-      String eventId, SavedComparison comparison) async {
+    String eventId,
+    SavedComparison comparison,
+  ) async {
     try {
       await _firestoreService.updateSubcollectionDocument(
         _collection,
@@ -311,7 +318,9 @@ class EventFirestoreService {
 
   /// Delete a saved comparison
   Future<void> deleteSavedComparison(
-      String eventId, String comparisonId) async {
+    String eventId,
+    String comparisonId,
+  ) async {
     try {
       await _firestoreService.deleteSubcollectionDocument(
         _collection,
