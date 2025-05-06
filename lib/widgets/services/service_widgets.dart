@@ -2,17 +2,21 @@
 // This file exports all service-related widgets to simplify imports
 
 // Filter widgets
-export 'filter_dialog.dart';
-export 'multi_select_chip_group.dart';
-export 'price_range_filter.dart';
-export 'range_slider_filter.dart';
-export 'service_filter_bar.dart';
+export 'filter/filter_dialog.dart';
+export 'filter/multi_select_chip_group.dart';
+export 'filter/price_range_filter.dart';
+export 'filter/range_slider_filter.dart';
+export 'filter/service_filter_bar.dart';
+export 'filter/venue_filter.dart';
 
 // Card widgets
-export 'service_card.dart';
-export 'recommended_badge.dart';
+export 'card/service_card.dart';
+export 'card/recommended_badge.dart';
 
 // Comparison widgets
-export 'comparison_item_card.dart';
-export 'feature_comparison_table.dart';
-export 'pricing_comparison_table.dart';
+export 'comparison/comparison_item_card.dart';
+export 'comparison/feature_comparison_table.dart';
+export 'comparison/feature_list_builder.dart';
+export 'comparison/feature_value_builder.dart';
+export 'comparison/pricing_comparison_builder.dart';
+export 'comparison/pricing_comparison_table.dart';
