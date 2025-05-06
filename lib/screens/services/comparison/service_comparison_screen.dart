@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/providers/providers.dart';
-import 'package:eventati_book/screens/services/comparison/saved_comparisons_screen.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/widgets/services/comparison/comparison_item_card.dart';
 import 'package:eventati_book/widgets/services/comparison/feature_comparison_table.dart';
 import 'package:eventati_book/widgets/services/comparison/pricing_comparison_table.dart';
+import 'package:eventati_book/routing/routing.dart';
 
 /// Screen for comparing services side by side
 class ServiceComparisonScreen extends StatefulWidget {
@@ -82,11 +82,9 @@ class _ServiceComparisonScreenState extends State<ServiceComparisonScreen>
           IconButton(
             icon: const Icon(Icons.history),
             onPressed: () {
-              Navigator.push(
+              NavigationUtils.navigateToNamed(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => const SavedComparisonsScreen(),
-                ),
+                RouteNames.savedComparisons,
               );
             },
             tooltip: 'View saved comparisons',
@@ -367,11 +365,9 @@ class _ServiceComparisonScreenState extends State<ServiceComparisonScreen>
                   label: 'View',
                   onPressed: () {
                     if (mounted) {
-                      Navigator.push(
+                      NavigationUtils.navigateToNamed(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) => const SavedComparisonsScreen(),
-                        ),
+                        RouteNames.savedComparisons,
                       );
                     }
                   },

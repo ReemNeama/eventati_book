@@ -87,6 +87,11 @@ class ServiceComparisonArguments extends RouteArguments {
   const ServiceComparisonArguments({required this.serviceType}) : super();
 }
 
+/// Arguments for saved comparisons screen
+class SavedComparisonsArguments extends RouteArguments {
+  const SavedComparisonsArguments() : super();
+}
+
 /// Arguments for event planning tools screen
 class EventPlanningArguments extends RouteArguments {
   final String eventId;

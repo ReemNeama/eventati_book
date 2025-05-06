@@ -22,7 +22,7 @@ class RouteNames {
   static const String bookingForm = '/bookings/form';
 
   // Comparison routes
-  static const String savedComparisons = '/comparisons/saved';
+  static const String savedComparisons = '/services/comparison/saved';
 
   // Service routes
   static const String services = '/services';

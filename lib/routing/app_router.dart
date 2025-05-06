@@ -111,6 +111,11 @@ class AppRouter {
                   ServiceComparisonScreen(serviceType: args.serviceType),
         );
 
+      case RouteNames.savedComparisons:
+        return MaterialPageRoute(
+          builder: (context) => const SavedComparisonsScreen(),
+        );
+
       case RouteNames.eventPlanning:
         final args = settings.arguments as EventPlanningArguments;
         return MaterialPageRoute(

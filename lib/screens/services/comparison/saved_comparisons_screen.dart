@@ -137,7 +137,7 @@ class _SavedComparisonsScreenState extends State<SavedComparisonsScreen> {
                       ? 'You haven\'t saved any comparisons yet.'
                       : 'You haven\'t saved any $_selectedServiceType comparisons yet.',
               actionText: 'Browse Services',
-              onAction: () => Navigator.of(context).pop(),
+              onAction: () => NavigationUtils.pop(context),
             );
           }
 
@@ -425,7 +425,7 @@ class _SavedComparisonsScreenState extends State<SavedComparisonsScreen> {
             ),
             actions: [
               TextButton(
-                onPressed: () => Navigator.of(context).pop(),
+                onPressed: () => NavigationUtils.pop(context),
                 child: const Text('Close'),
               ),
             ],
@@ -465,7 +465,7 @@ class _SavedComparisonsScreenState extends State<SavedComparisonsScreen> {
             ),
             actions: [
               TextButton(
-                onPressed: () => Navigator.of(dialogContext).pop(),
+                onPressed: () => NavigationUtils.pop(dialogContext),
                 child: const Text('Cancel'),
               ),
               TextButton(
@@ -477,7 +477,7 @@ class _SavedComparisonsScreenState extends State<SavedComparisonsScreen> {
                   );
 
                   // Close the dialog
-                  Navigator.of(dialogContext).pop();
+                  NavigationUtils.pop(dialogContext);
 
                   // Delete the comparison
                   provider.deleteSavedComparison(comparison.id).then((success) {
@@ -586,7 +586,7 @@ class _EditComparisonDialogState extends State<_EditComparisonDialog> {
       ),
       actions: [
         TextButton(
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => NavigationUtils.pop(context),
           child: const Text('Cancel'),
         ),
         TextButton(
@@ -615,7 +615,7 @@ class _EditComparisonDialogState extends State<_EditComparisonDialog> {
             );
 
             // Close the dialog
-            Navigator.of(context).pop();
+            NavigationUtils.pop(context);
 
             // Store a reference to the scaffold messenger
             final scaffoldMessenger = ScaffoldMessenger.of(context);
