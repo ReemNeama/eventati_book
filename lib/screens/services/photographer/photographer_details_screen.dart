@@ -10,7 +10,7 @@ import 'package:eventati_book/widgets/details/detail_tab_bar.dart';
 import 'package:eventati_book/widgets/details/image_placeholder.dart';
 import 'package:eventati_book/widgets/details/chip_group.dart';
 import 'package:eventati_book/widgets/responsive/responsive.dart';
-import 'package:eventati_book/screens/booking/booking_form_screen.dart';
+import 'package:eventati_book/routing/routing.dart';
 
 class PhotographerDetailsScreen extends StatefulWidget {
   final Photographer photographer;
@@ -217,17 +217,15 @@ class _PhotographerDetailsScreenState extends State<PhotographerDetailsScreen>
 
     final selectedPackage = _packages[_selectedPackageIndex];
 
-    Navigator.push(
+    NavigationUtils.navigateToNamed(
       context,
-      MaterialPageRoute(
-        builder:
-            (context) => BookingFormScreen(
-              serviceId: widget.photographer.name, // Using name as ID for now
-              serviceType: 'photography',
-              serviceName: widget.photographer.name,
-              basePrice: selectedPackage.price,
-              // Optional event parameters can be added here if available
-            ),
+      RouteNames.bookingForm,
+      arguments: BookingFormArguments(
+        serviceId: widget.photographer.name, // Using name as ID for now
+        serviceType: 'photography',
+        serviceName: widget.photographer.name,
+        basePrice: selectedPackage.price,
+        // Optional event parameters can be added here if available
       ),
     );
   }

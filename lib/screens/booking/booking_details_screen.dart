@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/providers/providers.dart';
-import 'package:eventati_book/screens/booking/booking_form_screen.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/widgets/common/loading_indicator.dart';
 import 'package:eventati_book/widgets/common/error_message.dart';
@@ -10,6 +9,7 @@ import 'package:eventati_book/widgets/common/confirmation_dialog.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/styles/text_styles.dart';
+import 'package:eventati_book/routing/routing.dart';
 
 /// Screen to display booking details
 class BookingDetailsScreen extends StatefulWidget {
@@ -477,19 +477,17 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
 
   /// Navigate to edit booking screen
   void _editBooking(Booking booking) async {
-    final result = await Navigator.push(
+    final result = await NavigationUtils.navigateToNamed(
       context,
-      MaterialPageRoute(
-        builder:
-            (context) => BookingFormScreen(
-              bookingId: booking.id,
-              serviceId: booking.serviceId,
-              serviceType: booking.serviceType,
-              serviceName: booking.serviceName,
-              basePrice: booking.totalPrice / booking.duration,
-              eventId: booking.eventId,
-              eventName: booking.eventName,
-            ),
+      RouteNames.bookingForm,
+      arguments: BookingFormArguments(
+        bookingId: booking.id,
+        serviceId: booking.serviceId,
+        serviceType: booking.serviceType,
+        serviceName: booking.serviceName,
+        basePrice: booking.totalPrice / booking.duration,
+        eventId: booking.eventId,
+        eventName: booking.eventName,
       ),
     );
 

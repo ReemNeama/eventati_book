@@ -6,11 +6,10 @@ import 'package:eventati_book/widgets/services/filter/filter_dialog.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/utils.dart';
-import 'package:eventati_book/screens/services/venue/venue_details_screen.dart';
-import 'package:eventati_book/screens/services/comparison/service_comparison_screen.dart';
 import 'package:eventati_book/providers/providers.dart';
 import 'package:provider/provider.dart';
 import 'package:eventati_book/widgets/services/filter/venue_filter.dart';
+import 'package:eventati_book/routing/routing.dart';
 
 class VenueListScreen extends StatefulWidget {
   const VenueListScreen({super.key});
@@ -162,11 +161,12 @@ class _VenueListScreenState extends State<VenueListScreen> {
                     comparisonProvider.toggleServiceSelection(venue);
                   },
                   onTap: () {
-                    Navigator.push(
+                    NavigationUtils.navigateToNamed(
                       context,
-                      MaterialPageRoute(
-                        builder: (context) => VenueDetailsScreen(venue: venue),
-                      ),
+                      RouteNames.venueDetails,
+                      arguments: VenueDetailsArguments(
+                        venueId: venue.name,
+                      ), // Using name as ID for now
                     );
                   },
                   additionalInfo: Column(
@@ -215,12 +215,11 @@ class _VenueListScreenState extends State<VenueListScreen> {
           if (count >= 2) {
             return FloatingActionButton.extended(
               onPressed: () {
-                Navigator.push(
+                NavigationUtils.navigateToNamed(
                   context,
-                  MaterialPageRoute(
-                    builder:
-                        (context) =>
-                            const ServiceComparisonScreen(serviceType: 'Venue'),
+                  RouteNames.serviceComparison,
+                  arguments: const ServiceComparisonArguments(
+                    serviceType: 'Venue',
                   ),
                 );
               },

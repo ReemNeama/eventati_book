@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/providers/providers.dart';
-import 'package:eventati_book/screens/booking/booking_details_screen.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/widgets/common/loading_indicator.dart';
 import 'package:eventati_book/widgets/common/error_message.dart';
@@ -10,6 +9,7 @@ import 'package:eventati_book/widgets/common/empty_state.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/styles/text_styles.dart';
+import 'package:eventati_book/routing/routing.dart';
 
 /// Screen to display booking history
 class BookingHistoryScreen extends StatefulWidget {
@@ -322,11 +322,10 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen>
 
   /// Navigate to booking details screen
   void _navigateToBookingDetails(String bookingId) {
-    Navigator.push(
+    NavigationUtils.navigateToNamed(
       context,
-      MaterialPageRoute(
-        builder: (context) => BookingDetailsScreen(bookingId: bookingId),
-      ),
+      RouteNames.bookingDetails,
+      arguments: BookingDetailsArguments(bookingId: bookingId),
     ).then((_) {
       // Refresh the list when returning from details
       setState(() {});

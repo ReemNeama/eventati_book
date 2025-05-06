@@ -6,10 +6,9 @@ import 'package:eventati_book/widgets/services/filter/filter_dialog.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/utils.dart';
-import 'package:eventati_book/screens/services/catering/catering_details_screen.dart';
-import 'package:eventati_book/screens/services/comparison/service_comparison_screen.dart';
 import 'package:eventati_book/providers/providers.dart';
 import 'package:provider/provider.dart';
+import 'package:eventati_book/routing/routing.dart';
 
 class CateringListScreen extends StatefulWidget {
   const CateringListScreen({super.key});
@@ -161,12 +160,11 @@ class _CateringListScreenState extends State<CateringListScreen> {
                     comparisonProvider.toggleServiceSelection(service);
                   },
                   onTap: () {
-                    Navigator.push(
+                    NavigationUtils.navigateToNamed(
                       context,
-                      MaterialPageRoute(
-                        builder:
-                            (context) =>
-                                CateringDetailsScreen(cateringService: service),
+                      RouteNames.cateringDetails,
+                      arguments: CateringDetailsArguments(
+                        cateringId: service.name,
                       ),
                     );
                   },
@@ -216,13 +214,11 @@ class _CateringListScreenState extends State<CateringListScreen> {
           if (count >= 2) {
             return FloatingActionButton.extended(
               onPressed: () {
-                Navigator.push(
+                NavigationUtils.navigateToNamed(
                   context,
-                  MaterialPageRoute(
-                    builder:
-                        (context) => const ServiceComparisonScreen(
-                          serviceType: 'Catering',
-                        ),
+                  RouteNames.serviceComparison,
+                  arguments: const ServiceComparisonArguments(
+                    serviceType: 'Catering',
                   ),
                 );
               },

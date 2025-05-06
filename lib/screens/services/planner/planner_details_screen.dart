@@ -14,8 +14,8 @@ import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/widgets/details/detail_widgets.dart';
 import 'package:eventati_book/widgets/responsive/responsive.dart';
 
-// Import booking screen
-import 'package:eventati_book/screens/booking/booking_form_screen.dart';
+// Import routing
+import 'package:eventati_book/routing/routing.dart';
 
 class PlannerDetailsScreen extends StatefulWidget {
   final Planner planner;
@@ -179,17 +179,15 @@ class _PlannerDetailsScreenState extends State<PlannerDetailsScreen>
 
     final selectedPackage = _packages[_selectedPackageIndex];
 
-    Navigator.push(
+    NavigationUtils.navigateToNamed(
       context,
-      MaterialPageRoute(
-        builder:
-            (context) => BookingFormScreen(
-              serviceId: widget.planner.name, // Using name as ID for now
-              serviceType: 'planner',
-              serviceName: widget.planner.name,
-              basePrice: selectedPackage.price,
-              // Optional event parameters can be added here if available
-            ),
+      RouteNames.bookingForm,
+      arguments: BookingFormArguments(
+        serviceId: widget.planner.name, // Using name as ID for now
+        serviceType: 'planner',
+        serviceName: widget.planner.name,
+        basePrice: selectedPackage.price,
+        // Optional event parameters can be added here if available
       ),
     );
   }

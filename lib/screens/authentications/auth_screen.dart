@@ -1,9 +1,7 @@
-import 'package:eventati_book/screens/authentications/forgetpassword_screen.dart';
-import 'package:eventati_book/screens/authentications/login_screen.dart';
-import 'package:eventati_book/screens/authentications/register_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/widgets/responsive/responsive.dart';
+import 'package:eventati_book/routing/routing.dart';
 
 /// Main authentication screen that provides options to login, register, or reset password
 class AuthScreen extends StatefulWidget {
@@ -118,7 +116,7 @@ class _AuthScreenState extends State<AuthScreen> {
   ) {
     return ElevatedButton(
       onPressed: () {
-        NavigationUtils.navigateTo(context, const LoginScreen());
+        NavigationUtils.navigateToNamed(context, RouteNames.login);
       },
       style: ButtonStyle(
         padding: WidgetStateProperty.all(
@@ -154,7 +152,7 @@ class _AuthScreenState extends State<AuthScreen> {
   ) {
     return ElevatedButton(
       onPressed: () {
-        NavigationUtils.navigateTo(context, const RegisterScreen());
+        NavigationUtils.navigateToNamed(context, RouteNames.register);
       },
       style: ButtonStyle(
         padding: WidgetStateProperty.all(
@@ -192,7 +190,7 @@ class _AuthScreenState extends State<AuthScreen> {
         padding: const EdgeInsets.only(right: AppConstants.mediumPadding),
         child: InkWell(
           onTap: () {
-            NavigationUtils.navigateTo(context, const ForgetpasswordScreen());
+            NavigationUtils.navigateToNamed(context, RouteNames.forgotPassword);
           },
           child: Text(
             'Forgot Password?',

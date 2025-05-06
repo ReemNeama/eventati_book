@@ -12,6 +12,11 @@ class VerificationArguments extends RouteArguments {
   const VerificationArguments({required this.email}) : super();
 }
 
+/// Arguments for reset password screen
+class ResetPasswordArguments extends RouteArguments {
+  const ResetPasswordArguments() : super();
+}
+
 /// Arguments for booking details screen
 class BookingDetailsArguments extends RouteArguments {
   final String bookingId;

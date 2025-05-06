@@ -7,10 +7,9 @@ import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/widgets/services/filter/price_range_filter.dart';
 import 'package:eventati_book/utils/utils.dart';
-import 'package:eventati_book/screens/services/photographer/photographer_details_screen.dart';
-import 'package:eventati_book/screens/services/comparison/service_comparison_screen.dart';
 import 'package:eventati_book/providers/providers.dart';
 import 'package:provider/provider.dart';
+import 'package:eventati_book/routing/routing.dart';
 
 class PhotographerListScreen extends StatefulWidget {
   const PhotographerListScreen({super.key});
@@ -152,13 +151,11 @@ class _PhotographerListScreenState extends State<PhotographerListScreen> {
                     comparisonProvider.toggleServiceSelection(photographer);
                   },
                   onTap: () {
-                    Navigator.push(
+                    NavigationUtils.navigateToNamed(
                       context,
-                      MaterialPageRoute(
-                        builder:
-                            (context) => PhotographerDetailsScreen(
-                              photographer: photographer,
-                            ),
+                      RouteNames.photographerDetails,
+                      arguments: PhotographerDetailsArguments(
+                        photographerId: photographer.name,
                       ),
                     );
                   },
@@ -208,13 +205,11 @@ class _PhotographerListScreenState extends State<PhotographerListScreen> {
           if (count >= 2) {
             return FloatingActionButton.extended(
               onPressed: () {
-                Navigator.push(
+                NavigationUtils.navigateToNamed(
                   context,
-                  MaterialPageRoute(
-                    builder:
-                        (context) => const ServiceComparisonScreen(
-                          serviceType: 'Photographer',
-                        ),
+                  RouteNames.serviceComparison,
+                  arguments: const ServiceComparisonArguments(
+                    serviceType: 'Photographer',
                   ),
                 );
               },

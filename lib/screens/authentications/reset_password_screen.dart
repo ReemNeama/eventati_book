@@ -5,6 +5,7 @@ import 'package:eventati_book/widgets/auth/auth_text_field.dart';
 import 'package:eventati_book/widgets/auth/auth_button.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:provider/provider.dart';
+import 'package:eventati_book/routing/routing.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
   const ResetPasswordScreen({super.key});
@@ -66,7 +67,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     );
 
     // Navigate back to login screen
-    Navigator.of(context).popUntil((route) => route.isFirst);
+    NavigationUtils.navigateToNamedAndRemoveUntil(context, RouteNames.login);
   }
 
   @override

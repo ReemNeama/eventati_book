@@ -26,6 +26,11 @@ class AppRouter {
           builder: (context) => VerificationScreen(email: args.email),
         );
 
+      case RouteNames.resetPassword:
+        return MaterialPageRoute(
+          builder: (context) => const ResetPasswordScreen(),
+        );
+
       case RouteNames.bookingDetails:
         final args = settings.arguments as BookingDetailsArguments;
         return MaterialPageRoute(

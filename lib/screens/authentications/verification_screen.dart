@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:eventati_book/screens/authentications/reset_password_screen.dart';
 import 'package:eventati_book/widgets/auth/auth_title_widget.dart';
 import 'package:eventati_book/widgets/auth/auth_button.dart';
 import 'package:eventati_book/widgets/auth/verification_code_input.dart';
 import 'package:eventati_book/utils/utils.dart';
+import 'package:eventati_book/routing/routing.dart';
 
 class VerificationScreen extends StatefulWidget {
   final String email;
@@ -120,11 +120,10 @@ class _VerificationScreenState extends State<VerificationScreen> {
                   );
 
                   // Navigate to reset password screen
-                  Navigator.push(
+                  NavigationUtils.navigateToNamed(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => const ResetPasswordScreen(),
-                    ),
+                    RouteNames.resetPassword,
+                    arguments: const ResetPasswordArguments(),
                   );
                 } else {
                   // Show error message

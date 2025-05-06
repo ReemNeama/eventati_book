@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/providers/providers.dart';
-import 'package:eventati_book/screens/authentications/verification_screen.dart';
 import 'package:eventati_book/widgets/auth/auth_title_widget.dart';
 import 'package:eventati_book/widgets/auth/auth_text_field.dart';
 import 'package:eventati_book/widgets/auth/auth_button.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:provider/provider.dart';
+import 'package:eventati_book/routing/routing.dart';
 
 class ForgetpasswordScreen extends StatefulWidget {
   const ForgetpasswordScreen({super.key});
@@ -69,11 +69,10 @@ class _ForgetpasswordScreenState extends State<ForgetpasswordScreen> {
       );
 
       // Navigate to verification screen
-      Navigator.push(
+      NavigationUtils.navigateToNamed(
         context,
-        MaterialPageRoute(
-          builder: (context) => VerificationScreen(email: email),
-        ),
+        RouteNames.verification,
+        arguments: VerificationArguments(email: email),
       );
     } else {
       // Show error message

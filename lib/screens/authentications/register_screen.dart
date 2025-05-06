@@ -5,6 +5,7 @@ import 'package:eventati_book/widgets/auth/auth_text_field.dart';
 import 'package:eventati_book/widgets/auth/auth_button.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:provider/provider.dart';
+import 'package:eventati_book/routing/routing.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -74,7 +75,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ),
       );
 
-      // No need to navigate - main.dart will handle navigation based on auth state
+      // Navigate to home screen
+      NavigationUtils.navigateToNamedAndRemoveUntil(context, RouteNames.home);
     } else {
       // Show error message
       ScaffoldMessenger.of(context).showSnackBar(

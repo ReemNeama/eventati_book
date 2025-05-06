@@ -7,7 +7,7 @@ import 'package:eventati_book/widgets/details/package_card.dart';
 import 'package:eventati_book/widgets/details/info_card.dart';
 import 'package:eventati_book/widgets/details/detail_tab_bar.dart';
 import 'package:eventati_book/widgets/details/image_placeholder.dart';
-import 'package:eventati_book/screens/booking/booking_form_screen.dart';
+import 'package:eventati_book/routing/routing.dart';
 
 class CateringDetailsScreen extends StatefulWidget {
   final CateringService cateringService;
@@ -188,18 +188,15 @@ class _CateringDetailsScreenState extends State<CateringDetailsScreen>
 
     final selectedPackage = _packages[_selectedPackageIndex];
 
-    Navigator.push(
+    NavigationUtils.navigateToNamed(
       context,
-      MaterialPageRoute(
-        builder:
-            (context) => BookingFormScreen(
-              serviceId:
-                  widget.cateringService.name, // Using name as ID for now
-              serviceType: 'catering',
-              serviceName: widget.cateringService.name,
-              basePrice: selectedPackage.price,
-              // Optional event parameters can be added here if available
-            ),
+      RouteNames.bookingForm,
+      arguments: BookingFormArguments(
+        serviceId: widget.cateringService.name, // Using name as ID for now
+        serviceType: 'catering',
+        serviceName: widget.cateringService.name,
+        basePrice: selectedPackage.price,
+        // Optional event parameters can be added here if available
       ),
     );
   }

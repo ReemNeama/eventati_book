@@ -10,8 +10,8 @@ import 'package:eventati_book/widgets/details/detail_tab_bar.dart';
 import 'package:eventati_book/widgets/details/image_placeholder.dart';
 import 'package:eventati_book/widgets/details/chip_group.dart';
 import 'package:eventati_book/providers/providers.dart';
-import 'package:eventati_book/screens/booking/booking_form_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:eventati_book/routing/routing.dart';
 
 class VenueDetailsScreen extends StatefulWidget {
   final Venue venue;
@@ -178,17 +178,15 @@ class _VenueDetailsScreenState extends State<VenueDetailsScreen>
 
     final selectedPackage = _packages[_selectedPackageIndex];
 
-    Navigator.push(
+    NavigationUtils.navigateToNamed(
       context,
-      MaterialPageRoute(
-        builder:
-            (context) => BookingFormScreen(
-              serviceId: widget.venue.name, // Using name as ID for now
-              serviceType: 'venue',
-              serviceName: widget.venue.name,
-              basePrice: selectedPackage.price,
-              // Optional event parameters can be added here if available
-            ),
+      RouteNames.bookingForm,
+      arguments: BookingFormArguments(
+        serviceId: widget.venue.name, // Using name as ID for now
+        serviceType: 'venue',
+        serviceName: widget.venue.name,
+        basePrice: selectedPackage.price,
+        // Optional event parameters can be added here if available
       ),
     );
   }

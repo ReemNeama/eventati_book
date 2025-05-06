@@ -6,10 +6,9 @@ import 'package:eventati_book/widgets/services/filter/filter_dialog.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/utils.dart';
-import 'package:eventati_book/screens/services/planner/planner_details_screen.dart';
-import 'package:eventati_book/screens/services/comparison/service_comparison_screen.dart';
 import 'package:eventati_book/providers/providers.dart';
 import 'package:provider/provider.dart';
+import 'package:eventati_book/routing/routing.dart';
 
 class PlannerListScreen extends StatefulWidget {
   const PlannerListScreen({super.key});
@@ -173,11 +172,11 @@ class _PlannerListScreenState extends State<PlannerListScreen> {
                     comparisonProvider.toggleServiceSelection(planner);
                   },
                   onTap: () {
-                    Navigator.push(
+                    NavigationUtils.navigateToNamed(
                       context,
-                      MaterialPageRoute(
-                        builder:
-                            (context) => PlannerDetailsScreen(planner: planner),
+                      RouteNames.plannerDetails,
+                      arguments: PlannerDetailsArguments(
+                        plannerId: planner.name,
                       ),
                     );
                   },
@@ -225,13 +224,11 @@ class _PlannerListScreenState extends State<PlannerListScreen> {
           if (count >= 2) {
             return FloatingActionButton.extended(
               onPressed: () {
-                Navigator.push(
+                NavigationUtils.navigateToNamed(
                   context,
-                  MaterialPageRoute(
-                    builder:
-                        (context) => const ServiceComparisonScreen(
-                          serviceType: 'Planner',
-                        ),
+                  RouteNames.serviceComparison,
+                  arguments: const ServiceComparisonArguments(
+                    serviceType: 'Planner',
                   ),
                 );
               },

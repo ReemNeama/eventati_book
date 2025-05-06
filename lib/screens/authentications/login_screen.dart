@@ -10,6 +10,9 @@ import 'package:eventati_book/utils/utils.dart';
 // Import authentication widgets using barrel file
 import 'package:eventati_book/widgets/auth/auth_widgets.dart';
 
+// Import routing
+import 'package:eventati_book/routing/routing.dart';
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -73,9 +76,8 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       );
 
-      // Pop the login screen to return to the previous screen
-      // This is needed because main.dart will handle showing the correct screen
-      Navigator.of(context).pop();
+      // Navigate to home screen
+      NavigationUtils.navigateToNamedAndRemoveUntil(context, RouteNames.home);
     } else {
       // Show error message
       ScaffoldMessenger.of(context).showSnackBar(
