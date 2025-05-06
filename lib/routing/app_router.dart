@@ -18,6 +18,17 @@ class AppRouter {
     RouteNames.login: (context) => const LoginScreen(),
     RouteNames.register: (context) => const RegisterScreen(),
     RouteNames.forgotPassword: (context) => const ForgetpasswordScreen(),
+
+    // Guard-related routes
+    RouteNames.unauthorized: (context) => const UnauthorizedScreen(),
+    RouteNames.subscription: (context) => const SubscriptionScreen(),
+    RouteNames.featureUnavailable:
+        (context) => const FeatureUnavailableScreen(),
+
+    // Demo routes
+    RouteNames.featureGuardDemo: (context) => const FeatureGuardDemoScreen(),
+    RouteNames.routePerformance: (context) => const RoutePerformanceScreen(),
+
     // Add more static routes as needed
   };
 

@@ -21,6 +21,7 @@ export 'common/empty_state.dart'; // Display when no data is available
 export 'common/loading_indicator.dart'; // Loading spinner/indicator
 export 'common/confirmation_dialog.dart'; // Dialog for confirming actions
 export 'common/route_guard_wrapper.dart'; // Wrapper for applying route guards
+export 'common/feature_guard_wrapper.dart'; // Wrapper for applying feature guards
 
 // -------------------------
 // AUTHENTICATION WIDGETS

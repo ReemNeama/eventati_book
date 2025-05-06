@@ -12,6 +12,18 @@ class RouteNames {
   static const String mainNavigation = '/main-navigation';
   static const String onboarding = '/onboarding';
 
+  // Guard-related routes
+  static const String unauthorized = '/unauthorized';
+  static const String subscription = '/subscription';
+  static const String featureUnavailable = '/feature-unavailable';
+  static const String bookingSelection = '/booking-selection';
+  static const String comparisonSelection = '/comparison-selection';
+  static const String wizard = '/wizard';
+
+  // Demo routes
+  static const String featureGuardDemo = '/demo/feature-guard';
+  static const String routePerformance = '/demo/route-performance';
+
   // Event wizard routes
   static const String eventWizardSuggestions = '/event-wizard/suggestions';
   static const String eventWizardCreateSuggestion =

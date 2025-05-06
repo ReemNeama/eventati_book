@@ -140,6 +140,22 @@ class ProfileScreen extends StatelessWidget {
                 ),
                 _buildSettingItem(
                   context,
+                  icon: Icons.security,
+                  title: 'Feature Guards Demo',
+                  onTap: () {
+                    Navigator.pushNamed(context, '/demo/feature-guard');
+                  },
+                ),
+                _buildSettingItem(
+                  context,
+                  icon: Icons.speed,
+                  title: 'Route Performance',
+                  onTap: () {
+                    Navigator.pushNamed(context, '/demo/route-performance');
+                  },
+                ),
+                _buildSettingItem(
+                  context,
                   icon: Icons.logout,
                   title: 'Logout',
                   textColor: Colors.red,

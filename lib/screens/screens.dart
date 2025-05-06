@@ -27,3 +27,9 @@ export 'event_wizard/event_wizard_screens.dart';
 
 // Booking screens
 export 'booking/booking_screens.dart';
+
+// Guard-related screens
+export 'guards/guards.dart';
+
+// Demo screens
+export 'demo/demo_screens.dart';

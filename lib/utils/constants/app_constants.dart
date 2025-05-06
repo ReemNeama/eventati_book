@@ -36,6 +36,7 @@ class AppConstants {
   static const String savedComparisonsKey = 'savedComparisons';
   static const String themePreferenceKey = 'themePreference';
   static const String suggestionsKey = 'suggestions';
+  static const String featuresKey = 'features';
 
   // API endpoints
   static const String baseUrl = 'https://api.eventati.com';

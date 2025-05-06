@@ -36,6 +36,7 @@ void main() async {
       providers: [
         // Core providers
         ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => FeatureProvider()),
 
         // Event wizard providers
         ChangeNotifierProvider(create: (_) => WizardProvider()),
