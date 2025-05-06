@@ -1,6 +1,7 @@
 // Import Flutter packages
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 // Import app modules
 import 'package:eventati_book/styles/app_theme.dart';
@@ -8,10 +9,14 @@ import 'package:eventati_book/routing/routing.dart';
 import 'package:eventati_book/di/service_locator.dart';
 import 'package:eventati_book/di/providers_manager.dart';
 import 'package:eventati_book/services/services.dart';
+import 'firebase_options.dart';
 
 void main() async {
   // Ensure Flutter is initialized
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Firebase
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   // Initialize the service locator
   ServiceLocator().initialize();
