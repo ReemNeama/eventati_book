@@ -21,8 +21,10 @@ eventati_book/
 ```
 lib/
 ├── main.dart           # Application entry point
+├── di/                 # Dependency injection
 ├── models/             # Data models
 ├── providers/          # State management
+├── routing/            # Routing and navigation
 ├── screens/            # UI screens
 ├── services/           # Business logic services
 ├── styles/             # Styling constants
@@ -92,6 +94,17 @@ screens/
     └── comparison/             # Comparison screens
 ```
 
+## Dependency Injection Directory
+
+The di directory contains classes for dependency injection.
+
+```
+di/
+├── README.md                   # Documentation
+├── service_locator.dart        # Service locator for services
+└── providers_manager.dart      # Manager for providers
+```
+
 ## Services Directory
 
 The services directory contains business logic services.
@@ -99,6 +112,13 @@ The services directory contains business logic services.
 ```
 services/
 ├── README.md                   # Documentation
+├── analytics/                  # Analytics services
+├── auth/                       # Authentication services
+├── booking/                    # Booking services
+├── comparison/                 # Comparison services
+├── event/                      # Event services
+├── search/                     # Search services
+├── suggestion/                 # Suggestion services
 ├── task_template_service.dart  # Task template service
 └── wizard_connection_service.dart # Wizard connection service
 ```

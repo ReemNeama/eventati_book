@@ -3,11 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 // Import app modules
-import 'package:eventati_book/providers/providers.dart';
 import 'package:eventati_book/styles/app_theme.dart';
 import 'package:eventati_book/routing/routing.dart';
 import 'package:eventati_book/di/service_locator.dart';
-import 'package:eventati_book/utils/utils.dart';
+import 'package:eventati_book/di/providers_manager.dart';
 import 'package:eventati_book/services/services.dart';
 
 void main() async {
@@ -33,60 +32,7 @@ void main() async {
 
   runApp(
     MultiProvider(
-      providers: [
-        // Core providers
-        ChangeNotifierProvider(create: (_) => AuthProvider()),
-        ChangeNotifierProvider(create: (_) => FeatureProvider()),
-
-        // Event wizard providers
-        ChangeNotifierProvider(create: (_) => WizardProvider()),
-        ChangeNotifierProxyProvider<WizardProvider, MilestoneProvider>(
-          create:
-              (context) => MilestoneProvider(
-                Provider.of<WizardProvider>(context, listen: false),
-              ),
-          update:
-              (context, wizardProvider, previous) =>
-                  previous ?? MilestoneProvider(wizardProvider),
-        ),
-        ChangeNotifierProvider(create: (_) => SuggestionProvider()),
-        ChangeNotifierProvider(create: (_) => ServiceRecommendationProvider()),
-        // ChangeNotifierProvider(create: (_) => ComparisonProvider()),
-
-        // Event planning tool providers
-        ChangeNotifierProvider(
-          create: (_) => BudgetProvider(eventId: 'default'),
-          lazy: true,
-        ),
-        ChangeNotifierProvider(
-          create: (_) => GuestListProvider(eventId: 'default'),
-          lazy: true,
-        ),
-        ChangeNotifierProvider(
-          create: (_) => MessagingProvider(eventId: 'default'),
-          lazy: true,
-        ),
-        ChangeNotifierProvider(
-          create: (_) => TaskProvider(eventId: 'default'),
-          lazy: true,
-        ),
-
-        // Booking provider
-        ChangeNotifierProvider(create: (_) => BookingProvider(), lazy: true),
-
-        // Comparison providers
-        ChangeNotifierProvider(create: (_) => ComparisonProvider()),
-        ChangeNotifierProxyProvider<AuthProvider, ComparisonSavingProvider>(
-          create:
-              (context) => ComparisonSavingProvider(
-                Provider.of<AuthProvider>(context, listen: false),
-              ),
-          update:
-              (context, authProvider, previous) =>
-                  previous ?? ComparisonSavingProvider(authProvider),
-          lazy: true,
-        ),
-      ],
+      providers: ProvidersManager().providers,
       child: const MyApp(),
     ),
   );
@@ -109,14 +55,8 @@ class _MyAppState extends State<MyApp> {
     // Initialize providers when the app starts
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        // Initialize auth provider
-        Provider.of<AuthProvider>(context, listen: false).initialize();
-
-        // Initialize suggestion provider
-        Provider.of<SuggestionProvider>(context, listen: false).initialize();
-
-        // Initialize booking provider
-        Provider.of<BookingProvider>(context, listen: false).initialize();
+        // Initialize all providers using the ProvidersManager
+        ProvidersManager().initializeProviders(context);
       }
     });
   }
@@ -147,28 +87,6 @@ class _MyAppState extends State<MyApp> {
       onUnknownRoute: AppRouter.onUnknownRoute,
       // Add route observer for analytics
       navigatorObservers: [...RouteAnalytics.instance.observers],
-      home: Consumer<AuthProvider>(
-        builder: (context, authProvider, _) {
-          // Show different screens based on authentication status
-          if (authProvider.status == AuthStatus.authenticating) {
-            // Show loading screen while authenticating
-            return const Scaffold(
-              body: Center(child: CircularProgressIndicator()),
-            );
-          } else if (authProvider.isAuthenticated) {
-            // Show main navigation screen if authenticated
-            return NavigationUtils.navigateToNamedAndRemoveUntilBuilder(
-              RouteNames.mainNavigation,
-              arguments: MainNavigationArguments(toggleTheme: toggleTheme),
-            );
-          } else {
-            // Show authentication screen if not authenticated
-            return NavigationUtils.navigateToNamedAndRemoveUntilBuilder(
-              RouteNames.splash,
-            );
-          }
-        },
-      ),
     );
   }
 }
