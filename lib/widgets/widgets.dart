@@ -20,6 +20,7 @@ export 'common/error_screen.dart'; // Full-screen error display
 export 'common/empty_state.dart'; // Display when no data is available
 export 'common/loading_indicator.dart'; // Loading spinner/indicator
 export 'common/confirmation_dialog.dart'; // Dialog for confirming actions
+export 'common/route_guard_wrapper.dart'; // Wrapper for applying route guards
 
 // -------------------------
 // AUTHENTICATION WIDGETS

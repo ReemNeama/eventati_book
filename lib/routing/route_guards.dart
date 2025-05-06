@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:eventati_book/routing/route_names.dart';
 import 'package:eventati_book/providers/providers.dart';
 import 'package:provider/provider.dart';
+import 'package:eventati_book/utils/ui/navigation_utils.dart';
 
 /// A route guard that checks if a user is authenticated
 class AuthGuard {
@@ -26,11 +27,6 @@ class AuthGuard {
   }
 }
 
-// Note: The following guards are commented out as they require providers
-// that are not yet implemented in the application. They serve as examples
-// for future implementation.
-
-/*
 /// A route guard that checks if a user has completed the onboarding process
 class OnboardingGuard {
   /// Check if the user has completed onboarding
@@ -44,7 +40,7 @@ class OnboardingGuard {
 
   /// Redirect to the onboarding screen if the user has not completed onboarding
   static void redirectToOnboarding(BuildContext context) {
-    Navigator.of(context).pushReplacementNamed(RouteNames.onboarding);
+    NavigationUtils.navigateToNamedReplacement(context, RouteNames.onboarding);
   }
 
   /// Handle navigation to a route that requires onboarding
@@ -67,7 +63,10 @@ class EventGuard {
 
   /// Redirect to the event selection screen if the user has no active event
   static void redirectToEventSelection(BuildContext context) {
-    Navigator.of(context).pushReplacementNamed(RouteNames.eventSelection);
+    NavigationUtils.navigateToNamedReplacement(
+      context,
+      RouteNames.eventSelection,
+    );
   }
 
   /// Handle navigation to a route that requires an active event
@@ -79,4 +78,3 @@ class EventGuard {
     return true;
   }
 }
-*/

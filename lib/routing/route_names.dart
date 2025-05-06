@@ -10,6 +10,7 @@ class RouteNames {
   static const String eventSelection = '/event-selection';
   static const String home = '/home';
   static const String mainNavigation = '/main-navigation';
+  static const String onboarding = '/onboarding';
 
   // Event wizard routes
   static const String eventWizardSuggestions = '/event-wizard/suggestions';

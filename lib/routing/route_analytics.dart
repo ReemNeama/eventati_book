@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:eventati_book/services/analytics/analytics_service.dart';
 
 /// A class for tracking navigation events
 class RouteAnalytics {
@@ -10,6 +11,17 @@ class RouteAnalytics {
 
   /// Get the singleton instance
   static RouteAnalytics get instance => _instance;
+
+  /// Analytics service
+  late final AnalyticsService _analyticsService;
+
+  /// Initialize the analytics service
+  void initialize(AnalyticsService analyticsService) {
+    _analyticsService = analyticsService;
+  }
+
+  /// Get the analytics service
+  AnalyticsService get analyticsService => _analyticsService;
 
   /// List of observers
   final List<RouteObserver<PageRoute>> _observers = [];
@@ -23,29 +35,48 @@ class RouteAnalytics {
   List<RouteObserver<PageRoute>> get observers => _observers;
 
   /// Track a navigation event
-  void trackNavigation(String routeName, {Map<String, dynamic>? parameters}) {
-    // In a real app, this would send the event to an analytics service
-    // For now, we'll just log to the console in debug mode
-    debugPrint('Navigation event: $routeName, parameters: $parameters');
+  Future<void> trackNavigation(
+    String routeName, {
+    Map<String, dynamic>? parameters,
+  }) async {
+    // Send the event to the analytics service
+    await _analyticsService.trackUserAction(
+      'navigation',
+      parameters: {'route_name': routeName, ...?parameters},
+    );
   }
 
   /// Track a screen view
-  void trackScreenView(String screenName, {Map<String, dynamic>? parameters}) {
-    // In a real app, this would send the event to an analytics service
-    // For now, we'll just log to the console in debug mode
-    debugPrint('Screen view: $screenName, parameters: $parameters');
+  Future<void> trackScreenView(
+    String screenName, {
+    Map<String, dynamic>? parameters,
+  }) async {
+    // Send the event to the analytics service
+    await _analyticsService.trackScreenView(screenName, parameters: parameters);
   }
 
   /// Track a user action
-  void trackUserAction(String action, {Map<String, dynamic>? parameters}) {
-    // In a real app, this would send the event to an analytics service
-    // For now, we'll just log to the console in debug mode
-    debugPrint('User action: $action, parameters: $parameters');
+  Future<void> trackUserAction(
+    String action, {
+    Map<String, dynamic>? parameters,
+  }) async {
+    // Send the event to the analytics service
+    await _analyticsService.trackUserAction(action, parameters: parameters);
   }
 }
 
 /// A route observer that tracks navigation events
 class AnalyticsRouteObserver extends RouteObserver<PageRoute<dynamic>> {
+  /// The analytics service
+  final AnalyticsService _analyticsService;
+
+  /// Creates a new AnalyticsRouteObserver
+  ///
+  /// If [analyticsService] is not provided, it will be obtained from RouteAnalytics.
+  AnalyticsRouteObserver({AnalyticsService? analyticsService})
+    : _analyticsService =
+          analyticsService ?? RouteAnalytics.instance.analyticsService;
+
   @override
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
     super.didPush(route, previousRoute);
@@ -74,14 +105,18 @@ class AnalyticsRouteObserver extends RouteObserver<PageRoute<dynamic>> {
     final screenName = route.settings.name ?? 'Unknown';
     final arguments = route.settings.arguments;
 
-    RouteAnalytics.instance.trackScreenView(
-      screenName,
-      parameters:
-          arguments is Map<String, dynamic>
-              ? arguments
-              : arguments != null
-              ? {'arguments': arguments.toString()}
-              : null,
-    );
+    // Extract parameters from arguments
+    final parameters =
+        arguments is Map<String, dynamic>
+            ? arguments
+            : arguments != null
+            ? {'arguments': arguments.toString()}
+            : null;
+
+    // Track screen view using Firebase Analytics
+    _analyticsService.trackScreenView(screenName, parameters: parameters);
+
+    // Also track in RouteAnalytics for consistency
+    RouteAnalytics.instance.trackScreenView(screenName, parameters: parameters);
   }
 }

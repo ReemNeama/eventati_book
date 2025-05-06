@@ -10,9 +10,8 @@ import 'package:eventati_book/styles/app_colors_dark.dart';
 // Import routing
 import 'package:eventati_book/routing/routing.dart';
 
-// Import widgets using barrel files
-import 'package:eventati_book/widgets/event_planning/event_planning_widgets.dart';
-import 'package:eventati_book/widgets/responsive/responsive.dart';
+// Import widgets using barrel file
+import 'package:eventati_book/widgets/widgets.dart';
 
 class EventPlanningToolsScreen extends StatelessWidget {
   final String eventId;
@@ -30,6 +29,19 @@ class EventPlanningToolsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Wrap the screen with RouteGuardWrapper to apply route guards
+    return RouteGuardWrapper(
+      // Require authentication
+      authGuard: true,
+      // Require onboarding completion
+      onboardingGuard: true,
+      // Require an active event
+      eventGuard: true,
+      child: _buildScreen(context),
+    );
+  }
+
+  Widget _buildScreen(BuildContext context) {
     final isDarkMode = UIUtils.isDarkMode(context);
     final primaryColor = isDarkMode ? AppColorsDark.primary : AppColors.primary;
     final cardColor = isDarkMode ? Colors.grey[800] : Colors.white;

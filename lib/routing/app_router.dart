@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/routing/route_names.dart';
 import 'package:eventati_book/routing/route_arguments.dart';
+// Route guards are applied in the UI layer, not here
 // import 'package:eventati_book/routing/route_guards.dart';
 import 'package:eventati_book/routing/route_analytics.dart';
+import 'package:eventati_book/routing/route_performance.dart';
 import 'package:eventati_book/screens/screens.dart';
 import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/tempDB/venues.dart';
@@ -21,6 +23,9 @@ class AppRouter {
 
   /// Handle routes that require parameters
   static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
+    // Start tracking navigation time
+    RoutePerformance.instance.startNavigationTimer(settings.name ?? 'unknown');
+
     // Track navigation event
     RouteAnalytics.instance.trackNavigation(
       settings.name ?? 'unknown',
@@ -35,9 +40,16 @@ class AppRouter {
     switch (settings.name) {
       case RouteNames.verification:
         final args = settings.arguments as VerificationArguments;
-        return MaterialPageRoute(
+        final route = MaterialPageRoute(
           builder: (context) => VerificationScreen(email: args.email),
         );
+
+        // End tracking navigation time when the route is built
+        RoutePerformance.instance.endNavigationTimer(
+          settings.name ?? 'unknown',
+        );
+
+        return route;
 
       case RouteNames.resetPassword:
         return MaterialPageRoute(
@@ -130,6 +142,8 @@ class AppRouter {
         );
 
       case RouteNames.eventPlanning:
+        // Route guards should be applied in the UI layer, not here
+        // We'll just process the arguments
         final args = settings.arguments as EventPlanningArguments;
         return MaterialPageRoute(
           builder:

@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/di/service_locator.dart';
+import 'package:eventati_book/routing/route_performance.dart';
 
 /// Utility functions for navigation-related operations
 class NavigationUtils {
   /// Navigate to a screen
   static Future<T?> navigateTo<T>(BuildContext context, Widget screen) {
-    return Navigator.push<T>(
-      context,
-      MaterialPageRoute(builder: (context) => screen),
-    );
+    // Start tracking navigation time
+    RoutePerformance.instance.startNavigationTimer('custom_route');
+
+    // Create the route
+    final route = MaterialPageRoute<T>(builder: (context) => screen);
+
+    // End tracking navigation time
+    RoutePerformance.instance.endNavigationTimer('custom_route');
+
+    return Navigator.push<T>(context, route);
   }
 
   /// Navigate to a screen and replace the current screen
@@ -40,7 +47,20 @@ class NavigationUtils {
     String routeName, {
     Object? arguments,
   }) {
-    return Navigator.pushNamed<T>(context, routeName, arguments: arguments);
+    // Start tracking navigation time
+    RoutePerformance.instance.startNavigationTimer(routeName);
+
+    // Navigate to the route
+    final result = Navigator.pushNamed<T>(
+      context,
+      routeName,
+      arguments: arguments,
+    );
+
+    // Note: We don't end the timer here because the route will be built by the app_router,
+    // which will call endNavigationTimer when the route is built
+
+    return result;
   }
 
   /// Navigate to a named route and replace the current screen

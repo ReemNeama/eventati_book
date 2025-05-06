@@ -1,22 +1,35 @@
-// Import providers using barrel file
-import 'package:eventati_book/providers/providers.dart';
-
-import 'package:eventati_book/styles/app_theme.dart';
+// Import Flutter packages
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-// Import routing
+// Import app modules
+import 'package:eventati_book/providers/providers.dart';
+import 'package:eventati_book/styles/app_theme.dart';
 import 'package:eventati_book/routing/routing.dart';
 import 'package:eventati_book/di/service_locator.dart';
 import 'package:eventati_book/utils/utils.dart';
+import 'package:eventati_book/services/services.dart';
 
-void main() {
+void main() async {
+  // Ensure Flutter is initialized
+  WidgetsFlutterBinding.ensureInitialized();
+
   // Initialize the service locator
   ServiceLocator().initialize();
 
+  // Initialize analytics service (mock implementation for now)
+  final analyticsService = AnalyticsService();
+  ServiceLocator().registerSingleton<AnalyticsService>(analyticsService);
+
   // Initialize route analytics
-  final analyticsObserver = AnalyticsRouteObserver();
+  RouteAnalytics.instance.initialize(analyticsService);
+  final analyticsObserver = AnalyticsRouteObserver(
+    analyticsService: analyticsService,
+  );
   RouteAnalytics.instance.addObserver(analyticsObserver);
+
+  // Initialize route performance
+  RoutePerformance.instance.initialize(analyticsService);
 
   runApp(
     MultiProvider(
