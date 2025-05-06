@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/services/interfaces/auth_service_interface.dart';
+import 'package:eventati_book/utils/logger.dart';
 
 /// Implementation of AuthServiceInterface using Firebase Authentication
 class FirebaseAuthService implements AuthServiceInterface {
@@ -12,8 +13,8 @@ class FirebaseAuthService implements AuthServiceInterface {
   FirebaseAuthService({
     firebase_auth.FirebaseAuth? firebaseAuth,
     FirebaseFirestore? firestore,
-  })  : _firebaseAuth = firebaseAuth ?? firebase_auth.FirebaseAuth.instance,
-        _firestore = firestore ?? FirebaseFirestore.instance;
+  }) : _firebaseAuth = firebaseAuth ?? firebase_auth.FirebaseAuth.instance,
+       _firestore = firestore ?? FirebaseFirestore.instance;
 
   @override
   User? get currentUser {
@@ -63,8 +64,7 @@ class FirebaseAuthService implements AuthServiceInterface {
     String name,
   ) async {
     try {
-      final userCredential =
-          await _firebaseAuth.createUserWithEmailAndPassword(
+      final userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
@@ -95,7 +95,9 @@ class FirebaseAuthService implements AuthServiceInterface {
       await user.reload();
       final updatedUser = _firebaseAuth.currentUser;
       if (updatedUser == null) {
-        return AuthResult.failure('Registration failed: User not found after creation');
+        return AuthResult.failure(
+          'Registration failed: User not found after creation',
+        );
       }
 
       final appUser = _mapFirebaseUserToUser(updatedUser, userData);
@@ -166,7 +168,9 @@ class FirebaseAuthService implements AuthServiceInterface {
       await user.reload();
       final updatedUser = _firebaseAuth.currentUser;
       if (updatedUser == null) {
-        return AuthResult.failure('Profile update failed: User not found after update');
+        return AuthResult.failure(
+          'Profile update failed: User not found after update',
+        );
       }
 
       final userData = await _getUserDataFromFirestore(updatedUser.uid);
@@ -222,10 +226,14 @@ class FirebaseAuthService implements AuthServiceInterface {
   // Helper methods
   Future<Map<String, dynamic>?> _getUserDataFromFirestore(String userId) async {
     try {
-      final docSnapshot = await _firestore.collection('users').doc(userId).get();
+      final docSnapshot =
+          await _firestore.collection('users').doc(userId).get();
       return docSnapshot.data();
     } catch (e) {
-      print('Error getting user data from Firestore: $e');
+      Logger.e(
+        'Error getting user data from Firestore: $e',
+        tag: 'FirebaseAuthService',
+      );
       return null;
     }
   }
@@ -240,21 +248,25 @@ class FirebaseAuthService implements AuthServiceInterface {
       email: firebaseUser.email ?? '',
       phoneNumber: userData?['phoneNumber'] ?? firebaseUser.phoneNumber,
       profileImageUrl: userData?['profileImageUrl'] ?? firebaseUser.photoURL,
-      createdAt: userData?['createdAt'] != null
-          ? (userData!['createdAt'] as Timestamp).toDate()
-          : DateTime.now(),
-      favoriteVenues: userData?['favoriteVenues'] != null
-          ? List<String>.from(userData!['favoriteVenues'])
-          : [],
-      favoriteServices: userData?['favoriteServices'] != null
-          ? List<String>.from(userData!['favoriteServices'])
-          : [],
+      createdAt:
+          userData?['createdAt'] != null
+              ? (userData!['createdAt'] as Timestamp).toDate()
+              : DateTime.now(),
+      favoriteVenues:
+          userData?['favoriteVenues'] != null
+              ? List<String>.from(userData!['favoriteVenues'])
+              : [],
+      favoriteServices:
+          userData?['favoriteServices'] != null
+              ? List<String>.from(userData!['favoriteServices'])
+              : [],
       role: userData?['role'] ?? 'user',
       hasPremiumSubscription: userData?['hasPremiumSubscription'] ?? false,
       isBetaTester: userData?['isBetaTester'] ?? false,
-      subscriptionExpirationDate: userData?['subscriptionExpirationDate'] != null
-          ? (userData!['subscriptionExpirationDate'] as Timestamp).toDate()
-          : null,
+      subscriptionExpirationDate:
+          userData?['subscriptionExpirationDate'] != null
+              ? (userData!['subscriptionExpirationDate'] as Timestamp).toDate()
+              : null,
     );
   }
 

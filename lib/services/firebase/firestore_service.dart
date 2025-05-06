@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eventati_book/services/interfaces/database_service_interface.dart';
+import 'package:eventati_book/utils/logger.dart';
 
 /// Implementation of DatabaseServiceInterface using Firestore
 class FirestoreService implements DatabaseServiceInterface {
@@ -8,18 +9,20 @@ class FirestoreService implements DatabaseServiceInterface {
 
   /// Constructor
   FirestoreService({FirebaseFirestore? firestore})
-      : _firestore = firestore ?? FirebaseFirestore.instance;
+    : _firestore = firestore ?? FirebaseFirestore.instance;
 
   @override
   Future<Map<String, dynamic>?> getDocument(
-      String collection, String documentId) async {
+    String collection,
+    String documentId,
+  ) async {
     try {
       final docSnapshot =
           await _firestore.collection(collection).doc(documentId).get();
       if (!docSnapshot.exists) return null;
       return docSnapshot.data();
     } catch (e) {
-      print('Error getting document: $e');
+      Logger.e('Error getting document: $e', tag: 'FirestoreService');
       rethrow;
     }
   }
@@ -38,7 +41,7 @@ class FirestoreService implements DatabaseServiceInterface {
       if (data == null) return null;
       return fromMap(data, documentId);
     } catch (e) {
-      print('Error getting document as type: $e');
+      Logger.e('Error getting document as type: $e', tag: 'FirestoreService');
       rethrow;
     }
   }
@@ -51,7 +54,7 @@ class FirestoreService implements DatabaseServiceInterface {
           .map((doc) => {'id': doc.id, ...doc.data()})
           .toList();
     } catch (e) {
-      print('Error getting collection: $e');
+      Logger.e('Error getting collection: $e', tag: 'FirestoreService');
       rethrow;
     }
   }
@@ -67,7 +70,7 @@ class FirestoreService implements DatabaseServiceInterface {
           .map((doc) => fromMap(doc.data(), doc.id))
           .toList();
     } catch (e) {
-      print('Error getting collection as type: $e');
+      Logger.e('Error getting collection as type: $e', tag: 'FirestoreService');
       rethrow;
     }
   }
@@ -83,11 +86,15 @@ class FirestoreService implements DatabaseServiceInterface {
         query = _applyFilter(query, filter);
       }
       final querySnapshot = await query.get();
-      return querySnapshot.docs
-          .map((doc) => {'id': doc.id, ...doc.data()})
-          .toList();
+      return querySnapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        return {'id': doc.id, ...data};
+      }).toList();
     } catch (e) {
-      print('Error getting collection with query: $e');
+      Logger.e(
+        'Error getting collection with query: $e',
+        tag: 'FirestoreService',
+      );
       rethrow;
     }
   }
@@ -108,19 +115,24 @@ class FirestoreService implements DatabaseServiceInterface {
           .map((doc) => fromMap(doc.data() as Map<String, dynamic>, doc.id))
           .toList();
     } catch (e) {
-      print('Error getting collection with query as type: $e');
+      Logger.e(
+        'Error getting collection with query as type: $e',
+        tag: 'FirestoreService',
+      );
       rethrow;
     }
   }
 
   @override
   Future<String> addDocument(
-      String collection, Map<String, dynamic> data) async {
+    String collection,
+    Map<String, dynamic> data,
+  ) async {
     try {
       final docRef = await _firestore.collection(collection).add(data);
       return docRef.id;
     } catch (e) {
-      print('Error adding document: $e');
+      Logger.e('Error adding document: $e', tag: 'FirestoreService');
       rethrow;
     }
   }
@@ -134,7 +146,7 @@ class FirestoreService implements DatabaseServiceInterface {
     try {
       await _firestore.collection(collection).doc(documentId).set(data);
     } catch (e) {
-      print('Error setting document: $e');
+      Logger.e('Error setting document: $e', tag: 'FirestoreService');
       rethrow;
     }
   }
@@ -148,7 +160,7 @@ class FirestoreService implements DatabaseServiceInterface {
     try {
       await _firestore.collection(collection).doc(documentId).update(data);
     } catch (e) {
-      print('Error updating document: $e');
+      Logger.e('Error updating document: $e', tag: 'FirestoreService');
       rethrow;
     }
   }
@@ -158,7 +170,7 @@ class FirestoreService implements DatabaseServiceInterface {
     try {
       await _firestore.collection(collection).doc(documentId).delete();
     } catch (e) {
-      print('Error deleting document: $e');
+      Logger.e('Error deleting document: $e', tag: 'FirestoreService');
       rethrow;
     }
   }
@@ -170,16 +182,17 @@ class FirestoreService implements DatabaseServiceInterface {
     String subcollection,
   ) async {
     try {
-      final querySnapshot = await _firestore
-          .collection(collection)
-          .doc(documentId)
-          .collection(subcollection)
-          .get();
+      final querySnapshot =
+          await _firestore
+              .collection(collection)
+              .doc(documentId)
+              .collection(subcollection)
+              .get();
       return querySnapshot.docs
           .map((doc) => {'id': doc.id, ...doc.data()})
           .toList();
     } catch (e) {
-      print('Error getting subcollection: $e');
+      Logger.e('Error getting subcollection: $e', tag: 'FirestoreService');
       rethrow;
     }
   }
@@ -192,16 +205,20 @@ class FirestoreService implements DatabaseServiceInterface {
     T Function(Map<String, dynamic> data, String id) fromMap,
   ) async {
     try {
-      final querySnapshot = await _firestore
-          .collection(collection)
-          .doc(documentId)
-          .collection(subcollection)
-          .get();
+      final querySnapshot =
+          await _firestore
+              .collection(collection)
+              .doc(documentId)
+              .collection(subcollection)
+              .get();
       return querySnapshot.docs
           .map((doc) => fromMap(doc.data(), doc.id))
           .toList();
     } catch (e) {
-      print('Error getting subcollection as type: $e');
+      Logger.e(
+        'Error getting subcollection as type: $e',
+        tag: 'FirestoreService',
+      );
       rethrow;
     }
   }
@@ -221,7 +238,10 @@ class FirestoreService implements DatabaseServiceInterface {
           .add(data);
       return docRef.id;
     } catch (e) {
-      print('Error adding subcollection document: $e');
+      Logger.e(
+        'Error adding subcollection document: $e',
+        tag: 'FirestoreService',
+      );
       rethrow;
     }
   }
@@ -242,7 +262,10 @@ class FirestoreService implements DatabaseServiceInterface {
           .doc(subdocumentId)
           .set(data);
     } catch (e) {
-      print('Error setting subcollection document: $e');
+      Logger.e(
+        'Error setting subcollection document: $e',
+        tag: 'FirestoreService',
+      );
       rethrow;
     }
   }
@@ -263,7 +286,10 @@ class FirestoreService implements DatabaseServiceInterface {
           .doc(subdocumentId)
           .update(data);
     } catch (e) {
-      print('Error updating subcollection document: $e');
+      Logger.e(
+        'Error updating subcollection document: $e',
+        tag: 'FirestoreService',
+      );
       rethrow;
     }
   }
@@ -283,7 +309,10 @@ class FirestoreService implements DatabaseServiceInterface {
           .doc(subdocumentId)
           .delete();
     } catch (e) {
-      print('Error deleting subcollection document: $e');
+      Logger.e(
+        'Error deleting subcollection document: $e',
+        tag: 'FirestoreService',
+      );
       rethrow;
     }
   }
@@ -306,11 +335,9 @@ class FirestoreService implements DatabaseServiceInterface {
     String documentId,
     T Function(Map<String, dynamic> data, String id) fromMap,
   ) {
-    return _firestore
-        .collection(collection)
-        .doc(documentId)
-        .snapshots()
-        .map((snapshot) {
+    return _firestore.collection(collection).doc(documentId).snapshots().map((
+      snapshot,
+    ) {
       final data = snapshot.data();
       if (data == null) return null;
       return fromMap(data, documentId);
@@ -319,8 +346,15 @@ class FirestoreService implements DatabaseServiceInterface {
 
   @override
   Stream<List<Map<String, dynamic>>> collectionStream(String collection) {
-    return _firestore.collection(collection).snapshots().map((snapshot) =>
-        snapshot.docs.map((doc) => {'id': doc.id, ...doc.data()}).toList());
+    return _firestore
+        .collection(collection)
+        .snapshots()
+        .map(
+          (snapshot) =>
+              snapshot.docs
+                  .map((doc) => {'id': doc.id, ...doc.data()})
+                  .toList(),
+        );
   }
 
   @override
@@ -328,8 +362,13 @@ class FirestoreService implements DatabaseServiceInterface {
     String collection,
     T Function(Map<String, dynamic> data, String id) fromMap,
   ) {
-    return _firestore.collection(collection).snapshots().map((snapshot) =>
-        snapshot.docs.map((doc) => fromMap(doc.data(), doc.id)).toList());
+    return _firestore
+        .collection(collection)
+        .snapshots()
+        .map(
+          (snapshot) =>
+              snapshot.docs.map((doc) => fromMap(doc.data(), doc.id)).toList(),
+        );
   }
 
   @override
@@ -341,9 +380,13 @@ class FirestoreService implements DatabaseServiceInterface {
     for (final filter in filters) {
       query = _applyFilter(query, filter);
     }
-    return query.snapshots().map((snapshot) => snapshot.docs
-        .map((doc) => {'id': doc.id, ...doc.data()})
-        .toList());
+    return query.snapshots().map(
+      (snapshot) =>
+          snapshot.docs.map((doc) {
+            final data = doc.data() as Map<String, dynamic>;
+            return <String, dynamic>{'id': doc.id, ...data};
+          }).toList(),
+    );
   }
 
   @override
@@ -356,9 +399,12 @@ class FirestoreService implements DatabaseServiceInterface {
     for (final filter in filters) {
       query = _applyFilter(query, filter);
     }
-    return query.snapshots().map((snapshot) => snapshot.docs
-        .map((doc) => fromMap(doc.data() as Map<String, dynamic>, doc.id))
-        .toList());
+    return query.snapshots().map(
+      (snapshot) =>
+          snapshot.docs
+              .map((doc) => fromMap(doc.data() as Map<String, dynamic>, doc.id))
+              .toList(),
+    );
   }
 
   @override
@@ -372,9 +418,12 @@ class FirestoreService implements DatabaseServiceInterface {
         .doc(documentId)
         .collection(subcollection)
         .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => {'id': doc.id, ...doc.data()})
-            .toList());
+        .map(
+          (snapshot) =>
+              snapshot.docs
+                  .map((doc) => {'id': doc.id, ...doc.data()})
+                  .toList(),
+        );
   }
 
   @override
@@ -389,8 +438,10 @@ class FirestoreService implements DatabaseServiceInterface {
         .doc(documentId)
         .collection(subcollection)
         .snapshots()
-        .map((snapshot) =>
-            snapshot.docs.map((doc) => fromMap(doc.data(), doc.id)).toList());
+        .map(
+          (snapshot) =>
+              snapshot.docs.map((doc) => fromMap(doc.data(), doc.id)).toList(),
+        );
   }
 
   @override
@@ -400,8 +451,9 @@ class FirestoreService implements DatabaseServiceInterface {
       for (final operation in operations) {
         if (operation.subcollection == null) {
           // Collection operation
-          final docRef =
-              _firestore.collection(operation.collection).doc(operation.documentId);
+          final docRef = _firestore
+              .collection(operation.collection)
+              .doc(operation.documentId);
           switch (operation.type) {
             case BatchOperationType.set:
               batch.set(docRef, operation.data!);
@@ -435,7 +487,7 @@ class FirestoreService implements DatabaseServiceInterface {
       }
       await batch.commit();
     } catch (e) {
-      print('Error running batch: $e');
+      Logger.e('Error running batch: $e', tag: 'FirestoreService');
       rethrow;
     }
   }
@@ -447,7 +499,7 @@ class FirestoreService implements DatabaseServiceInterface {
     try {
       return await _firestore.runTransaction(transactionFunction);
     } catch (e) {
-      print('Error running transaction: $e');
+      Logger.e('Error running transaction: $e', tag: 'FirestoreService');
       rethrow;
     }
   }

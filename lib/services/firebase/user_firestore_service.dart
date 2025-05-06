@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/services/firebase/firestore_service.dart';
+import 'package:eventati_book/utils/logger.dart';
 import 'package:eventati_book/services/interfaces/database_service_interface.dart';
 
 /// Service for handling user-related Firestore operations
@@ -49,7 +50,7 @@ class UserFirestoreService {
                 : null,
       );
     } catch (e) {
-      print('Error getting user by ID: $e');
+      Logger.e('Error getting user by ID: $e', tag: 'UserFirestoreService');
       rethrow;
     }
   }
@@ -98,7 +99,7 @@ class UserFirestoreService {
         user.toFirestore(),
       );
     } catch (e) {
-      print('Error creating user: $e');
+      Logger.e('Error creating user: $e', tag: 'UserFirestoreService');
       rethrow;
     }
   }
@@ -112,7 +113,7 @@ class UserFirestoreService {
         user.toFirestore(),
       );
     } catch (e) {
-      print('Error updating user: $e');
+      Logger.e('Error updating user: $e', tag: 'UserFirestoreService');
       rethrow;
     }
   }
@@ -122,7 +123,7 @@ class UserFirestoreService {
     try {
       await _firestoreService.deleteDocument(_collection, userId);
     } catch (e) {
-      print('Error deleting user: $e');
+      Logger.e('Error deleting user: $e', tag: 'UserFirestoreService');
       rethrow;
     }
   }
@@ -134,7 +135,7 @@ class UserFirestoreService {
         'favoriteVenues': FieldValue.arrayUnion([venueId]),
       });
     } catch (e) {
-      print('Error adding favorite venue: $e');
+      Logger.e('Error adding favorite venue: $e', tag: 'UserFirestoreService');
       rethrow;
     }
   }
@@ -146,7 +147,10 @@ class UserFirestoreService {
         'favoriteVenues': FieldValue.arrayRemove([venueId]),
       });
     } catch (e) {
-      print('Error removing favorite venue: $e');
+      Logger.e(
+        'Error removing favorite venue: $e',
+        tag: 'UserFirestoreService',
+      );
       rethrow;
     }
   }
@@ -158,7 +162,10 @@ class UserFirestoreService {
         'favoriteServices': FieldValue.arrayUnion([serviceId]),
       });
     } catch (e) {
-      print('Error adding favorite service: $e');
+      Logger.e(
+        'Error adding favorite service: $e',
+        tag: 'UserFirestoreService',
+      );
       rethrow;
     }
   }
@@ -170,7 +177,10 @@ class UserFirestoreService {
         'favoriteServices': FieldValue.arrayRemove([serviceId]),
       });
     } catch (e) {
-      print('Error removing favorite service: $e');
+      Logger.e(
+        'Error removing favorite service: $e',
+        tag: 'UserFirestoreService',
+      );
       rethrow;
     }
   }
@@ -186,7 +196,10 @@ class UserFirestoreService {
       );
       return suggestions;
     } catch (e) {
-      print('Error getting custom suggestions: $e');
+      Logger.e(
+        'Error getting custom suggestions: $e',
+        tag: 'UserFirestoreService',
+      );
       rethrow;
     }
   }
@@ -205,7 +218,10 @@ class UserFirestoreService {
       );
       return suggestionId;
     } catch (e) {
-      print('Error adding custom suggestion: $e');
+      Logger.e(
+        'Error adding custom suggestion: $e',
+        tag: 'UserFirestoreService',
+      );
       rethrow;
     }
   }
@@ -224,7 +240,10 @@ class UserFirestoreService {
         suggestion.toJson()..remove('id'),
       );
     } catch (e) {
-      print('Error updating custom suggestion: $e');
+      Logger.e(
+        'Error updating custom suggestion: $e',
+        tag: 'UserFirestoreService',
+      );
       rethrow;
     }
   }
@@ -242,7 +261,10 @@ class UserFirestoreService {
         suggestionId,
       );
     } catch (e) {
-      print('Error deleting custom suggestion: $e');
+      Logger.e(
+        'Error deleting custom suggestion: $e',
+        tag: 'UserFirestoreService',
+      );
       rethrow;
     }
   }

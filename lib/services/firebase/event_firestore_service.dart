@@ -1,6 +1,7 @@
 import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/services/firebase/firestore_service.dart';
 import 'package:eventati_book/services/interfaces/database_service_interface.dart';
+import 'package:eventati_book/utils/logger.dart';
 
 /// Service for handling event-related Firestore operations
 class EventFirestoreService {
@@ -24,7 +25,7 @@ class EventFirestoreService {
       if (eventData == null) return null;
       return EventTemplate.fromJson({'id': eventId, ...eventData});
     } catch (e) {
-      print('Error getting event by ID: $e');
+      Logger.e('Error getting event by ID: $e', tag: 'EventFirestoreService');
       rethrow;
     }
   }
@@ -42,7 +43,10 @@ class EventFirestoreService {
           ], (data, id) => EventTemplate.fromJson({'id': id, ...data}));
       return events;
     } catch (e) {
-      print('Error getting events for user: $e');
+      Logger.e(
+        'Error getting events for user: $e',
+        tag: 'EventFirestoreService',
+      );
       rethrow;
     }
   }
@@ -67,7 +71,7 @@ class EventFirestoreService {
       );
       return eventId;
     } catch (e) {
-      print('Error creating event: $e');
+      Logger.e('Error creating event: $e', tag: 'EventFirestoreService');
       rethrow;
     }
   }
@@ -81,7 +85,7 @@ class EventFirestoreService {
         event.toJson()..remove('id'),
       );
     } catch (e) {
-      print('Error updating event: $e');
+      Logger.e('Error updating event: $e', tag: 'EventFirestoreService');
       rethrow;
     }
   }
@@ -91,7 +95,7 @@ class EventFirestoreService {
     try {
       await _firestoreService.deleteDocument(_collection, eventId);
     } catch (e) {
-      print('Error deleting event: $e');
+      Logger.e('Error deleting event: $e', tag: 'EventFirestoreService');
       rethrow;
     }
   }
@@ -106,7 +110,7 @@ class EventFirestoreService {
       if (wizardData == null) return null;
       return WizardState.fromFirestore(wizardData, eventId);
     } catch (e) {
-      print('Error getting wizard state: $e');
+      Logger.e('Error getting wizard state: $e', tag: 'EventFirestoreService');
       rethrow;
     }
   }
@@ -120,7 +124,7 @@ class EventFirestoreService {
         wizardState.toJson(),
       );
     } catch (e) {
-      print('Error saving wizard state: $e');
+      Logger.e('Error saving wizard state: $e', tag: 'EventFirestoreService');
       rethrow;
     }
   }
@@ -134,7 +138,7 @@ class EventFirestoreService {
         'milestones',
         (data, id) {
           // Create a default criteria for the milestone
-          final criteria = MilestoneCriteria(
+          const criteria = MilestoneCriteria(
             completionConditions: [
               MilestoneCondition(
                 field: 'isCompleted',
@@ -147,7 +151,7 @@ class EventFirestoreService {
       );
       return milestones;
     } catch (e) {
-      print('Error getting milestones: $e');
+      Logger.e('Error getting milestones: $e', tag: 'EventFirestoreService');
       rethrow;
     }
   }
@@ -163,7 +167,7 @@ class EventFirestoreService {
       );
       return milestoneId;
     } catch (e) {
-      print('Error adding milestone: $e');
+      Logger.e('Error adding milestone: $e', tag: 'EventFirestoreService');
       rethrow;
     }
   }
@@ -179,7 +183,7 @@ class EventFirestoreService {
         milestone.toJson()..remove('id'),
       );
     } catch (e) {
-      print('Error updating milestone: $e');
+      Logger.e('Error updating milestone: $e', tag: 'EventFirestoreService');
       rethrow;
     }
   }
@@ -194,7 +198,7 @@ class EventFirestoreService {
         milestoneId,
       );
     } catch (e) {
-      print('Error deleting milestone: $e');
+      Logger.e('Error deleting milestone: $e', tag: 'EventFirestoreService');
       rethrow;
     }
   }
@@ -210,7 +214,7 @@ class EventFirestoreService {
       );
       return suggestions;
     } catch (e) {
-      print('Error getting suggestions: $e');
+      Logger.e('Error getting suggestions: $e', tag: 'EventFirestoreService');
       rethrow;
     }
   }
@@ -226,7 +230,7 @@ class EventFirestoreService {
       );
       return suggestionId;
     } catch (e) {
-      print('Error adding suggestion: $e');
+      Logger.e('Error adding suggestion: $e', tag: 'EventFirestoreService');
       rethrow;
     }
   }
@@ -242,7 +246,7 @@ class EventFirestoreService {
         suggestion.toJson()..remove('id'),
       );
     } catch (e) {
-      print('Error updating suggestion: $e');
+      Logger.e('Error updating suggestion: $e', tag: 'EventFirestoreService');
       rethrow;
     }
   }
@@ -257,7 +261,7 @@ class EventFirestoreService {
         suggestionId,
       );
     } catch (e) {
-      print('Error deleting suggestion: $e');
+      Logger.e('Error deleting suggestion: $e', tag: 'EventFirestoreService');
       rethrow;
     }
   }
@@ -273,7 +277,10 @@ class EventFirestoreService {
       );
       return comparisons;
     } catch (e) {
-      print('Error getting saved comparisons: $e');
+      Logger.e(
+        'Error getting saved comparisons: $e',
+        tag: 'EventFirestoreService',
+      );
       rethrow;
     }
   }
@@ -292,7 +299,10 @@ class EventFirestoreService {
       );
       return comparisonId;
     } catch (e) {
-      print('Error adding saved comparison: $e');
+      Logger.e(
+        'Error adding saved comparison: $e',
+        tag: 'EventFirestoreService',
+      );
       rethrow;
     }
   }
@@ -311,7 +321,10 @@ class EventFirestoreService {
         comparison.toJson()..remove('id'),
       );
     } catch (e) {
-      print('Error updating saved comparison: $e');
+      Logger.e(
+        'Error updating saved comparison: $e',
+        tag: 'EventFirestoreService',
+      );
       rethrow;
     }
   }
@@ -329,7 +342,10 @@ class EventFirestoreService {
         comparisonId,
       );
     } catch (e) {
-      print('Error deleting saved comparison: $e');
+      Logger.e(
+        'Error deleting saved comparison: $e',
+        tag: 'EventFirestoreService',
+      );
       rethrow;
     }
   }
