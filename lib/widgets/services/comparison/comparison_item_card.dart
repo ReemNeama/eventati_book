@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/models/models.dart';
-import 'package:eventati_book/screens/services/venue/venue_details_screen.dart';
-import 'package:eventati_book/screens/services/catering/catering_details_screen.dart';
-import 'package:eventati_book/screens/services/photographer/photographer_details_screen.dart';
-import 'package:eventati_book/screens/services/planner/planner_details_screen.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/utils.dart';
+import 'package:eventati_book/routing/routing.dart';
 
 /// Card widget for displaying a service in the comparison view
 class ComparisonItemCard extends StatelessWidget {
@@ -188,33 +185,28 @@ class ComparisonItemCard extends StatelessWidget {
   /// Navigate to the appropriate details screen based on service type
   void _navigateToDetailsScreen(BuildContext context) {
     if (serviceType == 'Venue' && service is Venue) {
-      Navigator.push(
+      NavigationUtils.navigateToNamed(
         context,
-        MaterialPageRoute(
-          builder: (context) => VenueDetailsScreen(venue: service),
-        ),
+        RouteNames.venueDetails,
+        arguments: VenueDetailsArguments(venueId: service.id),
       );
     } else if (serviceType == 'Catering' && service is CateringService) {
-      Navigator.push(
+      NavigationUtils.navigateToNamed(
         context,
-        MaterialPageRoute(
-          builder: (context) => CateringDetailsScreen(cateringService: service),
-        ),
+        RouteNames.cateringDetails,
+        arguments: CateringDetailsArguments(cateringId: service.id),
       );
     } else if (serviceType == 'Photographer' && service is Photographer) {
-      Navigator.push(
+      NavigationUtils.navigateToNamed(
         context,
-        MaterialPageRoute(
-          builder:
-              (context) => PhotographerDetailsScreen(photographer: service),
-        ),
+        RouteNames.photographerDetails,
+        arguments: PhotographerDetailsArguments(photographerId: service.id),
       );
     } else if (serviceType == 'Planner' && service is Planner) {
-      Navigator.push(
+      NavigationUtils.navigateToNamed(
         context,
-        MaterialPageRoute(
-          builder: (context) => PlannerDetailsScreen(planner: service),
-        ),
+        RouteNames.plannerDetails,
+        arguments: PlannerDetailsArguments(plannerId: service.id),
       );
     }
   }

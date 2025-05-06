@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:eventati_book/utils/ui/navigation_utils.dart';
 
 /// Utility functions for UI-related operations
 class UIUtils {
@@ -65,11 +66,11 @@ class UIUtils {
             content: Text(message),
             actions: [
               TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
+                onPressed: () => NavigationUtils.pop(context, false),
                 child: Text(cancelText),
               ),
               TextButton(
-                onPressed: () => Navigator.of(context).pop(true),
+                onPressed: () => NavigationUtils.pop(context, true),
                 child: Text(confirmText),
               ),
             ],

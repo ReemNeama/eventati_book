@@ -11,6 +11,13 @@ import 'package:eventati_book/di/service_locator.dart';
 import 'package:eventati_book/utils/utils.dart';
 
 void main() {
+  // Initialize the service locator
+  ServiceLocator().initialize();
+
+  // Initialize route analytics
+  final analyticsObserver = AnalyticsRouteObserver();
+  RouteAnalytics.instance.addObserver(analyticsObserver);
+
   runApp(
     MultiProvider(
       providers: [
@@ -124,6 +131,8 @@ class _MyAppState extends State<MyApp> {
       routes: AppRouter.routes,
       onGenerateRoute: AppRouter.onGenerateRoute,
       onUnknownRoute: AppRouter.onUnknownRoute,
+      // Add route observer for analytics
+      navigatorObservers: [...RouteAnalytics.instance.observers],
       home: Consumer<AuthProvider>(
         builder: (context, authProvider, _) {
           // Show different screens based on authentication status

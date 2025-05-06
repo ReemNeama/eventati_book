@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/routing/route_names.dart';
 import 'package:eventati_book/routing/route_arguments.dart';
+// import 'package:eventati_book/routing/route_guards.dart';
+import 'package:eventati_book/routing/route_analytics.dart';
 import 'package:eventati_book/screens/screens.dart';
 import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/tempDB/venues.dart';
@@ -19,6 +21,17 @@ class AppRouter {
 
   /// Handle routes that require parameters
   static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
+    // Track navigation event
+    RouteAnalytics.instance.trackNavigation(
+      settings.name ?? 'unknown',
+      parameters:
+          settings.arguments is Map<String, dynamic>
+              ? settings.arguments as Map<String, dynamic>
+              : settings.arguments != null
+              ? {'arguments': settings.arguments.toString()}
+              : null,
+    );
+
     switch (settings.name) {
       case RouteNames.verification:
         final args = settings.arguments as VerificationArguments;

@@ -42,7 +42,7 @@ class ConfirmationDialog extends StatelessWidget {
       content: Text(content, style: TextStyles.bodyMedium),
       actions: [
         TextButton(
-          onPressed: () => Navigator.of(context).pop(false),
+          onPressed: () => NavigationUtils.pop(context, false),
           child: Text(
             cancelText,
             style: TextStyles.bodyMedium.copyWith(color: Colors.grey[600]),
@@ -50,7 +50,7 @@ class ConfirmationDialog extends StatelessWidget {
         ),
         ElevatedButton(
           style: ElevatedButton.styleFrom(backgroundColor: buttonColor),
-          onPressed: () => Navigator.of(context).pop(true),
+          onPressed: () => NavigationUtils.pop(context, true),
           child: Text(
             confirmText,
             style: TextStyles.bodyMedium.copyWith(color: Colors.white),
