@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:eventati_book/di/service_locator.dart';
 
 /// Utility functions for navigation-related operations
 class NavigationUtils {
@@ -110,5 +111,53 @@ class NavigationUtils {
     }
 
     return true;
+  }
+
+  /// Navigate without context
+  static Future<T?> navigateWithoutContext<T>(
+    String routeName, {
+    Object? arguments,
+  }) {
+    return serviceLocator.navigationService.navigateTo<T>(
+      routeName,
+      arguments: arguments,
+    );
+  }
+
+  /// Navigate without context and replace the current screen
+  static Future<T?> navigateToReplacementWithoutContext<T>(
+    String routeName, {
+    Object? arguments,
+  }) {
+    return serviceLocator.navigationService.navigateToReplacement<T>(
+      routeName,
+      arguments: arguments,
+    );
+  }
+
+  /// Navigate without context and remove all previous screens
+  static Future<T?> navigateToAndRemoveUntilWithoutContext<T>(
+    String routeName, {
+    Object? arguments,
+  }) {
+    return serviceLocator.navigationService.navigateToAndRemoveUntil<T>(
+      routeName,
+      arguments: arguments,
+    );
+  }
+
+  /// Go back without context
+  static void goBackWithoutContext<T>([T? result]) {
+    serviceLocator.navigationService.goBack<T>(result);
+  }
+
+  /// Go back without context if possible
+  static void goBackIfCanWithoutContext<T>([T? result]) {
+    serviceLocator.navigationService.goBackIfCan<T>(result);
+  }
+
+  /// Pop until a specific route without context
+  static void popUntilWithoutContext(String routeName) {
+    serviceLocator.navigationService.popUntil(routeName);
   }
 }

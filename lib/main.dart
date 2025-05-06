@@ -7,6 +7,10 @@ import 'package:eventati_book/styles/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+// Import routing
+import 'package:eventati_book/routing/routing.dart';
+import 'package:eventati_book/di/service_locator.dart';
+
 void main() {
   runApp(
     MultiProvider(
@@ -113,53 +117,14 @@ class _MyAppState extends State<MyApp> {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: _themeMode,
+      // Use the navigation service's navigator key
+      navigatorKey: serviceLocator.navigationService.navigatorKey,
       // Define named routes for the app
-      initialRoute: '/',
-      routes: {
-        '/event-selection': (context) => const EventSelectionScreen(),
-        '/login': (context) => const LoginScreen(),
-        '/register': (context) => const RegisterScreen(),
-        '/forgot-password': (context) => const ForgetpasswordScreen(),
-        '/event-wizard/suggestions': (context) => const SuggestionScreen(),
-        '/event-wizard/create-suggestion':
-            (context) => const CreateSuggestionScreen(),
-        '/bookings': (context) => const BookingHistoryScreen(),
-        '/comparisons/saved': (context) => const SavedComparisonsScreen(),
-      },
-      // Use onGenerateRoute for routes that need parameters
-      onGenerateRoute: (settings) {
-        if (settings.name == '/verification') {
-          final args = settings.arguments as Map<String, dynamic>;
-
-          return MaterialPageRoute(
-            builder: (context) => VerificationScreen(email: args['email']),
-          );
-        } else if (settings.name == '/bookings/details') {
-          final args = settings.arguments as Map<String, dynamic>;
-
-          return MaterialPageRoute(
-            builder:
-                (context) => BookingDetailsScreen(bookingId: args['bookingId']),
-          );
-        } else if (settings.name == '/bookings/form') {
-          final args = settings.arguments as Map<String, dynamic>;
-
-          return MaterialPageRoute(
-            builder:
-                (context) => BookingFormScreen(
-                  serviceId: args['serviceId'],
-                  serviceType: args['serviceType'],
-                  serviceName: args['serviceName'],
-                  basePrice: args['basePrice'],
-                  bookingId: args['bookingId'],
-                  eventId: args['eventId'],
-                  eventName: args['eventName'],
-                ),
-          );
-        }
-
-        return null;
-      },
+      initialRoute: RouteNames.splash,
+      // Use AppRouter for routes
+      routes: AppRouter.routes,
+      onGenerateRoute: AppRouter.onGenerateRoute,
+      onUnknownRoute: AppRouter.onUnknownRoute,
       home: Consumer<AuthProvider>(
         builder: (context, authProvider, _) {
           // Show different screens based on authentication status
