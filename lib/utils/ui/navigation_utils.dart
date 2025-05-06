@@ -160,4 +160,24 @@ class NavigationUtils {
   static void popUntilWithoutContext(String routeName) {
     serviceLocator.navigationService.popUntil(routeName);
   }
+
+  /// Create a widget that navigates to a named route and removes all previous screens
+  /// This is useful for returning a widget from a builder function
+  static Widget navigateToNamedAndRemoveUntilBuilder(
+    String routeName, {
+    Object? arguments,
+  }) {
+    return Builder(
+      builder: (context) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          navigateToNamedAndRemoveUntil(
+            context,
+            routeName,
+            arguments: arguments,
+          );
+        });
+        return Container(); // This widget will be replaced immediately
+      },
+    );
+  }
 }

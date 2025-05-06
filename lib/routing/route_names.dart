@@ -9,6 +9,7 @@ class RouteNames {
   static const String resetPassword = '/reset-password';
   static const String eventSelection = '/event-selection';
   static const String home = '/home';
+  static const String mainNavigation = '/main-navigation';
 
   // Event wizard routes
   static const String eventWizardSuggestions = '/event-wizard/suggestions';
@@ -41,6 +42,8 @@ class RouteNames {
   static const String guestList = '/event-planning/guest-list';
   static const String timeline = '/event-planning/timeline';
   static const String vendors = '/event-planning/vendors';
+  static const String vendorCommunication =
+      '/event-planning/vendor-communication';
 
   // Profile routes
   static const String profile = '/profile';

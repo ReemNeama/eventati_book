@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
-import 'package:eventati_book/screens/event_planning/event_planning_tools_screen.dart';
+import 'package:eventati_book/routing/routing.dart';
 
 /// Screen that displays all events created or saved by the user
 class UserEventsScreen extends StatefulWidget {
@@ -51,7 +51,7 @@ class _UserEventsScreenState extends State<UserEventsScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // Navigate to event selection screen
-          Navigator.pushNamed(context, '/event-selection');
+          NavigationUtils.navigateToNamed(context, RouteNames.eventSelection);
         },
         backgroundColor: primaryColor,
         child: const Icon(Icons.add),
@@ -138,18 +138,16 @@ class _UserEventsScreenState extends State<UserEventsScreen> {
               icon: const Icon(Icons.more_vert),
               onSelected: (value) {
                 if (value == 'planning') {
-                  Navigator.push(
+                  NavigationUtils.navigateToNamed(
                     context,
-                    MaterialPageRoute(
-                      builder:
-                          (context) => EventPlanningToolsScreen(
-                            eventId:
-                                index
-                                    .toString(), // In a real app, this would be a real ID
-                            eventName: event['name'],
-                            eventType: event['type'],
-                            eventDate: event['date'],
-                          ),
+                    RouteNames.eventPlanning,
+                    arguments: EventPlanningArguments(
+                      eventId:
+                          index
+                              .toString(), // In a real app, this would be a real ID
+                      eventName: event['name'],
+                      eventType: event['type'],
+                      eventDate: event['date'],
                     ),
                   );
                 } else if (value == 'details') {

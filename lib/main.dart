@@ -1,8 +1,6 @@
 // Import providers using barrel file
 import 'package:eventati_book/providers/providers.dart';
 
-// Import screens using barrel files
-import 'package:eventati_book/screens/screens.dart';
 import 'package:eventati_book/styles/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -10,6 +8,7 @@ import 'package:provider/provider.dart';
 // Import routing
 import 'package:eventati_book/routing/routing.dart';
 import 'package:eventati_book/di/service_locator.dart';
+import 'package:eventati_book/utils/utils.dart';
 
 void main() {
   runApp(
@@ -135,10 +134,15 @@ class _MyAppState extends State<MyApp> {
             );
           } else if (authProvider.isAuthenticated) {
             // Show main navigation screen if authenticated
-            return MainNavigationScreen(toggleTheme: toggleTheme);
+            return NavigationUtils.navigateToNamedAndRemoveUntilBuilder(
+              RouteNames.mainNavigation,
+              arguments: MainNavigationArguments(toggleTheme: toggleTheme),
+            );
           } else {
             // Show authentication screen if not authenticated
-            return const AuthScreen();
+            return NavigationUtils.navigateToNamedAndRemoveUntilBuilder(
+              RouteNames.splash,
+            );
           }
         },
       ),

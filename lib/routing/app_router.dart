@@ -31,6 +31,13 @@ class AppRouter {
           builder: (context) => const ResetPasswordScreen(),
         );
 
+      case RouteNames.mainNavigation:
+        final args = settings.arguments as MainNavigationArguments;
+        return MaterialPageRoute(
+          builder:
+              (context) => MainNavigationScreen(toggleTheme: args.toggleTheme),
+        );
+
       case RouteNames.bookingDetails:
         final args = settings.arguments as BookingDetailsArguments;
         return MaterialPageRoute(
@@ -102,6 +109,58 @@ class AppRouter {
           builder:
               (context) =>
                   ServiceComparisonScreen(serviceType: args.serviceType),
+        );
+
+      case RouteNames.eventPlanning:
+        final args = settings.arguments as EventPlanningArguments;
+        return MaterialPageRoute(
+          builder:
+              (context) => EventPlanningToolsScreen(
+                eventId: args.eventId,
+                eventName: args.eventName,
+                eventType: args.eventType,
+                eventDate: args.eventDate,
+              ),
+        );
+
+      case RouteNames.budget:
+        final args = settings.arguments as BudgetArguments;
+        return MaterialPageRoute(
+          builder:
+              (context) => BudgetOverviewScreen(
+                eventId: args.eventId,
+                eventName: args.eventName,
+              ),
+        );
+
+      case RouteNames.guestList:
+        final args = settings.arguments as GuestListArguments;
+        return MaterialPageRoute(
+          builder:
+              (context) => GuestListScreen(
+                eventId: args.eventId,
+                eventName: args.eventName,
+              ),
+        );
+
+      case RouteNames.timeline:
+        final args = settings.arguments as TimelineArguments;
+        return MaterialPageRoute(
+          builder:
+              (context) => TimelineScreen(
+                eventId: args.eventId,
+                eventName: args.eventName,
+              ),
+        );
+
+      case RouteNames.vendorCommunication:
+        final args = settings.arguments as VendorCommunicationArguments;
+        return MaterialPageRoute(
+          builder:
+              (context) => VendorListScreen(
+                eventId: args.eventId,
+                eventName: args.eventName,
+              ),
         );
 
       default:

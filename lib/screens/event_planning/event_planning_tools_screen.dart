@@ -7,11 +7,8 @@ import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 
-// Import screens
-import 'package:eventati_book/screens/event_planning/budget/budget_overview_screen.dart';
-import 'package:eventati_book/screens/event_planning/guest_list/guest_list_screen.dart';
-import 'package:eventati_book/screens/event_planning/timeline/timeline_screen.dart';
-import 'package:eventati_book/screens/event_planning/messaging/vendor_list_screen.dart';
+// Import routing
+import 'package:eventati_book/routing/routing.dart';
 
 // Import widgets using barrel files
 import 'package:eventati_book/widgets/event_planning/event_planning_widgets.dart';
@@ -200,15 +197,10 @@ class EventPlanningToolsScreen extends StatelessWidget {
         'icon': Icons.calculate,
         'color': Colors.green,
         'onTap': (BuildContext context) {
-          Navigator.push(
+          NavigationUtils.navigateToNamed(
             context,
-            MaterialPageRoute(
-              builder:
-                  (context) => BudgetOverviewScreen(
-                    eventId: eventId,
-                    eventName: eventName,
-                  ),
-            ),
+            RouteNames.budget,
+            arguments: BudgetArguments(eventId: eventId, eventName: eventName),
           );
         },
       },
@@ -217,12 +209,12 @@ class EventPlanningToolsScreen extends StatelessWidget {
         'icon': Icons.people,
         'color': Colors.blue,
         'onTap': (BuildContext context) {
-          Navigator.push(
+          NavigationUtils.navigateToNamed(
             context,
-            MaterialPageRoute(
-              builder:
-                  (context) =>
-                      GuestListScreen(eventId: eventId, eventName: eventName),
+            RouteNames.guestList,
+            arguments: GuestListArguments(
+              eventId: eventId,
+              eventName: eventName,
             ),
           );
         },
@@ -232,12 +224,12 @@ class EventPlanningToolsScreen extends StatelessWidget {
         'icon': Icons.checklist,
         'color': Colors.orange,
         'onTap': (BuildContext context) {
-          Navigator.push(
+          NavigationUtils.navigateToNamed(
             context,
-            MaterialPageRoute(
-              builder:
-                  (context) =>
-                      TimelineScreen(eventId: eventId, eventName: eventName),
+            RouteNames.timeline,
+            arguments: TimelineArguments(
+              eventId: eventId,
+              eventName: eventName,
             ),
           );
         },
@@ -247,12 +239,12 @@ class EventPlanningToolsScreen extends StatelessWidget {
         'icon': Icons.message,
         'color': Colors.purple,
         'onTap': (BuildContext context) {
-          Navigator.push(
+          NavigationUtils.navigateToNamed(
             context,
-            MaterialPageRoute(
-              builder:
-                  (context) =>
-                      VendorListScreen(eventId: eventId, eventName: eventName),
+            RouteNames.vendorCommunication,
+            arguments: VendorCommunicationArguments(
+              eventId: eventId,
+              eventName: eventName,
             ),
           );
         },

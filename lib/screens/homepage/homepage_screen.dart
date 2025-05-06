@@ -3,6 +3,7 @@ import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/widgets/responsive/responsive.dart';
+import 'package:eventati_book/routing/routing.dart';
 
 class HomepageScreen extends StatefulWidget {
   const HomepageScreen({super.key});
@@ -84,7 +85,10 @@ class _HomepageScreenState extends State<HomepageScreen> {
               // Create new event button
               InkWell(
                 onTap: () {
-                  Navigator.pushNamed(context, '/event-selection');
+                  NavigationUtils.navigateToNamed(
+                    context,
+                    RouteNames.eventSelection,
+                  );
                 },
                 child: Container(
                   width: double.infinity,
