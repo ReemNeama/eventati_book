@@ -1,4 +1,10 @@
 import 'package:eventati_book/routing/navigation_service.dart';
+import 'package:eventati_book/services/interfaces/auth_service_interface.dart';
+import 'package:eventati_book/services/interfaces/database_service_interface.dart';
+import 'package:eventati_book/services/firebase/firebase_auth_service.dart';
+import 'package:eventati_book/services/firebase/firestore_service.dart';
+import 'package:eventati_book/services/firebase/user_firestore_service.dart';
+import 'package:eventati_book/services/firebase/event_firestore_service.dart';
 
 /// Simple service locator for dependency injection
 class ServiceLocator {
@@ -30,11 +36,32 @@ class ServiceLocator {
 
   /// Initialize the service locator with default services
   void initialize() {
+    // Register core services
     registerSingleton<NavigationService>(NavigationService());
+
+    // Register Firebase services
+    registerSingleton<AuthServiceInterface>(FirebaseAuthService());
+    registerSingleton<DatabaseServiceInterface>(FirestoreService());
+    registerSingleton<UserFirestoreService>(UserFirestoreService());
+    registerSingleton<EventFirestoreService>(EventFirestoreService());
   }
 
   /// Get the navigation service
   NavigationService get navigationService => get<NavigationService>();
+
+  /// Get the authentication service
+  AuthServiceInterface get authService => get<AuthServiceInterface>();
+
+  /// Get the database service
+  DatabaseServiceInterface get databaseService =>
+      get<DatabaseServiceInterface>();
+
+  /// Get the user Firestore service
+  UserFirestoreService get userFirestoreService => get<UserFirestoreService>();
+
+  /// Get the event Firestore service
+  EventFirestoreService get eventFirestoreService =>
+      get<EventFirestoreService>();
 }
 
 /// Global instance of the service locator

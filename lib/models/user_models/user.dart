@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class User {
   final String id;
   final String name;
@@ -78,6 +80,61 @@ class User {
       'isBetaTester': isBetaTester,
       'subscriptionExpirationDate':
           subscriptionExpirationDate?.toIso8601String(),
+    };
+  }
+
+  /// Create a User from a Firestore document
+  factory User.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>?;
+    if (data == null) {
+      throw Exception('Document data was null');
+    }
+
+    return User(
+      id: doc.id,
+      name: data['name'] ?? '',
+      email: data['email'] ?? '',
+      phoneNumber: data['phoneNumber'],
+      profileImageUrl: data['profileImageUrl'],
+      createdAt:
+          data['createdAt'] != null
+              ? (data['createdAt'] as Timestamp).toDate()
+              : DateTime.now(),
+      favoriteVenues:
+          data['favoriteVenues'] != null
+              ? List<String>.from(data['favoriteVenues'])
+              : [],
+      favoriteServices:
+          data['favoriteServices'] != null
+              ? List<String>.from(data['favoriteServices'])
+              : [],
+      role: data['role'] ?? 'user',
+      hasPremiumSubscription: data['hasPremiumSubscription'] ?? false,
+      isBetaTester: data['isBetaTester'] ?? false,
+      subscriptionExpirationDate:
+          data['subscriptionExpirationDate'] != null
+              ? (data['subscriptionExpirationDate'] as Timestamp).toDate()
+              : null,
+    );
+  }
+
+  /// Convert User to Firestore data
+  Map<String, dynamic> toFirestore() {
+    return {
+      'name': name,
+      'email': email,
+      'phoneNumber': phoneNumber,
+      'profileImageUrl': profileImageUrl,
+      'createdAt': Timestamp.fromDate(createdAt),
+      'favoriteVenues': favoriteVenues,
+      'favoriteServices': favoriteServices,
+      'role': role,
+      'hasPremiumSubscription': hasPremiumSubscription,
+      'isBetaTester': isBetaTester,
+      'subscriptionExpirationDate':
+          subscriptionExpirationDate != null
+              ? Timestamp.fromDate(subscriptionExpirationDate!)
+              : null,
     };
   }
 

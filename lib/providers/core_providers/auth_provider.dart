@@ -1,9 +1,10 @@
-import 'dart:convert';
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:eventati_book/models/models.dart';
-import 'package:eventati_book/utils/utils.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:eventati_book/services/interfaces/auth_service_interface.dart';
+import 'package:eventati_book/services/firebase/user_firestore_service.dart';
+import 'package:eventati_book/di/service_locator.dart';
 
 /// Authentication states
 enum AuthStatus {
@@ -59,17 +60,24 @@ enum AuthStatus {
 /// }
 /// ```
 class AuthProvider with ChangeNotifier {
+  /// Firebase authentication service
+  final AuthServiceInterface _authService = serviceLocator.authService;
+
+  /// User Firestore service
+  final UserFirestoreService _userFirestoreService =
+      serviceLocator.userFirestoreService;
+
   /// Current authentication status
   AuthStatus _status = AuthStatus.unauthenticated;
 
   /// Current user
   User? _user;
 
-  /// Authentication token
-  String? _token;
-
   /// Error message if authentication fails
   String? _errorMessage;
+
+  /// Stream subscription for auth state changes
+  StreamSubscription<User?>? _authStateSubscription;
 
   /// Get current authentication status
   AuthStatus get status => _status;
@@ -80,42 +88,42 @@ class AuthProvider with ChangeNotifier {
   /// Get current user (alias for user)
   User? get currentUser => _user;
 
-  /// Get authentication token
-  String? get token => _token;
-
   /// Get error message
   String? get errorMessage => _errorMessage;
 
   /// Check if user is authenticated
   bool get isAuthenticated => _status == AuthStatus.authenticated;
 
+  /// Constructor
+  AuthProvider() {
+    _initAuthStateListener();
+  }
+
+  /// Initialize auth state listener
+  void _initAuthStateListener() {
+    _authStateSubscription = _authService.authStateChanges.listen((user) {
+      if (user != null) {
+        _user = user;
+        _status = AuthStatus.authenticated;
+      } else {
+        _user = null;
+        _status = AuthStatus.unauthenticated;
+      }
+      notifyListeners();
+    });
+  }
+
   /// Initialize the provider
   Future<void> initialize() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-
-      // Check if token exists
-      final token = prefs.getString(AppConstants.tokenKey);
-      if (token == null) {
+      // Check if user is already signed in
+      final user = _authService.currentUser;
+      if (user != null) {
+        _user = user;
+        _status = AuthStatus.authenticated;
+      } else {
         _status = AuthStatus.unauthenticated;
-        notifyListeners();
-
-        return;
       }
-
-      // Check if user data exists
-      final userData = prefs.getString(AppConstants.userDataKey);
-      if (userData == null) {
-        _status = AuthStatus.unauthenticated;
-        notifyListeners();
-
-        return;
-      }
-
-      // Parse user data
-      _user = User.fromJson(jsonDecode(userData));
-      _token = token;
-      _status = AuthStatus.authenticated;
       notifyListeners();
     } catch (e) {
       _status = AuthStatus.error;
@@ -131,49 +139,26 @@ class AuthProvider with ChangeNotifier {
       _errorMessage = null;
       notifyListeners();
 
-      // TODO: Replace with actual API call
-      // Simulate API call delay
-      await Future.delayed(const Duration(seconds: 1));
+      final result = await _authService.signInWithEmailAndPassword(
+        email,
+        password,
+      );
 
-      // For demo purposes, accept any email with a password length >= 6
-      if (password.length < 6) {
-        _status = AuthStatus.error;
-        _errorMessage = 'Invalid credentials';
+      if (result.isSuccess) {
+        _user = result.user;
+        _status = AuthStatus.authenticated;
         notifyListeners();
-
+        return true;
+      } else {
+        _status = AuthStatus.error;
+        _errorMessage = result.errorMessage ?? 'Login failed';
+        notifyListeners();
         return false;
       }
-
-      // Create mock user and token
-      final user = User(
-        id: 'user_${DateTime.now().millisecondsSinceEpoch}',
-        name: email.split('@').first,
-        email: email,
-        createdAt: DateTime.now(),
-      );
-
-      final token = 'mock_token_${DateTime.now().millisecondsSinceEpoch}';
-
-      // Save to shared preferences
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(AppConstants.tokenKey, token);
-      await prefs.setString(
-        AppConstants.userDataKey,
-        jsonEncode(user.toJson()),
-      );
-
-      // Update state
-      _user = user;
-      _token = token;
-      _status = AuthStatus.authenticated;
-      notifyListeners();
-
-      return true;
     } catch (e) {
       _status = AuthStatus.error;
       _errorMessage = 'Login failed: ${e.toString()}';
       notifyListeners();
-
       return false;
     }
   }
@@ -185,40 +170,27 @@ class AuthProvider with ChangeNotifier {
       _errorMessage = null;
       notifyListeners();
 
-      // TODO: Replace with actual API call
-      // Simulate API call delay
-      await Future.delayed(const Duration(seconds: 1));
-
-      // Create mock user and token
-      final user = User(
-        id: 'user_${DateTime.now().millisecondsSinceEpoch}',
-        name: name,
-        email: email,
-        createdAt: DateTime.now(),
+      final result = await _authService.createUserWithEmailAndPassword(
+        email,
+        password,
+        name,
       );
 
-      final token = 'mock_token_${DateTime.now().millisecondsSinceEpoch}';
-
-      // Save to shared preferences
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(AppConstants.tokenKey, token);
-      await prefs.setString(
-        AppConstants.userDataKey,
-        jsonEncode(user.toJson()),
-      );
-
-      // Update state
-      _user = user;
-      _token = token;
-      _status = AuthStatus.authenticated;
-      notifyListeners();
-
-      return true;
+      if (result.isSuccess) {
+        _user = result.user;
+        _status = AuthStatus.authenticated;
+        notifyListeners();
+        return true;
+      } else {
+        _status = AuthStatus.error;
+        _errorMessage = result.errorMessage ?? 'Registration failed';
+        notifyListeners();
+        return false;
+      }
     } catch (e) {
       _status = AuthStatus.error;
       _errorMessage = 'Registration failed: ${e.toString()}';
       notifyListeners();
-
       return false;
     }
   }
@@ -226,14 +198,8 @@ class AuthProvider with ChangeNotifier {
   /// Logout the current user
   Future<void> logout() async {
     try {
-      // Clear shared preferences
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.remove(AppConstants.tokenKey);
-      await prefs.remove(AppConstants.userDataKey);
-
-      // Update state
+      await _authService.signOut();
       _user = null;
-      _token = null;
       _status = AuthStatus.unauthenticated;
       notifyListeners();
     } catch (e) {
@@ -246,16 +212,15 @@ class AuthProvider with ChangeNotifier {
   /// Reset password
   Future<bool> resetPassword(String email) async {
     try {
-      // TODO: Replace with actual API call
-      // Simulate API call delay
-      await Future.delayed(const Duration(seconds: 1));
-
-      // For demo purposes, always return success
-      return true;
+      final result = await _authService.sendPasswordResetEmail(email);
+      if (!result.isSuccess) {
+        _errorMessage = result.errorMessage;
+        notifyListeners();
+      }
+      return result.isSuccess;
     } catch (e) {
       _errorMessage = 'Password reset failed: ${e.toString()}';
       notifyListeners();
-
       return false;
     }
   }
@@ -270,37 +235,26 @@ class AuthProvider with ChangeNotifier {
       if (_user == null) {
         _errorMessage = 'No user is logged in';
         notifyListeners();
-
         return false;
       }
 
-      // TODO: Replace with actual API call
-      // Simulate API call delay
-      await Future.delayed(const Duration(seconds: 1));
-
-      // Update user
-      final updatedUser = _user!.copyWith(
-        name: name,
-        phoneNumber: phoneNumber,
-        profileImageUrl: profileImageUrl,
+      final result = await _authService.updateProfile(
+        displayName: name,
+        photoUrl: profileImageUrl,
       );
 
-      // Save to shared preferences
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(
-        AppConstants.userDataKey,
-        jsonEncode(updatedUser.toJson()),
-      );
-
-      // Update state
-      _user = updatedUser;
-      notifyListeners();
-
-      return true;
+      if (result.isSuccess) {
+        _user = result.user;
+        notifyListeners();
+        return true;
+      } else {
+        _errorMessage = result.errorMessage;
+        notifyListeners();
+        return false;
+      }
     } catch (e) {
       _errorMessage = 'Profile update failed: ${e.toString()}';
       notifyListeners();
-
       return false;
     }
   }
@@ -311,7 +265,6 @@ class AuthProvider with ChangeNotifier {
       if (_user == null) {
         _errorMessage = 'No user is logged in';
         notifyListeners();
-
         return false;
       }
 
@@ -320,19 +273,13 @@ class AuthProvider with ChangeNotifier {
         return true;
       }
 
-      // Add to favorites
+      // Add to favorites in Firestore
+      await _userFirestoreService.addFavoriteVenue(_user!.id, venueId);
+
+      // Update local state
       final updatedFavorites = List<String>.from(_user!.favoriteVenues)
         ..add(venueId);
       final updatedUser = _user!.copyWith(favoriteVenues: updatedFavorites);
-
-      // Save to shared preferences
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(
-        AppConstants.userDataKey,
-        jsonEncode(updatedUser.toJson()),
-      );
-
-      // Update state
       _user = updatedUser;
       notifyListeners();
 
@@ -340,7 +287,6 @@ class AuthProvider with ChangeNotifier {
     } catch (e) {
       _errorMessage = 'Failed to add favorite: ${e.toString()}';
       notifyListeners();
-
       return false;
     }
   }
@@ -351,23 +297,16 @@ class AuthProvider with ChangeNotifier {
       if (_user == null) {
         _errorMessage = 'No user is logged in';
         notifyListeners();
-
         return false;
       }
 
-      // Remove from favorites
+      // Remove from favorites in Firestore
+      await _userFirestoreService.removeFavoriteVenue(_user!.id, venueId);
+
+      // Update local state
       final updatedFavorites = List<String>.from(_user!.favoriteVenues)
         ..removeWhere((id) => id == venueId);
       final updatedUser = _user!.copyWith(favoriteVenues: updatedFavorites);
-
-      // Save to shared preferences
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(
-        AppConstants.userDataKey,
-        jsonEncode(updatedUser.toJson()),
-      );
-
-      // Update state
       _user = updatedUser;
       notifyListeners();
 
@@ -375,7 +314,6 @@ class AuthProvider with ChangeNotifier {
     } catch (e) {
       _errorMessage = 'Failed to remove favorite: ${e.toString()}';
       notifyListeners();
-
       return false;
     }
   }
@@ -386,7 +324,6 @@ class AuthProvider with ChangeNotifier {
       if (_user == null) {
         _errorMessage = 'No user is logged in';
         notifyListeners();
-
         return false;
       }
 
@@ -395,19 +332,13 @@ class AuthProvider with ChangeNotifier {
         return true;
       }
 
-      // Add to favorites
+      // Add to favorites in Firestore
+      await _userFirestoreService.addFavoriteService(_user!.id, serviceId);
+
+      // Update local state
       final updatedFavorites = List<String>.from(_user!.favoriteServices)
         ..add(serviceId);
       final updatedUser = _user!.copyWith(favoriteServices: updatedFavorites);
-
-      // Save to shared preferences
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(
-        AppConstants.userDataKey,
-        jsonEncode(updatedUser.toJson()),
-      );
-
-      // Update state
       _user = updatedUser;
       notifyListeners();
 
@@ -415,7 +346,6 @@ class AuthProvider with ChangeNotifier {
     } catch (e) {
       _errorMessage = 'Failed to add favorite: ${e.toString()}';
       notifyListeners();
-
       return false;
     }
   }
@@ -426,23 +356,16 @@ class AuthProvider with ChangeNotifier {
       if (_user == null) {
         _errorMessage = 'No user is logged in';
         notifyListeners();
-
         return false;
       }
 
-      // Remove from favorites
+      // Remove from favorites in Firestore
+      await _userFirestoreService.removeFavoriteService(_user!.id, serviceId);
+
+      // Update local state
       final updatedFavorites = List<String>.from(_user!.favoriteServices)
         ..removeWhere((id) => id == serviceId);
       final updatedUser = _user!.copyWith(favoriteServices: updatedFavorites);
-
-      // Save to shared preferences
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(
-        AppConstants.userDataKey,
-        jsonEncode(updatedUser.toJson()),
-      );
-
-      // Update state
       _user = updatedUser;
       notifyListeners();
 
@@ -450,8 +373,14 @@ class AuthProvider with ChangeNotifier {
     } catch (e) {
       _errorMessage = 'Failed to remove favorite: ${e.toString()}';
       notifyListeners();
-
       return false;
     }
+  }
+
+  /// Dispose of resources
+  @override
+  void dispose() {
+    _authStateSubscription?.cancel();
+    super.dispose();
   }
 }
