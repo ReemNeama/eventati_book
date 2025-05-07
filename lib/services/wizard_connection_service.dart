@@ -6,14 +6,18 @@ import 'package:eventati_book/services/task_template_service.dart';
 import 'package:eventati_book/services/wizard/budget_items_builder.dart';
 import 'package:eventati_book/services/wizard/guest_groups_builder.dart';
 import 'package:eventati_book/services/wizard/specialized_task_templates.dart';
+import 'package:eventati_book/services/firebase/firestore/wizard_connection_firestore_service.dart';
 
 /// Service to connect the wizard with other planning tools
 class WizardConnectionService {
   /// Connect wizard to all planning tools at once
-  static void connectToAllPlanningTools(
+  static Future<void> connectToAllPlanningTools(
     BuildContext context,
     Map<String, dynamic> wizardData,
-  ) {
+  ) async {
+    // Store the context for later use
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+
     // Connect to budget calculator
     connectToBudget(context, wizardData);
 
@@ -27,28 +31,30 @@ class WizardConnectionService {
     connectToServiceScreens(context, wizardData);
 
     // Persist connections to Firebase if user and event IDs are available
-    persistConnectionsToFirebase(context, wizardData);
+    await persistConnectionsToFirebase(context, wizardData);
 
-    // Show success message
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text(
-          'Wizard data connected to all planning tools successfully!',
-          style: TextStyle(color: Colors.white),
+    // Show success message if the context is still valid
+    if (context is StatefulElement && context.state.mounted) {
+      scaffoldMessenger.showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Wizard data connected to all planning tools successfully!',
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.green,
+          duration: Duration(seconds: 3),
         ),
-        backgroundColor: Colors.green,
-        duration: Duration(seconds: 3),
-      ),
-    );
+      );
+    }
 
     debugPrint('Connected wizard to all planning tools');
   }
 
   /// Persist wizard connections to Firebase
-  static void persistConnectionsToFirebase(
+  static Future<void> persistConnectionsToFirebase(
     BuildContext context,
     Map<String, dynamic> wizardData,
-  ) {
+  ) async {
     try {
       // Get the wizard provider
       final wizardProvider = Provider.of<WizardProvider>(
@@ -60,9 +66,90 @@ class WizardConnectionService {
       if (wizardProvider.useFirebase) {
         debugPrint('Persisting wizard connections to Firebase');
 
-        // The WizardProvider will handle saving to Firebase when state changes
-        // This is just to ensure the connections are saved
-        wizardProvider.saveStateToFirebase();
+        // Check if the wizard provider has Firebase persistence enabled
+        // This means it has user and event IDs
+        if (!wizardProvider.useFirebase) {
+          debugPrint('Firebase persistence is not enabled in WizardProvider');
+          return;
+        }
+
+        // Get the user and event IDs from the provider's internal state
+        String? userId;
+        String? eventId;
+
+        try {
+          // Access the private fields via reflection (for testing purposes)
+          userId =
+              wizardProvider.toString().split('_userId: ')[1].split(',')[0];
+          eventId =
+              wizardProvider.toString().split('_eventId: ')[1].split(',')[0];
+
+          // Clean up the IDs (remove quotes if present)
+          userId = userId.replaceAll('\'', '').trim();
+          eventId = eventId.replaceAll('\'', '').trim();
+
+          if (userId == 'null' || eventId == 'null') {
+            debugPrint('User ID or event ID is null in WizardProvider');
+            return;
+          }
+        } catch (e) {
+          debugPrint('Error extracting user/event IDs: $e');
+          return;
+        }
+
+        // Get the wizard state ID
+        final wizardStateId = '${userId}_$eventId';
+
+        // Create a WizardConnection object
+        final connection = WizardConnection(
+          userId: userId,
+          eventId: eventId,
+          wizardStateId: wizardStateId,
+          budgetEnabled: true,
+          guestListEnabled: true,
+          timelineEnabled: true,
+          serviceRecommendationsEnabled: true,
+        );
+
+        // Get the budget provider to collect budget item IDs
+        try {
+          final budgetProvider = Provider.of<BudgetProvider>(
+            context,
+            listen: false,
+          );
+          final budgetItemIds =
+              budgetProvider.items.map((item) => item.id).toList();
+
+          // Update the connection with budget item IDs
+          final updatedConnection = connection.copyWith(
+            budgetItemIds: budgetItemIds,
+          );
+
+          // Save the connection to Firebase
+          final firestoreService = WizardConnectionFirestoreService();
+          await firestoreService.saveWizardConnection(
+            userId,
+            eventId,
+            updatedConnection.toFirestore(),
+          );
+
+          debugPrint(
+            'Saved wizard connection to Firebase with ${budgetItemIds.length} budget items',
+          );
+        } catch (e) {
+          debugPrint('Error getting budget items: $e');
+
+          // Save the connection without budget items
+          final firestoreService = WizardConnectionFirestoreService();
+          await firestoreService.saveWizardConnection(
+            userId,
+            eventId,
+            connection.toFirestore(),
+          );
+        }
+
+        // The WizardProvider will handle saving the wizard state to Firebase
+        await wizardProvider.saveStateToFirebase();
       }
     } catch (e) {
       debugPrint('Error persisting wizard connections to Firebase: $e');

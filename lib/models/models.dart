@@ -18,6 +18,7 @@
 export 'event_models/event_models.dart'; // Barrel file for event models
 export 'event_models/event_template.dart'; // Template for creating events
 export 'event_models/wizard_state.dart'; // State management for the event wizard
+export 'event_models/wizard_connection.dart'; // Connections between wizard and planning tools
 
 // -------------------------
 // USER MODELS

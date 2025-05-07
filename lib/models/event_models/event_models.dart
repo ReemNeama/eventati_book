@@ -3,3 +3,4 @@
 
 export 'event_template.dart';
 export 'wizard_state.dart';
+export 'wizard_connection.dart';
