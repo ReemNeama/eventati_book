@@ -7,6 +7,9 @@ import 'package:eventati_book/services/wizard/budget_items_builder.dart';
 import 'package:eventati_book/services/wizard/guest_groups_builder.dart';
 import 'package:eventati_book/services/wizard/specialized_task_templates.dart';
 import 'package:eventati_book/services/firebase/firestore/wizard_connection_firestore_service.dart';
+import 'package:eventati_book/styles/app_colors.dart';
+import 'package:eventati_book/styles/app_colors_dark.dart';
+import 'package:eventati_book/utils/logger.dart';
 
 /// Service to connect the wizard with other planning tools
 class WizardConnectionService {
@@ -17,6 +20,9 @@ class WizardConnectionService {
   ) async {
     // Store the context for later use
     final scaffoldMessenger = ScaffoldMessenger.of(context);
+
+    // Store the theme brightness before any async operations
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     // Connect to budget calculator
     connectToBudget(context, wizardData);
@@ -33,21 +39,23 @@ class WizardConnectionService {
     // Persist connections to Firebase if user and event IDs are available
     await persistConnectionsToFirebase(context, wizardData);
 
-    // Show success message if the context is still valid
-    if (context is StatefulElement && context.state.mounted) {
-      scaffoldMessenger.showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Wizard data connected to all planning tools successfully!',
-            style: TextStyle(color: Colors.white),
-          ),
-          backgroundColor: Colors.green,
-          duration: Duration(seconds: 3),
+    // Show success message after async operations complete
+    // We'll use the stored scaffoldMessenger which doesn't depend on context
+    scaffoldMessenger.showSnackBar(
+      SnackBar(
+        content: const Text(
+          'Wizard data connected to all planning tools successfully!',
+          style: TextStyle(color: Colors.white),
         ),
-      );
-    }
+        backgroundColor: isDarkMode ? AppColorsDark.success : AppColors.success,
+        duration: const Duration(seconds: 3),
+      ),
+    );
 
-    debugPrint('Connected wizard to all planning tools');
+    Logger.i(
+      'Connected wizard to all planning tools',
+      tag: 'WizardConnectionService',
+    );
   }
 
   /// Persist wizard connections to Firebase
@@ -64,12 +72,18 @@ class WizardConnectionService {
 
       // Check if Firebase persistence is enabled
       if (wizardProvider.useFirebase) {
-        debugPrint('Persisting wizard connections to Firebase');
+        Logger.i(
+          'Persisting wizard connections to Firebase',
+          tag: 'WizardConnectionService',
+        );
 
         // Check if the wizard provider has Firebase persistence enabled
         // This means it has user and event IDs
         if (!wizardProvider.useFirebase) {
-          debugPrint('Firebase persistence is not enabled in WizardProvider');
+          Logger.w(
+            'Firebase persistence is not enabled in WizardProvider',
+            tag: 'WizardConnectionService',
+          );
           return;
         }
 
@@ -89,11 +103,17 @@ class WizardConnectionService {
           eventId = eventId.replaceAll('\'', '').trim();
 
           if (userId == 'null' || eventId == 'null') {
-            debugPrint('User ID or event ID is null in WizardProvider');
+            Logger.w(
+              'User ID or event ID is null in WizardProvider',
+              tag: 'WizardConnectionService',
+            );
             return;
           }
         } catch (e) {
-          debugPrint('Error extracting user/event IDs: $e');
+          Logger.e(
+            'Error extracting user/event IDs: $e',
+            tag: 'WizardConnectionService',
+          );
           return;
         }
 
@@ -133,11 +153,15 @@ class WizardConnectionService {
             updatedConnection.toFirestore(),
           );
 
-          debugPrint(
+          Logger.i(
             'Saved wizard connection to Firebase with ${budgetItemIds.length} budget items',
+            tag: 'WizardConnectionService',
           );
         } catch (e) {
-          debugPrint('Error getting budget items: $e');
+          Logger.e(
+            'Error getting budget items: $e',
+            tag: 'WizardConnectionService',
+          );
 
           // Save the connection without budget items
           final firestoreService = WizardConnectionFirestoreService();
@@ -152,7 +176,10 @@ class WizardConnectionService {
         await wizardProvider.saveStateToFirebase();
       }
     } catch (e) {
-      debugPrint('Error persisting wizard connections to Firebase: $e');
+      Logger.e(
+        'Error persisting wizard connections to Firebase: $e',
+        tag: 'WizardConnectionService',
+      );
     }
   }
 
