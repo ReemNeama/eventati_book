@@ -1,4 +1,3 @@
-import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/providers/planning_providers/task_provider.dart';
 import 'package:eventati_book/services/firebase/migration/task_migration_service.dart';
 import 'package:eventati_book/services/firebase/test/task_test_data_generator.dart';

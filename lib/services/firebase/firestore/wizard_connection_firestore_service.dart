@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/services/firebase/utils/firestore_service.dart';
 import 'package:eventati_book/services/interfaces/database_service_interface.dart';
 import 'package:eventati_book/utils/logger.dart';
@@ -14,7 +13,7 @@ class WizardConnectionFirestoreService {
 
   /// Constructor
   WizardConnectionFirestoreService({DatabaseServiceInterface? firestoreService})
-      : _firestoreService = firestoreService ?? FirestoreService();
+    : _firestoreService = firestoreService ?? FirestoreService();
 
   /// Save wizard connection data
   ///
@@ -112,10 +111,7 @@ class WizardConnectionFirestoreService {
   /// This method deletes the connection between the wizard and planning tools
   /// [userId] The ID of the user
   /// [eventId] The ID of the event
-  Future<void> deleteWizardConnection(
-    String userId,
-    String eventId,
-  ) async {
+  Future<void> deleteWizardConnection(String userId, String eventId) async {
     try {
       final documentId = '${userId}_$eventId';
       await _firestoreService.deleteDocument(_collection, documentId);

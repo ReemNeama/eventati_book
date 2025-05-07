@@ -359,7 +359,26 @@ class FirebaseMessagingService implements MessagingServiceInterface {
         tag: 'FirebaseMessagingService',
       );
 
-      // TODO: Implement notification data handling
+      // Process notification data based on type
+      final String notificationType = payload?['type'] as String? ?? 'general';
+
+      switch (notificationType) {
+        case 'event_reminder':
+          _handleEventReminder(title, body, payload);
+          break;
+        case 'task_due':
+          _handleTaskDue(title, body, payload);
+          break;
+        case 'rsvp_update':
+          _handleRsvpUpdate(title, body, payload);
+          break;
+        case 'budget_alert':
+          _handleBudgetAlert(title, body, payload);
+          break;
+        default:
+          _handleGeneralNotification(title, body, payload);
+          break;
+      }
     } catch (e) {
       Logger.e(
         'Error handling notification data: $e',
@@ -710,6 +729,126 @@ class FirebaseMessagingService implements MessagingServiceInterface {
     } catch (e) {
       Logger.e(
         'Error clearing badge count: $e',
+        tag: 'FirebaseMessagingService',
+      );
+    }
+  }
+
+  // Handle event reminder notifications
+  void _handleEventReminder(
+    String? title,
+    String? body,
+    Map<String, dynamic>? payload,
+  ) {
+    try {
+      final eventId = payload?['eventId'] as String?;
+      final eventDate = payload?['eventDate'] as String?;
+
+      Logger.i(
+        'Handling event reminder: $eventId, $eventDate',
+        tag: 'FirebaseMessagingService',
+      );
+
+      // Here you would typically update UI or trigger an action
+      // For now, we'll just log the information
+    } catch (e) {
+      Logger.e(
+        'Error handling event reminder: $e',
+        tag: 'FirebaseMessagingService',
+      );
+    }
+  }
+
+  // Handle task due notifications
+  void _handleTaskDue(
+    String? title,
+    String? body,
+    Map<String, dynamic>? payload,
+  ) {
+    try {
+      final taskId = payload?['taskId'] as String?;
+      final dueDate = payload?['dueDate'] as String?;
+
+      Logger.i(
+        'Handling task due: $taskId, $dueDate',
+        tag: 'FirebaseMessagingService',
+      );
+
+      // Here you would typically update UI or trigger an action
+      // For now, we'll just log the information
+    } catch (e) {
+      Logger.e('Error handling task due: $e', tag: 'FirebaseMessagingService');
+    }
+  }
+
+  // Handle RSVP update notifications
+  void _handleRsvpUpdate(
+    String? title,
+    String? body,
+    Map<String, dynamic>? payload,
+  ) {
+    try {
+      final guestId = payload?['guestId'] as String?;
+      final status = payload?['status'] as String?;
+
+      Logger.i(
+        'Handling RSVP update: $guestId, $status',
+        tag: 'FirebaseMessagingService',
+      );
+
+      // Here you would typically update UI or trigger an action
+      // For now, we'll just log the information
+    } catch (e) {
+      Logger.e(
+        'Error handling RSVP update: $e',
+        tag: 'FirebaseMessagingService',
+      );
+    }
+  }
+
+  // Handle budget alert notifications
+  void _handleBudgetAlert(
+    String? title,
+    String? body,
+    Map<String, dynamic>? payload,
+  ) {
+    try {
+      final budgetId = payload?['budgetId'] as String?;
+      final amount = payload?['amount'] as String?;
+      final threshold = payload?['threshold'] as String?;
+
+      Logger.i(
+        'Handling budget alert: $budgetId, $amount, $threshold',
+        tag: 'FirebaseMessagingService',
+      );
+
+      // Here you would typically update UI or trigger an action
+      // For now, we'll just log the information
+    } catch (e) {
+      Logger.e(
+        'Error handling budget alert: $e',
+        tag: 'FirebaseMessagingService',
+      );
+    }
+  }
+
+  // Handle general notifications
+  void _handleGeneralNotification(
+    String? title,
+    String? body,
+    Map<String, dynamic>? payload,
+  ) {
+    try {
+      Logger.i(
+        'Handling general notification: $title, $body, $payload',
+        tag: 'FirebaseMessagingService',
+      );
+
+      // Here you would typically update UI or trigger an action
+      // For now, we'll just log the information
+    } catch (e) {
+      Logger.e(
+        'Error handling general notification: $e',
         tag: 'FirebaseMessagingService',
       );
     }

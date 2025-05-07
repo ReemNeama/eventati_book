@@ -442,7 +442,7 @@ class SuggestionTemplates {
 
     // Venue suggestions
     suggestions.add(
-      Suggestion(
+      const Suggestion(
         id: 'venue_wedding_large',
         title: 'Consider a hotel or banquet hall for your large wedding',
         description:
@@ -469,7 +469,7 @@ class SuggestionTemplates {
     );
 
     suggestions.add(
-      Suggestion(
+      const Suggestion(
         id: 'venue_business_conference',
         title: 'Book a conference center with modern amenities',
         description:
@@ -492,7 +492,7 @@ class SuggestionTemplates {
 
     // Catering suggestions
     suggestions.add(
-      Suggestion(
+      const Suggestion(
         id: 'catering_wedding_buffet',
         title: 'Consider a buffet for cost-effective catering',
         description:
@@ -515,7 +515,7 @@ class SuggestionTemplates {
 
     // Photography suggestions
     suggestions.add(
-      Suggestion(
+      const Suggestion(
         id: 'photography_wedding_package',
         title: 'Book a comprehensive wedding photography package',
         description:
@@ -538,7 +538,7 @@ class SuggestionTemplates {
 
     // Entertainment suggestions
     suggestions.add(
-      Suggestion(
+      const Suggestion(
         id: 'entertainment_celebration_dj',
         title: 'Hire a DJ for your celebration',
         description:
@@ -561,7 +561,7 @@ class SuggestionTemplates {
 
     // Budget suggestions
     suggestions.add(
-      Suggestion(
+      const Suggestion(
         id: 'budget_wedding_priorities',
         title: 'Set your wedding budget priorities',
         description:
