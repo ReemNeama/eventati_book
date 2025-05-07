@@ -72,15 +72,24 @@ class TaskFirestoreService {
   /// Add a task category to an event
   Future<String> addTaskCategory(String eventId, TaskCategory category) async {
     try {
-      final categoryId = await _firestoreService
-          .addSubcollectionDocument(_collection, eventId, 'task_categories', {
-            'name': category.name,
-            'iconCodePoint': category.icon.codePoint,
-            'iconFontFamily': category.icon.fontFamily,
-            'iconFontPackage': category.icon.fontPackage,
-            'color': category.color.value & 0xFFFFFFFF,
-            'createdAt': FieldValue.serverTimestamp(),
-          });
+      final categoryId = await _firestoreService.addSubcollectionDocument(
+        _collection,
+        eventId,
+        'task_categories',
+        {
+          'name': category.name,
+          'iconCodePoint': category.icon.codePoint,
+          'iconFontFamily': category.icon.fontFamily,
+          'iconFontPackage': category.icon.fontPackage,
+          'colorARGB': [
+            category.color.a,
+            category.color.r,
+            category.color.g,
+            category.color.b,
+          ],
+          'createdAt': FieldValue.serverTimestamp(),
+        },
+      );
       return categoryId;
     } catch (e) {
       Logger.e('Error adding task category: $e', tag: 'TaskFirestoreService');
@@ -101,7 +110,12 @@ class TaskFirestoreService {
           'iconCodePoint': category.icon.codePoint,
           'iconFontFamily': category.icon.fontFamily,
           'iconFontPackage': category.icon.fontPackage,
-          'color': category.color.value & 0xFFFFFFFF,
+          'colorARGB': [
+            category.color.a,
+            category.color.r,
+            category.color.g,
+            category.color.b,
+          ],
           'updatedAt': FieldValue.serverTimestamp(),
         },
       );

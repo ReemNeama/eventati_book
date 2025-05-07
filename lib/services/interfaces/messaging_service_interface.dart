@@ -1,5 +1,3 @@
-import 'dart:io';
-
 /// Interface for Firebase Cloud Messaging services
 abstract class MessagingServiceInterface {
   /// Initialize the messaging service

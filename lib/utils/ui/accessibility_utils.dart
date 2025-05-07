@@ -11,13 +11,49 @@ class AccessibilityUtils {
 
   /// Get semantic label for an icon button
   ///
-  /// Note: The [icon] parameter is not currently used but is kept for future
-  /// implementation where the icon type might affect the label.
-  static String getIconButtonLabel(
-    // TODO: Use icon parameter in label generation
-    IconData icon,
-    String action,
-  ) {
+  /// Uses the [icon] parameter to generate a more descriptive label.
+  static String getIconButtonLabel(IconData icon, String action) {
+    // Map common icons to descriptive names
+    String iconDescription = '';
+
+    if (icon == Icons.add) {
+      iconDescription = 'Add';
+    } else if (icon == Icons.delete || icon == Icons.delete_outline) {
+      iconDescription = 'Delete';
+    } else if (icon == Icons.edit || icon == Icons.edit_outlined) {
+      iconDescription = 'Edit';
+    } else if (icon == Icons.save || icon == Icons.save_outlined) {
+      iconDescription = 'Save';
+    } else if (icon == Icons.close) {
+      iconDescription = 'Close';
+    } else if (icon == Icons.menu) {
+      iconDescription = 'Menu';
+    } else if (icon == Icons.search) {
+      iconDescription = 'Search';
+    } else if (icon == Icons.settings || icon == Icons.settings_outlined) {
+      iconDescription = 'Settings';
+    } else if (icon == Icons.favorite || icon == Icons.favorite_border) {
+      iconDescription = 'Favorite';
+    } else if (icon == Icons.share) {
+      iconDescription = 'Share';
+    } else if (icon == Icons.arrow_back) {
+      iconDescription = 'Back';
+    } else if (icon == Icons.arrow_forward) {
+      iconDescription = 'Forward';
+    } else if (icon == Icons.check) {
+      iconDescription = 'Check';
+    } else if (icon == Icons.info || icon == Icons.info_outline) {
+      iconDescription = 'Information';
+    } else if (icon == Icons.help || icon == Icons.help_outline) {
+      iconDescription = 'Help';
+    }
+
+    // If we have an icon description, include it in the label
+    if (iconDescription.isNotEmpty) {
+      return '$iconDescription $action button';
+    }
+
+    // Default to just the action if we don't recognize the icon
     return '$action button';
   }
 

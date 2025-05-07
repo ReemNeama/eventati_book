@@ -1,14 +1,13 @@
 import 'package:eventati_book/di/service_locator.dart';
 import 'package:eventati_book/services/interfaces/crashlytics_service_interface.dart';
 import 'package:eventati_book/utils/logger.dart';
-import 'package:flutter/foundation.dart';
 
 /// Utility functions for error handling
 class ErrorUtils {
   /// Get the crashlytics service
-  static CrashlyticsServiceInterface get _crashlyticsService => 
+  static CrashlyticsServiceInterface get _crashlyticsService =>
       serviceLocator.crashlyticsService;
-      
+
   /// Log an error
   static void logError(
     String message, {
@@ -18,19 +17,15 @@ class ErrorUtils {
   }) {
     // Log to console
     Logger.e(message, error: error, stackTrace: stackTrace, tag: tag);
-    
+
     // Report to crashlytics if available
     if (error != null) {
-      _crashlyticsService.recordError(
-        error,
-        stackTrace,
-        reason: message,
-      );
+      _crashlyticsService.recordError(error, stackTrace, reason: message);
     } else {
       _crashlyticsService.log('ERROR: $message');
     }
   }
-  
+
   /// Handle an exception
   static void handleException(
     dynamic exception, {
@@ -40,7 +35,7 @@ class ErrorUtils {
   }) {
     // Get stack trace if not provided
     final trace = stackTrace ?? StackTrace.current;
-    
+
     // Log to console
     Logger.e(
       'Exception${context != null ? ' in $context' : ''}: $exception',
@@ -48,7 +43,7 @@ class ErrorUtils {
       stackTrace: trace,
       tag: context,
     );
-    
+
     // Report to crashlytics
     _crashlyticsService.recordCaughtException(
       exception: exception,
@@ -57,7 +52,7 @@ class ErrorUtils {
       fatal: fatal,
     );
   }
-  
+
   /// Handle a network error
   static void handleNetworkError(
     dynamic exception, {
@@ -71,7 +66,7 @@ class ErrorUtils {
   }) {
     // Get stack trace if not provided
     final trace = stackTrace ?? StackTrace.current;
-    
+
     // Log to console
     Logger.e(
       'Network error: $method $url${statusCode != null ? ' ($statusCode)' : ''}',
@@ -79,7 +74,7 @@ class ErrorUtils {
       stackTrace: trace,
       tag: 'Network',
     );
-    
+
     // Report to crashlytics
     _crashlyticsService.recordNetworkError(
       exception: exception,
@@ -92,7 +87,7 @@ class ErrorUtils {
       fatal: fatal,
     );
   }
-  
+
   /// Handle a database error
   static void handleDatabaseError(
     dynamic exception, {
@@ -104,7 +99,7 @@ class ErrorUtils {
   }) {
     // Get stack trace if not provided
     final trace = stackTrace ?? StackTrace.current;
-    
+
     // Log to console
     Logger.e(
       'Database error: $operation on $collection${document != null ? '/$document' : ''}',
@@ -112,7 +107,7 @@ class ErrorUtils {
       stackTrace: trace,
       tag: 'Database',
     );
-    
+
     // Report to crashlytics
     _crashlyticsService.recordDatabaseError(
       exception: exception,
@@ -123,7 +118,7 @@ class ErrorUtils {
       fatal: fatal,
     );
   }
-  
+
   /// Handle an authentication error
   static void handleAuthError(
     dynamic exception, {
@@ -134,7 +129,7 @@ class ErrorUtils {
   }) {
     // Get stack trace if not provided
     final trace = stackTrace ?? StackTrace.current;
-    
+
     // Log to console
     Logger.e(
       'Authentication error: $method',
@@ -142,7 +137,7 @@ class ErrorUtils {
       stackTrace: trace,
       tag: 'Auth',
     );
-    
+
     // Report to crashlytics
     _crashlyticsService.recordAuthError(
       exception: exception,
@@ -152,7 +147,7 @@ class ErrorUtils {
       fatal: fatal,
     );
   }
-  
+
   /// Handle a permission error
   static void handlePermissionError(
     dynamic exception, {
@@ -162,7 +157,7 @@ class ErrorUtils {
   }) {
     // Get stack trace if not provided
     final trace = stackTrace ?? StackTrace.current;
-    
+
     // Log to console
     Logger.e(
       'Permission error: $permission',
@@ -170,7 +165,7 @@ class ErrorUtils {
       stackTrace: trace,
       tag: 'Permission',
     );
-    
+
     // Report to crashlytics
     _crashlyticsService.recordPermissionError(
       exception: exception,
@@ -179,7 +174,7 @@ class ErrorUtils {
       fatal: fatal,
     );
   }
-  
+
   /// Handle a validation error
   static void handleValidationError(
     dynamic exception, {
@@ -190,7 +185,7 @@ class ErrorUtils {
   }) {
     // Get stack trace if not provided
     final trace = stackTrace ?? StackTrace.current;
-    
+
     // Log to console
     Logger.e(
       'Validation error: $field',
@@ -198,7 +193,7 @@ class ErrorUtils {
       stackTrace: trace,
       tag: 'Validation',
     );
-    
+
     // Report to crashlytics
     _crashlyticsService.recordValidationError(
       exception: exception,
@@ -208,7 +203,7 @@ class ErrorUtils {
       fatal: fatal,
     );
   }
-  
+
   /// Handle a state error
   static void handleStateError(
     dynamic exception, {
@@ -219,7 +214,7 @@ class ErrorUtils {
   }) {
     // Get stack trace if not provided
     final trace = stackTrace ?? StackTrace.current;
-    
+
     // Log to console
     Logger.e(
       'State error: Expected $expectedState, got $currentState',
@@ -227,7 +222,7 @@ class ErrorUtils {
       stackTrace: trace,
       tag: 'State',
     );
-    
+
     // Report to crashlytics
     _crashlyticsService.recordStateError(
       exception: exception,
@@ -237,19 +232,19 @@ class ErrorUtils {
       fatal: fatal,
     );
   }
-  
+
   /// Set user identifier for error reporting
   static void setUserIdentifier(String? userId) {
     if (userId != null) {
       _crashlyticsService.setUserIdentifier(userId);
     }
   }
-  
+
   /// Add custom key for error reporting
   static void setCustomKey(String key, dynamic value) {
     _crashlyticsService.setCustomKey(key, value);
   }
-  
+
   /// Add log message for error reporting
   static void addLog(String message) {
     _crashlyticsService.log(message);

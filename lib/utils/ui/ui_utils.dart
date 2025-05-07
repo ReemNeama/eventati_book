@@ -117,15 +117,40 @@ class UIUtils {
 
   /// Get a color with alpha based on the current theme
   ///
-  /// Note: The [context] parameter is not currently used but is kept for future
-  /// implementation where the theme might affect the alpha calculation.
+  /// Uses the [context] parameter for theme-aware alpha calculation.
+  ///
+  /// The opacity is adjusted based on the current theme brightness to ensure
+  /// appropriate contrast and visibility in both light and dark themes.
   static Color getColorWithAlpha(
-    // TODO: Use context parameter for theme-aware alpha calculation
     BuildContext context,
     Color color,
     double opacity,
   ) {
-    return color.withAlpha((opacity * 255).round());
+    // Get the current theme brightness
+    final brightness = Theme.of(context).brightness;
+
+    // Adjust opacity based on theme brightness
+    double adjustedOpacity = opacity;
+
+    // For dark theme, we might want to increase opacity slightly for better visibility
+    if (brightness == Brightness.dark) {
+      // Increase opacity by 10% for dark theme, but cap at 1.0
+      adjustedOpacity = (opacity * 1.1).clamp(0.0, 1.0);
+
+      // For very light colors on dark theme, ensure minimum opacity
+      if (color.computeLuminance() > 0.7) {
+        adjustedOpacity = adjustedOpacity.clamp(0.15, 1.0);
+      }
+    } else {
+      // For dark colors on light theme, ensure minimum opacity
+      if (color.computeLuminance() < 0.3) {
+        adjustedOpacity = adjustedOpacity.clamp(0.15, 1.0);
+      }
+    }
+
+    // Convert opacity to alpha value (0-255)
+    final alpha = (adjustedOpacity * 255).round();
+    return color.withAlpha(alpha);
   }
 
   /// Show a loading dialog

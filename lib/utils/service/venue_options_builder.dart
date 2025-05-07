@@ -4,6 +4,8 @@ import 'package:eventati_book/models/service_options/venue_options.dart';
 /// Builder class for venue options form fields
 class VenueOptionsBuilder {
   /// Build all venue options form fields
+  ///
+  /// Uses [context] for theme-aware and responsive form fields
   static List<Widget> buildVenueOptionsFields({
     required BuildContext context,
     required VenueOptions initialOptions,
@@ -54,6 +56,7 @@ class VenueOptionsBuilder {
         teardownTimeController: teardownTimeController,
         onSetupTimeChanged: (_) => updateOptions(),
         onTeardownTimeChanged: (_) => updateOptions(),
+        context: context,
       ),
 
       ...buildLayoutSection(
@@ -82,37 +85,62 @@ class VenueOptionsBuilder {
     required TextEditingController teardownTimeController,
     required Function(String) onSetupTimeChanged,
     required Function(String) onTeardownTimeChanged,
+    BuildContext? context,
   }) {
-    return [
-      const Text(
-        'Setup and Teardown',
-        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+    // Get theme data if context is provided
+    final ThemeData theme =
+        context != null ? Theme.of(context) : ThemeData.light();
+
+    // Responsive sizing based on screen width
+    final bool isSmallScreen =
+        context != null && MediaQuery.of(context).size.width < 600;
+
+    final textStyle = TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.bold,
+      color: theme.colorScheme.primary,
+    );
+
+    final inputDecoration = InputDecoration(
+      labelStyle: TextStyle(color: theme.colorScheme.secondary),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(isSmallScreen ? 8.0 : 12.0),
       ),
+      filled: true,
+      fillColor: theme.colorScheme.surface,
+      contentPadding: EdgeInsets.symmetric(
+        horizontal: 16,
+        vertical: isSmallScreen ? 12 : 16,
+      ),
+    );
+
+    return [
+      Text('Setup and Teardown', style: textStyle),
       const SizedBox(height: 8),
 
       // Setup time
       TextField(
         controller: setupTimeController,
-        decoration: const InputDecoration(
+        decoration: inputDecoration.copyWith(
           labelText: 'Setup Time (minutes)',
           hintText: 'Enter setup time in minutes',
-          border: OutlineInputBorder(),
         ),
         keyboardType: TextInputType.number,
         onChanged: onSetupTimeChanged,
+        style: TextStyle(color: theme.colorScheme.onSurface),
       ),
       const SizedBox(height: 8),
 
       // Teardown time
       TextField(
         controller: teardownTimeController,
-        decoration: const InputDecoration(
+        decoration: inputDecoration.copyWith(
           labelText: 'Teardown Time (minutes)',
           hintText: 'Enter teardown time in minutes',
-          border: OutlineInputBorder(),
         ),
         keyboardType: TextInputType.number,
         onChanged: onTeardownTimeChanged,
+        style: TextStyle(color: theme.colorScheme.onSurface),
       ),
       const SizedBox(height: 16),
     ];

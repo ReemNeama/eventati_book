@@ -166,7 +166,7 @@ class MessagingProvider extends ChangeNotifier {
         content: content,
         timestamp: DateTime.now(),
         isFromUser: true,
-        attachments: attachments,
+        attachments: attachments != null ? List<String>.from(attachments) : [],
         isRead: true, // User's own messages are always read
       );
 
@@ -209,6 +209,9 @@ class MessagingProvider extends ChangeNotifier {
               isFromUser: message.isFromUser,
               attachments: message.attachments,
               isRead: true,
+              userId: message.userId,
+              eventId: message.eventId,
+              replyToMessageId: message.replyToMessageId,
             );
           }
 
@@ -253,6 +256,11 @@ class MessagingProvider extends ChangeNotifier {
 
     final now = DateTime.now();
 
+    // Mock user ID for testing
+    const mockUserId = 'user123';
+    // Mock event ID for testing
+    const mockEventId = 'event456';
+
     _messages = {
       '1': [
         Message(
@@ -262,6 +270,8 @@ class MessagingProvider extends ChangeNotifier {
           timestamp: now.subtract(const Duration(days: 5, hours: 3)),
           isFromUser: true,
           isRead: true,
+          userId: mockUserId,
+          eventId: mockEventId,
         ),
         Message(
           id: '2',
@@ -271,6 +281,8 @@ class MessagingProvider extends ChangeNotifier {
           timestamp: now.subtract(const Duration(days: 5, hours: 2)),
           isFromUser: false,
           isRead: true,
+          userId: mockUserId,
+          eventId: mockEventId,
         ),
         Message(
           id: '3',
@@ -279,6 +291,9 @@ class MessagingProvider extends ChangeNotifier {
           timestamp: now.subtract(const Duration(days: 5, hours: 1)),
           isFromUser: true,
           isRead: true,
+          userId: mockUserId,
+          eventId: mockEventId,
+          replyToMessageId: '2',
         ),
         Message(
           id: '4',
@@ -288,6 +303,9 @@ class MessagingProvider extends ChangeNotifier {
           timestamp: now.subtract(const Duration(days: 4, hours: 23)),
           isFromUser: false,
           isRead: false,
+          userId: mockUserId,
+          eventId: mockEventId,
+          replyToMessageId: '3',
         ),
       ],
       '2': [
@@ -298,6 +316,8 @@ class MessagingProvider extends ChangeNotifier {
           timestamp: now.subtract(const Duration(days: 3, hours: 5)),
           isFromUser: true,
           isRead: true,
+          userId: mockUserId,
+          eventId: mockEventId,
         ),
         Message(
           id: '6',
@@ -307,6 +327,9 @@ class MessagingProvider extends ChangeNotifier {
           timestamp: now.subtract(const Duration(days: 3, hours: 4)),
           isFromUser: false,
           isRead: true,
+          userId: mockUserId,
+          eventId: mockEventId,
+          replyToMessageId: '5',
         ),
       ],
     };

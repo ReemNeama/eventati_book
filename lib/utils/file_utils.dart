@@ -4,7 +4,6 @@ import 'dart:typed_data';
 import 'package:eventati_book/services/firebase/firebase_storage_service.dart';
 import 'package:eventati_book/services/interfaces/storage_service_interface.dart';
 import 'package:eventati_book/utils/logger.dart';
-import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
@@ -21,9 +20,7 @@ class FileUtils {
 
   /// Get the storage service
   static StorageServiceInterface get storageService {
-    if (_storageService == null) {
-      _storageService = FirebaseStorageService();
-    }
+    _storageService ??= FirebaseStorageService();
     return _storageService!;
   }
 

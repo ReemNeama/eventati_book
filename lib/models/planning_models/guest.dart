@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 enum RsvpStatus { pending, confirmed, declined, tentative }
 
 class GuestGroup {
@@ -28,6 +30,34 @@ class GuestGroup {
       description: description ?? this.description,
       color: color ?? this.color,
       guests: guests ?? this.guests,
+    );
+  }
+
+  /// Convert to Firestore data
+  Map<String, dynamic> toFirestore() {
+    return {
+      'name': name,
+      'description': description,
+      'color': color,
+      // Don't store guests here, they are stored in a subcollection
+      'createdAt': FieldValue.serverTimestamp(),
+      'updatedAt': FieldValue.serverTimestamp(),
+    };
+  }
+
+  /// Create from Firestore document
+  factory GuestGroup.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>?;
+    if (data == null) {
+      throw Exception('Document data was null');
+    }
+
+    return GuestGroup(
+      id: doc.id,
+      name: data['name'] ?? '',
+      description: data['description'],
+      color: data['color'],
+      guests: [], // Guests are loaded separately from a subcollection
     );
   }
 }
@@ -87,5 +117,103 @@ class Guest {
       plusOneCount: plusOneCount ?? this.plusOneCount,
       notes: notes ?? this.notes,
     );
+  }
+
+  /// Convert to JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'firstName': firstName,
+      'lastName': lastName,
+      'email': email,
+      'phone': phone,
+      'groupId': groupId,
+      'rsvpStatus': rsvpStatus.toString().split('.').last,
+      'rsvpResponseDate': rsvpResponseDate?.toIso8601String(),
+      'plusOne': plusOne,
+      'plusOneCount': plusOneCount,
+      'notes': notes,
+    };
+  }
+
+  /// Create from JSON
+  factory Guest.fromJson(Map<String, dynamic> json) {
+    return Guest(
+      id: json['id'],
+      firstName: json['firstName'] ?? '',
+      lastName: json['lastName'] ?? '',
+      email: json['email'],
+      phone: json['phone'],
+      groupId: json['groupId'],
+      rsvpStatus: _parseRsvpStatus(json['rsvpStatus']),
+      rsvpResponseDate:
+          json['rsvpResponseDate'] != null
+              ? DateTime.parse(json['rsvpResponseDate'])
+              : null,
+      plusOne: json['plusOne'] ?? false,
+      plusOneCount: json['plusOneCount'],
+      notes: json['notes'],
+    );
+  }
+
+  /// Convert to Firestore data
+  Map<String, dynamic> toFirestore() {
+    return {
+      'firstName': firstName,
+      'lastName': lastName,
+      'email': email,
+      'phone': phone,
+      'groupId': groupId,
+      'rsvpStatus': rsvpStatus.toString().split('.').last,
+      'rsvpResponseDate':
+          rsvpResponseDate != null
+              ? Timestamp.fromDate(rsvpResponseDate!)
+              : null,
+      'plusOne': plusOne,
+      'plusOneCount': plusOneCount,
+      'notes': notes,
+      'createdAt': FieldValue.serverTimestamp(),
+      'updatedAt': FieldValue.serverTimestamp(),
+    };
+  }
+
+  /// Create from Firestore document
+  factory Guest.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>?;
+    if (data == null) {
+      throw Exception('Document data was null');
+    }
+
+    return Guest(
+      id: doc.id,
+      firstName: data['firstName'] ?? '',
+      lastName: data['lastName'] ?? '',
+      email: data['email'],
+      phone: data['phone'],
+      groupId: data['groupId'],
+      rsvpStatus: _parseRsvpStatus(data['rsvpStatus']),
+      rsvpResponseDate:
+          data['rsvpResponseDate'] != null
+              ? (data['rsvpResponseDate'] as Timestamp).toDate()
+              : null,
+      plusOne: data['plusOne'] ?? false,
+      plusOneCount: data['plusOneCount'],
+      notes: data['notes'],
+    );
+  }
+
+  /// Parse RSVP status from string
+  static RsvpStatus _parseRsvpStatus(String? status) {
+    switch (status?.toLowerCase()) {
+      case 'confirmed':
+        return RsvpStatus.confirmed;
+      case 'declined':
+        return RsvpStatus.declined;
+      case 'tentative':
+        return RsvpStatus.tentative;
+      case 'pending':
+      default:
+        return RsvpStatus.pending;
+    }
   }
 }

@@ -3,7 +3,6 @@ import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/services/firebase/firestore_service.dart';
 import 'package:eventati_book/services/interfaces/database_service_interface.dart';
 import 'package:eventati_book/utils/logger.dart';
-import 'package:flutter/material.dart';
 
 /// Service for handling service-related Firestore operations
 class ServiceFirestoreService {
@@ -170,6 +169,33 @@ class ServiceFirestoreService {
         'Error getting photographer by ID: $e',
         tag: 'ServiceFirestoreService',
       );
+      rethrow;
+    }
+  }
+
+  /// Create a new venue
+  Future<String> createVenue(Venue venue) async {
+    try {
+      final data = {
+        'name': venue.name,
+        'description': venue.description,
+        'rating': venue.rating,
+        'venueTypes': venue.venueTypes,
+        'minCapacity': venue.minCapacity,
+        'maxCapacity': venue.maxCapacity,
+        'pricePerEvent': venue.pricePerEvent,
+        'imageUrl': venue.imageUrl,
+        'features': venue.features,
+        'createdAt': FieldValue.serverTimestamp(),
+      };
+
+      final venueId = await _firestoreService.addDocument(
+        _venuesCollection,
+        data,
+      );
+      return venueId;
+    } catch (e) {
+      Logger.e('Error creating venue: $e', tag: 'ServiceFirestoreService');
       rethrow;
     }
   }

@@ -20,7 +20,7 @@ class DataMigrationService {
   /// Firebase Auth instance
   final firebase_auth.FirebaseAuth _auth;
 
-  /// Firestore instance
+  /// Firestore instance - used for direct Firestore operations when needed
   final FirebaseFirestore _firestore;
 
   /// User Firestore service
@@ -149,6 +149,13 @@ class DataMigrationService {
       // Start creating sample data
       Logger.i('Creating sample data...', tag: 'DataMigrationService');
 
+      // Log Firestore settings to verify connection
+      final settings = _firestore.settings;
+      Logger.i(
+        'Using Firestore with host: ${settings.host}',
+        tag: 'DataMigrationService',
+      );
+
       // Create sample user
       final user = User(
         id: _auth.currentUser!.uid,
@@ -174,7 +181,7 @@ class DataMigrationService {
       );
       await _eventService.createEvent(event);
 
-      // Create sample venue
+      // Create sample venue using the service
       final venue = Venue(
         name: 'Sample Venue',
         description: 'This is a sample venue created for testing',
@@ -186,21 +193,9 @@ class DataMigrationService {
         imageUrl: 'assets/images/venue_placeholder.jpg',
         features: ['parking', 'wifi', 'catering'],
       );
-      await _firestore
-          .collection('services')
-          .doc('venues')
-          .collection('items')
-          .add({
-            'name': venue.name,
-            'description': venue.description,
-            'rating': venue.rating,
-            'venueTypes': venue.venueTypes,
-            'minCapacity': venue.minCapacity,
-            'maxCapacity': venue.maxCapacity,
-            'pricePerEvent': venue.pricePerEvent,
-            'imageUrl': venue.imageUrl,
-            'features': venue.features,
-          });
+
+      // Use the service_service to create the venue
+      await _serviceService.createVenue(venue);
 
       // Create sample guest
       final guest = Guest(
