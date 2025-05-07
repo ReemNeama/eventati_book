@@ -62,7 +62,7 @@ void main() {
       expect(message.content, equals('Test message'));
       expect(message.timestamp, equals(timestamp));
       expect(message.isFromUser, isTrue);
-      expect(message.attachments, isNull);
+      expect(message.attachments, isEmpty);
       expect(message.isRead, isFalse); // Default value
     });
 
