@@ -5,6 +5,7 @@ import 'package:eventati_book/services/interfaces/crashlytics_service_interface.
 import 'package:eventati_book/services/interfaces/database_service_interface.dart';
 import 'package:eventati_book/services/interfaces/messaging_service_interface.dart';
 import 'package:eventati_book/services/interfaces/storage_service_interface.dart';
+import 'package:eventati_book/services/firebase/data_migration_service.dart';
 import 'package:eventati_book/services/firebase/firebase_analytics_service.dart';
 import 'package:eventati_book/services/firebase/firebase_auth_service.dart';
 import 'package:eventati_book/services/firebase/firebase_crashlytics_service.dart';
@@ -59,6 +60,7 @@ class ServiceLocator {
     );
     registerSingleton<UserFirestoreService>(UserFirestoreService());
     registerSingleton<EventFirestoreService>(EventFirestoreService());
+    registerSingleton<DataMigrationService>(DataMigrationService());
 
     // Initialize FileUtils with the storage service
     FileUtils.setStorageService(get<StorageServiceInterface>());
@@ -100,6 +102,9 @@ class ServiceLocator {
   /// Get the crashlytics service
   CrashlyticsServiceInterface get crashlyticsService =>
       get<CrashlyticsServiceInterface>();
+
+  /// Get the data migration service
+  DataMigrationService get dataMigrationService => get<DataMigrationService>();
 }
 
 /// Global instance of the service locator
