@@ -1,31 +1,33 @@
+import 'package:eventati_book/di/service_locator.dart';
+import 'package:eventati_book/services/interfaces/analytics_service_interface.dart';
 import 'package:flutter/foundation.dart';
 
 /// Utility functions for analytics and tracking
 class AnalyticsUtils {
+  /// Get the analytics service
+  static AnalyticsServiceInterface get _analyticsService =>
+      serviceLocator.analyticsService;
+
   /// Log a screen view event
   static void logScreenView(String screenName) {
-    // In a real app, this would send data to an analytics service
-    // For now, we'll just print to the console in debug mode
+    // Log to console in debug mode
     if (kDebugMode) {
       print('Screen View: $screenName');
     }
 
-    // TODO: Implement actual analytics service integration
-    // Example with Firebase Analytics:
-    // FirebaseAnalytics.instance.logScreenView(screenName: screenName);
+    // Send to analytics service
+    _analyticsService.trackScreenView(screenName);
   }
 
   /// Log a user action event
   static void logEvent(String eventName, {Map<String, dynamic>? parameters}) {
-    // In a real app, this would send data to an analytics service
-    // For now, we'll just print to the console in debug mode
+    // Log to console in debug mode
     if (kDebugMode) {
       print('Event: $eventName, Parameters: $parameters');
     }
 
-    // TODO: Implement actual analytics service integration
-    // Example with Firebase Analytics:
-    // FirebaseAnalytics.instance.logEvent(name: eventName, parameters: parameters);
+    // Send to analytics service
+    _analyticsService.logEvent(eventName, parameters: parameters);
   }
 
   /// Log an error event
@@ -34,8 +36,7 @@ class AnalyticsUtils {
     StackTrace? stackTrace,
     String? errorCode,
   }) {
-    // In a real app, this would send data to an analytics service
-    // For now, we'll just print to the console in debug mode
+    // Log to console in debug mode
     if (kDebugMode) {
       print('Error: $errorMessage, Code: $errorCode');
       if (stackTrace != null) {
@@ -43,40 +44,30 @@ class AnalyticsUtils {
       }
     }
 
-    // TODO: Implement actual analytics service integration
-    // Example with Firebase Crashlytics:
-    // FirebaseCrashlytics.instance.recordError(
-    //   errorMessage,
-    //   stackTrace,
-    //   reason: errorCode,
-    // );
+    // Send to analytics service
+    _analyticsService.trackError(
+      errorMessage,
+      parameters: errorCode != null ? {'error_code': errorCode} : null,
+      stackTrace: stackTrace,
+    );
   }
 
   /// Log a user login event
   static void logLogin({required String method}) {
-    logEvent('login', parameters: {'method': method});
-
-    // TODO: Implement actual analytics service integration
-    // Example with Firebase Analytics:
-    // FirebaseAnalytics.instance.logLogin(loginMethod: method);
+    // Send to analytics service
+    _analyticsService.trackLogin(method: method);
   }
 
   /// Log a user signup event
   static void logSignUp({required String method}) {
-    logEvent('sign_up', parameters: {'method': method});
-
-    // TODO: Implement actual analytics service integration
-    // Example with Firebase Analytics:
-    // FirebaseAnalytics.instance.logSignUp(signUpMethod: method);
+    // Send to analytics service
+    _analyticsService.trackSignUp(method: method);
   }
 
   /// Log a search event
   static void logSearch({required String searchTerm}) {
-    logEvent('search', parameters: {'search_term': searchTerm});
-
-    // TODO: Implement actual analytics service integration
-    // Example with Firebase Analytics:
-    // FirebaseAnalytics.instance.logSearch(searchTerm: searchTerm);
+    // Send to analytics service
+    _analyticsService.trackSearch(searchTerm);
   }
 
   /// Log a service selection event
@@ -84,7 +75,8 @@ class AnalyticsUtils {
     required String serviceType,
     required String serviceName,
   }) {
-    logEvent(
+    // Send to analytics service
+    _analyticsService.logEvent(
       'select_service',
       parameters: {'service_type': serviceType, 'service_name': serviceName},
     );
@@ -95,7 +87,8 @@ class AnalyticsUtils {
     required String milestoneId,
     required String milestoneName,
   }) {
-    logEvent(
+    // Send to analytics service
+    _analyticsService.logEvent(
       'complete_milestone',
       parameters: {
         'milestone_id': milestoneId,
@@ -109,7 +102,8 @@ class AnalyticsUtils {
     required String category,
     required double amount,
   }) {
-    logEvent(
+    // Send to analytics service
+    _analyticsService.logEvent(
       'create_budget_item',
       parameters: {'category': category, 'amount': amount},
     );
@@ -117,7 +111,11 @@ class AnalyticsUtils {
 
   /// Log a guest list addition event
   static void logGuestAddition({required int guestCount}) {
-    logEvent('add_guest', parameters: {'guest_count': guestCount});
+    // Send to analytics service
+    _analyticsService.logEvent(
+      'add_guest',
+      parameters: {'guest_count': guestCount},
+    );
   }
 
   /// Log a task completion event
@@ -125,7 +123,8 @@ class AnalyticsUtils {
     required String taskId,
     required String taskName,
   }) {
-    logEvent(
+    // Send to analytics service
+    _analyticsService.logEvent(
       'complete_task',
       parameters: {'task_id': taskId, 'task_name': taskName},
     );
@@ -136,16 +135,10 @@ class AnalyticsUtils {
     required String metricName,
     required double value,
   }) {
-    logEvent(
+    // Send to analytics service
+    _analyticsService.logEvent(
       'performance_metric',
       parameters: {'metric_name': metricName, 'value': value},
     );
-
-    // TODO: Implement actual performance monitoring
-    // Example with Firebase Performance Monitoring:
-    // final metric = FirebasePerformance.instance.newHttpMetric(url, HttpMethod.Get);
-    // await metric.start();
-    // // ... perform operation ...
-    // await metric.stop();
   }
 }
