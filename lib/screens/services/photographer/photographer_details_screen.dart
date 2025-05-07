@@ -11,6 +11,8 @@ import 'package:eventati_book/widgets/details/image_placeholder.dart';
 import 'package:eventati_book/widgets/details/chip_group.dart';
 import 'package:eventati_book/widgets/responsive/responsive.dart';
 import 'package:eventati_book/routing/routing.dart';
+import 'package:eventati_book/providers/providers.dart';
+import 'package:provider/provider.dart';
 
 class PhotographerDetailsScreen extends StatefulWidget {
   final Photographer photographer;
@@ -230,12 +232,58 @@ class _PhotographerDetailsScreenState extends State<PhotographerDetailsScreen>
     );
   }
 
+  /// Builds the recommendation section if the photographer is recommended
+  Widget _buildRecommendationSection() {
+    return Consumer<ServiceRecommendationProvider>(
+      builder: (context, provider, _) {
+        // Only show if there's wizard data and the photographer is recommended
+        if (provider.wizardData == null) {
+          return const SizedBox.shrink();
+        }
+
+        final isRecommended = provider.isPhotographerRecommended(
+          widget.photographer,
+        );
+        if (!isRecommended) {
+          return const SizedBox.shrink();
+        }
+
+        final recommendationReason = provider
+            .getPhotographerRecommendationReason(widget.photographer);
+
+        return InfoCard(
+          title: 'Recommended for Your Event',
+          content: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Icon(Icons.thumb_up, color: Colors.green),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      recommendationReason ??
+                          'This photographer is recommended for your event',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   Widget _buildPackagesTab() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          _buildRecommendationSection(),
+          const SizedBox(height: 16),
           Text(
             'Select a Package',
             style: Theme.of(context).textTheme.titleLarge,

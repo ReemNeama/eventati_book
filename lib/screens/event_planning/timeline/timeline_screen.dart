@@ -7,6 +7,8 @@ import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/screens/event_planning/timeline/task_form_screen.dart';
 import 'package:eventati_book/screens/event_planning/timeline/checklist_screen.dart';
+import 'package:eventati_book/routing/route_names.dart';
+import 'package:eventati_book/routing/route_arguments.dart';
 import 'package:intl/intl.dart';
 
 class TimelineScreen extends StatefulWidget {
@@ -50,6 +52,22 @@ class _TimelineScreenState extends State<TimelineScreen>
         appBar: AppBar(
           title: Text('Timeline for ${widget.eventName}'),
           backgroundColor: primaryColor,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.account_tree),
+              tooltip: 'Manage Dependencies',
+              onPressed: () {
+                NavigationUtils.navigateToNamed(
+                  context,
+                  RouteNames.taskDependency,
+                  arguments: TaskDependencyArguments(
+                    eventId: widget.eventId,
+                    eventName: widget.eventName,
+                  ),
+                );
+              },
+            ),
+          ],
           bottom: TabBar(
             controller: _tabController,
             indicatorColor: Colors.white,
@@ -282,13 +300,21 @@ class _TimelineScreenState extends State<TimelineScreen>
                         ],
                       ),
                       const SizedBox(height: 8),
-                      Text(
-                        task.title,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: textColor,
-                        ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              task.title,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: textColor,
+                              ),
+                            ),
+                          ),
+                          // Dependency indicators
+                          _buildDependencyIndicators(taskProvider, task),
+                        ],
                       ),
                       if (task.description != null &&
                           task.description!.isNotEmpty) ...[
@@ -354,5 +380,34 @@ class _TimelineScreenState extends State<TimelineScreen>
     }
 
     return grouped;
+  }
+
+  /// Builds dependency indicator icons for a task
+  Widget _buildDependencyIndicators(TaskProvider taskProvider, Task task) {
+    final hasPrerequisites =
+        taskProvider.getPrerequisiteTasks(task.id).isNotEmpty;
+    final hasDependents = taskProvider.getDependentTasks(task.id).isNotEmpty;
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (hasPrerequisites)
+          const Tooltip(
+            message: 'This task depends on other tasks',
+            child: Padding(
+              padding: EdgeInsets.only(left: 4),
+              child: Icon(Icons.arrow_downward, size: 16, color: Colors.orange),
+            ),
+          ),
+        if (hasDependents)
+          const Tooltip(
+            message: 'Other tasks depend on this task',
+            child: Padding(
+              padding: EdgeInsets.only(left: 4),
+              child: Icon(Icons.arrow_upward, size: 16, color: Colors.blue),
+            ),
+          ),
+      ],
+    );
   }
 }

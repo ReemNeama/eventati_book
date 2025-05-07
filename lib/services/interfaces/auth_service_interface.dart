@@ -6,26 +6,16 @@ class AuthResult {
   final String? errorMessage;
   final User? user;
 
-  AuthResult({
-    required this.isSuccess,
-    this.errorMessage,
-    this.user,
-  });
+  AuthResult({required this.isSuccess, this.errorMessage, this.user});
 
   /// Create a successful result with a user
   factory AuthResult.success(User user) {
-    return AuthResult(
-      isSuccess: true,
-      user: user,
-    );
+    return AuthResult(isSuccess: true, user: user);
   }
 
   /// Create a failed result with an error message
   factory AuthResult.failure(String errorMessage) {
-    return AuthResult(
-      isSuccess: false,
-      errorMessage: errorMessage,
-    );
+    return AuthResult(isSuccess: false, errorMessage: errorMessage);
   }
 }
 
@@ -41,10 +31,7 @@ abstract class AuthServiceInterface {
   bool get isSignedIn;
 
   /// Sign in with email and password
-  Future<AuthResult> signInWithEmailAndPassword(
-    String email,
-    String password,
-  );
+  Future<AuthResult> signInWithEmailAndPassword(String email, String password);
 
   /// Create a new user with email and password
   Future<AuthResult> createUserWithEmailAndPassword(
@@ -63,10 +50,7 @@ abstract class AuthServiceInterface {
   Future<AuthResult> verifyEmail();
 
   /// Update a user's profile
-  Future<AuthResult> updateProfile({
-    String? displayName,
-    String? photoUrl,
-  });
+  Future<AuthResult> updateProfile({String? displayName, String? photoUrl});
 
   /// Delete the current user
   Future<AuthResult> deleteUser();

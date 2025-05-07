@@ -13,7 +13,7 @@ class FirebaseStorageService implements StorageServiceInterface {
 
   /// Constructor
   FirebaseStorageService({FirebaseStorage? storage})
-      : _storage = storage ?? FirebaseStorage.instance;
+    : _storage = storage ?? FirebaseStorage.instance;
 
   @override
   Future<String> uploadFile(
@@ -23,9 +23,10 @@ class FirebaseStorageService implements StorageServiceInterface {
   }) async {
     try {
       final ref = _storage.ref().child(path);
-      final uploadTask = metadata != null
-          ? ref.putFile(file, SettableMetadata(customMetadata: metadata))
-          : ref.putFile(file);
+      final uploadTask =
+          metadata != null
+              ? ref.putFile(file, SettableMetadata(customMetadata: metadata))
+              : ref.putFile(file);
       final snapshot = await uploadTask;
       return await snapshot.ref.getDownloadURL();
     } catch (e) {
@@ -42,9 +43,10 @@ class FirebaseStorageService implements StorageServiceInterface {
   }) async {
     try {
       final ref = _storage.ref().child(path);
-      final uploadTask = metadata != null
-          ? ref.putData(data, SettableMetadata(customMetadata: metadata))
-          : ref.putData(data);
+      final uploadTask =
+          metadata != null
+              ? ref.putData(data, SettableMetadata(customMetadata: metadata))
+              : ref.putData(data);
       final snapshot = await uploadTask;
       return await snapshot.ref.getDownloadURL();
     } catch (e) {
@@ -151,7 +153,10 @@ class FirebaseStorageService implements StorageServiceInterface {
       if (e is FirebaseException && e.code == 'object-not-found') {
         return false;
       }
-      Logger.e('Error checking if file exists: $e', tag: 'FirebaseStorageService');
+      Logger.e(
+        'Error checking if file exists: $e',
+        tag: 'FirebaseStorageService',
+      );
       rethrow;
     }
   }
@@ -178,9 +183,10 @@ class FirebaseStorageService implements StorageServiceInterface {
   }) async {
     try {
       final ref = _storage.ref().child(path);
-      final uploadTask = metadata != null
-          ? ref.putFile(file, SettableMetadata(customMetadata: metadata))
-          : ref.putFile(file);
+      final uploadTask =
+          metadata != null
+              ? ref.putFile(file, SettableMetadata(customMetadata: metadata))
+              : ref.putFile(file);
 
       if (onProgress != null) {
         uploadTask.snapshotEvents.listen((TaskSnapshot snapshot) {
@@ -192,7 +198,10 @@ class FirebaseStorageService implements StorageServiceInterface {
       final snapshot = await uploadTask;
       return await snapshot.ref.getDownloadURL();
     } catch (e) {
-      Logger.e('Error uploading file with progress: $e', tag: 'FirebaseStorageService');
+      Logger.e(
+        'Error uploading file with progress: $e',
+        tag: 'FirebaseStorageService',
+      );
       rethrow;
     }
   }
@@ -206,9 +215,10 @@ class FirebaseStorageService implements StorageServiceInterface {
   }) async {
     try {
       final ref = _storage.ref().child(path);
-      final uploadTask = metadata != null
-          ? ref.putData(data, SettableMetadata(customMetadata: metadata))
-          : ref.putData(data);
+      final uploadTask =
+          metadata != null
+              ? ref.putData(data, SettableMetadata(customMetadata: metadata))
+              : ref.putData(data);
 
       if (onProgress != null) {
         uploadTask.snapshotEvents.listen((TaskSnapshot snapshot) {
@@ -220,7 +230,10 @@ class FirebaseStorageService implements StorageServiceInterface {
       final snapshot = await uploadTask;
       return await snapshot.ref.getDownloadURL();
     } catch (e) {
-      Logger.e('Error uploading data with progress: $e', tag: 'FirebaseStorageService');
+      Logger.e(
+        'Error uploading data with progress: $e',
+        tag: 'FirebaseStorageService',
+      );
       rethrow;
     }
   }
@@ -234,36 +247,39 @@ class FirebaseStorageService implements StorageServiceInterface {
     try {
       final ref = _storage.ref().child(path);
       final file = File(localPath);
-      
+
       // Get the total size of the file
       final metadata = await ref.getMetadata();
       final totalBytes = metadata.size ?? 0;
-      
+
       // Create a temporary file to track progress
       final tempFile = File('${localPath}_temp');
       final downloadTask = ref.writeToFile(tempFile);
-      
+
       if (onProgress != null && totalBytes > 0) {
         downloadTask.snapshotEvents.listen((TaskSnapshot snapshot) {
           final progress = snapshot.bytesTransferred / totalBytes;
           onProgress(progress);
         });
       }
-      
+
       await downloadTask;
-      
+
       // Rename the temp file to the final file
       await tempFile.rename(localPath);
-      
+
       return file;
     } catch (e) {
-      Logger.e('Error downloading file with progress: $e', tag: 'FirebaseStorageService');
+      Logger.e(
+        'Error downloading file with progress: $e',
+        tag: 'FirebaseStorageService',
+      );
       rethrow;
     }
   }
 
   /// Generate a unique file path for storage
-  /// 
+  ///
   /// [userId] The ID of the user
   /// [folder] The folder to store the file in
   /// [fileName] The name of the file

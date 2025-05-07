@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:eventati_book/services/firebase/firebase_storage_service.dart';
+import 'package:eventati_book/services/firebase/core/firebase_storage_service.dart';
 import 'package:eventati_book/services/interfaces/storage_service_interface.dart';
 import 'package:eventati_book/utils/logger.dart';
 import 'package:image_picker/image_picker.dart';

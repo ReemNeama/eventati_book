@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/services/interfaces/auth_service_interface.dart';
-import 'package:eventati_book/services/firebase/user_firestore_service.dart';
+import 'package:eventati_book/services/firebase/firestore/user_firestore_service.dart';
 import 'package:eventati_book/di/service_locator.dart';
 
 /// Authentication states

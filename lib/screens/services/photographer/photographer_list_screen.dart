@@ -25,6 +25,7 @@ class _PhotographerListScreenState extends State<PhotographerListScreen> {
   final List<String> _selectedStyles = [];
   RangeValues _priceRange = const RangeValues(500, 2000);
   RangeValues _experienceRange = const RangeValues(1, 10);
+  bool _showRecommendedOnly = false;
 
   final List<Photographer> _photographers = [
     Photographer(
@@ -60,6 +61,9 @@ class _PhotographerListScreenState extends State<PhotographerListScreen> {
   ];
 
   List<Photographer> get filteredPhotographers {
+    final serviceRecommendationProvider =
+        Provider.of<ServiceRecommendationProvider>(context, listen: false);
+
     return _photographers.where((photographer) {
         final matchesSearch =
             photographer.name.toLowerCase().contains(
@@ -77,7 +81,16 @@ class _PhotographerListScreenState extends State<PhotographerListScreen> {
             photographer.pricePerEvent >= _priceRange.start &&
             photographer.pricePerEvent <= _priceRange.end;
 
-        return matchesSearch && matchesStyle && matchesPrice;
+        final matchesRecommendation =
+            !_showRecommendedOnly ||
+            serviceRecommendationProvider.isPhotographerRecommended(
+              photographer,
+            );
+
+        return matchesSearch &&
+            matchesStyle &&
+            matchesPrice &&
+            matchesRecommendation;
       }).toList()
       ..sort((a, b) {
         switch (_selectedSortOption) {
@@ -139,11 +152,23 @@ class _PhotographerListScreenState extends State<PhotographerListScreen> {
               itemBuilder: (context, index) {
                 final photographer = filteredPhotographers[index];
 
+                final serviceRecommendationProvider =
+                    Provider.of<ServiceRecommendationProvider>(context);
+                final isRecommended = serviceRecommendationProvider
+                    .isPhotographerRecommended(photographer);
+                final recommendationReason =
+                    isRecommended
+                        ? serviceRecommendationProvider
+                            .getPhotographerRecommendationReason(photographer)
+                        : null;
+
                 return ServiceCard(
                   name: photographer.name,
                   description: photographer.description,
                   rating: photographer.rating,
                   imageUrl: photographer.imageUrl,
+                  isRecommended: isRecommended,
+                  recommendationReason: recommendationReason,
                   isCompareSelected: comparisonProvider.isServiceSelected(
                     photographer,
                   ),
@@ -231,6 +256,7 @@ class _PhotographerListScreenState extends State<PhotographerListScreen> {
     RangeValues localPriceRange = _priceRange;
     RangeValues localExperienceRange = _experienceRange;
     final List<String> localSelectedStyles = List.from(_selectedStyles);
+    bool localShowRecommendedOnly = _showRecommendedOnly;
 
     showDialog(
       context: context,
@@ -307,6 +333,29 @@ class _PhotographerListScreenState extends State<PhotographerListScreen> {
                               _selectedStyles.clear();
                               _selectedStyles.addAll(localSelectedStyles);
                             });
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        Consumer<ServiceRecommendationProvider>(
+                          builder: (context, provider, _) {
+                            // Only show the recommended filter if there's wizard data
+                            if (provider.wizardData == null) {
+                              return const SizedBox.shrink();
+                            }
+
+                            return CheckboxListTile(
+                              title: const Text('Show Recommended Only'),
+                              value: localShowRecommendedOnly,
+                              onChanged: (value) {
+                                setDialogState(() {
+                                  localShowRecommendedOnly = value ?? false;
+                                });
+
+                                setState(() {
+                                  _showRecommendedOnly = value ?? false;
+                                });
+                              },
+                            );
                           },
                         ),
                       ],

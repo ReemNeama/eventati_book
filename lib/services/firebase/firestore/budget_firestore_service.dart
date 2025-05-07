@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eventati_book/models/models.dart';
-import 'package:eventati_book/services/firebase/firestore_service.dart';
+import 'package:eventati_book/services/firebase/utils/firestore_service.dart';
 import 'package:eventati_book/utils/logger.dart';
 import 'package:flutter/material.dart';
 

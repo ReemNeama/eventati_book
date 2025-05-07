@@ -134,6 +134,19 @@ class TimelineArguments extends RouteArguments {
     : super();
 }
 
+/// Arguments for task dependency screen
+class TaskDependencyArguments extends RouteArguments {
+  final String eventId;
+  final String eventName;
+  final String? focusedTaskId;
+
+  const TaskDependencyArguments({
+    required this.eventId,
+    required this.eventName,
+    this.focusedTaskId,
+  }) : super();
+}
+
 /// Arguments for vendor communication screen
 class VendorCommunicationArguments extends RouteArguments {
   final String eventId;

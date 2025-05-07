@@ -5,6 +5,7 @@ import 'package:eventati_book/providers/providers.dart';
 import 'package:eventati_book/services/task_template_service.dart';
 import 'package:eventati_book/services/wizard/budget_items_builder.dart';
 import 'package:eventati_book/services/wizard/guest_groups_builder.dart';
+import 'package:eventati_book/services/wizard/specialized_task_templates.dart';
 
 /// Service to connect the wizard with other planning tools
 class WizardConnectionService {
@@ -21,6 +22,21 @@ class WizardConnectionService {
 
     // Connect to timeline/checklist
     connectToTimeline(context, wizardData);
+
+    // Connect to service screens for recommendations
+    connectToServiceScreens(context, wizardData);
+
+    // Show success message
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(
+          'Wizard data connected to all planning tools successfully!',
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.green,
+        duration: Duration(seconds: 3),
+      ),
+    );
 
     debugPrint('Connected wizard to all planning tools');
   }
@@ -52,7 +68,11 @@ class WizardConnectionService {
     // Ensure budget categories exist
     _ensureBudgetCategoriesExist(budgetProvider);
 
-    // Create budget items based on selected services
+    // Get location and venue information from wizard data
+    final location = wizardData['location'] as String? ?? 'Unknown';
+    final isPremiumVenue = wizardData['isPremiumVenue'] as bool? ?? false;
+
+    // Create budget items based on selected services with enhanced calculations
     _createBudgetItemsFromServices(
       budgetProvider,
       selectedServices,
@@ -63,6 +83,9 @@ class WizardConnectionService {
       setupHours,
       needsTeardown,
       teardownHours,
+      location: location,
+      eventDate: eventDate,
+      isPremiumVenue: isPremiumVenue,
     );
 
     // Add budget allocation recommendations
@@ -316,52 +339,43 @@ class WizardConnectionService {
   ) {
     final specializedTasks = <Task>[];
 
-    // Add tasks specific to event type
+    // Use specialized task templates based on event type
     if (eventType.toLowerCase().contains('wedding')) {
-      // Wedding-specific tasks
-      specializedTasks.add(
-        Task(
-          id: 'task_${DateTime.now().millisecondsSinceEpoch}_1',
-          title: 'Create wedding website',
-          description: 'Set up a wedding website to share details with guests',
-          categoryId: '1', // Planning category
-          dueDate: eventDate.subtract(const Duration(days: 180)),
-          status: TaskStatus.notStarted,
-          isImportant: true,
-        ),
+      // Get comprehensive wedding task list from specialized templates
+      specializedTasks.addAll(
+        SpecializedTaskTemplates.createWeddingTasks(eventDate),
       );
 
-      specializedTasks.add(
-        Task(
-          id: 'task_${DateTime.now().millisecondsSinceEpoch}_2',
-          title: 'Schedule dress fittings',
-          description: 'Book appointments for wedding dress fittings',
-          categoryId: '2', // Attire category
-          dueDate: eventDate.subtract(const Duration(days: 90)),
-          status: TaskStatus.notStarted,
-          isImportant: true,
-        ),
+      debugPrint('Added ${specializedTasks.length} specialized wedding tasks');
+    } else if (eventType.toLowerCase().contains('business')) {
+      // Get comprehensive business event task list from specialized templates
+      specializedTasks.addAll(
+        SpecializedTaskTemplates.createBusinessEventTasks(eventDate),
       );
 
+      debugPrint(
+        'Added ${specializedTasks.length} specialized business event tasks',
+      );
+    } else {
+      // For other celebration events, add basic tasks
       specializedTasks.add(
         Task(
-          id: 'task_${DateTime.now().millisecondsSinceEpoch}_3',
-          title: 'Plan rehearsal dinner',
-          description: 'Organize the rehearsal dinner before the wedding',
+          id: 'celebration_task_${DateTime.now().millisecondsSinceEpoch}_1',
+          title: 'Create event timeline',
+          description: 'Develop a detailed schedule for the celebration',
           categoryId: '1', // Planning category
           dueDate: eventDate.subtract(const Duration(days: 60)),
           status: TaskStatus.notStarted,
-          isImportant: false,
+          isImportant: true,
         ),
       );
-    } else if (eventType.toLowerCase().contains('business')) {
-      // Business event-specific tasks
+
       specializedTasks.add(
         Task(
-          id: 'task_${DateTime.now().millisecondsSinceEpoch}_1',
-          title: 'Prepare event agenda',
-          description: 'Create a detailed agenda for the business event',
-          categoryId: '1', // Planning category
+          id: 'celebration_task_${DateTime.now().millisecondsSinceEpoch}_2',
+          title: 'Plan entertainment',
+          description: 'Arrange music, games, or other entertainment',
+          categoryId: '3', // Entertainment category
           dueDate: eventDate.subtract(const Duration(days: 45)),
           status: TaskStatus.notStarted,
           isImportant: true,
@@ -370,25 +384,13 @@ class WizardConnectionService {
 
       specializedTasks.add(
         Task(
-          id: 'task_${DateTime.now().millisecondsSinceEpoch}_2',
-          title: 'Arrange speaker presentations',
-          description: 'Collect and review presentations from all speakers',
-          categoryId: '3', // Content category
-          dueDate: eventDate.subtract(const Duration(days: 14)),
+          id: 'celebration_task_${DateTime.now().millisecondsSinceEpoch}_3',
+          title: 'Arrange decorations',
+          description: 'Plan and purchase decorations for the event',
+          categoryId: '5', // Decor category
+          dueDate: eventDate.subtract(const Duration(days: 30)),
           status: TaskStatus.notStarted,
           isImportant: true,
-        ),
-      );
-
-      specializedTasks.add(
-        Task(
-          id: 'task_${DateTime.now().millisecondsSinceEpoch}_3',
-          title: 'Prepare name badges',
-          description: 'Create name badges for all attendees',
-          categoryId: '4', // Materials category
-          dueDate: eventDate.subtract(const Duration(days: 7)),
-          status: TaskStatus.notStarted,
-          isImportant: false,
         ),
       );
     }
@@ -406,17 +408,100 @@ class WizardConnectionService {
           isImportant: true,
         ),
       );
+
+      // For very large events, add crowd management tasks
+      if (guestCount > 250) {
+        specializedTasks.add(
+          Task(
+            id: 'task_${DateTime.now().millisecondsSinceEpoch}_large_1',
+            title: 'Hire event staff',
+            description: 'Arrange for additional staff for large event',
+            categoryId: '6', // Staff category
+            dueDate: eventDate.subtract(const Duration(days: 60)),
+            status: TaskStatus.notStarted,
+            isImportant: true,
+          ),
+        );
+
+        specializedTasks.add(
+          Task(
+            id: 'task_${DateTime.now().millisecondsSinceEpoch}_large_2',
+            title: 'Create crowd flow plan',
+            description: 'Plan traffic flow and crowd management',
+            categoryId: '5', // Logistics category
+            dueDate: eventDate.subtract(const Duration(days: 45)),
+            status: TaskStatus.notStarted,
+            isImportant: true,
+          ),
+        );
+      }
     }
 
     // Add tasks based on selected services
-    if (selectedServices['Catering'] == true && guestCount > 100) {
+    if (selectedServices['Catering'] == true) {
       specializedTasks.add(
         Task(
-          id: 'task_${DateTime.now().millisecondsSinceEpoch}_5',
-          title: 'Confirm catering staff count',
-          description: 'Ensure adequate staff for large guest count',
+          id: 'task_${DateTime.now().millisecondsSinceEpoch}_catering_1',
+          title: 'Finalize menu selections',
+          description: 'Confirm final menu choices with caterer',
           categoryId: '6', // Vendors category
-          dueDate: eventDate.subtract(const Duration(days: 21)),
+          dueDate: eventDate.subtract(const Duration(days: 45)),
+          status: TaskStatus.notStarted,
+          isImportant: true,
+        ),
+      );
+
+      if (guestCount > 100) {
+        specializedTasks.add(
+          Task(
+            id: 'task_${DateTime.now().millisecondsSinceEpoch}_catering_2',
+            title: 'Confirm catering staff count',
+            description: 'Ensure adequate staff for large guest count',
+            categoryId: '6', // Vendors category
+            dueDate: eventDate.subtract(const Duration(days: 21)),
+            status: TaskStatus.notStarted,
+            isImportant: false,
+          ),
+        );
+      }
+
+      // Add dietary restrictions task
+      specializedTasks.add(
+        Task(
+          id: 'task_${DateTime.now().millisecondsSinceEpoch}_catering_3',
+          title: 'Collect dietary restrictions',
+          description: 'Gather special dietary needs from guests',
+          categoryId: '6', // Vendors category
+          dueDate: eventDate.subtract(const Duration(days: 30)),
+          status: TaskStatus.notStarted,
+          isImportant: true,
+        ),
+      );
+    }
+
+    // Add photography/videography specific tasks
+    if (selectedServices['Photography'] == true ||
+        selectedServices['Videography'] == true ||
+        selectedServices['Photography/Videography'] == true) {
+      specializedTasks.add(
+        Task(
+          id: 'task_${DateTime.now().millisecondsSinceEpoch}_photo_1',
+          title: 'Create shot list',
+          description: 'Prepare list of must-have photos/videos',
+          categoryId: '7', // Photography category
+          dueDate: eventDate.subtract(const Duration(days: 30)),
+          status: TaskStatus.notStarted,
+          isImportant: true,
+        ),
+      );
+
+      specializedTasks.add(
+        Task(
+          id: 'task_${DateTime.now().millisecondsSinceEpoch}_photo_2',
+          title: 'Scout photo locations',
+          description: 'Identify key spots for photos/videos',
+          categoryId: '7', // Photography category
+          dueDate: eventDate.subtract(const Duration(days: 14)),
           status: TaskStatus.notStarted,
           isImportant: false,
         ),
@@ -428,23 +513,99 @@ class WizardConnectionService {
 
   /// Create task dependencies and sequences
   ///
-  /// Note: This is a placeholder method for future implementation.
-  /// The parameters are currently used only for logging but will be used
-  /// to create actual task dependencies in the future.
+  /// Creates logical dependencies between tasks based on their categories and due dates.
+  /// For example, venue booking must be completed before sending invitations.
   static void _createTaskDependencies(
-    // TODO: Implement task dependency creation using these parameters
     TaskProvider taskProvider,
     List<Task> adjustedTasks,
     List<Task> specializedTasks,
   ) {
-    // In a real implementation, we would create dependencies between tasks
-    // For now, we'll just log that dependencies would be created
+    final allTasks = [...adjustedTasks, ...specializedTasks];
+
+    // Group tasks by category for easier processing
+    final Map<String, List<Task>> tasksByCategory = {};
+    for (final task in allTasks) {
+      if (!tasksByCategory.containsKey(task.categoryId)) {
+        tasksByCategory[task.categoryId] = [];
+      }
+      tasksByCategory[task.categoryId]!.add(task);
+    }
+
+    // Sort tasks within each category by due date
+    for (final category in tasksByCategory.keys) {
+      tasksByCategory[category]!.sort((a, b) => a.dueDate.compareTo(b.dueDate));
+    }
+
+    // Create dependencies within categories (sequential tasks)
+    for (final category in tasksByCategory.keys) {
+      final tasks = tasksByCategory[category]!;
+      for (int i = 0; i < tasks.length - 1; i++) {
+        // Make each task dependent on the previous task in the same category
+        taskProvider.addDependency(tasks[i].id, tasks[i + 1].id);
+      }
+    }
+
+    // Create cross-category dependencies
+
+    // Venue tasks must be completed before most other tasks
+    if (tasksByCategory.containsKey('1') && tasksByCategory['1']!.isNotEmpty) {
+      final venueBookingTask = tasksByCategory['1']!.firstWhere(
+        (task) =>
+            task.title.toLowerCase().contains('book') ||
+            task.title.toLowerCase().contains('deposit'),
+        orElse: () => tasksByCategory['1']!.first,
+      );
+
+      // Venue booking must be completed before catering can be finalized
+      if (tasksByCategory.containsKey('2') &&
+          tasksByCategory['2']!.isNotEmpty) {
+        for (final cateringTask in tasksByCategory['2']!) {
+          if (cateringTask.title.toLowerCase().contains('finalize') ||
+              cateringTask.title.toLowerCase().contains('confirm')) {
+            taskProvider.addDependency(venueBookingTask.id, cateringTask.id);
+          }
+        }
+      }
+
+      // Venue booking must be completed before sending invitations
+      final invitationTasks =
+          allTasks
+              .where(
+                (task) =>
+                    task.title.toLowerCase().contains('invitation') ||
+                    task.title.toLowerCase().contains('invite'),
+              )
+              .toList();
+
+      for (final invitationTask in invitationTasks) {
+        taskProvider.addDependency(venueBookingTask.id, invitationTask.id);
+      }
+    }
+
+    // Guest list must be created before sending invitations
+    final guestListTasks =
+        allTasks
+            .where((task) => task.title.toLowerCase().contains('guest list'))
+            .toList();
+
+    final invitationTasks =
+        allTasks
+            .where(
+              (task) =>
+                  task.title.toLowerCase().contains('invitation') ||
+                  task.title.toLowerCase().contains('invite'),
+            )
+            .toList();
+
+    if (guestListTasks.isNotEmpty && invitationTasks.isNotEmpty) {
+      for (final invitationTask in invitationTasks) {
+        taskProvider.addDependency(guestListTasks.first.id, invitationTask.id);
+      }
+    }
+
     debugPrint(
       'Created task dependencies for ${adjustedTasks.length + specializedTasks.length} tasks',
     );
-
-    // Example of how dependencies might be implemented:
-    // taskProvider.addDependency(taskId1, taskId2);
   }
 
   // Private helper methods
@@ -491,9 +652,12 @@ class WizardConnectionService {
     bool needsSetup,
     int setupHours,
     bool needsTeardown,
-    int teardownHours,
-  ) {
-    // Use the BudgetItemsBuilder to create budget items
+    int teardownHours, {
+    String location = 'Unknown',
+    DateTime? eventDate,
+    bool isPremiumVenue = false,
+  }) {
+    // Use the BudgetItemsBuilder to create budget items with enhanced calculations
     final budgetItems = BudgetItemsBuilder.createBudgetItemsFromServices(
       selectedServices: selectedServices,
       guestCount: guestCount,
@@ -503,6 +667,9 @@ class WizardConnectionService {
       setupHours: setupHours,
       needsTeardown: needsTeardown,
       teardownHours: teardownHours,
+      location: location,
+      eventDate: eventDate,
+      isPremiumVenue: isPremiumVenue,
     );
 
     // Add all budget items to the provider

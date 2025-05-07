@@ -3,7 +3,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 /// Interface for database services
 abstract class DatabaseServiceInterface {
   /// Get a document by ID
-  Future<Map<String, dynamic>?> getDocument(String collection, String documentId);
+  Future<Map<String, dynamic>?> getDocument(
+    String collection,
+    String documentId,
+  );
 
   /// Get a document by ID and convert it to a specific type
   Future<T?> getDocumentAs<T>(
@@ -240,8 +243,8 @@ class BatchOperation {
     required this.collection,
     required this.documentId,
     this.data,
-  })  : subcollection = null,
-        subdocumentId = null;
+  }) : subcollection = null,
+       subdocumentId = null;
 
   /// Constructor for subcollection operations
   BatchOperation.subcollection({

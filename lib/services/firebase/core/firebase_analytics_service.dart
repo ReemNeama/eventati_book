@@ -1,6 +1,8 @@
+import 'dart:io';
 import 'package:eventati_book/services/interfaces/analytics_service_interface.dart';
 import 'package:eventati_book/utils/logger.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 /// Implementation of AnalyticsServiceInterface using Firebase Analytics
@@ -21,6 +23,15 @@ class FirebaseAnalyticsService implements AnalyticsServiceInterface {
   @override
   Future<void> initialize() async {
     try {
+      // Check if platform is supported
+      if (!kIsWeb && !Platform.isAndroid && !Platform.isIOS) {
+        Logger.i(
+          'Firebase Analytics is not supported on this platform',
+          tag: 'FirebaseAnalyticsService',
+        );
+        return;
+      }
+
       // Enable analytics collection
       await _analytics.setAnalyticsCollectionEnabled(true);
 
@@ -507,33 +518,26 @@ class FirebaseAnalyticsService implements AnalyticsServiceInterface {
   }
 
   @override
-  Future<void> trackShare({
-    required String contentType,
-    required String itemId,
-    required String method,
+  Future<void> trackAchievementUnlocked({
+    required String achievementId,
+    required String achievementName,
   }) async {
     try {
-      await _analytics.logShare(
-        contentType: contentType,
-        itemId: itemId,
-        method: method,
+      await _analytics.logEvent(
+        name: 'achievement_unlocked',
+        parameters: {
+          'achievement_id': achievementId,
+          'achievement_name': achievementName,
+        },
       );
 
-      Logger.d('Share tracked: $contentType', tag: 'FirebaseAnalyticsService');
-    } catch (e) {
-      Logger.e('Error tracking share: $e', tag: 'FirebaseAnalyticsService');
-    }
-  }
-
-  @override
-  Future<void> trackTutorialBegin() async {
-    try {
-      await _analytics.logTutorialBegin();
-
-      Logger.d('Tutorial begin tracked', tag: 'FirebaseAnalyticsService');
+      Logger.d(
+        'Achievement unlocked tracked: $achievementName',
+        tag: 'FirebaseAnalyticsService',
+      );
     } catch (e) {
       Logger.e(
-        'Error tracking tutorial begin: $e',
+        'Error tracking achievement unlocked: $e',
         tag: 'FirebaseAnalyticsService',
       );
     }
@@ -554,10 +558,21 @@ class FirebaseAnalyticsService implements AnalyticsServiceInterface {
   }
 
   @override
-  Future<void> trackLevelUp({
-    required int level,
-    required String character,
-  }) async {
+  Future<void> trackTutorialBegin() async {
+    try {
+      await _analytics.logTutorialBegin();
+
+      Logger.d('Tutorial begin tracked', tag: 'FirebaseAnalyticsService');
+    } catch (e) {
+      Logger.e(
+        'Error tracking tutorial begin: $e',
+        tag: 'FirebaseAnalyticsService',
+      );
+    }
+  }
+
+  @override
+  Future<void> trackLevelUp({required int level, String? character}) async {
     try {
       await _analytics.logLevelUp(level: level, character: character);
 
@@ -568,22 +583,21 @@ class FirebaseAnalyticsService implements AnalyticsServiceInterface {
   }
 
   @override
-  Future<void> trackAchievementUnlocked({
-    required String achievementId,
-    required String achievementName,
+  Future<void> trackShare({
+    required String contentType,
+    required String itemId,
+    required String method,
   }) async {
     try {
-      await _analytics.logUnlockAchievement(id: achievementId);
+      await _analytics.logShare(
+        contentType: contentType,
+        itemId: itemId,
+        method: method,
+      );
 
-      Logger.d(
-        'Achievement unlocked tracked: $achievementName',
-        tag: 'FirebaseAnalyticsService',
-      );
+      Logger.d('Share tracked: $itemId', tag: 'FirebaseAnalyticsService');
     } catch (e) {
-      Logger.e(
-        'Error tracking achievement unlocked: $e',
-        tag: 'FirebaseAnalyticsService',
-      );
+      Logger.e('Error tracking share: $e', tag: 'FirebaseAnalyticsService');
     }
   }
 
@@ -595,10 +609,13 @@ class FirebaseAnalyticsService implements AnalyticsServiceInterface {
     try {
       await _analytics.logEvent(
         name: 'app_crash',
-        parameters: {'error': error, 'stack_trace': stackTrace.toString()},
+        parameters: {
+          'error_message': error,
+          'stack_trace': stackTrace.toString(),
+        },
       );
 
-      Logger.d('App crash tracked: $error', tag: 'FirebaseAnalyticsService');
+      Logger.d('App crash tracked', tag: 'FirebaseAnalyticsService');
     } catch (e) {
       Logger.e('Error tracking app crash: $e', tag: 'FirebaseAnalyticsService');
     }
@@ -619,7 +636,7 @@ class FirebaseAnalyticsService implements AnalyticsServiceInterface {
       );
 
       Logger.d(
-        'Notification received tracked: $notificationType',
+        'Notification received tracked: $notificationId',
         tag: 'FirebaseAnalyticsService',
       );
     } catch (e) {
@@ -645,7 +662,7 @@ class FirebaseAnalyticsService implements AnalyticsServiceInterface {
       );
 
       Logger.d(
-        'Notification opened tracked: $notificationType',
+        'Notification opened tracked: $notificationId',
         tag: 'FirebaseAnalyticsService',
       );
     } catch (e) {

@@ -120,7 +120,11 @@ services/
 ├── search/                     # Search services
 ├── suggestion/                 # Suggestion services
 ├── task_template_service.dart  # Task template service
-└── wizard_connection_service.dart # Wizard connection service
+├── wizard_connection_service.dart # Wizard connection service
+└── wizard/                    # Wizard-related services
+    ├── README.md                   # Documentation
+    ├── budget_items_builder.dart   # Budget items builder
+    └── guest_groups_builder.dart   # Guest groups builder
 ```
 
 ## Styles Directory

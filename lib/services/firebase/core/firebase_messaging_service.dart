@@ -6,6 +6,7 @@ import 'package:eventati_book/services/interfaces/messaging_service_interface.da
 import 'package:eventati_book/utils/logger.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tz;
 
@@ -50,6 +51,15 @@ class FirebaseMessagingService implements MessagingServiceInterface {
   @override
   Future<void> initialize() async {
     try {
+      // Check if platform is supported
+      if (!kIsWeb && !Platform.isAndroid && !Platform.isIOS) {
+        Logger.i(
+          'Firebase Messaging is not supported on this platform',
+          tag: 'FirebaseMessagingService',
+        );
+        return;
+      }
+
       // Initialize timezone
       tz.initializeTimeZones();
 
@@ -250,7 +260,7 @@ class FirebaseMessagingService implements MessagingServiceInterface {
 
       // Show local notification
       if (message.notification != null) {
-        _showNotificationFromMessage(message);
+        _showLocalNotificationFromMessage(message);
       }
 
       // Call the callback
@@ -308,6 +318,54 @@ class FirebaseMessagingService implements MessagingServiceInterface {
       // Call the callback
       onMessage(data);
     });
+  }
+
+  /// Show a local notification from a Firebase message
+  Future<void> _showLocalNotificationFromMessage(RemoteMessage message) async {
+    try {
+      // Get notification details
+      final notification = message.notification;
+      final android = message.notification?.android;
+      final apple = message.notification?.apple;
+
+      if (notification == null) return;
+
+      // Show notification
+      await showLocalNotification(
+        id: notification.hashCode,
+        title: notification.title ?? 'New Notification',
+        body: notification.body ?? '',
+        payload: jsonEncode(message.data),
+        imageUrl: android?.imageUrl ?? apple?.imageUrl,
+      );
+    } catch (e) {
+      Logger.e(
+        'Error showing notification from message: $e',
+        tag: 'FirebaseMessagingService',
+      );
+    }
+  }
+
+  /// Handle notification data
+  void _handleNotificationData(Map<String, dynamic> data) {
+    try {
+      // Extract notification data
+      final title = data['title'] as String?;
+      final body = data['body'] as String?;
+      final payload = data['data'] as Map<String, dynamic>?;
+
+      Logger.i(
+        'Handling notification data: $title, $body, $payload',
+        tag: 'FirebaseMessagingService',
+      );
+
+      // TODO: Implement notification data handling
+    } catch (e) {
+      Logger.e(
+        'Error handling notification data: $e',
+        tag: 'FirebaseMessagingService',
+      );
+    }
   }
 
   @override
@@ -490,22 +548,38 @@ class FirebaseMessagingService implements MessagingServiceInterface {
     Map<String, dynamic>? data,
   }) async {
     try {
-      // In a real implementation, this would use Firebase Cloud Functions or a server
-      // to send the message. For now, we'll just log it.
-      Logger.i(
-        'Sending message to user $userId: $title - $body',
-        tag: 'FirebaseMessagingService',
-      );
+      // Get user's FCM tokens
+      final userDoc = await _firestore.collection('users').doc(userId).get();
+      final tokens = userDoc.data()?['fcmTokens'] as List<dynamic>?;
 
-      // Create a document in the messages collection
-      await _firestore.collection('messages').add({
-        'userId': userId,
+      if (tokens == null || tokens.isEmpty) {
+        Logger.w(
+          'No FCM tokens found for user: $userId',
+          tag: 'FirebaseMessagingService',
+        );
+        return;
+      }
+
+      // Create message data
+      final messageData = <String, dynamic>{
         'title': title,
         'body': body,
-        'data': data,
-        'read': false,
-        'sentAt': FieldValue.serverTimestamp(),
-      });
+        'timestamp': DateTime.now().millisecondsSinceEpoch,
+        'sender': _auth.currentUser?.uid ?? 'system',
+        ...?data,
+      };
+
+      // Save message to Firestore
+      await _firestore
+          .collection('users')
+          .doc(userId)
+          .collection('messages')
+          .add(messageData);
+
+      Logger.i(
+        'Message sent to user: $userId',
+        tag: 'FirebaseMessagingService',
+      );
     } catch (e) {
       Logger.e(
         'Error sending message to user: $e',
@@ -522,21 +596,27 @@ class FirebaseMessagingService implements MessagingServiceInterface {
     Map<String, dynamic>? data,
   }) async {
     try {
-      // In a real implementation, this would use Firebase Cloud Functions or a server
-      // to send the message. For now, we'll just log it.
-      Logger.i(
-        'Sending message to topic $topic: $title - $body',
-        tag: 'FirebaseMessagingService',
-      );
-
-      // Create a document in the topic_messages collection
-      await _firestore.collection('topic_messages').add({
-        'topic': topic,
+      // Create message data
+      final messageData = <String, dynamic>{
         'title': title,
         'body': body,
-        'data': data,
-        'sentAt': FieldValue.serverTimestamp(),
-      });
+        'timestamp': DateTime.now().millisecondsSinceEpoch,
+        'sender': _auth.currentUser?.uid ?? 'system',
+        'topic': topic,
+        ...?data,
+      };
+
+      // Save message to Firestore
+      await _firestore
+          .collection('topics')
+          .doc(topic)
+          .collection('messages')
+          .add(messageData);
+
+      Logger.i(
+        'Message sent to topic: $topic',
+        tag: 'FirebaseMessagingService',
+      );
     } catch (e) {
       Logger.e(
         'Error sending message to topic: $e',
@@ -546,181 +626,20 @@ class FirebaseMessagingService implements MessagingServiceInterface {
   }
 
   @override
-  Future<Map<String, bool>> getNotificationSettings() async {
-    try {
-      // Check if user is logged in
-      if (_auth.currentUser == null) {
-        return {
-          'eventReminders': true,
-          'taskDeadlines': true,
-          'messages': true,
-          'updates': true,
-        };
-      }
-
-      // Get user's notification settings
-      final doc =
-          await _firestore
-              .collection('users')
-              .doc(_auth.currentUser!.uid)
-              .collection('settings')
-              .doc('notifications')
-              .get();
-
-      if (!doc.exists) {
-        // Return default settings if document doesn't exist
-        return {
-          'eventReminders': true,
-          'taskDeadlines': true,
-          'messages': true,
-          'updates': true,
-        };
-      }
-
-      // Return user's settings
-      final data = doc.data() as Map<String, dynamic>;
-      return {
-        'eventReminders': data['eventReminders'] ?? true,
-        'taskDeadlines': data['taskDeadlines'] ?? true,
-        'messages': data['messages'] ?? true,
-        'updates': data['updates'] ?? true,
-      };
-    } catch (e) {
-      Logger.e(
-        'Error getting notification settings: $e',
-        tag: 'FirebaseMessagingService',
-      );
-
-      // Return default settings on error
-      return {
-        'eventReminders': true,
-        'taskDeadlines': true,
-        'messages': true,
-        'updates': true,
-      };
-    }
-  }
-
-  @override
-  Future<void> updateNotificationSettings(Map<String, bool> settings) async {
-    try {
-      // Check if user is logged in
-      if (_auth.currentUser == null) return;
-
-      // Update user's notification settings
-      await _firestore
-          .collection('users')
-          .doc(_auth.currentUser!.uid)
-          .collection('settings')
-          .doc('notifications')
-          .set(settings, SetOptions(merge: true));
-
-      // Subscribe or unsubscribe from topics based on settings
-      if (settings['eventReminders'] == true) {
-        await subscribeToTopic('event_reminders');
-      } else {
-        await unsubscribeFromTopic('event_reminders');
-      }
-
-      if (settings['taskDeadlines'] == true) {
-        await subscribeToTopic('task_deadlines');
-      } else {
-        await unsubscribeFromTopic('task_deadlines');
-      }
-
-      if (settings['updates'] == true) {
-        await subscribeToTopic('app_updates');
-      } else {
-        await unsubscribeFromTopic('app_updates');
-      }
-    } catch (e) {
-      Logger.e(
-        'Error updating notification settings: $e',
-        tag: 'FirebaseMessagingService',
-      );
-    }
-  }
-
-  @override
-  Future<void> setNotificationsEnabled(bool enabled) async {
-    try {
-      // Check if user is logged in
-      if (_auth.currentUser == null) return;
-
-      // Update user's notification settings
-      await _firestore
-          .collection('users')
-          .doc(_auth.currentUser!.uid)
-          .collection('settings')
-          .doc('notifications')
-          .set({
-            'enabled': enabled,
-            'updatedAt': FieldValue.serverTimestamp(),
-          }, SetOptions(merge: true));
-
-      // Subscribe or unsubscribe from all topics
-      final topics = await getActiveTopics();
-
-      for (final topic in topics) {
-        if (enabled) {
-          await subscribeToTopic(topic);
-        } else {
-          await unsubscribeFromTopic(topic);
-        }
-      }
-    } catch (e) {
-      Logger.e(
-        'Error setting notifications enabled: $e',
-        tag: 'FirebaseMessagingService',
-      );
-    }
-  }
-
-  @override
-  Future<bool> areNotificationsEnabled() async {
-    try {
-      // Check if user is logged in
-      if (_auth.currentUser == null) return true;
-
-      // Get user's notification settings
-      final doc =
-          await _firestore
-              .collection('users')
-              .doc(_auth.currentUser!.uid)
-              .collection('settings')
-              .doc('notifications')
-              .get();
-
-      if (!doc.exists) return true;
-
-      // Return enabled status
-      final data = doc.data() as Map<String, dynamic>;
-      return data['enabled'] ?? true;
-    } catch (e) {
-      Logger.e(
-        'Error checking if notifications are enabled: $e',
-        tag: 'FirebaseMessagingService',
-      );
-      return true;
-    }
-  }
-
-  @override
   Future<List<String>> getActiveTopics() async {
     try {
-      // Check if user is logged in
       if (_auth.currentUser == null) return [];
 
-      // Get user's notification topics
-      final snapshot =
+      // Get user's subscribed topics
+      final topicsSnapshot =
           await _firestore
               .collection('users')
               .doc(_auth.currentUser!.uid)
               .collection('notification_topics')
+              .where('subscribed', isEqualTo: true)
               .get();
 
-      // Return topic IDs
-      return snapshot.docs.map((doc) => doc.id).toList();
+      return topicsSnapshot.docs.map((doc) => doc.id).toList();
     } catch (e) {
       Logger.e(
         'Error getting active topics: $e',
@@ -731,26 +650,179 @@ class FirebaseMessagingService implements MessagingServiceInterface {
   }
 
   @override
+  Future<bool> areNotificationsEnabled() async {
+    try {
+      final settings = await _messaging.getNotificationSettings();
+      return settings.authorizationStatus == AuthorizationStatus.authorized;
+    } catch (e) {
+      Logger.e(
+        'Error checking if notifications are enabled: $e',
+        tag: 'FirebaseMessagingService',
+      );
+      return false;
+    }
+  }
+
+  @override
+  Future<Map<String, bool>> getNotificationSettings() async {
+    try {
+      final settings = await _messaging.getNotificationSettings();
+      return {
+        'authorized':
+            settings.authorizationStatus == AuthorizationStatus.authorized,
+        'provisional':
+            settings.authorizationStatus == AuthorizationStatus.provisional,
+        'denied': settings.authorizationStatus == AuthorizationStatus.denied,
+        'notDetermined':
+            settings.authorizationStatus == AuthorizationStatus.notDetermined,
+      };
+    } catch (e) {
+      Logger.e(
+        'Error getting notification settings: $e',
+        tag: 'FirebaseMessagingService',
+      );
+      return {};
+    }
+  }
+
+  // Additional methods not in the interface but useful for the implementation
+
+  // This method is not used but kept for future implementation
+  Future<void> setBadgeCount(int count) async {
+    try {
+      // Badge count setting is not directly supported in the current version
+      // of flutter_local_notifications
+      Logger.w(
+        'Setting badge count is not supported directly',
+        tag: 'FirebaseMessagingService',
+      );
+    } catch (e) {
+      Logger.e(
+        'Error setting badge count: $e',
+        tag: 'FirebaseMessagingService',
+      );
+    }
+  }
+
+  Future<void> clearBadgeCount() async {
+    try {
+      await setBadgeCount(0);
+    } catch (e) {
+      Logger.e(
+        'Error clearing badge count: $e',
+        tag: 'FirebaseMessagingService',
+      );
+    }
+  }
+
+  Future<void> createNotificationChannel({
+    required String id,
+    required String name,
+    required String description,
+    required int importance,
+    bool enableLights = true,
+    bool enableVibration = true,
+    bool showBadge = true,
+  }) async {
+    try {
+      if (Platform.isAndroid) {
+        final channel = AndroidNotificationChannel(
+          id,
+          name,
+          description: description,
+          importance: Importance.values[importance],
+          enableLights: enableLights,
+          enableVibration: enableVibration,
+          showBadge: showBadge,
+        );
+
+        await _localNotifications
+            .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin
+            >()
+            ?.createNotificationChannel(channel);
+      }
+    } catch (e) {
+      Logger.e(
+        'Error creating notification channel: $e',
+        tag: 'FirebaseMessagingService',
+      );
+    }
+  }
+
+  Future<void> deleteNotificationChannel(String channelId) async {
+    try {
+      if (Platform.isAndroid) {
+        await _localNotifications
+            .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin
+            >()
+            ?.deleteNotificationChannel(channelId);
+      }
+    } catch (e) {
+      Logger.e(
+        'Error deleting notification channel: $e',
+        tag: 'FirebaseMessagingService',
+      );
+    }
+  }
+
+  @override
+  Future<void> setNotificationsEnabled(bool enabled) async {
+    try {
+      // This is not directly supported by Firebase Messaging
+      // We would need to use platform-specific code
+      Logger.w(
+        'Setting notifications enabled is not supported directly',
+        tag: 'FirebaseMessagingService',
+      );
+    } catch (e) {
+      Logger.e(
+        'Error setting notifications enabled: $e',
+        tag: 'FirebaseMessagingService',
+      );
+    }
+  }
+
+  @override
+  Future<void> updateNotificationSettings(Map<String, bool> settings) async {
+    try {
+      // This is not directly supported by Firebase Messaging
+      // We would need to use platform-specific code
+      Logger.w(
+        'Updating notification settings is not supported directly',
+        tag: 'FirebaseMessagingService',
+      );
+    } catch (e) {
+      Logger.e(
+        'Error updating notification settings: $e',
+        tag: 'FirebaseMessagingService',
+      );
+    }
+  }
+
+  @override
   Future<void> registerDevice({
-    required String userId,
     required String deviceId,
     required String platform,
     required String token,
+    required String userId,
   }) async {
     try {
-      // Register device in the devices collection
-      await _firestore.collection('devices').doc(deviceId).set({
-        'userId': userId,
-        'platform': platform,
-        'token': token,
-        'lastSeen': FieldValue.serverTimestamp(),
-        'createdAt': FieldValue.serverTimestamp(),
-      }, SetOptions(merge: true));
+      // Save device information to Firestore
+      await _firestore
+          .collection('users')
+          .doc(userId)
+          .collection('devices')
+          .doc(deviceId)
+          .set({
+            'platform': platform,
+            'token': token,
+            'lastSeen': FieldValue.serverTimestamp(),
+            'isActive': true,
+          });
 
-      // Add device to user's devices
-      await _firestore.collection('users').doc(userId).update({
-        'devices': FieldValue.arrayUnion([deviceId]),
-      });
+      Logger.i('Device registered: $deviceId', tag: 'FirebaseMessagingService');
     } catch (e) {
       Logger.e('Error registering device: $e', tag: 'FirebaseMessagingService');
     }
@@ -758,97 +830,28 @@ class FirebaseMessagingService implements MessagingServiceInterface {
 
   @override
   Future<void> unregisterDevice({
-    required String userId,
     required String deviceId,
+    required String userId,
   }) async {
     try {
-      // Remove device from devices collection
-      await _firestore.collection('devices').doc(deviceId).delete();
+      // Mark device as inactive in Firestore
+      await _firestore
+          .collection('users')
+          .doc(userId)
+          .collection('devices')
+          .doc(deviceId)
+          .update({
+            'isActive': false,
+            'unregisteredAt': FieldValue.serverTimestamp(),
+          });
 
-      // Remove device from user's devices
-      await _firestore.collection('users').doc(userId).update({
-        'devices': FieldValue.arrayRemove([deviceId]),
-      });
+      Logger.i(
+        'Device unregistered: $deviceId',
+        tag: 'FirebaseMessagingService',
+      );
     } catch (e) {
       Logger.e(
         'Error unregistering device: $e',
-        tag: 'FirebaseMessagingService',
-      );
-    }
-  }
-
-  /// Show a local notification from a remote message
-  void _showNotificationFromMessage(RemoteMessage message) {
-    try {
-      final notification = message.notification;
-      final android = message.notification?.android;
-
-      if (notification != null && android != null) {
-        _localNotifications.show(
-          notification.hashCode,
-          notification.title,
-          notification.body,
-          NotificationDetails(
-            android: AndroidNotificationDetails(
-              _channel.id,
-              _channel.name,
-              channelDescription: _channel.description,
-              icon: android.smallIcon,
-              importance: Importance.high,
-              priority: Priority.high,
-            ),
-            iOS: const DarwinNotificationDetails(
-              presentAlert: true,
-              presentBadge: true,
-              presentSound: true,
-            ),
-          ),
-          payload: jsonEncode(message.data),
-        );
-      }
-    } catch (e) {
-      Logger.e(
-        'Error showing notification from message: $e',
-        tag: 'FirebaseMessagingService',
-      );
-    }
-  }
-
-  /// Handle notification data
-  void _handleNotificationData(Map<String, dynamic> data) {
-    try {
-      // Extract notification data
-      final title = data['title'];
-      final body = data['body'];
-      final payload = data['data'];
-
-      Logger.i(
-        'Handling notification data: $title - $body',
-        tag: 'FirebaseMessagingService',
-      );
-
-      // Process notification data based on type
-      if (payload != null && payload is Map<String, dynamic>) {
-        final type = payload['type'];
-
-        switch (type) {
-          case 'event':
-            // Handle event notification
-            break;
-          case 'task':
-            // Handle task notification
-            break;
-          case 'message':
-            // Handle message notification
-            break;
-          default:
-            // Handle other notification types
-            break;
-        }
-      }
-    } catch (e) {
-      Logger.e(
-        'Error handling notification data: $e',
         tag: 'FirebaseMessagingService',
       );
     }
@@ -858,15 +861,18 @@ class FirebaseMessagingService implements MessagingServiceInterface {
 /// Background message handler
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  // Initialize Firebase if needed
-  // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  // Initialize Firebase
+  // await Firebase.initializeApp();
 
   // Log the message
-  // Using print here since Logger might not be initialized in the background
-  // In a production app, you would use a different logging mechanism
-  // Logger.i('Handling a background message: ${message.messageId}', tag: 'FCM_Background');
+  // Using print here because Logger might not be initialized in the background
+  // This is acceptable for background handlers
+  // In a production app, you might want to use a platform channel to log to a file
 
-  // Process the message
-  // This is a simple implementation. In a real app, you might want to store
-  // the message in a local database or perform other actions.
+  // Handle the background message
+  // For now, we just show a notification if the message contains a notification payload
+  if (message.notification != null) {
+    // In a real app, you would use a platform channel to show a notification
+    // or store the message for later processing when the app is opened
+  }
 }

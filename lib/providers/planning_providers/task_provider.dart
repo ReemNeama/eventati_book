@@ -1,6 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/models/models.dart';
 
+/// Represents a dependency between two tasks
+class TaskDependency {
+  /// The ID of the prerequisite task that must be completed first
+  final String prerequisiteTaskId;
+
+  /// The ID of the dependent task that can only be started after the prerequisite
+  final String dependentTaskId;
+
+  /// Creates a new task dependency
+  TaskDependency({
+    required this.prerequisiteTaskId,
+    required this.dependentTaskId,
+  });
+}
+
 /// Provider for managing tasks and checklists for an event.
 ///
 /// The TaskProvider is responsible for:
@@ -57,6 +72,9 @@ class TaskProvider extends ChangeNotifier {
   /// List of task categories (e.g., Venue, Catering, Invitations)
   List<TaskCategory> _categories = [];
 
+  /// List of task dependencies (which tasks depend on other tasks)
+  List<TaskDependency> _dependencies = [];
+
   /// Flag indicating if the provider is currently loading data
   bool _isLoading = false;
 
@@ -75,6 +93,9 @@ class TaskProvider extends ChangeNotifier {
 
   /// Returns the list of all task categories
   List<TaskCategory> get categories => _categories;
+
+  /// Returns the list of all task dependencies
+  List<TaskDependency> get dependencies => _dependencies;
 
   /// Indicates if the provider is currently loading data
   bool get isLoading => _isLoading;
@@ -338,6 +359,143 @@ class TaskProvider extends ChangeNotifier {
     }
   }
 
+  /// Adds a dependency between two tasks
+  ///
+  /// [prerequisiteTaskId] The ID of the task that must be completed first
+  /// [dependentTaskId] The ID of the task that depends on the prerequisite
+  ///
+  /// Returns true if the dependency was added successfully, false otherwise.
+  /// A dependency will not be added if:
+  /// - Either task ID doesn't exist
+  /// - The dependency would create a circular reference
+  /// - The dependency already exists
+  bool addDependency(String prerequisiteTaskId, String dependentTaskId) {
+    // Don't allow dependencies to self
+    if (prerequisiteTaskId == dependentTaskId) {
+      return false;
+    }
+
+    // Check if both tasks exist
+    final prerequisiteExists = _tasks.any((t) => t.id == prerequisiteTaskId);
+    final dependentExists = _tasks.any((t) => t.id == dependentTaskId);
+
+    if (!prerequisiteExists || !dependentExists) {
+      return false;
+    }
+
+    // Check if dependency already exists
+    final dependencyExists = _dependencies.any(
+      (d) =>
+          d.prerequisiteTaskId == prerequisiteTaskId &&
+          d.dependentTaskId == dependentTaskId,
+    );
+
+    if (dependencyExists) {
+      return false;
+    }
+
+    // Check for circular dependencies
+    if (_wouldCreateCircularDependency(prerequisiteTaskId, dependentTaskId)) {
+      return false;
+    }
+
+    // Add the dependency
+    _dependencies.add(
+      TaskDependency(
+        prerequisiteTaskId: prerequisiteTaskId,
+        dependentTaskId: dependentTaskId,
+      ),
+    );
+
+    notifyListeners();
+    return true;
+  }
+
+  /// Removes a dependency between two tasks
+  ///
+  /// [prerequisiteTaskId] The ID of the prerequisite task
+  /// [dependentTaskId] The ID of the dependent task
+  ///
+  /// Returns true if the dependency was removed, false if it didn't exist
+  bool removeDependency(String prerequisiteTaskId, String dependentTaskId) {
+    final initialLength = _dependencies.length;
+
+    _dependencies.removeWhere(
+      (d) =>
+          d.prerequisiteTaskId == prerequisiteTaskId &&
+          d.dependentTaskId == dependentTaskId,
+    );
+
+    final removed = initialLength > _dependencies.length;
+
+    if (removed) {
+      notifyListeners();
+    }
+
+    return removed;
+  }
+
+  /// Gets all dependencies where the specified task is a prerequisite
+  ///
+  /// [taskId] The ID of the prerequisite task
+  ///
+  /// Returns a list of task IDs that depend on the specified task
+  List<String> getDependentTasks(String taskId) {
+    return _dependencies
+        .where((d) => d.prerequisiteTaskId == taskId)
+        .map((d) => d.dependentTaskId)
+        .toList();
+  }
+
+  /// Gets all dependencies where the specified task is dependent
+  ///
+  /// [taskId] The ID of the dependent task
+  ///
+  /// Returns a list of task IDs that the specified task depends on
+  List<String> getPrerequisiteTasks(String taskId) {
+    return _dependencies
+        .where((d) => d.dependentTaskId == taskId)
+        .map((d) => d.prerequisiteTaskId)
+        .toList();
+  }
+
+  /// Checks if adding a dependency would create a circular reference
+  ///
+  /// [prerequisiteTaskId] The ID of the prerequisite task
+  /// [dependentTaskId] The ID of the dependent task
+  ///
+  /// Returns true if adding this dependency would create a circular reference
+  bool _wouldCreateCircularDependency(
+    String prerequisiteTaskId,
+    String dependentTaskId,
+  ) {
+    // If the dependent task is already a prerequisite for the prerequisite task,
+    // this would create a circular dependency
+    final visited = <String>{};
+    final toVisit = <String>[dependentTaskId];
+
+    while (toVisit.isNotEmpty) {
+      final current = toVisit.removeLast();
+      visited.add(current);
+
+      final dependents = getDependentTasks(current);
+
+      // If any dependent is the prerequisite, we have a cycle
+      if (dependents.contains(prerequisiteTaskId)) {
+        return true;
+      }
+
+      // Add unvisited dependents to the queue
+      for (final dependent in dependents) {
+        if (!visited.contains(dependent)) {
+          toVisit.add(dependent);
+        }
+      }
+    }
+
+    return false;
+  }
+
   /// Loads mock data for testing and demonstration purposes
   ///
   /// This method creates sample task categories and tasks.
@@ -424,6 +582,20 @@ class TaskProvider extends ChangeNotifier {
         dueDate: now.add(const Duration(days: 30)),
         status: TaskStatus.notStarted,
         categoryId: '4',
+      ),
+    ];
+
+    // Initialize dependencies
+    _dependencies = [
+      // Venue booking must be completed before catering selection
+      TaskDependency(
+        prerequisiteTaskId: '1', // Book venue
+        dependentTaskId: '2', // Select catering menu
+      ),
+      // Venue booking must be completed before sending invitations
+      TaskDependency(
+        prerequisiteTaskId: '1', // Book venue
+        dependentTaskId: '3', // Send invitations
       ),
     ];
   }

@@ -24,6 +24,7 @@ class _PlannerListScreenState extends State<PlannerListScreen> {
   final List<String> _selectedSpecialties = [];
   RangeValues _priceRange = const RangeValues(1000, 5000);
   RangeValues _experienceRange = const RangeValues(2, 10);
+  bool _showRecommendedOnly = false;
 
   final List<Planner> _planners = [
     Planner(
@@ -72,6 +73,9 @@ class _PlannerListScreenState extends State<PlannerListScreen> {
   ];
 
   List<Planner> get filteredPlanners {
+    final serviceRecommendationProvider =
+        Provider.of<ServiceRecommendationProvider>(context, listen: false);
+
     return _planners.where((planner) {
         final matchesSearch =
             planner.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
@@ -93,10 +97,15 @@ class _PlannerListScreenState extends State<PlannerListScreen> {
             planner.yearsExperience >= _experienceRange.start &&
             planner.yearsExperience <= _experienceRange.end;
 
+        final matchesRecommendation =
+            !_showRecommendedOnly ||
+            serviceRecommendationProvider.isPlannerRecommended(planner);
+
         return matchesSearch &&
             matchesSpecialty &&
             matchesPrice &&
-            matchesExperience;
+            matchesExperience &&
+            matchesRecommendation;
       }).toList()
       ..sort((a, b) {
         switch (_selectedSortOption) {
@@ -160,11 +169,23 @@ class _PlannerListScreenState extends State<PlannerListScreen> {
               itemBuilder: (context, index) {
                 final planner = filteredPlanners[index];
 
+                final serviceRecommendationProvider =
+                    Provider.of<ServiceRecommendationProvider>(context);
+                final isRecommended = serviceRecommendationProvider
+                    .isPlannerRecommended(planner);
+                final recommendationReason =
+                    isRecommended
+                        ? serviceRecommendationProvider
+                            .getPlannerRecommendationReason(planner)
+                        : null;
+
                 return ServiceCard(
                   name: planner.name,
                   description: planner.description,
                   rating: planner.rating,
                   imageUrl: planner.imageUrl,
+                  isRecommended: isRecommended,
+                  recommendationReason: recommendationReason,
                   isCompareSelected: comparisonProvider.isServiceSelected(
                     planner,
                   ),
@@ -252,6 +273,7 @@ class _PlannerListScreenState extends State<PlannerListScreen> {
     final List<String> localSelectedSpecialties = List.from(
       _selectedSpecialties,
     );
+    bool localShowRecommendedOnly = _showRecommendedOnly;
 
     showDialog(
       context: context,
@@ -306,6 +328,28 @@ class _PlannerListScreenState extends State<PlannerListScreen> {
                     });
                   },
                   filterTitle: 'Specialties',
+                  extraFilterWidget: Consumer<ServiceRecommendationProvider>(
+                    builder: (context, provider, _) {
+                      // Only show the recommended filter if there's wizard data
+                      if (provider.wizardData == null) {
+                        return const SizedBox.shrink();
+                      }
+
+                      return CheckboxListTile(
+                        title: const Text('Show Recommended Only'),
+                        value: localShowRecommendedOnly,
+                        onChanged: (value) {
+                          setDialogState(() {
+                            localShowRecommendedOnly = value ?? false;
+                          });
+
+                          setState(() {
+                            _showRecommendedOnly = value ?? false;
+                          });
+                        },
+                      );
+                    },
+                  ),
                 ),
           ),
     );

@@ -5,15 +5,15 @@ import 'package:eventati_book/services/interfaces/crashlytics_service_interface.
 import 'package:eventati_book/services/interfaces/database_service_interface.dart';
 import 'package:eventati_book/services/interfaces/messaging_service_interface.dart';
 import 'package:eventati_book/services/interfaces/storage_service_interface.dart';
-import 'package:eventati_book/services/firebase/data_migration_service.dart';
-import 'package:eventati_book/services/firebase/firebase_analytics_service.dart';
-import 'package:eventati_book/services/firebase/firebase_auth_service.dart';
-import 'package:eventati_book/services/firebase/firebase_crashlytics_service.dart';
-import 'package:eventati_book/services/firebase/firebase_messaging_service.dart';
-import 'package:eventati_book/services/firebase/firestore_service.dart';
-import 'package:eventati_book/services/firebase/firebase_storage_service.dart';
-import 'package:eventati_book/services/firebase/user_firestore_service.dart';
-import 'package:eventati_book/services/firebase/event_firestore_service.dart';
+import 'package:eventati_book/services/firebase/utils/data_migration_service.dart';
+import 'package:eventati_book/services/firebase/core/firebase_analytics_service.dart';
+import 'package:eventati_book/services/firebase/core/firebase_auth_service.dart';
+import 'package:eventati_book/services/firebase/core/firebase_crashlytics_service.dart';
+import 'package:eventati_book/services/firebase/core/firebase_messaging_service.dart';
+import 'package:eventati_book/services/firebase/utils/firestore_service.dart';
+import 'package:eventati_book/services/firebase/core/firebase_storage_service.dart';
+import 'package:eventati_book/services/firebase/firestore/user_firestore_service.dart';
+import 'package:eventati_book/services/firebase/firestore/event_firestore_service.dart';
 import 'package:eventati_book/utils/file_utils.dart';
 
 /// Simple service locator for dependency injection

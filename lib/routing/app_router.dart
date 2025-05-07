@@ -9,6 +9,7 @@ import 'package:eventati_book/screens/screens.dart';
 import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/tempDB/venues.dart';
 import 'package:eventati_book/tempDB/services.dart';
+import 'package:eventati_book/screens/planning/task_dependency_screen.dart';
 
 /// Router class for handling all navigation in the app
 class AppRouter {
@@ -193,6 +194,16 @@ class AppRouter {
               (context) => TimelineScreen(
                 eventId: args.eventId,
                 eventName: args.eventName,
+              ),
+        );
+
+      case RouteNames.taskDependency:
+        final args = settings.arguments as TaskDependencyArguments;
+        return MaterialPageRoute(
+          builder:
+              (context) => TaskDependencyScreen(
+                eventId: args.eventId,
+                focusedTaskId: args.focusedTaskId,
               ),
         );
 

@@ -74,10 +74,7 @@ abstract class AnalyticsServiceInterface {
   Future<void> setCurrentScreen(String screenName);
 
   /// Log event
-  Future<void> logEvent(
-    String name, {
-    Map<String, dynamic>? parameters,
-  });
+  Future<void> logEvent(String name, {Map<String, dynamic>? parameters});
 
   /// Reset analytics data
   Future<void> resetAnalyticsData();
@@ -144,10 +141,7 @@ abstract class AnalyticsServiceInterface {
   Future<void> trackTutorialComplete();
 
   /// Track level up event
-  Future<void> trackLevelUp({
-    required int level,
-    required String character,
-  });
+  Future<void> trackLevelUp({required int level, required String character});
 
   /// Track achievement unlocked event
   Future<void> trackAchievementUnlocked({

@@ -54,6 +54,7 @@ class RouteNames {
   static const String budget = '/event-planning/budget';
   static const String guestList = '/event-planning/guest-list';
   static const String timeline = '/event-planning/timeline';
+  static const String taskDependency = '/event-planning/task-dependency';
   static const String vendors = '/event-planning/vendors';
   static const String vendorCommunication =
       '/event-planning/vendor-communication';

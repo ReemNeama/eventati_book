@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eventati_book/services/interfaces/database_service_interface.dart';
 import 'package:eventati_book/utils/logger.dart';
 
+// We don't need to define QueryOperator enum here as we'll use FilterOperation from the interface
+
 /// Implementation of DatabaseServiceInterface using Firestore
 class FirestoreService implements DatabaseServiceInterface {
   /// Firestore instance
@@ -504,7 +506,7 @@ class FirestoreService implements DatabaseServiceInterface {
     }
   }
 
-  /// Apply a filter to a query
+  /// Apply a query filter to a Firestore query
   Query _applyFilter(Query query, QueryFilter filter) {
     switch (filter.operation) {
       case FilterOperation.equalTo:
@@ -522,11 +524,14 @@ class FirestoreService implements DatabaseServiceInterface {
       case FilterOperation.arrayContains:
         return query.where(filter.field, arrayContains: filter.value);
       case FilterOperation.arrayContainsAny:
-        return query.where(filter.field, arrayContainsAny: filter.value);
+        return query.where(
+          filter.field,
+          arrayContainsAny: filter.value as List,
+        );
       case FilterOperation.whereIn:
-        return query.where(filter.field, whereIn: filter.value);
+        return query.where(filter.field, whereIn: filter.value as List);
       case FilterOperation.whereNotIn:
-        return query.where(filter.field, whereNotIn: filter.value);
+        return query.where(filter.field, whereNotIn: filter.value as List);
     }
   }
 }

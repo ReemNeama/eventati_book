@@ -24,6 +24,7 @@ class _CateringListScreenState extends State<CateringListScreen> {
   final List<String> _selectedCuisineTypes = [];
   RangeValues _priceRange = const RangeValues(50, 100);
   RangeValues _capacityRange = const RangeValues(30, 500);
+  bool _showRecommendedOnly = false;
 
   final List<CateringService> _cateringServices = [
     CateringService(
@@ -60,6 +61,9 @@ class _CateringListScreenState extends State<CateringListScreen> {
   ];
 
   List<CateringService> get filteredServices {
+    final serviceRecommendationProvider =
+        Provider.of<ServiceRecommendationProvider>(context, listen: false);
+
     return _cateringServices.where((service) {
         final matchesSearch =
             service.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
@@ -81,10 +85,15 @@ class _CateringListScreenState extends State<CateringListScreen> {
             service.maxCapacity >= _capacityRange.start &&
             service.minCapacity <= _capacityRange.end;
 
+        final matchesRecommendation =
+            !_showRecommendedOnly ||
+            serviceRecommendationProvider.isCateringServiceRecommended(service);
+
         return matchesSearch &&
             matchesCuisine &&
             matchesPrice &&
-            matchesCapacity;
+            matchesCapacity &&
+            matchesRecommendation;
       }).toList()
       ..sort((a, b) {
         switch (_selectedSortOption) {
@@ -148,11 +157,23 @@ class _CateringListScreenState extends State<CateringListScreen> {
               itemBuilder: (context, index) {
                 final service = filteredServices[index];
 
+                final serviceRecommendationProvider =
+                    Provider.of<ServiceRecommendationProvider>(context);
+                final isRecommended = serviceRecommendationProvider
+                    .isCateringServiceRecommended(service);
+                final recommendationReason =
+                    isRecommended
+                        ? serviceRecommendationProvider
+                            .getCateringRecommendationReason(service)
+                        : null;
+
                 return ServiceCard(
                   name: service.name,
                   description: service.description,
                   rating: service.rating,
                   imageUrl: service.imageUrl,
+                  isRecommended: isRecommended,
+                  recommendationReason: recommendationReason,
                   isCompareSelected: comparisonProvider.isServiceSelected(
                     service,
                   ),
@@ -242,6 +263,7 @@ class _CateringListScreenState extends State<CateringListScreen> {
     final List<String> localSelectedCuisineTypes = List.from(
       _selectedCuisineTypes,
     );
+    bool localShowRecommendedOnly = _showRecommendedOnly;
 
     showDialog(
       context: context,
@@ -296,6 +318,28 @@ class _CateringListScreenState extends State<CateringListScreen> {
                     });
                   },
                   filterTitle: 'Cuisine Types',
+                  extraFilterWidget: Consumer<ServiceRecommendationProvider>(
+                    builder: (context, provider, _) {
+                      // Only show the recommended filter if there's wizard data
+                      if (provider.wizardData == null) {
+                        return const SizedBox.shrink();
+                      }
+
+                      return CheckboxListTile(
+                        title: const Text('Show Recommended Only'),
+                        value: localShowRecommendedOnly,
+                        onChanged: (value) {
+                          setDialogState(() {
+                            localShowRecommendedOnly = value ?? false;
+                          });
+
+                          setState(() {
+                            _showRecommendedOnly = value ?? false;
+                          });
+                        },
+                      );
+                    },
+                  ),
                 ),
           ),
     );

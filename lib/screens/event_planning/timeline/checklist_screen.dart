@@ -6,6 +6,8 @@ import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/screens/event_planning/timeline/task_form_screen.dart';
+import 'package:eventati_book/routing/route_names.dart';
+import 'package:eventati_book/routing/route_arguments.dart';
 import 'package:intl/intl.dart';
 
 class ChecklistScreen extends StatefulWidget {
@@ -198,6 +200,30 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
                 _showCompleted = value;
               });
             },
+          ),
+
+          // Manage dependencies button
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: ElevatedButton.icon(
+              onPressed: () {
+                NavigationUtils.navigateToNamed(
+                  context,
+                  RouteNames.taskDependency,
+                  arguments: TaskDependencyArguments(
+                    eventId: widget.eventId,
+                    eventName:
+                        'Event', // We don't have event name in this screen
+                  ),
+                );
+              },
+              icon: const Icon(Icons.account_tree),
+              label: const Text('Manage Task Dependencies'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: primaryColor,
+                foregroundColor: Colors.white,
+              ),
+            ),
           ),
         ],
       ),
@@ -396,17 +422,25 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
                       ],
                     ),
                     const SizedBox(height: 8),
-                    Text(
-                      task.title,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: textColor,
-                        decoration:
-                            task.status == TaskStatus.completed
-                                ? TextDecoration.lineThrough
-                                : null,
-                      ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            task.title,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: textColor,
+                              decoration:
+                                  task.status == TaskStatus.completed
+                                      ? TextDecoration.lineThrough
+                                      : null,
+                            ),
+                          ),
+                        ),
+                        // Dependency indicators
+                        _buildDependencyIndicators(taskProvider, task),
+                      ],
                     ),
                     if (task.description != null &&
                         task.description!.isNotEmpty) ...[
@@ -552,6 +586,35 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  /// Builds dependency indicator icons for a task
+  Widget _buildDependencyIndicators(TaskProvider taskProvider, Task task) {
+    final hasPrerequisites =
+        taskProvider.getPrerequisiteTasks(task.id).isNotEmpty;
+    final hasDependents = taskProvider.getDependentTasks(task.id).isNotEmpty;
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (hasPrerequisites)
+          const Tooltip(
+            message: 'This task depends on other tasks',
+            child: Padding(
+              padding: EdgeInsets.only(left: 4),
+              child: Icon(Icons.arrow_downward, size: 16, color: Colors.orange),
+            ),
+          ),
+        if (hasDependents)
+          const Tooltip(
+            message: 'Other tasks depend on this task',
+            child: Padding(
+              padding: EdgeInsets.only(left: 4),
+              child: Icon(Icons.arrow_upward, size: 16, color: Colors.blue),
+            ),
+          ),
+      ],
     );
   }
 }

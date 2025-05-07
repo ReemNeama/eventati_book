@@ -3,12 +3,12 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eventati_book/models/models.dart';
-import 'package:eventati_book/services/firebase/event_firestore_service.dart';
-import 'package:eventati_book/services/firebase/firestore_service.dart';
-import 'package:eventati_book/services/firebase/guest_firestore_service.dart';
-import 'package:eventati_book/services/firebase/service_firestore_service.dart';
-import 'package:eventati_book/services/firebase/task_firestore_service.dart';
-import 'package:eventati_book/services/firebase/user_firestore_service.dart';
+import 'package:eventati_book/services/firebase/firestore/event_firestore_service.dart';
+import 'package:eventati_book/services/firebase/utils/firestore_service.dart';
+import 'package:eventati_book/services/firebase/firestore/guest_firestore_service.dart';
+import 'package:eventati_book/services/firebase/firestore/service_firestore_service.dart';
+import 'package:eventati_book/services/firebase/firestore/task_firestore_service.dart';
+import 'package:eventati_book/services/firebase/firestore/user_firestore_service.dart';
 import 'package:eventati_book/services/interfaces/database_service_interface.dart';
 import 'package:eventati_book/utils/logger.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;

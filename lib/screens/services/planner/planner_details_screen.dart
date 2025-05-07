@@ -17,6 +17,10 @@ import 'package:eventati_book/widgets/responsive/responsive.dart';
 // Import routing
 import 'package:eventati_book/routing/routing.dart';
 
+// Import providers
+import 'package:eventati_book/providers/providers.dart';
+import 'package:provider/provider.dart';
+
 class PlannerDetailsScreen extends StatefulWidget {
   final Planner planner;
 
@@ -205,12 +209,57 @@ class _PlannerDetailsScreenState extends State<PlannerDetailsScreen>
     );
   }
 
+  /// Builds the recommendation section if the planner is recommended
+  Widget _buildRecommendationSection() {
+    return Consumer<ServiceRecommendationProvider>(
+      builder: (context, provider, _) {
+        // Only show if there's wizard data and the planner is recommended
+        if (provider.wizardData == null) {
+          return const SizedBox.shrink();
+        }
+
+        final isRecommended = provider.isPlannerRecommended(widget.planner);
+        if (!isRecommended) {
+          return const SizedBox.shrink();
+        }
+
+        final recommendationReason = provider.getPlannerRecommendationReason(
+          widget.planner,
+        );
+
+        return InfoCard(
+          title: 'Recommended for Your Event',
+          content: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Icon(Icons.thumb_up, color: Colors.green),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      recommendationReason ??
+                          'This planner is recommended for your event',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   Widget _buildPackagesList(int columns) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          _buildRecommendationSection(),
+          const SizedBox(height: 16),
           Text(
             'Select a Package',
             style: Theme.of(context).textTheme.titleLarge,

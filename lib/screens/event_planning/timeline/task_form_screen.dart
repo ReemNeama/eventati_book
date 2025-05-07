@@ -4,6 +4,8 @@ import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
+import 'package:eventati_book/routing/route_names.dart';
+import 'package:eventati_book/routing/route_arguments.dart';
 import 'package:intl/intl.dart';
 
 class TaskFormScreen extends StatefulWidget {
@@ -251,6 +253,58 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
               maxLines: 3,
             ),
 
+            if (widget.task != null) ...[
+              const Divider(),
+              const SizedBox(height: 16),
+
+              // Dependencies section
+              const Text(
+                'Task Dependencies',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 16),
+
+              // Prerequisite tasks
+              _buildDependencyList(
+                'This task depends on:',
+                widget.taskProvider.getPrerequisiteTasks(widget.task!.id),
+                widget.taskProvider,
+              ),
+
+              const SizedBox(height: 16),
+
+              // Dependent tasks
+              _buildDependencyList(
+                'Tasks that depend on this task:',
+                widget.taskProvider.getDependentTasks(widget.task!.id),
+                widget.taskProvider,
+              ),
+
+              const SizedBox(height: 16),
+
+              // Manage dependencies button
+              ElevatedButton.icon(
+                onPressed: () {
+                  NavigationUtils.navigateToNamed(
+                    context,
+                    RouteNames.taskDependency,
+                    arguments: TaskDependencyArguments(
+                      eventId: widget.eventId,
+                      eventName:
+                          'Event', // We don't have event name in this screen
+                      focusedTaskId: widget.task!.id,
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.account_tree),
+                label: const Text('Manage Dependencies'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: primaryColor,
+                  foregroundColor: Colors.white,
+                ),
+              ),
+            ],
+
             const SizedBox(height: 24),
 
             // Submit button
@@ -359,6 +413,73 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
               ),
             ],
           ),
+    );
+  }
+
+  /// Builds a list of dependent or prerequisite tasks
+  Widget _buildDependencyList(
+    String title,
+    List<String> taskIds,
+    TaskProvider taskProvider,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+        const SizedBox(height: 8),
+        if (taskIds.isEmpty)
+          const Text('None', style: TextStyle(fontStyle: FontStyle.italic))
+        else
+          Column(
+            children:
+                taskIds.map((taskId) {
+                  final task = taskProvider.tasks.firstWhere(
+                    (t) => t.id == taskId,
+                    orElse:
+                        () => Task(
+                          id: taskId,
+                          title: 'Unknown Task',
+                          categoryId: '0',
+                          dueDate: DateTime.now(),
+                        ),
+                  );
+
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 4),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.arrow_right, size: 16),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            task.title,
+                            style: TextStyle(
+                              decoration:
+                                  task.status == TaskStatus.completed
+                                      ? TextDecoration.lineThrough
+                                      : null,
+                            ),
+                          ),
+                        ),
+                        Text(
+                          task.status == TaskStatus.completed
+                              ? 'Completed'
+                              : 'Pending',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color:
+                                task.status == TaskStatus.completed
+                                    ? Colors.green
+                                    : Colors.orange,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }).toList(),
+          ),
+      ],
     );
   }
 }

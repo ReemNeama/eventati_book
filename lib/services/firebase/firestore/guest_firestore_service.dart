@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eventati_book/models/models.dart';
-import 'package:eventati_book/services/firebase/firestore_service.dart';
+import 'package:eventati_book/services/firebase/utils/firestore_service.dart';
 import 'package:eventati_book/utils/logger.dart';
 
 /// Service for handling guest list-related Firestore operations
@@ -13,7 +13,7 @@ class GuestFirestoreService {
 
   /// Constructor
   GuestFirestoreService({FirestoreService? firestoreService})
-      : _firestoreService = firestoreService ?? FirestoreService();
+    : _firestoreService = firestoreService ?? FirestoreService();
 
   /// Get guest groups for an event
   Future<List<GuestGroup>> getGuestGroups(String eventId) async {
@@ -52,9 +52,10 @@ class GuestFirestoreService {
           phone: data['phone'],
           groupId: data['groupId'],
           rsvpStatus: _mapRsvpStatus(data['rsvpStatus']),
-          rsvpResponseDate: data['rsvpResponseDate'] != null
-              ? (data['rsvpResponseDate'] as Timestamp).toDate()
-              : null,
+          rsvpResponseDate:
+              data['rsvpResponseDate'] != null
+                  ? (data['rsvpResponseDate'] as Timestamp).toDate()
+                  : null,
           plusOne: data['plusOne'] ?? false,
           plusOneCount: data['plusOneCount'],
           notes: data['notes'],
@@ -70,17 +71,13 @@ class GuestFirestoreService {
   /// Add a guest group to an event
   Future<String> addGuestGroup(String eventId, GuestGroup group) async {
     try {
-      final groupId = await _firestoreService.addSubcollectionDocument(
-        _collection,
-        eventId,
-        'guest_groups',
-        {
-          'name': group.name,
-          'description': group.description,
-          'color': group.color,
-          'createdAt': FieldValue.serverTimestamp(),
-        },
-      );
+      final groupId = await _firestoreService
+          .addSubcollectionDocument(_collection, eventId, 'guest_groups', {
+            'name': group.name,
+            'description': group.description,
+            'color': group.color,
+            'createdAt': FieldValue.serverTimestamp(),
+          });
       return groupId;
     } catch (e) {
       Logger.e('Error adding guest group: $e', tag: 'GuestFirestoreService');
@@ -127,26 +124,23 @@ class GuestFirestoreService {
   /// Add a guest to an event
   Future<String> addGuest(String eventId, Guest guest) async {
     try {
-      final guestId = await _firestoreService.addSubcollectionDocument(
-        _collection,
-        eventId,
-        'guests',
-        {
-          'firstName': guest.firstName,
-          'lastName': guest.lastName,
-          'email': guest.email,
-          'phone': guest.phone,
-          'groupId': guest.groupId,
-          'rsvpStatus': guest.rsvpStatus.toString().split('.').last,
-          'rsvpResponseDate': guest.rsvpResponseDate != null
-              ? Timestamp.fromDate(guest.rsvpResponseDate!)
-              : null,
-          'plusOne': guest.plusOne,
-          'plusOneCount': guest.plusOneCount,
-          'notes': guest.notes,
-          'createdAt': FieldValue.serverTimestamp(),
-        },
-      );
+      final guestId = await _firestoreService
+          .addSubcollectionDocument(_collection, eventId, 'guests', {
+            'firstName': guest.firstName,
+            'lastName': guest.lastName,
+            'email': guest.email,
+            'phone': guest.phone,
+            'groupId': guest.groupId,
+            'rsvpStatus': guest.rsvpStatus.toString().split('.').last,
+            'rsvpResponseDate':
+                guest.rsvpResponseDate != null
+                    ? Timestamp.fromDate(guest.rsvpResponseDate!)
+                    : null,
+            'plusOne': guest.plusOne,
+            'plusOneCount': guest.plusOneCount,
+            'notes': guest.notes,
+            'createdAt': FieldValue.serverTimestamp(),
+          });
       return guestId;
     } catch (e) {
       Logger.e('Error adding guest: $e', tag: 'GuestFirestoreService');
@@ -169,9 +163,10 @@ class GuestFirestoreService {
           'phone': guest.phone,
           'groupId': guest.groupId,
           'rsvpStatus': guest.rsvpStatus.toString().split('.').last,
-          'rsvpResponseDate': guest.rsvpResponseDate != null
-              ? Timestamp.fromDate(guest.rsvpResponseDate!)
-              : null,
+          'rsvpResponseDate':
+              guest.rsvpResponseDate != null
+                  ? Timestamp.fromDate(guest.rsvpResponseDate!)
+                  : null,
           'plusOne': guest.plusOne,
           'plusOneCount': guest.plusOneCount,
           'notes': guest.notes,
@@ -202,14 +197,10 @@ class GuestFirestoreService {
   /// Set RSVP deadline for an event
   Future<void> setRsvpDeadline(String eventId, DateTime deadline) async {
     try {
-      await _firestoreService.updateDocument(
-        _collection,
-        eventId,
-        {
-          'rsvpDeadline': Timestamp.fromDate(deadline),
-          'updatedAt': FieldValue.serverTimestamp(),
-        },
-      );
+      await _firestoreService.updateDocument(_collection, eventId, {
+        'rsvpDeadline': Timestamp.fromDate(deadline),
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
     } catch (e) {
       Logger.e('Error setting RSVP deadline: $e', tag: 'GuestFirestoreService');
       rethrow;
@@ -219,16 +210,15 @@ class GuestFirestoreService {
   /// Set expected guest count for an event
   Future<void> setExpectedGuestCount(String eventId, int count) async {
     try {
-      await _firestoreService.updateDocument(
-        _collection,
-        eventId,
-        {
-          'expectedGuestCount': count,
-          'updatedAt': FieldValue.serverTimestamp(),
-        },
-      );
+      await _firestoreService.updateDocument(_collection, eventId, {
+        'expectedGuestCount': count,
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
     } catch (e) {
-      Logger.e('Error setting expected guest count: $e', tag: 'GuestFirestoreService');
+      Logger.e(
+        'Error setting expected guest count: $e',
+        tag: 'GuestFirestoreService',
+      );
       rethrow;
     }
   }
