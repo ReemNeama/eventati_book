@@ -24,7 +24,7 @@ class DependencyIndicator extends StatelessWidget {
             color:
                 isCreating
                     ? AppColors.primary
-                    : AppColors.textSecondary.withOpacity(0.5),
+                    : AppColors.textSecondary.withAlpha(128), // 0.5 * 255 = 128
           ),
 
           // Arrow
@@ -36,7 +36,9 @@ class DependencyIndicator extends StatelessWidget {
                 color:
                     isCreating
                         ? AppColors.primary
-                        : AppColors.textSecondary.withOpacity(0.5),
+                        : AppColors.textSecondary.withAlpha(
+                          128,
+                        ), // 0.5 * 255 = 128
               ),
             ),
           ),

@@ -101,7 +101,7 @@ class _DependencyGraphState extends State<DependencyGraph> {
     return CustomPaint(
       painter: GridPainter(
         gridSpacing: 50 * _scale,
-        gridColor: Colors.grey.withOpacity(0.2),
+        gridColor: Colors.grey.withAlpha(51), // 0.2 * 255 = 51
       ),
       size: Size.infinite,
     );
@@ -151,7 +151,7 @@ class _DependencyGraphState extends State<DependencyGraph> {
                 _selectedTask?.id == prerequisiteTask.id ||
                         _selectedTask?.id == dependentTask.id
                     ? AppColors.primary
-                    : Colors.grey.withOpacity(0.5),
+                    : Colors.grey.withAlpha(128), // 0.5 * 255 = 128
             strokeWidth:
                 _selectedTask?.id == prerequisiteTask.id ||
                         _selectedTask?.id == dependentTask.id
@@ -199,6 +199,8 @@ class _DependencyGraphState extends State<DependencyGraph> {
               isSelected: _selectedTask?.id == task.id,
               isPrerequisite: _isPrerequisite(task),
               isDependent: _isDependent(task),
+              prerequisiteCount: _getPrerequisiteCount(task),
+              dependentCount: _getDependentCount(task),
               onTap: () {
                 setState(() {
                   _selectedTask = _selectedTask?.id == task.id ? null : task;
@@ -305,6 +307,20 @@ class _DependencyGraphState extends State<DependencyGraph> {
           d.prerequisiteTaskId == _selectedTask!.id,
     );
   }
+
+  /// Gets the count of tasks that depend on this task
+  int _getDependentCount(Task task) {
+    return widget.dependencies
+        .where((d) => d.prerequisiteTaskId == task.id)
+        .length;
+  }
+
+  /// Gets the count of tasks that this task depends on
+  int _getPrerequisiteCount(Task task) {
+    return widget.dependencies
+        .where((d) => d.dependentTaskId == task.id)
+        .length;
+  }
 }
 
 /// Custom painter for drawing the dependency lines
@@ -366,7 +382,7 @@ class DependencyLinePainter extends CustomPainter {
     final angle = (tip - tail).direction;
 
     // Calculate the points for the arrow
-    final arrowSize = 10.0;
+    const arrowSize = 10.0;
     final arrowPoint1 = Offset(
       tip.dx - arrowSize * 1.5 * math.cos(angle - math.pi / 6),
       tip.dy - arrowSize * 1.5 * math.sin(angle - math.pi / 6),

@@ -5,8 +5,6 @@ import 'package:eventati_book/providers/providers.dart';
 import 'package:eventati_book/screens/planning/widgets/dependency_graph.dart';
 import 'package:eventati_book/screens/planning/widgets/dependency_indicator.dart';
 import 'package:eventati_book/screens/planning/widgets/task_card.dart';
-import 'package:eventati_book/styles/app_colors.dart';
-import 'package:eventati_book/utils/core/constants.dart';
 
 /// Enum for the different view modes
 enum ViewMode {
@@ -50,8 +48,7 @@ class _TaskDependencyScreenState extends State<TaskDependencyScreen>
   /// Error message if an operation fails
   String? _errorMessage;
 
-  /// The current view mode (list or graph)
-  ViewMode _viewMode = ViewMode.list;
+  // We'll use TabController instead of a separate view mode field
 
   /// Tab controller for switching between views
   late TabController _tabController;
@@ -59,16 +56,17 @@ class _TaskDependencyScreenState extends State<TaskDependencyScreen>
   /// Whether a dependency is being created
   bool _isCreatingDependency = false;
 
+  /// ID of the dependency being removed (format: "prerequisiteId_dependentId")
+  String? _isRemovingDependencyId;
+
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _tabController.addListener(() {
       if (!_tabController.indexIsChanging) {
-        setState(() {
-          _viewMode =
-              _tabController.index == 0 ? ViewMode.list : ViewMode.graph;
-        });
+        // Update UI when tab changes
+        setState(() {});
       }
     });
     _loadTasks();
@@ -334,6 +332,14 @@ class _TaskDependencyScreenState extends State<TaskDependencyScreen>
                                 task: task,
                                 category: category,
                                 isSelected: _prerequisiteTask?.id == task.id,
+                                prerequisiteCount:
+                                    taskProvider
+                                        .getPrerequisiteTasks(task.id)
+                                        .length,
+                                dependentCount:
+                                    taskProvider
+                                        .getDependentTasks(task.id)
+                                        .length,
                                 onTap: () {
                                   setState(() {
                                     _prerequisiteTask =
@@ -398,6 +404,14 @@ class _TaskDependencyScreenState extends State<TaskDependencyScreen>
                                 task: task,
                                 category: category,
                                 isSelected: _dependentTask?.id == task.id,
+                                prerequisiteCount:
+                                    taskProvider
+                                        .getPrerequisiteTasks(task.id)
+                                        .length,
+                                dependentCount:
+                                    taskProvider
+                                        .getDependentTasks(task.id)
+                                        .length,
                                 onTap: () {
                                   setState(() {
                                     _dependentTask =
@@ -419,18 +433,37 @@ class _TaskDependencyScreenState extends State<TaskDependencyScreen>
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton.icon(
-                          onPressed: () {
-                            setState(() {
-                              _isCreatingDependency = true;
-                            });
-                            _addDependency().then((_) {
-                              setState(() {
-                                _isCreatingDependency = false;
-                              });
-                            });
-                          },
-                          icon: const Icon(Icons.link),
-                          label: const Text('Create Dependency'),
+                          onPressed:
+                              _isCreatingDependency
+                                  ? null
+                                  : () {
+                                    setState(() {
+                                      _isCreatingDependency = true;
+                                    });
+                                    _addDependency().then((_) {
+                                      setState(() {
+                                        _isCreatingDependency = false;
+                                      });
+                                    });
+                                  },
+                          icon:
+                              _isCreatingDependency
+                                  ? const SizedBox(
+                                    width: 16,
+                                    height: 16,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        Colors.white,
+                                      ),
+                                    ),
+                                  )
+                                  : const Icon(Icons.link),
+                          label: Text(
+                            _isCreatingDependency
+                                ? 'Creating...'
+                                : 'Create Dependency',
+                          ),
                         ),
                       ),
                     ],
@@ -581,17 +614,50 @@ class _TaskDependencyScreenState extends State<TaskDependencyScreen>
                                       alignment: Alignment.centerRight,
                                       child: TextButton.icon(
                                         onPressed:
-                                            () => _removeDependency(
-                                              dependency.prerequisiteTaskId,
-                                              dependency.dependentTaskId,
-                                            ),
-                                        icon: const Icon(
-                                          Icons.delete,
-                                          color: Colors.red,
-                                        ),
-                                        label: const Text(
-                                          'Remove Dependency',
-                                          style: TextStyle(color: Colors.red),
+                                            _isLoading
+                                                ? null
+                                                : () {
+                                                  setState(() {
+                                                    _isRemovingDependencyId =
+                                                        '${dependency.prerequisiteTaskId}_${dependency.dependentTaskId}';
+                                                  });
+                                                  _removeDependency(
+                                                    dependency
+                                                        .prerequisiteTaskId,
+                                                    dependency.dependentTaskId,
+                                                  ).then((_) {
+                                                    setState(() {
+                                                      _isRemovingDependencyId =
+                                                          null;
+                                                    });
+                                                  });
+                                                },
+                                        icon:
+                                            _isRemovingDependencyId ==
+                                                    '${dependency.prerequisiteTaskId}_${dependency.dependentTaskId}'
+                                                ? const SizedBox(
+                                                  width: 16,
+                                                  height: 16,
+                                                  child: CircularProgressIndicator(
+                                                    strokeWidth: 2,
+                                                    valueColor:
+                                                        AlwaysStoppedAnimation<
+                                                          Color
+                                                        >(Colors.red),
+                                                  ),
+                                                )
+                                                : const Icon(
+                                                  Icons.delete,
+                                                  color: Colors.red,
+                                                ),
+                                        label: Text(
+                                          _isRemovingDependencyId ==
+                                                  '${dependency.prerequisiteTaskId}_${dependency.dependentTaskId}'
+                                              ? 'Removing...'
+                                              : 'Remove Dependency',
+                                          style: const TextStyle(
+                                            color: Colors.red,
+                                          ),
                                         ),
                                       ),
                                     ),

@@ -21,6 +21,12 @@ class TaskCard extends StatelessWidget {
   /// Whether the card is a dependent task
   final bool isDependent;
 
+  /// Number of prerequisite tasks this task depends on
+  final int prerequisiteCount;
+
+  /// Number of tasks that depend on this task
+  final int dependentCount;
+
   /// Callback when the card is tapped
   final VoidCallback? onTap;
 
@@ -32,6 +38,8 @@ class TaskCard extends StatelessWidget {
     this.isSelected = false,
     this.isPrerequisite = false,
     this.isDependent = false,
+    this.prerequisiteCount = 0,
+    this.dependentCount = 0,
     this.onTap,
   });
 
@@ -44,9 +52,9 @@ class TaskCard extends StatelessWidget {
     if (isSelected) {
       cardColor = AppColors.primaryWithAlpha(0.15);
     } else if (isPrerequisite) {
-      cardColor = Colors.blue.withOpacity(0.1);
+      cardColor = Colors.blue.withAlpha(26); // 0.1 * 255 = 26
     } else if (isDependent) {
-      cardColor = Colors.orange.withOpacity(0.1);
+      cardColor = Colors.orange.withAlpha(26); // 0.1 * 255 = 26
     }
 
     // Determine border color based on selection state
@@ -127,7 +135,9 @@ class TaskCard extends StatelessWidget {
                   // Category
                   if (category != null)
                     Chip(
-                      backgroundColor: category!.color.withOpacity(0.2),
+                      backgroundColor: category!.color.withAlpha(
+                        51,
+                      ), // 0.2 * 255 = 51
                       label: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -167,6 +177,35 @@ class TaskCard extends StatelessWidget {
                   ),
                 ],
               ),
+
+              // Dependency indicators
+              if (prerequisiteCount > 0 || dependentCount > 0)
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      if (prerequisiteCount > 0)
+                        _buildDependencyBadge(
+                          count: prerequisiteCount,
+                          icon: Icons.arrow_upward,
+                          color: Colors.blue,
+                          tooltip:
+                              'Depends on $prerequisiteCount ${prerequisiteCount == 1 ? 'task' : 'tasks'}',
+                        ),
+                      if (prerequisiteCount > 0 && dependentCount > 0)
+                        const SizedBox(width: 8),
+                      if (dependentCount > 0)
+                        _buildDependencyBadge(
+                          count: dependentCount,
+                          icon: Icons.arrow_downward,
+                          color: Colors.orange,
+                          tooltip:
+                              '$dependentCount ${dependentCount == 1 ? 'task depends' : 'tasks depend'} on this',
+                        ),
+                    ],
+                  ),
+                ),
             ],
           ),
         ),
@@ -193,12 +232,46 @@ class TaskCard extends StatelessWidget {
         color = AppColors.error;
         break;
       case TaskStatus.notStarted:
-      default:
         icon = Icons.circle_outlined;
         color = AppColors.textSecondary;
         break;
     }
 
     return Icon(icon, color: color);
+  }
+
+  /// Builds a dependency badge with count
+  Widget _buildDependencyBadge({
+    required int count,
+    required IconData icon,
+    required Color color,
+    required String tooltip,
+  }) {
+    return Tooltip(
+      message: tooltip,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+        decoration: BoxDecoration(
+          color: color.withAlpha(26), // 0.1 * 255 = 26
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: color, width: 1),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 14, color: color),
+            const SizedBox(width: 4),
+            Text(
+              count.toString(),
+              style: TextStyle(
+                color: color,
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
