@@ -28,6 +28,8 @@ class RouteNames {
   static const String eventWizardSuggestions = '/event-wizard/suggestions';
   static const String eventWizardCreateSuggestion =
       '/event-wizard/create-suggestion';
+  static const String personalizedRecommendations =
+      '/recommendations/personalized';
 
   // Booking routes
   static const String bookings = '/bookings';

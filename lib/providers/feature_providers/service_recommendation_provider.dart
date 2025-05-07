@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:eventati_book/di/service_locator.dart';
 import 'package:eventati_book/models/models.dart';
+import 'package:eventati_book/services/firebase/firestore/vendor_recommendation_firestore_service.dart';
+import 'package:eventati_book/utils/logger.dart';
 
 /// Provider for recommending services based on event wizard data.
 ///
@@ -65,16 +68,57 @@ class ServiceRecommendationProvider extends ChangeNotifier {
   /// The map contains keys like 'eventType', 'guestCount', and 'selectedServices'.
   Map<String, dynamic>? _wizardData;
 
+  /// The current wizard state
+  WizardState? _wizardState;
+
   /// Flag indicating whether to show only recommended services in service listings
   ///
   /// When true, service screens should filter out non-recommended services.
   /// When false, all services should be shown, with recommended ones highlighted.
   bool _showOnlyRecommended = false;
 
+  /// Vendor recommendation service
+  final VendorRecommendationFirestoreService _recommendationService;
+
+  /// List of personalized recommendations from Firestore
+  List<Suggestion> _personalizedRecommendations = [];
+
+  /// Whether the provider is loading data
+  bool _isLoading = false;
+
+  /// Error message if loading fails
+  String? _errorMessage;
+
+  /// Constructor
+  ServiceRecommendationProvider({
+    VendorRecommendationFirestoreService? recommendationService,
+    WizardState? initialWizardState,
+  }) : _recommendationService =
+           recommendationService ??
+           serviceLocator.vendorRecommendationFirestoreService {
+    if (initialWizardState != null) {
+      _wizardState = initialWizardState;
+      _loadPersonalizedRecommendations();
+    }
+  }
+
   /// Returns the current wizard data, or null if no data has been set
   ///
   /// This data includes event type, guest count, and selected services.
   Map<String, dynamic>? get wizardData => _wizardData;
+
+  /// Get the current wizard state
+  WizardState? get wizardState => _wizardState;
+
+  /// Get the list of personalized recommendations
+  List<Suggestion> get personalizedRecommendations =>
+      _personalizedRecommendations;
+
+  /// Get whether the provider is loading data
+  bool get isLoading => _isLoading;
+
+  /// Get the error message
+  String? get errorMessage => _errorMessage;
 
   /// Indicates whether to show only recommended services
   ///
@@ -95,6 +139,81 @@ class ServiceRecommendationProvider extends ChangeNotifier {
   void setWizardData(Map<String, dynamic> data) {
     _wizardData = data;
     notifyListeners();
+  }
+
+  /// Set the wizard state and load personalized recommendations
+  Future<void> setWizardState(WizardState wizardState) async {
+    _wizardState = wizardState;
+    await _loadPersonalizedRecommendations();
+  }
+
+  /// Load personalized recommendations based on the current wizard state
+  Future<void> _loadPersonalizedRecommendations() async {
+    if (_wizardState == null) {
+      _errorMessage = 'No wizard state available';
+      notifyListeners();
+      return;
+    }
+
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      // Get personalized recommendations
+      final recommendations = await _recommendationService
+          .getPersonalizedRecommendations(_wizardState!);
+
+      _personalizedRecommendations = recommendations;
+      _isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      _isLoading = false;
+      _errorMessage = 'Failed to load recommendations: ${e.toString()}';
+      Logger.e(_errorMessage!, tag: 'ServiceRecommendationProvider');
+      notifyListeners();
+    }
+  }
+
+  /// Refresh personalized recommendations
+  Future<void> refreshRecommendations() async {
+    await _loadPersonalizedRecommendations();
+  }
+
+  /// Get personalized recommendations for a specific category
+  List<Suggestion> getPersonalizedRecommendationsForCategory(
+    SuggestionCategory category,
+  ) {
+    return _personalizedRecommendations
+        .where((recommendation) => recommendation.category == category)
+        .toList();
+  }
+
+  /// Get high priority personalized recommendations
+  List<Suggestion> get highPriorityPersonalizedRecommendations {
+    return _personalizedRecommendations
+        .where(
+          (recommendation) =>
+              recommendation.priority == SuggestionPriority.high,
+        )
+        .toList();
+  }
+
+  /// Seed the database with predefined recommendations
+  Future<void> seedPredefinedRecommendations() async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      await _recommendationService.seedPredefinedRecommendations();
+      await _loadPersonalizedRecommendations();
+    } catch (e) {
+      _isLoading = false;
+      _errorMessage = 'Failed to seed recommendations: ${e.toString()}';
+      Logger.e(_errorMessage!, tag: 'ServiceRecommendationProvider');
+      notifyListeners();
+    }
   }
 
   /// Toggles between showing all services and showing only recommended services

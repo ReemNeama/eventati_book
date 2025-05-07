@@ -208,6 +208,9 @@ class Suggestion {
   /// Event types this suggestion applies to
   final List<String> applicableEventTypes;
 
+  /// Tags for categorizing and filtering the suggestion
+  final List<String> tags;
+
   /// Optional image URL to illustrate the suggestion
   final String? imageUrl;
 
@@ -226,6 +229,7 @@ class Suggestion {
     required this.baseRelevanceScore,
     required this.conditions,
     required this.applicableEventTypes,
+    this.tags = const [],
     this.imageUrl,
     this.actionUrl,
     this.isCustom = false,
@@ -307,6 +311,7 @@ class Suggestion {
       'baseRelevanceScore': baseRelevanceScore,
       'conditions': conditions.map((c) => c.toJson()).toList(),
       'applicableEventTypes': applicableEventTypes,
+      'tags': tags,
       'imageUrl': imageUrl,
       'actionUrl': actionUrl,
       'isCustom': isCustom,
@@ -333,6 +338,7 @@ class Suggestion {
               .map((c) => SuggestionCondition.fromJson(c))
               .toList(),
       applicableEventTypes: List<String>.from(json['applicableEventTypes']),
+      tags: json['tags'] != null ? List<String>.from(json['tags']) : const [],
       imageUrl: json['imageUrl'],
       actionUrl: json['actionUrl'],
       isCustom: json['isCustom'] ?? false,
@@ -349,6 +355,7 @@ class Suggestion {
       'baseRelevanceScore': baseRelevanceScore,
       'conditions': conditions.map((c) => c.toJson()).toList(),
       'applicableEventTypes': applicableEventTypes,
+      'tags': tags,
       'imageUrl': imageUrl,
       'actionUrl': actionUrl,
       'isCustom': isCustom,
@@ -387,6 +394,7 @@ class Suggestion {
           data['applicableEventTypes'] != null
               ? List<String>.from(data['applicableEventTypes'])
               : ['all'],
+      tags: data['tags'] != null ? List<String>.from(data['tags']) : const [],
       imageUrl: data['imageUrl'],
       actionUrl: data['actionUrl'],
       isCustom: data['isCustom'] ?? false,
@@ -403,6 +411,7 @@ class Suggestion {
     int? baseRelevanceScore,
     List<SuggestionCondition>? conditions,
     List<String>? applicableEventTypes,
+    List<String>? tags,
     String? imageUrl,
     String? actionUrl,
     bool? isCustom,
@@ -416,6 +425,7 @@ class Suggestion {
       baseRelevanceScore: baseRelevanceScore ?? this.baseRelevanceScore,
       conditions: conditions ?? this.conditions,
       applicableEventTypes: applicableEventTypes ?? this.applicableEventTypes,
+      tags: tags ?? this.tags,
       imageUrl: imageUrl ?? this.imageUrl,
       actionUrl: actionUrl ?? this.actionUrl,
       isCustom: isCustom ?? this.isCustom,
@@ -427,11 +437,152 @@ class Suggestion {
 class SuggestionTemplates {
   /// Get all predefined suggestions
   static List<Suggestion> getPredefinedSuggestions() {
-    return [
-      ...getWeddingSuggestions(),
-      ...getBusinessEventSuggestions(),
-      ...getCelebrationSuggestions(),
-    ];
+    // Create a list of predefined suggestions for Firestore
+    final List<Suggestion> suggestions = [];
+
+    // Venue suggestions
+    suggestions.add(
+      Suggestion(
+        id: 'venue_wedding_large',
+        title: 'Consider a hotel or banquet hall for your large wedding',
+        description:
+            'For weddings with over 100 guests, hotels and banquet halls offer ample space, in-house catering, and often accommodation for out-of-town guests.',
+        category: SuggestionCategory.venue,
+        priority: SuggestionPriority.high,
+        baseRelevanceScore: 85,
+        conditions: [
+          SuggestionCondition(
+            field: 'templateId',
+            operator: ConditionOperator.equals,
+            value: 'wedding',
+          ),
+          SuggestionCondition(
+            field: 'guestCount',
+            operator: ConditionOperator.greaterThan,
+            value: 100,
+          ),
+        ],
+        applicableEventTypes: ['wedding'],
+        tags: ['large_venue', 'hotel', 'banquet_hall', 'accommodation'],
+        actionUrl: '/services/venues',
+      ),
+    );
+
+    suggestions.add(
+      Suggestion(
+        id: 'venue_business_conference',
+        title: 'Book a conference center with modern amenities',
+        description:
+            'For business events, look for venues with built-in AV equipment, high-speed internet, and breakout rooms for smaller sessions.',
+        category: SuggestionCategory.venue,
+        priority: SuggestionPriority.high,
+        baseRelevanceScore: 90,
+        conditions: [
+          SuggestionCondition(
+            field: 'templateId',
+            operator: ConditionOperator.equals,
+            value: 'business',
+          ),
+        ],
+        applicableEventTypes: ['business'],
+        tags: ['medium_venue', 'modern', 'conference', 'accessible'],
+        actionUrl: '/services/venues',
+      ),
+    );
+
+    // Catering suggestions
+    suggestions.add(
+      Suggestion(
+        id: 'catering_wedding_buffet',
+        title: 'Consider a buffet for cost-effective catering',
+        description:
+            'Buffet-style service is typically less expensive than plated meals and allows guests to choose what they want to eat.',
+        category: SuggestionCategory.catering,
+        priority: SuggestionPriority.medium,
+        baseRelevanceScore: 75,
+        conditions: [
+          SuggestionCondition(
+            field: 'templateId',
+            operator: ConditionOperator.equals,
+            value: 'wedding',
+          ),
+        ],
+        applicableEventTypes: ['wedding', 'celebration'],
+        tags: ['buffet', 'food_station', 'cost_effective', 'casual'],
+        actionUrl: '/services/catering',
+      ),
+    );
+
+    // Photography suggestions
+    suggestions.add(
+      Suggestion(
+        id: 'photography_wedding_package',
+        title: 'Book a comprehensive wedding photography package',
+        description:
+            'Look for packages that include engagement photos, full wedding day coverage, and a second shooter for capturing multiple angles.',
+        category: SuggestionCategory.photography,
+        priority: SuggestionPriority.high,
+        baseRelevanceScore: 80,
+        conditions: [
+          SuggestionCondition(
+            field: 'templateId',
+            operator: ConditionOperator.equals,
+            value: 'wedding',
+          ),
+        ],
+        applicableEventTypes: ['wedding'],
+        tags: ['engagement', 'second_shooter', 'album', 'traditional'],
+        actionUrl: '/services/photography',
+      ),
+    );
+
+    // Entertainment suggestions
+    suggestions.add(
+      Suggestion(
+        id: 'entertainment_celebration_dj',
+        title: 'Hire a DJ for your celebration',
+        description:
+            'A professional DJ can read the crowd and adjust the music to keep your guests entertained throughout the event.',
+        category: SuggestionCategory.entertainment,
+        priority: SuggestionPriority.medium,
+        baseRelevanceScore: 70,
+        conditions: [
+          SuggestionCondition(
+            field: 'templateId',
+            operator: ConditionOperator.equals,
+            value: 'celebration',
+          ),
+        ],
+        applicableEventTypes: ['celebration', 'wedding'],
+        tags: ['dj', 'dance_floor', 'reception_music', 'casual'],
+        actionUrl: '/services/entertainment',
+      ),
+    );
+
+    // Budget suggestions
+    suggestions.add(
+      Suggestion(
+        id: 'budget_wedding_priorities',
+        title: 'Set your wedding budget priorities',
+        description:
+            'Decide which aspects of your wedding are most important to you and allocate your budget accordingly. This helps ensure you spend on what matters most.',
+        category: SuggestionCategory.budget,
+        priority: SuggestionPriority.high,
+        baseRelevanceScore: 95,
+        conditions: [
+          SuggestionCondition(
+            field: 'templateId',
+            operator: ConditionOperator.equals,
+            value: 'wedding',
+          ),
+        ],
+        applicableEventTypes: ['wedding'],
+        tags: ['budget', 'planning', 'priorities', 'cost_effective'],
+        actionUrl: '/event-planning/budget',
+      ),
+    );
+
+    return suggestions;
   }
 
   /// Get suggestions for a specific event type

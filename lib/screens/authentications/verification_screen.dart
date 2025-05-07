@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/widgets/auth/auth_title_widget.dart';
 import 'package:eventati_book/widgets/auth/auth_button.dart';
-import 'package:eventati_book/widgets/auth/verification_code_input.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/routing/routing.dart';
+import 'package:eventati_book/providers/providers.dart';
+import 'package:provider/provider.dart';
 
 class VerificationScreen extends StatefulWidget {
   final String email;
@@ -15,139 +16,163 @@ class VerificationScreen extends StatefulWidget {
 }
 
 class _VerificationScreenState extends State<VerificationScreen> {
-  final List<TextEditingController> controllers = List.generate(
-    6,
-    (index) => TextEditingController(),
-  );
+  bool _isResending = false;
+  bool _isChecking = false;
 
-  final List<FocusNode> focusNodes = List.generate(6, (index) => FocusNode());
+  Future<void> _resendVerificationEmail(AuthProvider authProvider) async {
+    setState(() {
+      _isResending = true;
+    });
 
-  @override
-  void dispose() {
-    for (var controller in controllers) {
-      controller.dispose();
-    }
-    for (var node in focusNodes) {
-      node.dispose();
-    }
-    super.dispose();
-  }
+    final success = await authProvider.verifyEmail();
 
-  void onCodeChanged(String value, int index) {
-    if (value.length == 1 && index < 5) {
-      focusNodes[index + 1].requestFocus();
-    }
-    if (value.isEmpty && index > 0) {
-      focusNodes[index - 1].requestFocus();
-    }
-  }
-
-  // Method to handle resending verification code
-  Future<void> _resendVerificationCode() async {
-    // Show loading indicator
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder:
-          (dialogContext) => const AlertDialog(
-            content: Row(
-              children: [
-                CircularProgressIndicator(),
-                SizedBox(width: 20),
-                Text('Resending code...'),
-              ],
-            ),
-          ),
-    );
-
-    // Simulate API call delay
-    await Future.delayed(const Duration(seconds: 1));
-
-    // Only proceed if the widget is still mounted
     if (!mounted) return;
 
-    // Hide loading indicator
-    Navigator.pop(context);
+    setState(() {
+      _isResending = false;
+    });
 
-    // Show success message
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Verification code resent to ${widget.email}',
-          style: const TextStyle(color: Colors.white),
+    if (success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Verification email sent. Please check your inbox.',
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.green,
         ),
-        backgroundColor: Colors.blue,
-      ),
-    );
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            authProvider.errorMessage ?? 'Failed to send verification email',
+            style: const TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  Future<void> _checkEmailVerification(AuthProvider authProvider) async {
+    setState(() {
+      _isChecking = true;
+    });
+
+    // Reload the user to check if email is verified
+    await authProvider.reloadUser();
+
+    if (!mounted) return;
+
+    setState(() {
+      _isChecking = false;
+    });
+
+    if (authProvider.isEmailVerified) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Email verified successfully!',
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.green,
+        ),
+      );
+
+      // Navigate to home screen
+      NavigationUtils.navigateToNamedAndRemoveUntil(context, RouteNames.home);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Email not verified yet. Please check your inbox and click the verification link.',
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.orange,
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).primaryColor,
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).primaryColor,
-        elevation: 0,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const AuthTitleWidget(title: 'Verification', fontSize: 32),
-            const SizedBox(height: 20),
-            const Text(
-              'Enter the verification code sent to your email',
-              style: TextStyle(color: Colors.white70),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 50),
-            VerificationCodeInput(
-              controllers: controllers,
-              focusNodes: focusNodes,
-              onCodeChanged: onCodeChanged,
-            ),
-            const SizedBox(height: 30),
-            AuthButton(
-              onPressed: () {
-                final String code =
-                    controllers.map((controller) => controller.text).join();
-                if (code.length == 6) {
-                  // Show success message
-                  UIUtils.showSuccessSnackBar(
+    return Consumer<AuthProvider>(
+      builder: (context, authProvider, _) {
+        return Scaffold(
+          backgroundColor: Theme.of(context).primaryColor,
+          appBar: AppBar(
+            backgroundColor: Theme.of(context).primaryColor,
+            elevation: 0,
+          ),
+          body: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const AuthTitleWidget(title: 'Verify Your Email', fontSize: 32),
+                const SizedBox(height: 20),
+                const Icon(Icons.email_outlined, size: 80, color: Colors.white),
+                const SizedBox(height: 20),
+                Text(
+                  'A verification email has been sent to:',
+                  style: Theme.of(
                     context,
-                    'Verification successful!',
-                  );
-
-                  // Navigate to reset password screen
-                  NavigationUtils.navigateToNamed(
-                    context,
-                    RouteNames.resetPassword,
-                    arguments: const ResetPasswordArguments(),
-                  );
-                } else {
-                  // Show error message
-                  UIUtils.showErrorSnackBar(
-                    context,
-                    'Please enter a valid 6-digit verification code',
-                  );
-                }
-              },
-              text: 'Verify',
+                  ).textTheme.titleLarge?.copyWith(color: Colors.white),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  widget.email,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 30),
+                const Text(
+                  'Please check your inbox and click the verification link to complete your registration.',
+                  style: TextStyle(color: Colors.white70),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 40),
+                AuthButton(
+                  onPressed:
+                      _isChecking
+                          ? null
+                          : () => _checkEmailVerification(authProvider),
+                  text: _isChecking ? 'Checking...' : 'I\'ve Verified My Email',
+                ),
+                const SizedBox(height: 20),
+                TextButton(
+                  onPressed:
+                      _isResending
+                          ? null
+                          : () => _resendVerificationEmail(authProvider),
+                  child: Text(
+                    _isResending ? 'Sending...' : 'Resend Verification Email',
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                TextButton(
+                  onPressed: () {
+                    NavigationUtils.navigateToNamedAndRemoveUntil(
+                      context,
+                      RouteNames.login,
+                    );
+                  },
+                  child: const Text(
+                    'Back to Login',
+                    style: TextStyle(color: Colors.white70),
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 20),
-            TextButton(
-              onPressed: () {
-                _resendVerificationCode();
-              },
-              child: const Text(
-                'Resend Code',
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }

@@ -14,6 +14,7 @@ import 'package:eventati_book/services/firebase/utils/firestore_service.dart';
 import 'package:eventati_book/services/firebase/core/firebase_storage_service.dart';
 import 'package:eventati_book/services/firebase/firestore/user_firestore_service.dart';
 import 'package:eventati_book/services/firebase/firestore/event_firestore_service.dart';
+import 'package:eventati_book/services/firebase/firestore/vendor_recommendation_firestore_service.dart';
 import 'package:eventati_book/utils/file_utils.dart';
 
 /// Simple service locator for dependency injection
@@ -60,6 +61,9 @@ class ServiceLocator {
     );
     registerSingleton<UserFirestoreService>(UserFirestoreService());
     registerSingleton<EventFirestoreService>(EventFirestoreService());
+    registerSingleton<VendorRecommendationFirestoreService>(
+      VendorRecommendationFirestoreService(),
+    );
     registerSingleton<DataMigrationService>(DataMigrationService());
 
     // Initialize FileUtils with the storage service
@@ -87,6 +91,11 @@ class ServiceLocator {
   /// Get the event Firestore service
   EventFirestoreService get eventFirestoreService =>
       get<EventFirestoreService>();
+
+  /// Get the vendor recommendation Firestore service
+  VendorRecommendationFirestoreService
+  get vendorRecommendationFirestoreService =>
+      get<VendorRecommendationFirestoreService>();
 
   /// Get the storage service
   StorageServiceInterface get storageService => get<StorageServiceInterface>();

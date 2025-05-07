@@ -11,6 +11,7 @@ import 'package:eventati_book/tempDB/venues.dart';
 import 'package:eventati_book/tempDB/services.dart';
 import 'package:eventati_book/screens/planning/task_dependency_screen.dart';
 import 'package:eventati_book/screens/testing/task_firestore_test_screen.dart';
+import 'package:eventati_book/screens/recommendations/personalized_recommendations_screen.dart';
 
 /// Router class for handling all navigation in the app
 class AppRouter {
@@ -222,6 +223,11 @@ class AppRouter {
         final args = settings.arguments as TaskFirestoreTestArguments;
         return MaterialPageRoute(
           builder: (context) => TaskFirestoreTestScreen(eventId: args.eventId),
+        );
+
+      case RouteNames.personalizedRecommendations:
+        return MaterialPageRoute(
+          builder: (context) => const PersonalizedRecommendationsScreen(),
         );
 
       default:

@@ -261,6 +261,17 @@ class EventPlanningToolsScreen extends StatelessWidget {
           );
         },
       },
+      {
+        'title': 'Personalized Recommendations',
+        'icon': Icons.lightbulb,
+        'color': Colors.amber,
+        'onTap': (BuildContext context) {
+          NavigationUtils.navigateToNamed(
+            context,
+            RouteNames.personalizedRecommendations,
+          );
+        },
+      },
     ];
 
     // Use ResponsiveGridView for more flexibility

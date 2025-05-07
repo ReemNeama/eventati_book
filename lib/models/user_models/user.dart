@@ -22,6 +22,9 @@ class User {
   /// User subscription expiration date
   final DateTime? subscriptionExpirationDate;
 
+  /// Whether the user's email is verified
+  final bool emailVerified;
+
   /// Alias for id (for Firebase compatibility)
   String get uid => id;
 
@@ -41,6 +44,7 @@ class User {
     this.hasPremiumSubscription = false,
     this.isBetaTester = false,
     this.subscriptionExpirationDate,
+    this.emailVerified = false,
   });
 
   // Create a User from JSON data
@@ -57,6 +61,7 @@ class User {
       role: json['role'] as String? ?? 'user',
       hasPremiumSubscription: json['hasPremiumSubscription'] as bool? ?? false,
       isBetaTester: json['isBetaTester'] as bool? ?? false,
+      emailVerified: json['emailVerified'] as bool? ?? false,
       subscriptionExpirationDate:
           json['subscriptionExpirationDate'] != null
               ? DateTime.parse(json['subscriptionExpirationDate'] as String)
@@ -78,6 +83,7 @@ class User {
       'role': role,
       'hasPremiumSubscription': hasPremiumSubscription,
       'isBetaTester': isBetaTester,
+      'emailVerified': emailVerified,
       'subscriptionExpirationDate':
           subscriptionExpirationDate?.toIso8601String(),
     };
@@ -111,6 +117,7 @@ class User {
       role: data['role'] ?? 'user',
       hasPremiumSubscription: data['hasPremiumSubscription'] ?? false,
       isBetaTester: data['isBetaTester'] ?? false,
+      emailVerified: data['emailVerified'] ?? false,
       subscriptionExpirationDate:
           data['subscriptionExpirationDate'] != null
               ? (data['subscriptionExpirationDate'] as Timestamp).toDate()
@@ -131,6 +138,7 @@ class User {
       'role': role,
       'hasPremiumSubscription': hasPremiumSubscription,
       'isBetaTester': isBetaTester,
+      'emailVerified': emailVerified,
       'subscriptionExpirationDate':
           subscriptionExpirationDate != null
               ? Timestamp.fromDate(subscriptionExpirationDate!)
@@ -151,6 +159,7 @@ class User {
     String? role,
     bool? hasPremiumSubscription,
     bool? isBetaTester,
+    bool? emailVerified,
     DateTime? subscriptionExpirationDate,
   }) {
     return User(
@@ -166,6 +175,7 @@ class User {
       hasPremiumSubscription:
           hasPremiumSubscription ?? this.hasPremiumSubscription,
       isBetaTester: isBetaTester ?? this.isBetaTester,
+      emailVerified: emailVerified ?? this.emailVerified,
       subscriptionExpirationDate:
           subscriptionExpirationDate ?? this.subscriptionExpirationDate,
     );

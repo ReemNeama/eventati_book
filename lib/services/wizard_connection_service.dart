@@ -754,6 +754,18 @@ class WizardConnectionService {
       // Set the wizard data in the provider
       serviceRecommendationProvider.setWizardData(wizardData);
 
+      // Get the wizard state from the wizard provider
+      final wizardProvider = Provider.of<WizardProvider>(
+        context,
+        listen: false,
+      );
+      final wizardState = wizardProvider.state;
+
+      // Set the wizard state in the provider for personalized recommendations
+      if (wizardState != null) {
+        serviceRecommendationProvider.setWizardState(wizardState);
+      }
+
       debugPrint(
         'Connected wizard data to service screens for recommendations',
       );

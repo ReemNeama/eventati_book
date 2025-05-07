@@ -223,6 +223,22 @@ class FirebaseAuthService implements AuthServiceInterface {
     });
   }
 
+  @override
+  Future<void> reloadUser() async {
+    try {
+      final user = _firebaseAuth.currentUser;
+      if (user != null) {
+        await user.reload();
+      }
+    } on firebase_auth.FirebaseAuthException catch (e) {
+      Logger.e('Error reloading user: ${e.code}', tag: 'FirebaseAuthService');
+      throw Exception(_mapFirebaseAuthError(e.code));
+    } catch (e) {
+      Logger.e('Error reloading user: $e', tag: 'FirebaseAuthService');
+      throw Exception('Failed to reload user: ${e.toString()}');
+    }
+  }
+
   // Helper methods
   Future<Map<String, dynamic>?> _getUserDataFromFirestore(String userId) async {
     try {
@@ -263,6 +279,7 @@ class FirebaseAuthService implements AuthServiceInterface {
       role: userData?['role'] ?? 'user',
       hasPremiumSubscription: userData?['hasPremiumSubscription'] ?? false,
       isBetaTester: userData?['isBetaTester'] ?? false,
+      emailVerified: userData?['emailVerified'] ?? firebaseUser.emailVerified,
       subscriptionExpirationDate:
           userData?['subscriptionExpirationDate'] != null
               ? (userData!['subscriptionExpirationDate'] as Timestamp).toDate()

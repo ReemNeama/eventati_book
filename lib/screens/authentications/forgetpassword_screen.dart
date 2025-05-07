@@ -61,19 +61,15 @@ class _ForgetpasswordScreenState extends State<ForgetpasswordScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'Reset password email sent to $email',
+            'Password reset link sent to $email. Please check your inbox.',
             style: const TextStyle(color: Colors.white),
           ),
-          backgroundColor: Colors.blue,
+          backgroundColor: Colors.green,
         ),
       );
 
-      // Navigate to verification screen
-      NavigationUtils.navigateToNamed(
-        context,
-        RouteNames.verification,
-        arguments: VerificationArguments(email: email),
-      );
+      // Navigate back to login screen
+      NavigationUtils.navigateToNamedReplacement(context, RouteNames.login);
     } else {
       // Show error message
       ScaffoldMessenger.of(context).showSnackBar(

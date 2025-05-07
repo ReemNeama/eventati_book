@@ -10,7 +10,7 @@ class TaskMigrationService {
 
   /// Constructor
   TaskMigrationService({TaskFirestoreService? taskFirestoreService})
-      : _taskFirestoreService = taskFirestoreService ?? TaskFirestoreService();
+    : _taskFirestoreService = taskFirestoreService ?? TaskFirestoreService();
 
   /// Migrate task data for an event to Firestore
   ///
@@ -41,9 +41,10 @@ class TaskMigrationService {
       final taskMap = <String, String>{}; // Old ID to new ID mapping
       for (final task in tasks) {
         // Update category ID if it was remapped
-        final updatedTask = categoryMap.containsKey(task.categoryId)
-            ? task.copyWith(categoryId: categoryMap[task.categoryId])
-            : task;
+        final updatedTask =
+            categoryMap.containsKey(task.categoryId)
+                ? task.copyWith(categoryId: categoryMap[task.categoryId])
+                : task;
 
         final newTaskId = await _taskFirestoreService.addTask(
           eventId,
@@ -55,13 +56,15 @@ class TaskMigrationService {
       // Migrate dependencies
       for (final dependency in dependencies) {
         // Update task IDs if they were remapped
-        final prerequisiteId = taskMap.containsKey(dependency.prerequisiteTaskId)
-            ? taskMap[dependency.prerequisiteTaskId]!
-            : dependency.prerequisiteTaskId;
+        final prerequisiteId =
+            taskMap.containsKey(dependency.prerequisiteTaskId)
+                ? taskMap[dependency.prerequisiteTaskId]!
+                : dependency.prerequisiteTaskId;
 
-        final dependentId = taskMap.containsKey(dependency.dependentTaskId)
-            ? taskMap[dependency.dependentTaskId]!
-            : dependency.dependentTaskId;
+        final dependentId =
+            taskMap.containsKey(dependency.dependentTaskId)
+                ? taskMap[dependency.dependentTaskId]!
+                : dependency.dependentTaskId;
 
         final updatedDependency = TaskDependency(
           prerequisiteTaskId: prerequisiteId,

@@ -60,4 +60,7 @@ abstract class AuthServiceInterface {
 
   /// Get a stream of user changes
   Stream<User?> get userChanges;
+
+  /// Reload the current user to get the latest data
+  Future<void> reloadUser();
 }

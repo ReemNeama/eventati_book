@@ -94,6 +94,9 @@ class AuthProvider with ChangeNotifier {
   /// Check if user is authenticated
   bool get isAuthenticated => _status == AuthStatus.authenticated;
 
+  /// Check if the current user's email is verified
+  bool get isEmailVerified => _user?.emailVerified ?? false;
+
   /// Constructor
   AuthProvider() {
     _initAuthStateListener();
@@ -374,6 +377,37 @@ class AuthProvider with ChangeNotifier {
       _errorMessage = 'Failed to remove favorite: ${e.toString()}';
       notifyListeners();
       return false;
+    }
+  }
+
+  /// Send email verification to the current user
+  Future<bool> verifyEmail() async {
+    try {
+      final result = await _authService.verifyEmail();
+      if (!result.isSuccess) {
+        _errorMessage = result.errorMessage;
+        notifyListeners();
+      }
+      return result.isSuccess;
+    } catch (e) {
+      _errorMessage = 'Email verification failed: ${e.toString()}';
+      notifyListeners();
+      return false;
+    }
+  }
+
+  /// Reload the current user to get the latest data
+  Future<void> reloadUser() async {
+    try {
+      await _authService.reloadUser();
+      final user = _authService.currentUser;
+      if (user != null) {
+        _user = user;
+        notifyListeners();
+      }
+    } catch (e) {
+      _errorMessage = 'Failed to reload user: ${e.toString()}';
+      notifyListeners();
     }
   }
 

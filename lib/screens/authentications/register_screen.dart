@@ -68,15 +68,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
-            'Registration successful! Your account has been created.',
+            'Registration successful! Please verify your email.',
             style: TextStyle(color: Colors.white),
           ),
           backgroundColor: Colors.green,
         ),
       );
 
-      // Navigate to home screen
-      NavigationUtils.navigateToNamedAndRemoveUntil(context, RouteNames.home);
+      // Store email for later use
+      final email = _emailController.text;
+
+      // Send verification email
+      await authProvider.verifyEmail();
+
+      // Check if widget is still mounted before navigating
+      if (!mounted) return;
+
+      // Navigate to verification screen
+      NavigationUtils.navigateToNamed(
+        context,
+        RouteNames.verification,
+        arguments: VerificationArguments(email: email),
+      );
     } else {
       // Show error message
       ScaffoldMessenger.of(context).showSnackBar(

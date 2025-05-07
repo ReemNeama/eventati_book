@@ -4,13 +4,13 @@ import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 
 class AuthButton extends StatelessWidget {
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final String text;
   final bool isWhiteBackground;
 
   const AuthButton({
     super.key,
-    required this.onPressed,
+    this.onPressed,
     required this.text,
     this.isWhiteBackground = true,
   });
