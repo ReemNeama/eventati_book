@@ -8,31 +8,34 @@ class FirebaseAnalyticsService implements AnalyticsServiceInterface {
   /// Firebase Analytics instance
   final FirebaseAnalytics _analytics;
 
-  /// Firebase Analytics observer
-  final FirebaseAnalyticsObserver _observer;
+  /// Route observer for navigation tracking
+  final RouteObserver<PageRoute> _routeObserver = RouteObserver<PageRoute>();
 
   /// Constructor
   FirebaseAnalyticsService({FirebaseAnalytics? analytics})
-      : _analytics = analytics ?? FirebaseAnalytics.instance,
-        _observer = FirebaseAnalyticsObserver(
-          analytics: analytics ?? FirebaseAnalytics.instance,
-        );
+    : _analytics = analytics ?? FirebaseAnalytics.instance;
 
   @override
-  RouteObserver<PageRoute> get observer => _observer;
+  RouteObserver<PageRoute> get observer => _routeObserver;
 
   @override
   Future<void> initialize() async {
     try {
       // Enable analytics collection
       await _analytics.setAnalyticsCollectionEnabled(true);
-      
+
       // Log app open event
       await trackAppOpen();
-      
-      Logger.i('Firebase Analytics initialized', tag: 'FirebaseAnalyticsService');
+
+      Logger.i(
+        'Firebase Analytics initialized',
+        tag: 'FirebaseAnalyticsService',
+      );
     } catch (e) {
-      Logger.e('Error initializing Firebase Analytics: $e', tag: 'FirebaseAnalyticsService');
+      Logger.e(
+        'Error initializing Firebase Analytics: $e',
+        tag: 'FirebaseAnalyticsService',
+      );
     }
   }
 
@@ -47,10 +50,16 @@ class FirebaseAnalyticsService implements AnalyticsServiceInterface {
         screenClass: screenName,
         parameters: parameters,
       );
-      
-      Logger.d('Screen view tracked: $screenName', tag: 'FirebaseAnalyticsService');
+
+      Logger.d(
+        'Screen view tracked: $screenName',
+        tag: 'FirebaseAnalyticsService',
+      );
     } catch (e) {
-      Logger.e('Error tracking screen view: $e', tag: 'FirebaseAnalyticsService');
+      Logger.e(
+        'Error tracking screen view: $e',
+        tag: 'FirebaseAnalyticsService',
+      );
     }
   }
 
@@ -60,14 +69,14 @@ class FirebaseAnalyticsService implements AnalyticsServiceInterface {
     Map<String, dynamic>? parameters,
   }) async {
     try {
-      await _analytics.logEvent(
-        name: action,
-        parameters: parameters,
-      );
-      
+      await _analytics.logEvent(name: action, parameters: parameters);
+
       Logger.d('User action tracked: $action', tag: 'FirebaseAnalyticsService');
     } catch (e) {
-      Logger.e('Error tracking user action: $e', tag: 'FirebaseAnalyticsService');
+      Logger.e(
+        'Error tracking user action: $e',
+        tag: 'FirebaseAnalyticsService',
+      );
     }
   }
 
@@ -86,7 +95,7 @@ class FirebaseAnalyticsService implements AnalyticsServiceInterface {
           ...?parameters,
         },
       );
-      
+
       Logger.d('Error tracked: $error', tag: 'FirebaseAnalyticsService');
     } catch (e) {
       Logger.e('Error tracking error: $e', tag: 'FirebaseAnalyticsService');
@@ -97,7 +106,7 @@ class FirebaseAnalyticsService implements AnalyticsServiceInterface {
   Future<void> trackLogin({String? method}) async {
     try {
       await _analytics.logLogin(loginMethod: method ?? 'email');
-      
+
       Logger.d('Login tracked: $method', tag: 'FirebaseAnalyticsService');
     } catch (e) {
       Logger.e('Error tracking login: $e', tag: 'FirebaseAnalyticsService');
@@ -108,7 +117,7 @@ class FirebaseAnalyticsService implements AnalyticsServiceInterface {
   Future<void> trackSignUp({String? method}) async {
     try {
       await _analytics.logSignUp(signUpMethod: method ?? 'email');
-      
+
       Logger.d('Sign-up tracked: $method', tag: 'FirebaseAnalyticsService');
     } catch (e) {
       Logger.e('Error tracking sign-up: $e', tag: 'FirebaseAnalyticsService');
@@ -119,7 +128,7 @@ class FirebaseAnalyticsService implements AnalyticsServiceInterface {
   Future<void> trackSearch(String searchTerm) async {
     try {
       await _analytics.logSearch(searchTerm: searchTerm);
-      
+
       Logger.d('Search tracked: $searchTerm', tag: 'FirebaseAnalyticsService');
     } catch (e) {
       Logger.e('Error tracking search: $e', tag: 'FirebaseAnalyticsService');
@@ -143,8 +152,11 @@ class FirebaseAnalyticsService implements AnalyticsServiceInterface {
           'price': price,
         },
       );
-      
-      Logger.d('Booking tracked: $serviceName', tag: 'FirebaseAnalyticsService');
+
+      Logger.d(
+        'Booking tracked: $serviceName',
+        tag: 'FirebaseAnalyticsService',
+      );
     } catch (e) {
       Logger.e('Error tracking booking: $e', tag: 'FirebaseAnalyticsService');
     }
@@ -166,10 +178,16 @@ class FirebaseAnalyticsService implements AnalyticsServiceInterface {
           'count': serviceIds.length,
         },
       );
-      
-      Logger.d('Comparison tracked: $serviceType', tag: 'FirebaseAnalyticsService');
+
+      Logger.d(
+        'Comparison tracked: $serviceType',
+        tag: 'FirebaseAnalyticsService',
+      );
     } catch (e) {
-      Logger.e('Error tracking comparison: $e', tag: 'FirebaseAnalyticsService');
+      Logger.e(
+        'Error tracking comparison: $e',
+        tag: 'FirebaseAnalyticsService',
+      );
     }
   }
 
@@ -187,7 +205,7 @@ class FirebaseAnalyticsService implements AnalyticsServiceInterface {
           ...filters,
         },
       );
-      
+
       Logger.d('Filter tracked: $serviceType', tag: 'FirebaseAnalyticsService');
     } catch (e) {
       Logger.e('Error tracking filter: $e', tag: 'FirebaseAnalyticsService');
@@ -209,8 +227,11 @@ class FirebaseAnalyticsService implements AnalyticsServiceInterface {
           'ascending': ascending,
         },
       );
-      
-      Logger.d('Sort tracked: $serviceType, $sortBy', tag: 'FirebaseAnalyticsService');
+
+      Logger.d(
+        'Sort tracked: $serviceType, $sortBy',
+        tag: 'FirebaseAnalyticsService',
+      );
     } catch (e) {
       Logger.e('Error tracking sort: $e', tag: 'FirebaseAnalyticsService');
     }
@@ -225,19 +246,19 @@ class FirebaseAnalyticsService implements AnalyticsServiceInterface {
       if (userId != null) {
         await _analytics.setUserId(id: userId);
       }
-      
+
       if (properties != null) {
         for (final entry in properties.entries) {
-          await _analytics.setUserProperty(
-            name: entry.key,
-            value: entry.value,
-          );
+          await _analytics.setUserProperty(name: entry.key, value: entry.value);
         }
       }
-      
+
       Logger.d('User properties set', tag: 'FirebaseAnalyticsService');
     } catch (e) {
-      Logger.e('Error setting user properties: $e', tag: 'FirebaseAnalyticsService');
+      Logger.e(
+        'Error setting user properties: $e',
+        tag: 'FirebaseAnalyticsService',
+      );
     }
   }
 
@@ -245,7 +266,7 @@ class FirebaseAnalyticsService implements AnalyticsServiceInterface {
   Future<void> setUserId(String? userId) async {
     try {
       await _analytics.setUserId(id: userId);
-      
+
       Logger.d('User ID set: $userId', tag: 'FirebaseAnalyticsService');
     } catch (e) {
       Logger.e('Error setting user ID: $e', tag: 'FirebaseAnalyticsService');
@@ -255,25 +276,26 @@ class FirebaseAnalyticsService implements AnalyticsServiceInterface {
   @override
   Future<void> setCurrentScreen(String screenName) async {
     try {
-      await _analytics.setCurrentScreen(screenName: screenName);
-      
-      Logger.d('Current screen set: $screenName', tag: 'FirebaseAnalyticsService');
+      // Use logScreenView instead of setCurrentScreen (which is deprecated)
+      await _analytics.logScreenView(screenName: screenName);
+
+      Logger.d(
+        'Current screen set: $screenName',
+        tag: 'FirebaseAnalyticsService',
+      );
     } catch (e) {
-      Logger.e('Error setting current screen: $e', tag: 'FirebaseAnalyticsService');
+      Logger.e(
+        'Error setting current screen: $e',
+        tag: 'FirebaseAnalyticsService',
+      );
     }
   }
 
   @override
-  Future<void> logEvent(
-    String name, {
-    Map<String, dynamic>? parameters,
-  }) async {
+  Future<void> logEvent(String name, {Map<String, dynamic>? parameters}) async {
     try {
-      await _analytics.logEvent(
-        name: name,
-        parameters: parameters,
-      );
-      
+      await _analytics.logEvent(name: name, parameters: parameters);
+
       Logger.d('Event logged: $name', tag: 'FirebaseAnalyticsService');
     } catch (e) {
       Logger.e('Error logging event: $e', tag: 'FirebaseAnalyticsService');
@@ -284,10 +306,13 @@ class FirebaseAnalyticsService implements AnalyticsServiceInterface {
   Future<void> resetAnalyticsData() async {
     try {
       await _analytics.resetAnalyticsData();
-      
+
       Logger.d('Analytics data reset', tag: 'FirebaseAnalyticsService');
     } catch (e) {
-      Logger.e('Error resetting analytics data: $e', tag: 'FirebaseAnalyticsService');
+      Logger.e(
+        'Error resetting analytics data: $e',
+        tag: 'FirebaseAnalyticsService',
+      );
     }
   }
 
@@ -295,10 +320,16 @@ class FirebaseAnalyticsService implements AnalyticsServiceInterface {
   Future<void> setAnalyticsCollectionEnabled(bool enabled) async {
     try {
       await _analytics.setAnalyticsCollectionEnabled(enabled);
-      
-      Logger.d('Analytics collection enabled: $enabled', tag: 'FirebaseAnalyticsService');
+
+      Logger.d(
+        'Analytics collection enabled: $enabled',
+        tag: 'FirebaseAnalyticsService',
+      );
     } catch (e) {
-      Logger.e('Error setting analytics collection enabled: $e', tag: 'FirebaseAnalyticsService');
+      Logger.e(
+        'Error setting analytics collection enabled: $e',
+        tag: 'FirebaseAnalyticsService',
+      );
     }
   }
 
@@ -306,24 +337,35 @@ class FirebaseAnalyticsService implements AnalyticsServiceInterface {
   Future<String?> getAppInstanceId() async {
     try {
       final appInstanceId = await _analytics.appInstanceId;
-      
-      Logger.d('App instance ID: $appInstanceId', tag: 'FirebaseAnalyticsService');
-      
+
+      Logger.d(
+        'App instance ID: $appInstanceId',
+        tag: 'FirebaseAnalyticsService',
+      );
+
       return appInstanceId;
     } catch (e) {
-      Logger.e('Error getting app instance ID: $e', tag: 'FirebaseAnalyticsService');
+      Logger.e(
+        'Error getting app instance ID: $e',
+        tag: 'FirebaseAnalyticsService',
+      );
       return null;
     }
   }
 
   @override
-  Future<void> setDefaultEventParameters(Map<String, dynamic>? parameters) async {
+  Future<void> setDefaultEventParameters(
+    Map<String, dynamic>? parameters,
+  ) async {
     try {
       await _analytics.setDefaultEventParameters(parameters);
-      
+
       Logger.d('Default event parameters set', tag: 'FirebaseAnalyticsService');
     } catch (e) {
-      Logger.e('Error setting default event parameters: $e', tag: 'FirebaseAnalyticsService');
+      Logger.e(
+        'Error setting default event parameters: $e',
+        tag: 'FirebaseAnalyticsService',
+      );
     }
   }
 
@@ -331,7 +373,7 @@ class FirebaseAnalyticsService implements AnalyticsServiceInterface {
   Future<void> trackAppOpen() async {
     try {
       await _analytics.logAppOpen();
-      
+
       Logger.d('App open tracked', tag: 'FirebaseAnalyticsService');
     } catch (e) {
       Logger.e('Error tracking app open: $e', tag: 'FirebaseAnalyticsService');
@@ -350,17 +392,19 @@ class FirebaseAnalyticsService implements AnalyticsServiceInterface {
         currency: currency,
         value: price,
         items: [
-          AnalyticsEventItem(
-            itemId: itemId,
-            itemName: itemName,
-            price: price,
-          ),
+          AnalyticsEventItem(itemId: itemId, itemName: itemName, price: price),
         ],
       );
-      
-      Logger.d('In-app purchase tracked: $itemName', tag: 'FirebaseAnalyticsService');
+
+      Logger.d(
+        'In-app purchase tracked: $itemName',
+        tag: 'FirebaseAnalyticsService',
+      );
     } catch (e) {
-      Logger.e('Error tracking in-app purchase: $e', tag: 'FirebaseAnalyticsService');
+      Logger.e(
+        'Error tracking in-app purchase: $e',
+        tag: 'FirebaseAnalyticsService',
+      );
     }
   }
 
@@ -376,17 +420,19 @@ class FirebaseAnalyticsService implements AnalyticsServiceInterface {
         currency: currency,
         value: price,
         items: [
-          AnalyticsEventItem(
-            itemId: itemId,
-            itemName: itemName,
-            price: price,
-          ),
+          AnalyticsEventItem(itemId: itemId, itemName: itemName, price: price),
         ],
       );
-      
-      Logger.d('Add to cart tracked: $itemName', tag: 'FirebaseAnalyticsService');
+
+      Logger.d(
+        'Add to cart tracked: $itemName',
+        tag: 'FirebaseAnalyticsService',
+      );
     } catch (e) {
-      Logger.e('Error tracking add to cart: $e', tag: 'FirebaseAnalyticsService');
+      Logger.e(
+        'Error tracking add to cart: $e',
+        tag: 'FirebaseAnalyticsService',
+      );
     }
   }
 
@@ -399,7 +445,7 @@ class FirebaseAnalyticsService implements AnalyticsServiceInterface {
   }) async {
     try {
       final items = <AnalyticsEventItem>[];
-      
+
       for (var i = 0; i < itemIds.length; i++) {
         items.add(
           AnalyticsEventItem(
@@ -408,16 +454,19 @@ class FirebaseAnalyticsService implements AnalyticsServiceInterface {
           ),
         );
       }
-      
+
       await _analytics.logBeginCheckout(
         currency: currency,
         value: value,
         items: items,
       );
-      
+
       Logger.d('Begin checkout tracked', tag: 'FirebaseAnalyticsService');
     } catch (e) {
-      Logger.e('Error tracking begin checkout: $e', tag: 'FirebaseAnalyticsService');
+      Logger.e(
+        'Error tracking begin checkout: $e',
+        tag: 'FirebaseAnalyticsService',
+      );
     }
   }
 
@@ -431,7 +480,7 @@ class FirebaseAnalyticsService implements AnalyticsServiceInterface {
   }) async {
     try {
       final items = <AnalyticsEventItem>[];
-      
+
       for (var i = 0; i < itemIds.length; i++) {
         items.add(
           AnalyticsEventItem(
@@ -440,15 +489,18 @@ class FirebaseAnalyticsService implements AnalyticsServiceInterface {
           ),
         );
       }
-      
+
       await _analytics.logPurchase(
         transactionId: transactionId,
         currency: currency,
         value: value,
         items: items,
       );
-      
-      Logger.d('Purchase tracked: $transactionId', tag: 'FirebaseAnalyticsService');
+
+      Logger.d(
+        'Purchase tracked: $transactionId',
+        tag: 'FirebaseAnalyticsService',
+      );
     } catch (e) {
       Logger.e('Error tracking purchase: $e', tag: 'FirebaseAnalyticsService');
     }
@@ -466,7 +518,7 @@ class FirebaseAnalyticsService implements AnalyticsServiceInterface {
         itemId: itemId,
         method: method,
       );
-      
+
       Logger.d('Share tracked: $contentType', tag: 'FirebaseAnalyticsService');
     } catch (e) {
       Logger.e('Error tracking share: $e', tag: 'FirebaseAnalyticsService');
@@ -477,10 +529,13 @@ class FirebaseAnalyticsService implements AnalyticsServiceInterface {
   Future<void> trackTutorialBegin() async {
     try {
       await _analytics.logTutorialBegin();
-      
+
       Logger.d('Tutorial begin tracked', tag: 'FirebaseAnalyticsService');
     } catch (e) {
-      Logger.e('Error tracking tutorial begin: $e', tag: 'FirebaseAnalyticsService');
+      Logger.e(
+        'Error tracking tutorial begin: $e',
+        tag: 'FirebaseAnalyticsService',
+      );
     }
   }
 
@@ -488,10 +543,13 @@ class FirebaseAnalyticsService implements AnalyticsServiceInterface {
   Future<void> trackTutorialComplete() async {
     try {
       await _analytics.logTutorialComplete();
-      
+
       Logger.d('Tutorial complete tracked', tag: 'FirebaseAnalyticsService');
     } catch (e) {
-      Logger.e('Error tracking tutorial complete: $e', tag: 'FirebaseAnalyticsService');
+      Logger.e(
+        'Error tracking tutorial complete: $e',
+        tag: 'FirebaseAnalyticsService',
+      );
     }
   }
 
@@ -501,11 +559,8 @@ class FirebaseAnalyticsService implements AnalyticsServiceInterface {
     required String character,
   }) async {
     try {
-      await _analytics.logLevelUp(
-        level: level,
-        character: character,
-      );
-      
+      await _analytics.logLevelUp(level: level, character: character);
+
       Logger.d('Level up tracked: $level', tag: 'FirebaseAnalyticsService');
     } catch (e) {
       Logger.e('Error tracking level up: $e', tag: 'FirebaseAnalyticsService');
@@ -518,13 +573,17 @@ class FirebaseAnalyticsService implements AnalyticsServiceInterface {
     required String achievementName,
   }) async {
     try {
-      await _analytics.logUnlockAchievement(
-        id: achievementId,
+      await _analytics.logUnlockAchievement(id: achievementId);
+
+      Logger.d(
+        'Achievement unlocked tracked: $achievementName',
+        tag: 'FirebaseAnalyticsService',
       );
-      
-      Logger.d('Achievement unlocked tracked: $achievementName', tag: 'FirebaseAnalyticsService');
     } catch (e) {
-      Logger.e('Error tracking achievement unlocked: $e', tag: 'FirebaseAnalyticsService');
+      Logger.e(
+        'Error tracking achievement unlocked: $e',
+        tag: 'FirebaseAnalyticsService',
+      );
     }
   }
 
@@ -536,12 +595,9 @@ class FirebaseAnalyticsService implements AnalyticsServiceInterface {
     try {
       await _analytics.logEvent(
         name: 'app_crash',
-        parameters: {
-          'error': error,
-          'stack_trace': stackTrace.toString(),
-        },
+        parameters: {'error': error, 'stack_trace': stackTrace.toString()},
       );
-      
+
       Logger.d('App crash tracked: $error', tag: 'FirebaseAnalyticsService');
     } catch (e) {
       Logger.e('Error tracking app crash: $e', tag: 'FirebaseAnalyticsService');
@@ -561,10 +617,16 @@ class FirebaseAnalyticsService implements AnalyticsServiceInterface {
           'notification_type': notificationType,
         },
       );
-      
-      Logger.d('Notification received tracked: $notificationType', tag: 'FirebaseAnalyticsService');
+
+      Logger.d(
+        'Notification received tracked: $notificationType',
+        tag: 'FirebaseAnalyticsService',
+      );
     } catch (e) {
-      Logger.e('Error tracking notification received: $e', tag: 'FirebaseAnalyticsService');
+      Logger.e(
+        'Error tracking notification received: $e',
+        tag: 'FirebaseAnalyticsService',
+      );
     }
   }
 
@@ -581,10 +643,16 @@ class FirebaseAnalyticsService implements AnalyticsServiceInterface {
           'notification_type': notificationType,
         },
       );
-      
-      Logger.d('Notification opened tracked: $notificationType', tag: 'FirebaseAnalyticsService');
+
+      Logger.d(
+        'Notification opened tracked: $notificationType',
+        tag: 'FirebaseAnalyticsService',
+      );
     } catch (e) {
-      Logger.e('Error tracking notification opened: $e', tag: 'FirebaseAnalyticsService');
+      Logger.e(
+        'Error tracking notification opened: $e',
+        tag: 'FirebaseAnalyticsService',
+      );
     }
   }
 }
