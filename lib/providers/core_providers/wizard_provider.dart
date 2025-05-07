@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/services/wizard_connection_service.dart';
+import 'package:eventati_book/services/firebase/firestore/wizard_state_firestore_service.dart';
 
 /// Provider to manage the state of the event wizard throughout the application.
 ///
@@ -49,6 +50,19 @@ class WizardProvider extends ChangeNotifier {
   /// Error message if any
   String? _error;
 
+  /// Current user ID
+  String? _userId;
+
+  /// Current event ID
+  String? _eventId;
+
+  /// Whether to use Firebase for persistence
+  bool _useFirebase = false;
+
+  /// Firestore service for wizard state
+  final WizardStateFirestoreService _firestoreService =
+      WizardStateFirestoreService();
+
   /// Get the current wizard state
   WizardState? get state => _state;
 
@@ -57,6 +71,42 @@ class WizardProvider extends ChangeNotifier {
 
   /// Get the error message if any
   String? get error => _error;
+
+  /// Get whether Firebase is being used for persistence
+  bool get useFirebase => _useFirebase;
+
+  /// Set whether to use Firebase for persistence
+  set useFirebase(bool value) {
+    _useFirebase = value;
+    notifyListeners();
+  }
+
+  /// Initialize with user and event IDs for Firebase persistence
+  void initializeWithIds(String userId, String eventId) {
+    _userId = userId;
+    _eventId = eventId;
+    _useFirebase = true;
+    notifyListeners();
+  }
+
+  /// Explicitly save the current state to Firebase
+  Future<void> saveStateToFirebase() async {
+    if (_state == null ||
+        !_useFirebase ||
+        _userId == null ||
+        _eventId == null) {
+      return;
+    }
+
+    try {
+      await _firestoreService.saveWizardState(_userId!, _eventId!, _state!);
+      debugPrint('Explicitly saved wizard state to Firebase');
+    } catch (e) {
+      _error = 'Failed to save wizard state to Firebase: $e';
+      debugPrint(_error);
+      notifyListeners();
+    }
+  }
 
   /// Initialize the wizard with a template
   Future<void> initializeWizard(EventTemplate template) async {
@@ -296,34 +346,67 @@ class WizardProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Clear the wizard state
-  void clearWizard() async {
+  /// Clear the wizard state from all storage
+  Future<void> clearWizard() async {
     if (_state == null) return;
 
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('wizard_${_state!.template.id}');
+    try {
+      // Clear from SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('wizard_${_state!.template.id}');
 
-    _state = null;
-    notifyListeners();
+      // If Firebase is enabled, also clear from Firestore
+      if (_useFirebase && _userId != null && _eventId != null) {
+        await _firestoreService.deleteWizardState(_userId!, _eventId!);
+        debugPrint('Deleted wizard state from Firebase');
+      }
+
+      _state = null;
+      notifyListeners();
+    } catch (e) {
+      _error = 'Failed to clear wizard state: $e';
+      notifyListeners();
+    }
   }
 
-  /// Save the current state to shared preferences
+  /// Save the current state to storage (SharedPreferences or Firebase)
   Future<void> _saveState() async {
     if (_state == null) return;
 
     try {
+      // Always save to SharedPreferences for backward compatibility
       final prefs = await SharedPreferences.getInstance();
       final jsonData = jsonEncode(_state!.toJson());
       await prefs.setString('wizard_${_state!.template.id}', jsonData);
+
+      // If Firebase is enabled, also save to Firestore
+      if (_useFirebase && _userId != null && _eventId != null) {
+        await _firestoreService.saveWizardState(_userId!, _eventId!, _state!);
+        debugPrint('Saved wizard state to Firebase');
+      }
     } catch (e) {
       _error = 'Failed to save wizard state: $e';
       notifyListeners();
     }
   }
 
-  /// Load a saved state from shared preferences
+  /// Load a saved state from storage (SharedPreferences or Firebase)
   Future<WizardState?> _loadSavedState(String templateId) async {
     try {
+      // If Firebase is enabled, try to load from Firestore first
+      if (_useFirebase && _userId != null && _eventId != null) {
+        final firebaseState = await _firestoreService.getWizardState(
+          _userId!,
+          _eventId!,
+        );
+
+        if (firebaseState != null) {
+          debugPrint('Loaded wizard state from Firebase');
+          return firebaseState;
+        }
+      }
+
+      // Fall back to SharedPreferences if Firebase is disabled or no data found
       final prefs = await SharedPreferences.getInstance();
       final jsonData = prefs.getString('wizard_$templateId');
 

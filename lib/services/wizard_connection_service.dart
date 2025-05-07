@@ -6,6 +6,7 @@ import 'package:eventati_book/services/task_template_service.dart';
 import 'package:eventati_book/services/wizard/budget_items_builder.dart';
 import 'package:eventati_book/services/wizard/guest_groups_builder.dart';
 import 'package:eventati_book/services/wizard/specialized_task_templates.dart';
+import 'package:eventati_book/services/firebase/firestore/wizard_state_firestore_service.dart';
 
 /// Service to connect the wizard with other planning tools
 class WizardConnectionService {
@@ -26,6 +27,9 @@ class WizardConnectionService {
     // Connect to service screens for recommendations
     connectToServiceScreens(context, wizardData);
 
+    // Persist connections to Firebase if user and event IDs are available
+    persistConnectionsToFirebase(context, wizardData);
+
     // Show success message
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
@@ -39,6 +43,31 @@ class WizardConnectionService {
     );
 
     debugPrint('Connected wizard to all planning tools');
+  }
+
+  /// Persist wizard connections to Firebase
+  static void persistConnectionsToFirebase(
+    BuildContext context,
+    Map<String, dynamic> wizardData,
+  ) {
+    try {
+      // Get the wizard provider
+      final wizardProvider = Provider.of<WizardProvider>(
+        context,
+        listen: false,
+      );
+
+      // Check if Firebase persistence is enabled
+      if (wizardProvider.useFirebase) {
+        debugPrint('Persisting wizard connections to Firebase');
+
+        // The WizardProvider will handle saving to Firebase when state changes
+        // This is just to ensure the connections are saved
+        wizardProvider.saveStateToFirebase();
+      }
+    } catch (e) {
+      debugPrint('Error persisting wizard connections to Firebase: $e');
+    }
   }
 
   /// Connect wizard data to budget calculator

@@ -13,6 +13,7 @@ import 'package:eventati_book/widgets/event_wizard/services_selection.dart';
 import 'package:eventati_book/widgets/event_wizard/time_picker_tile.dart';
 import 'package:eventati_book/widgets/event_wizard/wizard_progress_indicator.dart';
 import 'package:eventati_book/widgets/milestones/milestone_celebration_overlay.dart';
+import 'package:eventati_book/widgets/firebase_persistence_status.dart';
 
 /// A unified wizard screen for creating events of different types
 class EventWizardScreen extends StatefulWidget {
@@ -47,6 +48,20 @@ class _EventWizardScreenState extends State<EventWizardScreen> {
           context,
           listen: false,
         );
+
+        // Initialize Firebase persistence if user is logged in
+        final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+        if (authProvider.currentUser != null) {
+          // Initialize with user ID and event ID for Firebase persistence
+          wizardProvider.initializeWithIds(
+            authProvider.currentUser!.id,
+            widget.template.id,
+          );
+          debugPrint('Initialized Firebase persistence for wizard');
+        }
+
+        // Initialize the wizard with the template
         wizardProvider.initializeWizard(widget.template);
 
         // Set up the event name controller
@@ -119,6 +134,11 @@ class _EventWizardScreenState extends State<EventWizardScreen> {
             centerTitle: true,
             iconTheme: const IconThemeData(color: Colors.white),
             actions: [
+              // Firebase persistence status
+              const Padding(
+                padding: EdgeInsets.only(right: 8.0),
+                child: FirebasePersistenceStatus(),
+              ),
               // Milestones button
               IconButton(
                 icon: const Icon(Icons.emoji_events),
