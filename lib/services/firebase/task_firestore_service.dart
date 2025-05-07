@@ -14,7 +14,7 @@ class TaskFirestoreService {
 
   /// Constructor
   TaskFirestoreService({FirestoreService? firestoreService})
-      : _firestoreService = firestoreService ?? FirestoreService();
+    : _firestoreService = firestoreService ?? FirestoreService();
 
   /// Get task categories for an event
   Future<List<TaskCategory>> getTaskCategories(String eventId) async {
@@ -27,12 +27,15 @@ class TaskFirestoreService {
           id: id,
           name: data['name'] ?? '',
           icon: _iconDataFromMap(data),
-          color: Color(data['color'] ?? 0xFF000000),
+          color: Color(data['color'] as int? ?? 0xFF000000),
         ),
       );
       return categories;
     } catch (e) {
-      Logger.e('Error getting task categories: $e', tag: 'TaskFirestoreService');
+      Logger.e(
+        'Error getting task categories: $e',
+        tag: 'TaskFirestoreService',
+      );
       rethrow;
     }
   }
@@ -48,9 +51,10 @@ class TaskFirestoreService {
           id: id,
           title: data['title'] ?? '',
           description: data['description'],
-          dueDate: data['dueDate'] != null
-              ? (data['dueDate'] as Timestamp).toDate()
-              : DateTime.now(),
+          dueDate:
+              data['dueDate'] != null
+                  ? (data['dueDate'] as Timestamp).toDate()
+                  : DateTime.now(),
           status: _mapTaskStatus(data['status']),
           categoryId: data['categoryId'] ?? '',
           assignedTo: data['assignedTo'],
@@ -68,19 +72,15 @@ class TaskFirestoreService {
   /// Add a task category to an event
   Future<String> addTaskCategory(String eventId, TaskCategory category) async {
     try {
-      final categoryId = await _firestoreService.addSubcollectionDocument(
-        _collection,
-        eventId,
-        'task_categories',
-        {
-          'name': category.name,
-          'iconCodePoint': category.icon.codePoint,
-          'iconFontFamily': category.icon.fontFamily,
-          'iconFontPackage': category.icon.fontPackage,
-          'color': category.color.value,
-          'createdAt': FieldValue.serverTimestamp(),
-        },
-      );
+      final categoryId = await _firestoreService
+          .addSubcollectionDocument(_collection, eventId, 'task_categories', {
+            'name': category.name,
+            'iconCodePoint': category.icon.codePoint,
+            'iconFontFamily': category.icon.fontFamily,
+            'iconFontPackage': category.icon.fontPackage,
+            'color': category.color.value & 0xFFFFFFFF,
+            'createdAt': FieldValue.serverTimestamp(),
+          });
       return categoryId;
     } catch (e) {
       Logger.e('Error adding task category: $e', tag: 'TaskFirestoreService');
@@ -89,10 +89,7 @@ class TaskFirestoreService {
   }
 
   /// Update a task category
-  Future<void> updateTaskCategory(
-    String eventId,
-    TaskCategory category,
-  ) async {
+  Future<void> updateTaskCategory(String eventId, TaskCategory category) async {
     try {
       await _firestoreService.updateSubcollectionDocument(
         _collection,
@@ -104,7 +101,7 @@ class TaskFirestoreService {
           'iconCodePoint': category.icon.codePoint,
           'iconFontFamily': category.icon.fontFamily,
           'iconFontPackage': category.icon.fontPackage,
-          'color': category.color.value,
+          'color': category.color.value & 0xFFFFFFFF,
           'updatedAt': FieldValue.serverTimestamp(),
         },
       );
@@ -132,22 +129,18 @@ class TaskFirestoreService {
   /// Add a task to an event
   Future<String> addTask(String eventId, Task task) async {
     try {
-      final taskId = await _firestoreService.addSubcollectionDocument(
-        _collection,
-        eventId,
-        'tasks',
-        {
-          'title': task.title,
-          'description': task.description,
-          'dueDate': Timestamp.fromDate(task.dueDate),
-          'status': task.status.toString().split('.').last,
-          'categoryId': task.categoryId,
-          'assignedTo': task.assignedTo,
-          'isImportant': task.isImportant,
-          'notes': task.notes,
-          'createdAt': FieldValue.serverTimestamp(),
-        },
-      );
+      final taskId = await _firestoreService
+          .addSubcollectionDocument(_collection, eventId, 'tasks', {
+            'title': task.title,
+            'description': task.description,
+            'dueDate': Timestamp.fromDate(task.dueDate),
+            'status': task.status.toString().split('.').last,
+            'categoryId': task.categoryId,
+            'assignedTo': task.assignedTo,
+            'isImportant': task.isImportant,
+            'notes': task.notes,
+            'createdAt': FieldValue.serverTimestamp(),
+          });
       return taskId;
     } catch (e) {
       Logger.e('Error adding task: $e', tag: 'TaskFirestoreService');
@@ -158,23 +151,18 @@ class TaskFirestoreService {
   /// Update a task
   Future<void> updateTask(String eventId, Task task) async {
     try {
-      await _firestoreService.updateSubcollectionDocument(
-        _collection,
-        eventId,
-        'tasks',
-        task.id,
-        {
-          'title': task.title,
-          'description': task.description,
-          'dueDate': Timestamp.fromDate(task.dueDate),
-          'status': task.status.toString().split('.').last,
-          'categoryId': task.categoryId,
-          'assignedTo': task.assignedTo,
-          'isImportant': task.isImportant,
-          'notes': task.notes,
-          'updatedAt': FieldValue.serverTimestamp(),
-        },
-      );
+      await _firestoreService
+          .updateSubcollectionDocument(_collection, eventId, 'tasks', task.id, {
+            'title': task.title,
+            'description': task.description,
+            'dueDate': Timestamp.fromDate(task.dueDate),
+            'status': task.status.toString().split('.').last,
+            'categoryId': task.categoryId,
+            'assignedTo': task.assignedTo,
+            'isImportant': task.isImportant,
+            'notes': task.notes,
+            'updatedAt': FieldValue.serverTimestamp(),
+          });
     } catch (e) {
       Logger.e('Error updating task: $e', tag: 'TaskFirestoreService');
       rethrow;

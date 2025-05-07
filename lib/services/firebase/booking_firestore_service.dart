@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/services/firebase/firestore_service.dart';
+import 'package:eventati_book/services/interfaces/database_service_interface.dart';
 import 'package:eventati_book/utils/logger.dart';
 
 /// Service for handling booking-related Firestore operations
@@ -13,25 +14,25 @@ class BookingFirestoreService {
 
   /// Constructor
   BookingFirestoreService({FirestoreService? firestoreService})
-      : _firestoreService = firestoreService ?? FirestoreService();
+    : _firestoreService = firestoreService ?? FirestoreService();
 
   /// Get all bookings for a user
   Future<List<Booking>> getBookingsForUser(String userId) async {
     try {
-      final bookings = await _firestoreService.getCollectionWithQueryAs(
-        _collection,
-        [
-          QueryFilter(
-            field: 'userId',
-            operation: FilterOperation.equalTo,
-            value: userId,
-          ),
-        ],
-        (data, id) => _mapToBooking(data, id),
-      );
+      final bookings = await _firestoreService
+          .getCollectionWithQueryAs(_collection, [
+            QueryFilter(
+              field: 'userId',
+              operation: FilterOperation.equalTo,
+              value: userId,
+            ),
+          ], (data, id) => _mapToBooking(data, id));
       return bookings;
     } catch (e) {
-      Logger.e('Error getting bookings for user: $e', tag: 'BookingFirestoreService');
+      Logger.e(
+        'Error getting bookings for user: $e',
+        tag: 'BookingFirestoreService',
+      );
       rethrow;
     }
   }
@@ -39,20 +40,20 @@ class BookingFirestoreService {
   /// Get all bookings for an event
   Future<List<Booking>> getBookingsForEvent(String eventId) async {
     try {
-      final bookings = await _firestoreService.getCollectionWithQueryAs(
-        _collection,
-        [
-          QueryFilter(
-            field: 'eventId',
-            operation: FilterOperation.equalTo,
-            value: eventId,
-          ),
-        ],
-        (data, id) => _mapToBooking(data, id),
-      );
+      final bookings = await _firestoreService
+          .getCollectionWithQueryAs(_collection, [
+            QueryFilter(
+              field: 'eventId',
+              operation: FilterOperation.equalTo,
+              value: eventId,
+            ),
+          ], (data, id) => _mapToBooking(data, id));
       return bookings;
     } catch (e) {
-      Logger.e('Error getting bookings for event: $e', tag: 'BookingFirestoreService');
+      Logger.e(
+        'Error getting bookings for event: $e',
+        tag: 'BookingFirestoreService',
+      );
       rethrow;
     }
   }
@@ -67,7 +68,10 @@ class BookingFirestoreService {
       if (bookingData == null) return null;
       return _mapToBooking(bookingData, bookingId);
     } catch (e) {
-      Logger.e('Error getting booking by ID: $e', tag: 'BookingFirestoreService');
+      Logger.e(
+        'Error getting booking by ID: $e',
+        tag: 'BookingFirestoreService',
+      );
       rethrow;
     }
   }
@@ -103,10 +107,7 @@ class BookingFirestoreService {
   /// Delete a booking
   Future<void> deleteBooking(String bookingId) async {
     try {
-      await _firestoreService.deleteDocument(
-        _collection,
-        bookingId,
-      );
+      await _firestoreService.deleteDocument(_collection, bookingId);
     } catch (e) {
       Logger.e('Error deleting booking: $e', tag: 'BookingFirestoreService');
       rethrow;
@@ -115,32 +116,24 @@ class BookingFirestoreService {
 
   /// Get a stream of bookings for a user
   Stream<List<Booking>> getBookingsForUserStream(String userId) {
-    return _firestoreService.collectionStreamWithQueryAs(
-      _collection,
-      [
-        QueryFilter(
-          field: 'userId',
-          operation: FilterOperation.equalTo,
-          value: userId,
-        ),
-      ],
-      (data, id) => _mapToBooking(data, id),
-    );
+    return _firestoreService.collectionStreamWithQueryAs(_collection, [
+      QueryFilter(
+        field: 'userId',
+        operation: FilterOperation.equalTo,
+        value: userId,
+      ),
+    ], (data, id) => _mapToBooking(data, id));
   }
 
   /// Get a stream of bookings for an event
   Stream<List<Booking>> getBookingsForEventStream(String eventId) {
-    return _firestoreService.collectionStreamWithQueryAs(
-      _collection,
-      [
-        QueryFilter(
-          field: 'eventId',
-          operation: FilterOperation.equalTo,
-          value: eventId,
-        ),
-      ],
-      (data, id) => _mapToBooking(data, id),
-    );
+    return _firestoreService.collectionStreamWithQueryAs(_collection, [
+      QueryFilter(
+        field: 'eventId',
+        operation: FilterOperation.equalTo,
+        value: eventId,
+      ),
+    ], (data, id) => _mapToBooking(data, id));
   }
 
   /// Get a stream of a booking by ID
@@ -163,22 +156,19 @@ class BookingFirestoreService {
       final endTime = dateTime.add(Duration(minutes: (duration * 60).toInt()));
 
       // Get all bookings for the service
-      final bookings = await _firestoreService.getCollectionWithQueryAs(
-        _collection,
-        [
-          QueryFilter(
-            field: 'serviceId',
-            operation: FilterOperation.equalTo,
-            value: serviceId,
-          ),
-          QueryFilter(
-            field: 'status',
-            operation: FilterOperation.notEqualTo,
-            value: BookingStatus.cancelled.index,
-          ),
-        ],
-        (data, id) => _mapToBooking(data, id),
-      );
+      final bookings = await _firestoreService
+          .getCollectionWithQueryAs(_collection, [
+            QueryFilter(
+              field: 'serviceId',
+              operation: FilterOperation.equalTo,
+              value: serviceId,
+            ),
+            QueryFilter(
+              field: 'status',
+              operation: FilterOperation.notEqualTo,
+              value: BookingStatus.cancelled.index,
+            ),
+          ], (data, id) => _mapToBooking(data, id));
 
       // Check if any booking overlaps with the requested time
       for (final booking in bookings) {
@@ -196,7 +186,10 @@ class BookingFirestoreService {
 
       return true; // Service is available
     } catch (e) {
-      Logger.e('Error checking service availability: $e', tag: 'BookingFirestoreService');
+      Logger.e(
+        'Error checking service availability: $e',
+        tag: 'BookingFirestoreService',
+      );
       rethrow;
     }
   }
@@ -209,20 +202,23 @@ class BookingFirestoreService {
       serviceId: data['serviceId'] ?? '',
       serviceType: data['serviceType'] ?? '',
       serviceName: data['serviceName'] ?? '',
-      bookingDateTime: data['bookingDateTime'] != null
-          ? (data['bookingDateTime'] as Timestamp).toDate()
-          : DateTime.now(),
+      bookingDateTime:
+          data['bookingDateTime'] != null
+              ? (data['bookingDateTime'] as Timestamp).toDate()
+              : DateTime.now(),
       duration: (data['duration'] ?? 0).toDouble(),
       guestCount: data['guestCount'] ?? 0,
       specialRequests: data['specialRequests'] ?? '',
       status: BookingStatus.values[data['status'] ?? 0],
       totalPrice: (data['totalPrice'] ?? 0).toDouble(),
-      createdAt: data['createdAt'] != null
-          ? (data['createdAt'] as Timestamp).toDate()
-          : DateTime.now(),
-      updatedAt: data['updatedAt'] != null
-          ? (data['updatedAt'] as Timestamp).toDate()
-          : DateTime.now(),
+      createdAt:
+          data['createdAt'] != null
+              ? (data['createdAt'] as Timestamp).toDate()
+              : DateTime.now(),
+      updatedAt:
+          data['updatedAt'] != null
+              ? (data['updatedAt'] as Timestamp).toDate()
+              : DateTime.now(),
       contactName: data['contactName'] ?? '',
       contactEmail: data['contactEmail'] ?? '',
       contactPhone: data['contactPhone'] ?? '',

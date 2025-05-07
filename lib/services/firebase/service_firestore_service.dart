@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/services/firebase/firestore_service.dart';
+import 'package:eventati_book/services/interfaces/database_service_interface.dart';
 import 'package:eventati_book/utils/logger.dart';
 import 'package:flutter/material.dart';
 
@@ -16,7 +17,7 @@ class ServiceFirestoreService {
 
   /// Constructor
   ServiceFirestoreService({FirestoreService? firestoreService})
-      : _firestoreService = firestoreService ?? FirestoreService();
+    : _firestoreService = firestoreService ?? FirestoreService();
 
   /// Get all venues
   Future<List<Venue>> getVenues() async {
@@ -85,7 +86,10 @@ class ServiceFirestoreService {
       );
       return cateringServices;
     } catch (e) {
-      Logger.e('Error getting catering services: $e', tag: 'ServiceFirestoreService');
+      Logger.e(
+        'Error getting catering services: $e',
+        tag: 'ServiceFirestoreService',
+      );
       rethrow;
     }
   }
@@ -109,7 +113,10 @@ class ServiceFirestoreService {
         imageUrl: cateringData['imageUrl'] ?? '',
       );
     } catch (e) {
-      Logger.e('Error getting catering service by ID: $e', tag: 'ServiceFirestoreService');
+      Logger.e(
+        'Error getting catering service by ID: $e',
+        tag: 'ServiceFirestoreService',
+      );
       rethrow;
     }
   }
@@ -132,7 +139,10 @@ class ServiceFirestoreService {
       );
       return photographers;
     } catch (e) {
-      Logger.e('Error getting photographers: $e', tag: 'ServiceFirestoreService');
+      Logger.e(
+        'Error getting photographers: $e',
+        tag: 'ServiceFirestoreService',
+      );
       rethrow;
     }
   }
@@ -156,7 +166,10 @@ class ServiceFirestoreService {
         packages: List<String>.from(photographerData['packages'] ?? []),
       );
     } catch (e) {
-      Logger.e('Error getting photographer by ID: $e', tag: 'ServiceFirestoreService');
+      Logger.e(
+        'Error getting photographer by ID: $e',
+        tag: 'ServiceFirestoreService',
+      );
       rethrow;
     }
   }
@@ -172,7 +185,7 @@ class ServiceFirestoreService {
         [
           QueryFilter(
             field: 'name',
-            operation: FilterOperation.contains,
+            operation: FilterOperation.equalTo,
             value: query,
           ),
         ],
@@ -188,7 +201,7 @@ class ServiceFirestoreService {
         [
           QueryFilter(
             field: 'name',
-            operation: FilterOperation.contains,
+            operation: FilterOperation.equalTo,
             value: query,
           ),
         ],
@@ -204,7 +217,7 @@ class ServiceFirestoreService {
         [
           QueryFilter(
             field: 'name',
-            operation: FilterOperation.contains,
+            operation: FilterOperation.equalTo,
             value: query,
           ),
         ],

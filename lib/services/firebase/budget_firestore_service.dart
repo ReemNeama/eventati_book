@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/services/firebase/firestore_service.dart';
 import 'package:eventati_book/utils/logger.dart';
+import 'package:flutter/material.dart';
 
 /// Service for handling budget-related Firestore operations
 class BudgetFirestoreService {
@@ -13,7 +14,7 @@ class BudgetFirestoreService {
 
   /// Constructor
   BudgetFirestoreService({FirestoreService? firestoreService})
-      : _firestoreService = firestoreService ?? FirestoreService();
+    : _firestoreService = firestoreService ?? FirestoreService();
 
   /// Get budget categories for an event
   Future<List<BudgetCategory>> getBudgetCategories(String eventId) async {
@@ -30,7 +31,10 @@ class BudgetFirestoreService {
       );
       return categories;
     } catch (e) {
-      Logger.e('Error getting budget categories: $e', tag: 'BudgetFirestoreService');
+      Logger.e(
+        'Error getting budget categories: $e',
+        tag: 'BudgetFirestoreService',
+      );
       rethrow;
     }
   }
@@ -47,13 +51,15 @@ class BudgetFirestoreService {
           categoryId: data['categoryId'] ?? '',
           description: data['description'] ?? '',
           estimatedCost: (data['estimatedCost'] ?? 0).toDouble(),
-          actualCost: data['actualCost'] != null
-              ? (data['actualCost'] as num).toDouble()
-              : null,
+          actualCost:
+              data['actualCost'] != null
+                  ? (data['actualCost'] as num).toDouble()
+                  : null,
           isPaid: data['isPaid'] ?? false,
-          paymentDate: data['paymentDate'] != null
-              ? (data['paymentDate'] as Timestamp).toDate()
-              : null,
+          paymentDate:
+              data['paymentDate'] != null
+                  ? (data['paymentDate'] as Timestamp).toDate()
+                  : null,
           notes: data['notes'],
         ),
       );
@@ -65,23 +71,25 @@ class BudgetFirestoreService {
   }
 
   /// Add a budget category to an event
-  Future<String> addBudgetCategory(String eventId, BudgetCategory category) async {
+  Future<String> addBudgetCategory(
+    String eventId,
+    BudgetCategory category,
+  ) async {
     try {
-      final categoryId = await _firestoreService.addSubcollectionDocument(
-        _collection,
-        eventId,
-        'budget_categories',
-        {
-          'name': category.name,
-          'iconCodePoint': category.icon.codePoint,
-          'iconFontFamily': category.icon.fontFamily,
-          'iconFontPackage': category.icon.fontPackage,
-          'createdAt': FieldValue.serverTimestamp(),
-        },
-      );
+      final categoryId = await _firestoreService
+          .addSubcollectionDocument(_collection, eventId, 'budget_categories', {
+            'name': category.name,
+            'iconCodePoint': category.icon.codePoint,
+            'iconFontFamily': category.icon.fontFamily,
+            'iconFontPackage': category.icon.fontPackage,
+            'createdAt': FieldValue.serverTimestamp(),
+          });
       return categoryId;
     } catch (e) {
-      Logger.e('Error adding budget category: $e', tag: 'BudgetFirestoreService');
+      Logger.e(
+        'Error adding budget category: $e',
+        tag: 'BudgetFirestoreService',
+      );
       rethrow;
     }
   }
@@ -106,7 +114,10 @@ class BudgetFirestoreService {
         },
       );
     } catch (e) {
-      Logger.e('Error updating budget category: $e', tag: 'BudgetFirestoreService');
+      Logger.e(
+        'Error updating budget category: $e',
+        tag: 'BudgetFirestoreService',
+      );
       rethrow;
     }
   }
@@ -121,7 +132,10 @@ class BudgetFirestoreService {
         categoryId,
       );
     } catch (e) {
-      Logger.e('Error deleting budget category: $e', tag: 'BudgetFirestoreService');
+      Logger.e(
+        'Error deleting budget category: $e',
+        tag: 'BudgetFirestoreService',
+      );
       rethrow;
     }
   }
@@ -129,23 +143,20 @@ class BudgetFirestoreService {
   /// Add a budget item to an event
   Future<String> addBudgetItem(String eventId, BudgetItem item) async {
     try {
-      final itemId = await _firestoreService.addSubcollectionDocument(
-        _collection,
-        eventId,
-        'budget_items',
-        {
-          'categoryId': item.categoryId,
-          'description': item.description,
-          'estimatedCost': item.estimatedCost,
-          'actualCost': item.actualCost,
-          'isPaid': item.isPaid,
-          'paymentDate': item.paymentDate != null
-              ? Timestamp.fromDate(item.paymentDate!)
-              : null,
-          'notes': item.notes,
-          'createdAt': FieldValue.serverTimestamp(),
-        },
-      );
+      final itemId = await _firestoreService
+          .addSubcollectionDocument(_collection, eventId, 'budget_items', {
+            'categoryId': item.categoryId,
+            'description': item.description,
+            'estimatedCost': item.estimatedCost,
+            'actualCost': item.actualCost,
+            'isPaid': item.isPaid,
+            'paymentDate':
+                item.paymentDate != null
+                    ? Timestamp.fromDate(item.paymentDate!)
+                    : null,
+            'notes': item.notes,
+            'createdAt': FieldValue.serverTimestamp(),
+          });
       return itemId;
     } catch (e) {
       Logger.e('Error adding budget item: $e', tag: 'BudgetFirestoreService');
@@ -167,9 +178,10 @@ class BudgetFirestoreService {
           'estimatedCost': item.estimatedCost,
           'actualCost': item.actualCost,
           'isPaid': item.isPaid,
-          'paymentDate': item.paymentDate != null
-              ? Timestamp.fromDate(item.paymentDate!)
-              : null,
+          'paymentDate':
+              item.paymentDate != null
+                  ? Timestamp.fromDate(item.paymentDate!)
+                  : null,
           'notes': item.notes,
           'updatedAt': FieldValue.serverTimestamp(),
         },
