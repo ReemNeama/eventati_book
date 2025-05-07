@@ -1,10 +1,13 @@
 import 'package:eventati_book/routing/navigation_service.dart';
 import 'package:eventati_book/services/interfaces/auth_service_interface.dart';
 import 'package:eventati_book/services/interfaces/database_service_interface.dart';
+import 'package:eventati_book/services/interfaces/storage_service_interface.dart';
 import 'package:eventati_book/services/firebase/firebase_auth_service.dart';
 import 'package:eventati_book/services/firebase/firestore_service.dart';
+import 'package:eventati_book/services/firebase/firebase_storage_service.dart';
 import 'package:eventati_book/services/firebase/user_firestore_service.dart';
 import 'package:eventati_book/services/firebase/event_firestore_service.dart';
+import 'package:eventati_book/utils/file_utils.dart';
 
 /// Simple service locator for dependency injection
 class ServiceLocator {
@@ -42,8 +45,12 @@ class ServiceLocator {
     // Register Firebase services
     registerSingleton<AuthServiceInterface>(FirebaseAuthService());
     registerSingleton<DatabaseServiceInterface>(FirestoreService());
+    registerSingleton<StorageServiceInterface>(FirebaseStorageService());
     registerSingleton<UserFirestoreService>(UserFirestoreService());
     registerSingleton<EventFirestoreService>(EventFirestoreService());
+
+    // Initialize FileUtils with the storage service
+    FileUtils.setStorageService(get<StorageServiceInterface>());
   }
 
   /// Get the navigation service
@@ -62,6 +69,9 @@ class ServiceLocator {
   /// Get the event Firestore service
   EventFirestoreService get eventFirestoreService =>
       get<EventFirestoreService>();
+
+  /// Get the storage service
+  StorageServiceInterface get storageService => get<StorageServiceInterface>();
 }
 
 /// Global instance of the service locator
