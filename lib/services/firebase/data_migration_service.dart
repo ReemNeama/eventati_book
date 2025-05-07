@@ -13,6 +13,7 @@ import 'package:eventati_book/services/interfaces/database_service_interface.dar
 import 'package:eventati_book/utils/logger.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart' show Icons;
 
 /// Service for migrating data from tempDB to Firebase
 class DataMigrationService {
@@ -64,7 +65,10 @@ class DataMigrationService {
     try {
       // Check if platform is supported
       if (!kIsWeb && !Platform.isAndroid && !Platform.isIOS) {
-        Logger.i('Firebase is not supported on this platform', tag: 'DataMigrationService');
+        Logger.i(
+          'Firebase is not supported on this platform',
+          tag: 'DataMigrationService',
+        );
         return;
       }
 
@@ -78,10 +82,16 @@ class DataMigrationService {
 
       // Migration is not implemented yet
       // This is a placeholder for future implementation
-      Logger.i('Data migration not implemented yet', tag: 'DataMigrationService');
+      Logger.i(
+        'Data migration not implemented yet',
+        tag: 'DataMigrationService',
+      );
 
       // Migration complete
-      Logger.i('Data migration completed successfully', tag: 'DataMigrationService');
+      Logger.i(
+        'Data migration completed successfully',
+        tag: 'DataMigrationService',
+      );
     } catch (e) {
       Logger.e('Error migrating data: $e', tag: 'DataMigrationService');
       rethrow;
@@ -111,7 +121,10 @@ class DataMigrationService {
       // Migration is needed
       return true;
     } catch (e) {
-      Logger.e('Error checking if migration is needed: $e', tag: 'DataMigrationService');
+      Logger.e(
+        'Error checking if migration is needed: $e',
+        tag: 'DataMigrationService',
+      );
       return false;
     }
   }
@@ -121,7 +134,10 @@ class DataMigrationService {
     try {
       // Check if platform is supported
       if (!kIsWeb && !Platform.isAndroid && !Platform.isIOS) {
-        Logger.i('Firebase is not supported on this platform', tag: 'DataMigrationService');
+        Logger.i(
+          'Firebase is not supported on this platform',
+          tag: 'DataMigrationService',
+        );
         return;
       }
 
@@ -147,7 +163,7 @@ class DataMigrationService {
         id: 'sample-event',
         name: 'Sample Event',
         description: 'This is a sample event created for testing',
-        icon: null,
+        icon: Icons.event,
         subtypes: ['wedding', 'celebration'],
         defaultServices: {'venue': true, 'catering': true, 'photography': true},
         suggestedTasks: ['Book venue', 'Send invitations', 'Order cake'],
@@ -170,17 +186,21 @@ class DataMigrationService {
         imageUrl: 'assets/images/venue_placeholder.jpg',
         features: ['parking', 'wifi', 'catering'],
       );
-      await _firestore.collection('services').doc('venues').collection('items').add({
-        'name': venue.name,
-        'description': venue.description,
-        'rating': venue.rating,
-        'venueTypes': venue.venueTypes,
-        'minCapacity': venue.minCapacity,
-        'maxCapacity': venue.maxCapacity,
-        'pricePerEvent': venue.pricePerEvent,
-        'imageUrl': venue.imageUrl,
-        'features': venue.features,
-      });
+      await _firestore
+          .collection('services')
+          .doc('venues')
+          .collection('items')
+          .add({
+            'name': venue.name,
+            'description': venue.description,
+            'rating': venue.rating,
+            'venueTypes': venue.venueTypes,
+            'minCapacity': venue.minCapacity,
+            'maxCapacity': venue.maxCapacity,
+            'pricePerEvent': venue.pricePerEvent,
+            'imageUrl': venue.imageUrl,
+            'features': venue.features,
+          });
 
       // Create sample guest
       final guest = Guest(
