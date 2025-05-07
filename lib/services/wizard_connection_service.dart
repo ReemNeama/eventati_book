@@ -6,7 +6,6 @@ import 'package:eventati_book/services/task_template_service.dart';
 import 'package:eventati_book/services/wizard/budget_items_builder.dart';
 import 'package:eventati_book/services/wizard/guest_groups_builder.dart';
 import 'package:eventati_book/services/wizard/specialized_task_templates.dart';
-import 'package:eventati_book/services/firebase/firestore/wizard_state_firestore_service.dart';
 
 /// Service to connect the wizard with other planning tools
 class WizardConnectionService {

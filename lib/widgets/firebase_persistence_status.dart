@@ -5,27 +5,26 @@ import 'package:eventati_book/providers/providers.dart';
 /// Widget to display the Firebase persistence status
 class FirebasePersistenceStatus extends StatelessWidget {
   /// Creates a new Firebase persistence status widget
-  const FirebasePersistenceStatus({Key? key}) : super(key: key);
+  const FirebasePersistenceStatus({super.key});
 
   @override
   Widget build(BuildContext context) {
     final wizardProvider = Provider.of<WizardProvider>(context);
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: wizardProvider.useFirebase
-            ? Colors.green.withOpacity(0.2)
-            : Colors.grey.withOpacity(0.2),
+        color:
+            wizardProvider.useFirebase
+                ? Colors.green.withAlpha(51) // 0.2 * 255 = 51
+                : Colors.grey.withAlpha(51),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
-            wizardProvider.useFirebase
-                ? Icons.cloud_done
-                : Icons.cloud_off,
+            wizardProvider.useFirebase ? Icons.cloud_done : Icons.cloud_off,
             size: 16,
             color: wizardProvider.useFirebase ? Colors.green : Colors.grey,
           ),
