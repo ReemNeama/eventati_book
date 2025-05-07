@@ -29,7 +29,8 @@ class ServiceRecommendationProvider with ChangeNotifier {
     VendorRecommendationFirestoreService? recommendationService,
     WizardState? initialWizardState,
   }) : _recommendationService =
-            recommendationService ?? serviceLocator.vendorRecommendationFirestoreService {
+           recommendationService ??
+           serviceLocator.vendorRecommendationFirestoreService {
     if (initialWizardState != null) {
       _wizardState = initialWizardState;
       _loadRecommendations();
@@ -71,10 +72,8 @@ class ServiceRecommendationProvider with ChangeNotifier {
 
     try {
       // Get personalized recommendations
-      final recommendations =
-          await _recommendationService.getPersonalizedRecommendations(
-        _wizardState!,
-      );
+      final recommendations = await _recommendationService
+          .getPersonalizedRecommendations(_wizardState!);
 
       _recommendations = recommendations;
       _initialized = true;
@@ -103,21 +102,29 @@ class ServiceRecommendationProvider with ChangeNotifier {
   /// Get high priority recommendations
   List<Suggestion> get highPriorityRecommendations {
     return _recommendations
-        .where((recommendation) => recommendation.priority == SuggestionPriority.high)
+        .where(
+          (recommendation) =>
+              recommendation.priority == SuggestionPriority.high,
+        )
         .toList();
   }
 
   /// Get medium priority recommendations
   List<Suggestion> get mediumPriorityRecommendations {
     return _recommendations
-        .where((recommendation) => recommendation.priority == SuggestionPriority.medium)
+        .where(
+          (recommendation) =>
+              recommendation.priority == SuggestionPriority.medium,
+        )
         .toList();
   }
 
   /// Get low priority recommendations
   List<Suggestion> get lowPriorityRecommendations {
     return _recommendations
-        .where((recommendation) => recommendation.priority == SuggestionPriority.low)
+        .where(
+          (recommendation) => recommendation.priority == SuggestionPriority.low,
+        )
         .toList();
   }
 

@@ -13,8 +13,9 @@ class VendorRecommendationFirestoreService {
   static const String _collection = 'vendor_recommendations';
 
   /// Constructor
-  VendorRecommendationFirestoreService({DatabaseServiceInterface? firestoreService})
-      : _firestoreService = firestoreService ?? FirestoreService();
+  VendorRecommendationFirestoreService({
+    DatabaseServiceInterface? firestoreService,
+  }) : _firestoreService = firestoreService ?? FirestoreService();
 
   /// Get all vendor recommendations
   Future<List<Suggestion>> getAllVendorRecommendations() async {
@@ -34,13 +35,18 @@ class VendorRecommendationFirestoreService {
   }
 
   /// Get vendor recommendations for a specific event type
-  Future<List<Suggestion>> getRecommendationsForEventType(String eventType) async {
+  Future<List<Suggestion>> getRecommendationsForEventType(
+    String eventType,
+  ) async {
     try {
-      final recommendations = await _firestoreService.getCollectionWithQueryAs(
-        _collection,
-        (query) => query.where('applicableEventTypes', arrayContains: eventType),
-        (data, id) => Suggestion.fromJson({'id': id, ...data}),
-      );
+      final recommendations = await _firestoreService
+          .getCollectionWithQueryAs(_collection, [
+            QueryFilter(
+              field: 'applicableEventTypes',
+              operation: FilterOperation.arrayContains,
+              value: eventType,
+            ),
+          ], (data, id) => Suggestion.fromJson({'id': id, ...data}));
       return recommendations;
     } catch (e) {
       Logger.e(
@@ -56,11 +62,14 @@ class VendorRecommendationFirestoreService {
     SuggestionCategory category,
   ) async {
     try {
-      final recommendations = await _firestoreService.getCollectionWithQueryAs(
-        _collection,
-        (query) => query.where('category', isEqualTo: category.name),
-        (data, id) => Suggestion.fromJson({'id': id, ...data}),
-      );
+      final recommendations = await _firestoreService
+          .getCollectionWithQueryAs(_collection, [
+            QueryFilter(
+              field: 'category',
+              operation: FilterOperation.equalTo,
+              value: category.name,
+            ),
+          ], (data, id) => Suggestion.fromJson({'id': id, ...data}));
       return recommendations;
     } catch (e) {
       Logger.e(
@@ -144,9 +153,12 @@ class VendorRecommendationFirestoreService {
       );
 
       // Filter and sort recommendations based on relevance
-      final relevantRecommendations = allRecommendations
-          .where((recommendation) => recommendation.isRelevantFor(wizardState))
-          .toList();
+      final relevantRecommendations =
+          allRecommendations
+              .where(
+                (recommendation) => recommendation.isRelevantFor(wizardState),
+              )
+              .toList();
 
       // Sort by relevance score
       relevantRecommendations.sort((a, b) {

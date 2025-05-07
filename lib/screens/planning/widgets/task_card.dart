@@ -38,7 +38,7 @@ class TaskCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     // Determine card color based on selection state
     Color cardColor = theme.cardTheme.color ?? Colors.white;
     if (isSelected) {
@@ -64,7 +64,10 @@ class TaskCard extends StatelessWidget {
         vertical: AppConstants.smallPadding / 2,
         horizontal: AppConstants.smallPadding,
       ),
-      elevation: isSelected ? AppConstants.mediumElevation : AppConstants.smallElevation,
+      elevation:
+          isSelected
+              ? AppConstants.mediumElevation
+              : AppConstants.smallElevation,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppConstants.mediumBorderRadius),
         side: BorderSide(
@@ -89,9 +92,10 @@ class TaskCard extends StatelessWidget {
                       task.title,
                       style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
-                        decoration: task.status == TaskStatus.completed
-                            ? TextDecoration.lineThrough
-                            : null,
+                        decoration:
+                            task.status == TaskStatus.completed
+                                ? TextDecoration.lineThrough
+                                : null,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -101,7 +105,7 @@ class TaskCard extends StatelessWidget {
                   _buildStatusIndicator(task.status),
                 ],
               ),
-              
+
               if (task.description != null && task.description!.isNotEmpty) ...[
                 const SizedBox(height: AppConstants.smallPadding),
                 Text(
@@ -113,9 +117,9 @@ class TaskCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
               ],
-              
+
               const SizedBox(height: AppConstants.mediumPadding),
-              
+
               // Task metadata
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -145,7 +149,7 @@ class TaskCard extends StatelessWidget {
                       padding: EdgeInsets.zero,
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
-                  
+
                   // Due date
                   Row(
                     children: [
@@ -174,7 +178,7 @@ class TaskCard extends StatelessWidget {
   Widget _buildStatusIndicator(TaskStatus status) {
     IconData icon;
     Color color;
-    
+
     switch (status) {
       case TaskStatus.completed:
         icon = Icons.check_circle;
@@ -194,7 +198,7 @@ class TaskCard extends StatelessWidget {
         color = AppColors.textSecondary;
         break;
     }
-    
+
     return Icon(icon, color: color);
   }
 }

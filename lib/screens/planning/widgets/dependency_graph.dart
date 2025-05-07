@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:math' as math;
 import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/providers/providers.dart';
 import 'package:eventati_book/screens/planning/widgets/task_card.dart';
@@ -54,7 +55,7 @@ class _DependencyGraphState extends State<DependencyGraph> {
         setState(() {
           // Update scale (zoom) with limits
           _scale = (_scale * details.scale).clamp(0.5, 2.0);
-          
+
           // Update offset (pan)
           _offset += details.focalPointDelta;
         });
@@ -64,7 +65,7 @@ class _DependencyGraphState extends State<DependencyGraph> {
           children: [
             // Background grid
             _buildGrid(),
-            
+
             // Transformable content
             Transform.translate(
               offset: _offset,
@@ -75,14 +76,14 @@ class _DependencyGraphState extends State<DependencyGraph> {
                   children: [
                     // Dependency lines
                     ..._buildDependencyLines(),
-                    
+
                     // Task nodes
                     ..._buildTaskNodes(),
                   ],
                 ),
               ),
             ),
-            
+
             // Controls overlay
             Positioned(
               right: AppConstants.mediumPadding,
@@ -109,77 +110,82 @@ class _DependencyGraphState extends State<DependencyGraph> {
   /// Builds the dependency lines between tasks
   List<Widget> _buildDependencyLines() {
     final lines = <Widget>[];
-    
+
     for (final dependency in widget.dependencies) {
       // Find the tasks
       final prerequisiteTask = widget.tasks.firstWhere(
         (task) => task.id == dependency.prerequisiteTaskId,
-        orElse: () => Task(
-          id: dependency.prerequisiteTaskId,
-          title: 'Unknown Task',
-          categoryId: '0',
-          dueDate: DateTime.now(),
-          status: TaskStatus.notStarted,
-        ),
+        orElse:
+            () => Task(
+              id: dependency.prerequisiteTaskId,
+              title: 'Unknown Task',
+              categoryId: '0',
+              dueDate: DateTime.now(),
+              status: TaskStatus.notStarted,
+            ),
       );
-      
+
       final dependentTask = widget.tasks.firstWhere(
         (task) => task.id == dependency.dependentTaskId,
-        orElse: () => Task(
-          id: dependency.dependentTaskId,
-          title: 'Unknown Task',
-          categoryId: '0',
-          dueDate: DateTime.now(),
-          status: TaskStatus.notStarted,
-        ),
+        orElse:
+            () => Task(
+              id: dependency.dependentTaskId,
+              title: 'Unknown Task',
+              categoryId: '0',
+              dueDate: DateTime.now(),
+              status: TaskStatus.notStarted,
+            ),
       );
-      
+
       // Calculate positions
       final prerequisitePosition = _calculateTaskPosition(prerequisiteTask);
       final dependentPosition = _calculateTaskPosition(dependentTask);
-      
+
       // Add the line
       lines.add(
         CustomPaint(
           painter: DependencyLinePainter(
             start: prerequisitePosition,
             end: dependentPosition,
-            color: _selectedTask?.id == prerequisiteTask.id ||
-                   _selectedTask?.id == dependentTask.id
-                ? AppColors.primary
-                : Colors.grey.withOpacity(0.5),
-            strokeWidth: _selectedTask?.id == prerequisiteTask.id ||
+            color:
+                _selectedTask?.id == prerequisiteTask.id ||
                         _selectedTask?.id == dependentTask.id
-                ? 2.0
-                : 1.0,
+                    ? AppColors.primary
+                    : Colors.grey.withOpacity(0.5),
+            strokeWidth:
+                _selectedTask?.id == prerequisiteTask.id ||
+                        _selectedTask?.id == dependentTask.id
+                    ? 2.0
+                    : 1.0,
           ),
           size: Size.infinite,
         ),
       );
     }
-    
+
     return lines;
   }
 
   /// Builds the task nodes
   List<Widget> _buildTaskNodes() {
     final nodes = <Widget>[];
-    
+
     for (final task in widget.tasks) {
       // Find the category
       final category = widget.categories.firstWhere(
         (cat) => cat.id == task.categoryId,
-        orElse: () => TaskCategory(
-          id: '0',
-          name: 'Unknown',
-          icon: Icons.help_outline,
-          color: Colors.grey,
-        ),
+        orElse:
+            () => TaskCategory(
+              id: '0',
+              name: 'Unknown',
+              icon: Icons.help_outline,
+              color: Colors.grey,
+            ),
       );
-      
+
       // Calculate position
       final position = _calculateTaskPosition(task);
-      
+
       // Add the node
       nodes.add(
         Positioned(
@@ -206,7 +212,7 @@ class _DependencyGraphState extends State<DependencyGraph> {
         ),
       );
     }
-    
+
     return nodes;
   }
 
@@ -226,7 +232,7 @@ class _DependencyGraphState extends State<DependencyGraph> {
           child: const Icon(Icons.add),
         ),
         const SizedBox(height: AppConstants.smallPadding),
-        
+
         // Zoom out button
         FloatingActionButton(
           heroTag: 'zoom_out',
@@ -239,7 +245,7 @@ class _DependencyGraphState extends State<DependencyGraph> {
           child: const Icon(Icons.remove),
         ),
         const SizedBox(height: AppConstants.smallPadding),
-        
+
         // Reset button
         FloatingActionButton(
           heroTag: 'reset',
@@ -261,40 +267,42 @@ class _DependencyGraphState extends State<DependencyGraph> {
     // This is a simple layout algorithm that positions tasks based on their due date
     // and category. A more sophisticated algorithm could be implemented for better
     // visualization.
-    
+
     // Get the index of the task's category
     final categoryIndex = widget.categories.indexWhere(
       (cat) => cat.id == task.categoryId,
     );
-    
+
     // Calculate x position based on category
     final x = 200.0 + (categoryIndex * 350.0);
-    
+
     // Calculate y position based on due date
     final now = DateTime.now();
     final daysDifference = task.dueDate.difference(now).inDays;
     final y = 200.0 + (daysDifference * 2.0);
-    
+
     return Offset(x, y);
   }
 
   /// Checks if a task is a prerequisite for the selected task
   bool _isPrerequisite(Task task) {
     if (_selectedTask == null) return false;
-    
+
     return widget.dependencies.any(
-      (d) => d.prerequisiteTaskId == task.id &&
-             d.dependentTaskId == _selectedTask!.id,
+      (d) =>
+          d.prerequisiteTaskId == task.id &&
+          d.dependentTaskId == _selectedTask!.id,
     );
   }
 
   /// Checks if a task is dependent on the selected task
   bool _isDependent(Task task) {
     if (_selectedTask == null) return false;
-    
+
     return widget.dependencies.any(
-      (d) => d.dependentTaskId == task.id &&
-             d.prerequisiteTaskId == _selectedTask!.id,
+      (d) =>
+          d.dependentTaskId == task.id &&
+          d.prerequisiteTaskId == _selectedTask!.id,
     );
   }
 }
@@ -303,13 +311,13 @@ class _DependencyGraphState extends State<DependencyGraph> {
 class DependencyLinePainter extends CustomPainter {
   /// The start position of the line
   final Offset start;
-  
+
   /// The end position of the line
   final Offset end;
-  
+
   /// The color of the line
   final Color color;
-  
+
   /// The stroke width of the line
   final double strokeWidth;
 
@@ -323,33 +331,31 @@ class DependencyLinePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..strokeWidth = strokeWidth
-      ..style = PaintingStyle.stroke;
+    final paint =
+        Paint()
+          ..color = color
+          ..strokeWidth = strokeWidth
+          ..style = PaintingStyle.stroke;
 
     // Draw a curved line with an arrow
     final path = Path();
     path.moveTo(start.dx, start.dy);
-    
+
     // Control points for the curve
-    final controlPoint1 = Offset(
-      start.dx + (end.dx - start.dx) / 2,
-      start.dy,
-    );
-    final controlPoint2 = Offset(
-      start.dx + (end.dx - start.dx) / 2,
+    final controlPoint1 = Offset(start.dx + (end.dx - start.dx) / 2, start.dy);
+    final controlPoint2 = Offset(start.dx + (end.dx - start.dx) / 2, end.dy);
+
+    path.cubicTo(
+      controlPoint1.dx,
+      controlPoint1.dy,
+      controlPoint2.dx,
+      controlPoint2.dy,
+      end.dx,
       end.dy,
     );
-    
-    path.cubicTo(
-      controlPoint1.dx, controlPoint1.dy,
-      controlPoint2.dx, controlPoint2.dy,
-      end.dx, end.dy,
-    );
-    
+
     canvas.drawPath(path, paint);
-    
+
     // Draw arrow at the end
     _drawArrow(canvas, end, Offset(end.dx - 10, end.dy), paint);
   }
@@ -358,7 +364,7 @@ class DependencyLinePainter extends CustomPainter {
   void _drawArrow(Canvas canvas, Offset tip, Offset tail, Paint paint) {
     // Calculate the angle of the line
     final angle = (tip - tail).direction;
-    
+
     // Calculate the points for the arrow
     final arrowSize = 10.0;
     final arrowPoint1 = Offset(
@@ -369,23 +375,24 @@ class DependencyLinePainter extends CustomPainter {
       tip.dx - arrowSize * 1.5 * math.cos(angle + math.pi / 6),
       tip.dy - arrowSize * 1.5 * math.sin(angle + math.pi / 6),
     );
-    
+
     // Draw the arrow
-    final arrowPath = Path()
-      ..moveTo(tip.dx, tip.dy)
-      ..lineTo(arrowPoint1.dx, arrowPoint1.dy)
-      ..lineTo(arrowPoint2.dx, arrowPoint2.dy)
-      ..close();
-    
+    final arrowPath =
+        Path()
+          ..moveTo(tip.dx, tip.dy)
+          ..lineTo(arrowPoint1.dx, arrowPoint1.dy)
+          ..lineTo(arrowPoint2.dx, arrowPoint2.dy)
+          ..close();
+
     canvas.drawPath(arrowPath, paint..style = PaintingStyle.fill);
   }
 
   @override
   bool shouldRepaint(covariant DependencyLinePainter oldDelegate) {
     return oldDelegate.start != start ||
-           oldDelegate.end != end ||
-           oldDelegate.color != color ||
-           oldDelegate.strokeWidth != strokeWidth;
+        oldDelegate.end != end ||
+        oldDelegate.color != color ||
+        oldDelegate.strokeWidth != strokeWidth;
   }
 }
 
@@ -393,21 +400,19 @@ class DependencyLinePainter extends CustomPainter {
 class GridPainter extends CustomPainter {
   /// The spacing between grid lines
   final double gridSpacing;
-  
+
   /// The color of the grid lines
   final Color gridColor;
 
   /// Creates a new grid painter
-  GridPainter({
-    this.gridSpacing = 50.0,
-    this.gridColor = Colors.grey,
-  });
+  GridPainter({this.gridSpacing = 50.0, this.gridColor = Colors.grey});
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = gridColor
-      ..strokeWidth = 1.0;
+    final paint =
+        Paint()
+          ..color = gridColor
+          ..strokeWidth = 1.0;
 
     // Draw horizontal lines
     for (double y = 0; y < size.height; y += gridSpacing) {
@@ -423,9 +428,6 @@ class GridPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant GridPainter oldDelegate) {
     return oldDelegate.gridSpacing != gridSpacing ||
-           oldDelegate.gridColor != gridColor;
+        oldDelegate.gridColor != gridColor;
   }
 }
-
-// Import for math functions
-import 'dart:math' as math;

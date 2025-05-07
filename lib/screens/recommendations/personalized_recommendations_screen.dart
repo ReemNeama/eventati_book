@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/providers/providers.dart';
-import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/utils/core/constants.dart';
 
 /// Screen for displaying personalized recommendations based on wizard data
@@ -25,9 +24,12 @@ class _PersonalizedRecommendationsScreenState
     super.initState();
     // Load recommendations if needed
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final provider =
-          Provider.of<ServiceRecommendationProvider>(context, listen: false);
-      if (provider.wizardState != null && provider.personalizedRecommendations.isEmpty) {
+      final provider = Provider.of<ServiceRecommendationProvider>(
+        context,
+        listen: false,
+      );
+      if (provider.wizardState != null &&
+          provider.personalizedRecommendations.isEmpty) {
         provider.refreshRecommendations();
       }
     });
@@ -55,9 +57,7 @@ class _PersonalizedRecommendationsScreenState
       body: Consumer<ServiceRecommendationProvider>(
         builder: (context, provider, child) {
           if (provider.isLoading) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return const Center(child: CircularProgressIndicator());
           }
 
           if (provider.errorMessage != null) {
@@ -65,11 +65,7 @@ class _PersonalizedRecommendationsScreenState
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
-                    Icons.error_outline,
-                    color: Colors.red,
-                    size: 48,
-                  ),
+                  const Icon(Icons.error_outline, color: Colors.red, size: 48),
                   const SizedBox(height: 16),
                   Text(
                     'Error loading recommendations',
@@ -93,13 +89,18 @@ class _PersonalizedRecommendationsScreenState
 
           if (provider.wizardState == null) {
             return const Center(
-              child: Text('No wizard data available. Complete the event wizard first.'),
+              child: Text(
+                'No wizard data available. Complete the event wizard first.',
+              ),
             );
           }
 
-          final recommendations = _selectedCategory != null
-              ? provider.getPersonalizedRecommendationsForCategory(_selectedCategory!)
-              : provider.personalizedRecommendations;
+          final recommendations =
+              _selectedCategory != null
+                  ? provider.getPersonalizedRecommendationsForCategory(
+                    _selectedCategory!,
+                  )
+                  : provider.personalizedRecommendations;
 
           if (recommendations.isEmpty) {
             return Center(
@@ -138,7 +139,7 @@ class _PersonalizedRecommendationsScreenState
                 padding: const EdgeInsets.all(AppConstants.mediumPadding),
                 child: _buildCategoryFilter(),
               ),
-              
+
               // Recommendations list
               Expanded(
                 child: ListView.builder(
@@ -178,10 +179,7 @@ class _PersonalizedRecommendationsScreenState
               child: FilterChip(
                 label: Text(category.label),
                 selected: _selectedCategory == category,
-                avatar: Icon(
-                  category.icon,
-                  size: 16,
-                ),
+                avatar: Icon(category.icon, size: 16),
                 onSelected: (selected) {
                   setState(() {
                     _selectedCategory = selected ? category : null;
@@ -189,7 +187,7 @@ class _PersonalizedRecommendationsScreenState
                 },
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );
@@ -219,22 +217,22 @@ class _PersonalizedRecommendationsScreenState
                   child: Text(
                     recommendation.title,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 _buildPriorityChip(recommendation.priority),
               ],
             ),
             const SizedBox(height: 8),
-            
+
             // Description
             Text(
               recommendation.description,
               style: Theme.of(context).textTheme.bodyMedium,
             ),
             const SizedBox(height: 16),
-            
+
             // Action button
             if (recommendation.actionUrl != null)
               Align(
@@ -263,12 +261,9 @@ class _PersonalizedRecommendationsScreenState
   /// Builds a priority chip
   Widget _buildPriorityChip(SuggestionPriority priority) {
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 8,
-        vertical: 4,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: priority.color.withOpacity(0.2),
+        color: priority.color.withAlpha(51), // 0.2 * 255 = 51
         borderRadius: BorderRadius.circular(12),
       ),
       child: Text(

@@ -8,10 +8,7 @@ class DependencyIndicator extends StatelessWidget {
   final bool isCreating;
 
   /// Creates a new dependency indicator
-  const DependencyIndicator({
-    super.key,
-    this.isCreating = false,
-  });
+  const DependencyIndicator({super.key, this.isCreating = false});
 
   @override
   Widget build(BuildContext context) {
@@ -24,30 +21,28 @@ class DependencyIndicator extends StatelessWidget {
           Container(
             width: 2,
             height: 40,
-            color: isCreating
-                ? AppColors.primary
-                : AppColors.textSecondary.withOpacity(0.5),
+            color:
+                isCreating
+                    ? AppColors.primary
+                    : AppColors.textSecondary.withOpacity(0.5),
           ),
-          
+
           // Arrow
           Positioned(
             bottom: 0,
             child: CustomPaint(
               size: const Size(16, 8),
               painter: ArrowPainter(
-                color: isCreating
-                    ? AppColors.primary
-                    : AppColors.textSecondary.withOpacity(0.5),
+                color:
+                    isCreating
+                        ? AppColors.primary
+                        : AppColors.textSecondary.withOpacity(0.5),
               ),
             ),
           ),
-          
+
           // Optional animation for creating state
-          if (isCreating)
-            Positioned(
-              top: 0,
-              child: _buildAnimatedDot(),
-            ),
+          if (isCreating) Positioned(top: 0, child: _buildAnimatedDot()),
         ],
       ),
     );
@@ -85,15 +80,17 @@ class ArrowPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.fill;
+    final paint =
+        Paint()
+          ..color = color
+          ..style = PaintingStyle.fill;
 
-    final path = Path()
-      ..moveTo(0, 0)
-      ..lineTo(size.width, 0)
-      ..lineTo(size.width / 2, size.height)
-      ..close();
+    final path =
+        Path()
+          ..moveTo(0, 0)
+          ..lineTo(size.width, 0)
+          ..lineTo(size.width / 2, size.height)
+          ..close();
 
     canvas.drawPath(path, paint);
   }
