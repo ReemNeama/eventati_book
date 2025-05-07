@@ -67,6 +67,19 @@ class _TimelineScreenState extends State<TimelineScreen>
                 );
               },
             ),
+            IconButton(
+              icon: const Icon(Icons.cloud_upload),
+              tooltip: 'Firestore Test',
+              onPressed: () {
+                NavigationUtils.navigateToNamed(
+                  context,
+                  RouteNames.taskFirestoreTest,
+                  arguments: TaskFirestoreTestArguments(
+                    eventId: widget.eventId,
+                  ),
+                );
+              },
+            ),
           ],
           bottom: TabBar(
             controller: _tabController,

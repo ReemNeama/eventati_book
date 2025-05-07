@@ -86,7 +86,7 @@ class _TaskDependencyScreenState extends State<TaskDependencyScreen> {
   }
 
   /// Add a dependency between the selected tasks
-  void _addDependency() {
+  Future<void> _addDependency() async {
     if (_prerequisiteTask == null || _dependentTask == null) {
       setState(() {
         _errorMessage = 'Please select both tasks';
@@ -101,49 +101,95 @@ class _TaskDependencyScreenState extends State<TaskDependencyScreen> {
       return;
     }
 
-    final taskProvider = Provider.of<TaskProvider>(context, listen: false);
-    final success = taskProvider.addDependency(
-      _prerequisiteTask!.id,
-      _dependentTask!.id,
-    );
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
 
-    if (success) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Dependency added successfully'),
-          backgroundColor: Colors.green,
-        ),
+    try {
+      final taskProvider = Provider.of<TaskProvider>(context, listen: false);
+      final success = await taskProvider.addDependency(
+        _prerequisiteTask!.id,
+        _dependentTask!.id,
       );
 
-      // Reset selections
       setState(() {
-        _prerequisiteTask = null;
-        _dependentTask = null;
-        _errorMessage = null;
+        _isLoading = false;
       });
-    } else {
+
+      if (success) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Dependency added successfully'),
+              backgroundColor: Colors.green,
+            ),
+          );
+
+          // Reset selections
+          setState(() {
+            _prerequisiteTask = null;
+            _dependentTask = null;
+            _errorMessage = null;
+          });
+        }
+      } else {
+        if (mounted) {
+          setState(() {
+            _errorMessage =
+                'Failed to add dependency. It may create a circular reference.';
+          });
+        }
+      }
+    } catch (e) {
       setState(() {
-        _errorMessage =
-            'Failed to add dependency. It may create a circular reference.';
+        _isLoading = false;
+        _errorMessage = 'Error adding dependency: $e';
       });
     }
   }
 
   /// Remove a dependency between tasks
-  void _removeDependency(String prerequisiteId, String dependentId) {
-    final taskProvider = Provider.of<TaskProvider>(context, listen: false);
-    final success = taskProvider.removeDependency(prerequisiteId, dependentId);
+  Future<void> _removeDependency(
+    String prerequisiteId,
+    String dependentId,
+  ) async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
 
-    if (success) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Dependency removed successfully'),
-          backgroundColor: Colors.green,
-        ),
+    try {
+      final taskProvider = Provider.of<TaskProvider>(context, listen: false);
+      final success = await taskProvider.removeDependency(
+        prerequisiteId,
+        dependentId,
       );
-    } else {
+
       setState(() {
-        _errorMessage = 'Failed to remove dependency';
+        _isLoading = false;
+      });
+
+      if (success) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Dependency removed successfully'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
+      } else {
+        if (mounted) {
+          setState(() {
+            _errorMessage = 'Failed to remove dependency';
+          });
+        }
+      }
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+        _errorMessage = 'Error removing dependency: $e';
       });
     }
   }

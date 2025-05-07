@@ -494,6 +494,11 @@ class FirestoreService implements DatabaseServiceInterface {
     }
   }
 
+  /// Get the Firestore instance
+  FirebaseFirestore getFirestore() {
+    return _firestore;
+  }
+
   @override
   Future<T> runTransaction<T>(
     Future<T> Function(Transaction transaction) transactionFunction,

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eventati_book/models/models.dart';
+import 'package:eventati_book/providers/planning_providers/task_provider.dart';
 import 'package:eventati_book/services/firebase/utils/firestore_service.dart';
 import 'package:eventati_book/utils/logger.dart';
 import 'package:flutter/material.dart';
@@ -60,11 +61,44 @@ class TaskFirestoreService {
           assignedTo: data['assignedTo'],
           isImportant: data['isImportant'] ?? false,
           notes: data['notes'],
+          completedDate:
+              data['completedDate'] != null
+                  ? (data['completedDate'] as Timestamp).toDate()
+                  : null,
+          priority: _mapTaskPriority(data['priority']),
+          isServiceRelated: data['isServiceRelated'] ?? false,
+          serviceId: data['serviceId'],
+          dependencies:
+              data['dependencies'] != null
+                  ? List<String>.from(data['dependencies'])
+                  : [],
         ),
       );
       return tasks;
     } catch (e) {
       Logger.e('Error getting tasks: $e', tag: 'TaskFirestoreService');
+      rethrow;
+    }
+  }
+
+  /// Get task dependencies for an event
+  Future<List<TaskDependency>> getTaskDependencies(String eventId) async {
+    try {
+      final dependencies = await _firestoreService.getSubcollectionAs(
+        _collection,
+        eventId,
+        'task_dependencies',
+        (data, id) => TaskDependency(
+          prerequisiteTaskId: data['prerequisiteTaskId'] ?? '',
+          dependentTaskId: data['dependentTaskId'] ?? '',
+        ),
+      );
+      return dependencies;
+    } catch (e) {
+      Logger.e(
+        'Error getting task dependencies: $e',
+        tag: 'TaskFirestoreService',
+      );
       rethrow;
     }
   }
@@ -153,6 +187,14 @@ class TaskFirestoreService {
             'assignedTo': task.assignedTo,
             'isImportant': task.isImportant,
             'notes': task.notes,
+            'completedDate':
+                task.completedDate != null
+                    ? Timestamp.fromDate(task.completedDate!)
+                    : null,
+            'priority': task.priority.toString().split('.').last,
+            'isServiceRelated': task.isServiceRelated,
+            'serviceId': task.serviceId,
+            'dependencies': task.dependencies,
             'createdAt': FieldValue.serverTimestamp(),
           });
       return taskId;
@@ -175,6 +217,14 @@ class TaskFirestoreService {
             'assignedTo': task.assignedTo,
             'isImportant': task.isImportant,
             'notes': task.notes,
+            'completedDate':
+                task.completedDate != null
+                    ? Timestamp.fromDate(task.completedDate!)
+                    : null,
+            'priority': task.priority.toString().split('.').last,
+            'isServiceRelated': task.isServiceRelated,
+            'serviceId': task.serviceId,
+            'dependencies': task.dependencies,
             'updatedAt': FieldValue.serverTimestamp(),
           });
     } catch (e) {
@@ -234,6 +284,141 @@ class TaskFirestoreService {
       data['iconCodePoint'] ?? Icons.task_alt.codePoint,
       fontFamily: data['iconFontFamily'],
       fontPackage: data['iconFontPackage'],
+    );
+  }
+
+  /// Helper method to map string to TaskPriority enum
+  TaskPriority _mapTaskPriority(String? priority) {
+    switch (priority) {
+      case 'high':
+        return TaskPriority.high;
+      case 'low':
+        return TaskPriority.low;
+      case 'medium':
+      default:
+        return TaskPriority.medium;
+    }
+  }
+
+  /// Add a task dependency
+  Future<String> addTaskDependency(
+    String eventId,
+    TaskDependency dependency,
+  ) async {
+    try {
+      final dependencyId = await _firestoreService
+          .addSubcollectionDocument(_collection, eventId, 'task_dependencies', {
+            'prerequisiteTaskId': dependency.prerequisiteTaskId,
+            'dependentTaskId': dependency.dependentTaskId,
+            'createdAt': FieldValue.serverTimestamp(),
+          });
+      return dependencyId;
+    } catch (e) {
+      Logger.e('Error adding task dependency: $e', tag: 'TaskFirestoreService');
+      rethrow;
+    }
+  }
+
+  /// Remove a task dependency
+  Future<void> removeTaskDependency(
+    String eventId,
+    String prerequisiteTaskId,
+    String dependentTaskId,
+  ) async {
+    try {
+      // Get the dependency document ID
+      final querySnapshot =
+          await _firestoreService
+              .getFirestore()
+              .collection(_collection)
+              .doc(eventId)
+              .collection('task_dependencies')
+              .where('prerequisiteTaskId', isEqualTo: prerequisiteTaskId)
+              .where('dependentTaskId', isEqualTo: dependentTaskId)
+              .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        final dependencyId = querySnapshot.docs.first.id;
+        await _firestoreService.deleteSubcollectionDocument(
+          _collection,
+          eventId,
+          'task_dependencies',
+          dependencyId,
+        );
+      }
+    } catch (e) {
+      Logger.e(
+        'Error removing task dependency: $e',
+        tag: 'TaskFirestoreService',
+      );
+      rethrow;
+    }
+  }
+
+  /// Get a stream of tasks for an event
+  Stream<List<Task>> getTasksStream(String eventId) {
+    return _firestoreService.subcollectionStreamAs(
+      _collection,
+      eventId,
+      'tasks',
+      (data, id) => Task(
+        id: id,
+        title: data['title'] ?? '',
+        description: data['description'],
+        dueDate:
+            data['dueDate'] != null
+                ? (data['dueDate'] as Timestamp).toDate()
+                : DateTime.now(),
+        status: _mapTaskStatus(data['status']),
+        categoryId: data['categoryId'] ?? '',
+        assignedTo: data['assignedTo'],
+        isImportant: data['isImportant'] ?? false,
+        notes: data['notes'],
+        completedDate:
+            data['completedDate'] != null
+                ? (data['completedDate'] as Timestamp).toDate()
+                : null,
+        priority: _mapTaskPriority(data['priority']),
+        isServiceRelated: data['isServiceRelated'] ?? false,
+        serviceId: data['serviceId'],
+        dependencies:
+            data['dependencies'] != null
+                ? List<String>.from(data['dependencies'])
+                : [],
+      ),
+    );
+  }
+
+  /// Get a stream of task categories for an event
+  Stream<List<TaskCategory>> getTaskCategoriesStream(String eventId) {
+    return _firestoreService.subcollectionStreamAs(
+      _collection,
+      eventId,
+      'task_categories',
+      (data, id) => TaskCategory(
+        id: id,
+        name: data['name'] ?? '',
+        icon: _iconDataFromMap(data),
+        color: Color.fromARGB(
+          data['colorARGB']?[0] ?? 255,
+          data['colorARGB']?[1] ?? 0,
+          data['colorARGB']?[2] ?? 0,
+          data['colorARGB']?[3] ?? 0,
+        ),
+      ),
+    );
+  }
+
+  /// Get a stream of task dependencies for an event
+  Stream<List<TaskDependency>> getTaskDependenciesStream(String eventId) {
+    return _firestoreService.subcollectionStreamAs(
+      _collection,
+      eventId,
+      'task_dependencies',
+      (data, id) => TaskDependency(
+        prerequisiteTaskId: data['prerequisiteTaskId'] ?? '',
+        dependentTaskId: data['dependentTaskId'] ?? '',
+      ),
     );
   }
 }

@@ -10,6 +10,7 @@ import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/tempDB/venues.dart';
 import 'package:eventati_book/tempDB/services.dart';
 import 'package:eventati_book/screens/planning/task_dependency_screen.dart';
+import 'package:eventati_book/screens/testing/task_firestore_test_screen.dart';
 
 /// Router class for handling all navigation in the app
 class AppRouter {
@@ -215,6 +216,12 @@ class AppRouter {
                 eventId: args.eventId,
                 eventName: args.eventName,
               ),
+        );
+
+      case RouteNames.taskFirestoreTest:
+        final args = settings.arguments as TaskFirestoreTestArguments;
+        return MaterialPageRoute(
+          builder: (context) => TaskFirestoreTestScreen(eventId: args.eventId),
         );
 
       default:

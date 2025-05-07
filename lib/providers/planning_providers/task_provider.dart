@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:eventati_book/models/models.dart';
+import 'package:eventati_book/services/firebase/firestore/task_firestore_service.dart';
 
 /// Represents a dependency between two tasks
 class TaskDependency {
@@ -81,10 +83,21 @@ class TaskProvider extends ChangeNotifier {
   /// Error message if an operation fails
   String? _error;
 
+  /// Firestore service for tasks
+  final TaskFirestoreService _taskFirestoreService;
+
+  /// Stream subscriptions
+  StreamSubscription<List<Task>>? _tasksSubscription;
+  StreamSubscription<List<TaskCategory>>? _categoriesSubscription;
+  StreamSubscription<List<TaskDependency>>? _dependenciesSubscription;
+
   /// Creates a new TaskProvider for the specified event
   ///
   /// Automatically loads task data when instantiated
-  TaskProvider({required this.eventId}) {
+  TaskProvider({
+    required this.eventId,
+    TaskFirestoreService? taskFirestoreService,
+  }) : _taskFirestoreService = taskFirestoreService ?? TaskFirestoreService() {
     _loadTasks();
   }
 
@@ -189,17 +202,60 @@ class TaskProvider extends ChangeNotifier {
   /// Loads the task data for the event
   ///
   /// This is called automatically when the provider is created.
-  /// In a real application, this would fetch data from a database or API.
-  /// Currently uses mock data for demonstration purposes.
+  /// Fetches data from Firestore and sets up stream subscriptions.
   Future<void> _loadTasks() async {
     _isLoading = true;
     _error = null;
     notifyListeners();
 
     try {
-      // In a real app, this would load from a database or API
-      await Future.delayed(const Duration(milliseconds: 500));
-      _loadMockData();
+      // Subscribe to tasks stream
+      _tasksSubscription = _taskFirestoreService
+          .getTasksStream(eventId)
+          .listen(
+            (tasks) {
+              _tasks = tasks;
+              notifyListeners();
+            },
+            onError: (e) {
+              _error = e.toString();
+              notifyListeners();
+            },
+          );
+
+      // Subscribe to categories stream
+      _categoriesSubscription = _taskFirestoreService
+          .getTaskCategoriesStream(eventId)
+          .listen(
+            (categories) {
+              _categories = categories;
+              notifyListeners();
+            },
+            onError: (e) {
+              _error = e.toString();
+              notifyListeners();
+            },
+          );
+
+      // Subscribe to dependencies stream
+      _dependenciesSubscription = _taskFirestoreService
+          .getTaskDependenciesStream(eventId)
+          .listen(
+            (dependencies) {
+              _dependencies = dependencies;
+              notifyListeners();
+            },
+            onError: (e) {
+              _error = e.toString();
+              notifyListeners();
+            },
+          );
+
+      // Initial load
+      _tasks = await _taskFirestoreService.getTasks(eventId);
+      _categories = await _taskFirestoreService.getTaskCategories(eventId);
+      _dependencies = await _taskFirestoreService.getTaskDependencies(eventId);
+
       _isLoading = false;
       notifyListeners();
     } catch (e) {
@@ -215,24 +271,24 @@ class TaskProvider extends ChangeNotifier {
   ///
   /// If a task with the same ID already exists, it will be updated.
   /// Otherwise, a new task will be added to the list.
-  /// In a real application, this would persist the task to a database or API.
+  /// Persists the task to Firestore.
   /// Notifies listeners when the operation completes.
   Future<void> addTask(Task task) async {
     _isLoading = true;
+    _error = null;
     notifyListeners();
 
     try {
-      // In a real app, this would save to a database or API
-      await Future.delayed(const Duration(milliseconds: 300));
+      if (task.id.isEmpty || task.id == 'temp_id') {
+        // Add task to Firestore
+        await _taskFirestoreService.addTask(eventId, task);
 
-      // Check if task with this ID already exists
-      final existingTaskIndex = _tasks.indexWhere((t) => t.id == task.id);
-      if (existingTaskIndex >= 0) {
-        // Update existing task
-        _tasks[existingTaskIndex] = task;
+        // The task will be added to _tasks via the stream subscription
       } else {
-        // Add new task
-        _tasks.add(task);
+        // Update existing task
+        await _taskFirestoreService.updateTask(eventId, task);
+
+        // The task will be updated in _tasks via the stream subscription
       }
 
       _isLoading = false;
@@ -250,25 +306,21 @@ class TaskProvider extends ChangeNotifier {
   ///
   /// For each task, if a task with the same ID already exists, it will be updated.
   /// Otherwise, a new task will be added to the list.
-  /// In a real application, this would persist the tasks to a database or API.
+  /// Persists the tasks to Firestore.
   /// Notifies listeners when the operation completes.
   Future<void> addTasks(List<Task> tasks) async {
     _isLoading = true;
+    _error = null;
     notifyListeners();
 
     try {
-      // In a real app, this would save to a database or API
-      await Future.delayed(const Duration(milliseconds: 300));
-
       for (final task in tasks) {
-        // Check if task with this ID already exists
-        final existingTaskIndex = _tasks.indexWhere((t) => t.id == task.id);
-        if (existingTaskIndex >= 0) {
-          // Update existing task
-          _tasks[existingTaskIndex] = task;
+        if (task.id.isEmpty || task.id == 'temp_id') {
+          // Add task to Firestore
+          await _taskFirestoreService.addTask(eventId, task);
         } else {
-          // Add new task
-          _tasks.add(task);
+          // Update existing task
+          await _taskFirestoreService.updateTask(eventId, task);
         }
       }
 
@@ -285,19 +337,18 @@ class TaskProvider extends ChangeNotifier {
   ///
   /// [task] The updated task (must have the same ID as an existing task)
   ///
-  /// In a real application, this would update the task in a database or API.
+  /// Updates the task in Firestore.
   /// Notifies listeners when the operation completes.
   Future<void> updateTask(Task task) async {
     _isLoading = true;
+    _error = null;
     notifyListeners();
 
     try {
-      // In a real app, this would update in a database or API
-      await Future.delayed(const Duration(milliseconds: 300));
-      final index = _tasks.indexWhere((t) => t.id == task.id);
-      if (index >= 0) {
-        _tasks[index] = task;
-      }
+      await _taskFirestoreService.updateTask(eventId, task);
+
+      // The task will be updated in _tasks via the stream subscription
+
       _isLoading = false;
       notifyListeners();
     } catch (e) {
@@ -311,16 +362,23 @@ class TaskProvider extends ChangeNotifier {
   ///
   /// [taskId] The ID of the task to remove
   ///
-  /// In a real application, this would delete the task from a database or API.
+  /// Deletes the task from Firestore.
   /// Notifies listeners when the operation completes.
   Future<void> deleteTask(String taskId) async {
     _isLoading = true;
+    _error = null;
     notifyListeners();
 
     try {
-      // In a real app, this would delete from a database or API
-      await Future.delayed(const Duration(milliseconds: 300));
-      _tasks.removeWhere((task) => task.id == taskId);
+      await _taskFirestoreService.deleteTask(eventId, taskId);
+
+      // The task will be removed from _tasks via the stream subscription
+
+      // Also remove any dependencies involving this task
+      _dependencies.removeWhere(
+        (d) => d.prerequisiteTaskId == taskId || d.dependentTaskId == taskId,
+      );
+
       _isLoading = false;
       notifyListeners();
     } catch (e) {
@@ -337,19 +395,23 @@ class TaskProvider extends ChangeNotifier {
   ///
   /// This is a convenience method for updating just the status of a task
   /// without having to update the entire task object.
-  /// In a real application, this would update the task in a database or API.
+  /// Updates the task in Firestore.
   /// Notifies listeners when the operation completes.
   Future<void> updateTaskStatus(String taskId, TaskStatus status) async {
     _isLoading = true;
+    _error = null;
     notifyListeners();
 
     try {
-      // In a real app, this would update in a database or API
-      await Future.delayed(const Duration(milliseconds: 300));
       final index = _tasks.indexWhere((t) => t.id == taskId);
       if (index >= 0) {
-        _tasks[index] = _tasks[index].copyWith(status: status);
+        final task = _tasks[index].copyWith(
+          status: status,
+          completedDate: status == TaskStatus.completed ? DateTime.now() : null,
+        );
+        await _taskFirestoreService.updateTask(eventId, task);
       }
+
       _isLoading = false;
       notifyListeners();
     } catch (e) {
@@ -369,7 +431,10 @@ class TaskProvider extends ChangeNotifier {
   /// - Either task ID doesn't exist
   /// - The dependency would create a circular reference
   /// - The dependency already exists
-  bool addDependency(String prerequisiteTaskId, String dependentTaskId) {
+  Future<bool> addDependency(
+    String prerequisiteTaskId,
+    String dependentTaskId,
+  ) async {
     // Don't allow dependencies to self
     if (prerequisiteTaskId == dependentTaskId) {
       return false;
@@ -399,16 +464,24 @@ class TaskProvider extends ChangeNotifier {
       return false;
     }
 
-    // Add the dependency
-    _dependencies.add(
-      TaskDependency(
+    try {
+      // Create dependency object
+      final dependency = TaskDependency(
         prerequisiteTaskId: prerequisiteTaskId,
         dependentTaskId: dependentTaskId,
-      ),
-    );
+      );
 
-    notifyListeners();
-    return true;
+      // Add dependency to Firestore
+      await _taskFirestoreService.addTaskDependency(eventId, dependency);
+
+      // The dependency will be added to _dependencies via the stream subscription
+
+      return true;
+    } catch (e) {
+      _error = e.toString();
+      notifyListeners();
+      return false;
+    }
   }
 
   /// Removes a dependency between two tasks
@@ -417,22 +490,26 @@ class TaskProvider extends ChangeNotifier {
   /// [dependentTaskId] The ID of the dependent task
   ///
   /// Returns true if the dependency was removed, false if it didn't exist
-  bool removeDependency(String prerequisiteTaskId, String dependentTaskId) {
-    final initialLength = _dependencies.length;
+  Future<bool> removeDependency(
+    String prerequisiteTaskId,
+    String dependentTaskId,
+  ) async {
+    try {
+      // Remove dependency from Firestore
+      await _taskFirestoreService.removeTaskDependency(
+        eventId,
+        prerequisiteTaskId,
+        dependentTaskId,
+      );
 
-    _dependencies.removeWhere(
-      (d) =>
-          d.prerequisiteTaskId == prerequisiteTaskId &&
-          d.dependentTaskId == dependentTaskId,
-    );
+      // The dependency will be removed from _dependencies via the stream subscription
 
-    final removed = initialLength > _dependencies.length;
-
-    if (removed) {
+      return true;
+    } catch (e) {
+      _error = e.toString();
       notifyListeners();
+      return false;
     }
-
-    return removed;
   }
 
   /// Gets all dependencies where the specified task is a prerequisite
@@ -496,107 +573,12 @@ class TaskProvider extends ChangeNotifier {
     return false;
   }
 
-  /// Loads mock data for testing and demonstration purposes
-  ///
-  /// This method creates sample task categories and tasks.
-  /// In a real application, this would be replaced with data from a database or API.
-  void _loadMockData() {
-    _categories = [
-      TaskCategory(
-        id: '1',
-        name: 'Venue',
-        icon: Icons.location_on,
-        color: Colors.blue,
-      ),
-      TaskCategory(
-        id: '2',
-        name: 'Catering',
-        icon: Icons.restaurant,
-        color: Colors.orange,
-      ),
-      TaskCategory(
-        id: '3',
-        name: 'Invitations',
-        icon: Icons.mail,
-        color: Colors.purple,
-      ),
-      TaskCategory(
-        id: '4',
-        name: 'Decoration',
-        icon: Icons.celebration,
-        color: Colors.pink,
-      ),
-      TaskCategory(
-        id: '5',
-        name: 'Attire',
-        icon: Icons.checkroom,
-        color: Colors.teal,
-      ),
-      TaskCategory(
-        id: '6',
-        name: 'Transportation',
-        icon: Icons.directions_car,
-        color: Colors.green,
-      ),
-      TaskCategory(
-        id: '7',
-        name: 'Miscellaneous',
-        icon: Icons.more_horiz,
-        color: Colors.grey,
-      ),
-    ];
-
-    final now = DateTime.now();
-
-    _tasks = [
-      Task(
-        id: '1',
-        title: 'Book venue',
-        description: 'Find and book the perfect venue for the event',
-        dueDate: now.add(const Duration(days: 90)),
-        status: TaskStatus.completed,
-        categoryId: '1',
-        isImportant: true,
-      ),
-      Task(
-        id: '2',
-        title: 'Select catering menu',
-        description: 'Choose menu items and confirm with caterer',
-        dueDate: now.add(const Duration(days: 60)),
-        status: TaskStatus.inProgress,
-        categoryId: '2',
-      ),
-      Task(
-        id: '3',
-        title: 'Send invitations',
-        description: 'Finalize guest list and send out invitations',
-        dueDate: now.add(const Duration(days: 45)),
-        status: TaskStatus.notStarted,
-        categoryId: '3',
-        isImportant: true,
-      ),
-      Task(
-        id: '4',
-        title: 'Order flowers',
-        description: 'Select and order flowers for the event',
-        dueDate: now.add(const Duration(days: 30)),
-        status: TaskStatus.notStarted,
-        categoryId: '4',
-      ),
-    ];
-
-    // Initialize dependencies
-    _dependencies = [
-      // Venue booking must be completed before catering selection
-      TaskDependency(
-        prerequisiteTaskId: '1', // Book venue
-        dependentTaskId: '2', // Select catering menu
-      ),
-      // Venue booking must be completed before sending invitations
-      TaskDependency(
-        prerequisiteTaskId: '1', // Book venue
-        dependentTaskId: '3', // Send invitations
-      ),
-    ];
+  /// Clean up resources when the provider is disposed
+  @override
+  void dispose() {
+    _tasksSubscription?.cancel();
+    _categoriesSubscription?.cancel();
+    _dependenciesSubscription?.cancel();
+    super.dispose();
   }
 }

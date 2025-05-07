@@ -157,3 +157,10 @@ class VendorCommunicationArguments extends RouteArguments {
     required this.eventName,
   }) : super();
 }
+
+/// Arguments for task Firestore test screen
+class TaskFirestoreTestArguments extends RouteArguments {
+  final String eventId;
+
+  const TaskFirestoreTestArguments({required this.eventId}) : super();
+}
