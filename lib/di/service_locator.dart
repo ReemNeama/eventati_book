@@ -1,11 +1,13 @@
 import 'package:eventati_book/routing/navigation_service.dart';
 import 'package:eventati_book/services/interfaces/analytics_service_interface.dart';
 import 'package:eventati_book/services/interfaces/auth_service_interface.dart';
+import 'package:eventati_book/services/interfaces/crashlytics_service_interface.dart';
 import 'package:eventati_book/services/interfaces/database_service_interface.dart';
 import 'package:eventati_book/services/interfaces/messaging_service_interface.dart';
 import 'package:eventati_book/services/interfaces/storage_service_interface.dart';
 import 'package:eventati_book/services/firebase/firebase_analytics_service.dart';
 import 'package:eventati_book/services/firebase/firebase_auth_service.dart';
+import 'package:eventati_book/services/firebase/firebase_crashlytics_service.dart';
 import 'package:eventati_book/services/firebase/firebase_messaging_service.dart';
 import 'package:eventati_book/services/firebase/firestore_service.dart';
 import 'package:eventati_book/services/firebase/firebase_storage_service.dart';
@@ -52,6 +54,9 @@ class ServiceLocator {
     registerSingleton<StorageServiceInterface>(FirebaseStorageService());
     registerSingleton<MessagingServiceInterface>(FirebaseMessagingService());
     registerSingleton<AnalyticsServiceInterface>(FirebaseAnalyticsService());
+    registerSingleton<CrashlyticsServiceInterface>(
+      FirebaseCrashlyticsService(),
+    );
     registerSingleton<UserFirestoreService>(UserFirestoreService());
     registerSingleton<EventFirestoreService>(EventFirestoreService());
 
@@ -59,6 +64,7 @@ class ServiceLocator {
     FileUtils.setStorageService(get<StorageServiceInterface>());
 
     // Initialize services
+    get<CrashlyticsServiceInterface>().initialize();
     get<MessagingServiceInterface>().initialize();
     get<AnalyticsServiceInterface>().initialize();
   }
@@ -90,6 +96,10 @@ class ServiceLocator {
   /// Get the analytics service
   AnalyticsServiceInterface get analyticsService =>
       get<AnalyticsServiceInterface>();
+
+  /// Get the crashlytics service
+  CrashlyticsServiceInterface get crashlyticsService =>
+      get<CrashlyticsServiceInterface>();
 }
 
 /// Global instance of the service locator

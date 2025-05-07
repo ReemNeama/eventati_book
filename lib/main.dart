@@ -9,17 +9,40 @@ import 'package:eventati_book/routing/routing.dart';
 import 'package:eventati_book/di/service_locator.dart';
 import 'package:eventati_book/di/providers_manager.dart';
 import 'package:eventati_book/services/services.dart';
+import 'package:eventati_book/services/interfaces/crashlytics_service_interface.dart';
+import 'package:eventati_book/utils/error_utils.dart';
 import 'firebase_options.dart';
 
 void main() async {
   // Ensure Flutter is initialized
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  // Initialize Firebase (only for supported platforms)
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } catch (e) {
+    // Handle initialization error for unsupported platforms
+    debugPrint('Firebase initialization failed: $e');
+    // Continue without Firebase on unsupported platforms
+  }
 
   // Initialize the service locator
   ServiceLocator().initialize();
+
+  // Set up error handling
+  FlutterError.onError = (FlutterErrorDetails details) {
+    // Log to console
+    FlutterError.presentError(details);
+
+    // Report to crashlytics
+    ErrorUtils.logError(
+      'Flutter error',
+      error: details.exception,
+      stackTrace: details.stack,
+    );
+  };
 
   // Initialize analytics service (mock implementation for now)
   final analyticsService = AnalyticsService();

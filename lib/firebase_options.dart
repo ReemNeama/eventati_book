@@ -25,13 +25,11 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        return macos;
       case TargetPlatform.windows:
-        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for linux - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
+          'DefaultFirebaseOptions have not been configured for desktop platforms - '
+          'Firebase is only supported on Android, iOS and Web for this application.',
         );
       default:
         throw UnsupportedError(
@@ -67,22 +65,5 @@ class DefaultFirebaseOptions {
     iosBundleId: 'com.example.eventatiBook',
   );
 
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyAJCsbi0aG7WnAZcoXzTKxldX-WWKUv7EU',
-    appId: '1:777533853363:ios:ef0aea5743a119ff0aaac6',
-    messagingSenderId: '777533853363',
-    projectId: 'eventati-book',
-    storageBucket: 'eventati-book.firebasestorage.app',
-    iosBundleId: 'com.example.eventatiBook',
-  );
-
-  static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyDAiZfoZIt9MojK5h0VngF5-4st_QX6uyw',
-    appId: '1:777533853363:web:cc241487c968ac610aaac6',
-    messagingSenderId: '777533853363',
-    projectId: 'eventati-book',
-    authDomain: 'eventati-book.firebaseapp.com',
-    storageBucket: 'eventati-book.firebasestorage.app',
-    measurementId: 'G-6LNR55XXH9',
-  );
+  // Desktop platforms are not supported in this application
 }
