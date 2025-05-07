@@ -97,8 +97,97 @@ class TaskProvider extends ChangeNotifier {
   TaskProvider({
     required this.eventId,
     TaskFirestoreService? taskFirestoreService,
+    bool loadFromFirestore = true,
   }) : _taskFirestoreService = taskFirestoreService ?? TaskFirestoreService() {
-    _loadTasks();
+    if (loadFromFirestore) {
+      _loadTasks();
+    } else {
+      // For testing purposes, load mock data
+      _loadMockData();
+    }
+  }
+
+  /// Loads mock data for testing purposes
+  void _loadMockData() {
+    _categories = [
+      TaskCategory(
+        id: '1',
+        name: 'Venue',
+        icon: Icons.location_on,
+        color: Colors.blue,
+      ),
+      TaskCategory(
+        id: '2',
+        name: 'Catering',
+        icon: Icons.restaurant,
+        color: Colors.orange,
+      ),
+      TaskCategory(
+        id: '3',
+        name: 'Invitations',
+        icon: Icons.mail,
+        color: Colors.green,
+      ),
+      TaskCategory(
+        id: '4',
+        name: 'Decorations',
+        icon: Icons.celebration,
+        color: Colors.purple,
+      ),
+    ];
+
+    final now = DateTime.now();
+
+    _tasks = [
+      Task(
+        id: '1',
+        title: 'Book venue',
+        description: 'Find and book the perfect venue for the event',
+        dueDate: now.add(const Duration(days: 90)),
+        status: TaskStatus.completed,
+        categoryId: '1',
+        isImportant: true,
+      ),
+      Task(
+        id: '2',
+        title: 'Select catering menu',
+        description: 'Choose menu items and confirm with caterer',
+        dueDate: now.add(const Duration(days: 60)),
+        status: TaskStatus.inProgress,
+        categoryId: '2',
+      ),
+      Task(
+        id: '3',
+        title: 'Send invitations',
+        description: 'Finalize guest list and send out invitations',
+        dueDate: now.add(const Duration(days: 45)),
+        status: TaskStatus.notStarted,
+        categoryId: '3',
+        isImportant: true,
+      ),
+      Task(
+        id: '4',
+        title: 'Order flowers',
+        description: 'Select and order flowers for the event',
+        dueDate: now.add(const Duration(days: 30)),
+        status: TaskStatus.notStarted,
+        categoryId: '4',
+      ),
+    ];
+
+    // Initialize dependencies
+    _dependencies = [
+      // Venue booking must be completed before catering selection
+      TaskDependency(
+        prerequisiteTaskId: '1', // Book venue
+        dependentTaskId: '2', // Select catering menu
+      ),
+      // Venue booking must be completed before sending invitations
+      TaskDependency(
+        prerequisiteTaskId: '1', // Book venue
+        dependentTaskId: '3', // Send invitations
+      ),
+    ];
   }
 
   /// Returns the list of all tasks

@@ -204,7 +204,11 @@ void main() {
                   create: (_) => GuestListProvider(eventId: 'test_event'),
                 ),
                 ChangeNotifierProvider(
-                  create: (_) => TaskProvider(eventId: 'test_event'),
+                  create:
+                      (_) => TaskProvider(
+                        eventId: 'test_event',
+                        loadFromFirestore: false, // Use mock data for tests
+                      ),
                 ),
                 ChangeNotifierProvider(
                   create: (_) => ServiceRecommendationProvider(),
