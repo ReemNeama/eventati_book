@@ -392,9 +392,9 @@ bookings/
 
 ## Implementation Steps
 
-### Phase 1: Project Setup and Dependencies
+### Phase 1: Project Setup and Dependencies (COMPLETED)
 
-#### 1. Firebase Project Setup (Already Completed)
+#### 1. Firebase Project Setup (COMPLETED)
 - [x] Create Firebase project 'eventati-book'
 - [x] Register Android app and download google-services.json
 - [x] Generate firebase_options.dart using FlutterFire CLI
@@ -498,27 +498,31 @@ dependencies:
 - [ ] Update `lib/screens/authentications/forgetpassword_screen.dart`
 - [ ] Update `lib/screens/authentications/verification_screen.dart`
 
-### Phase 3: Firestore Database Implementation
+### Phase 3: Firestore Database Implementation (PARTIALLY COMPLETED)
 
-#### 1. Create Base Firestore Services
-- [ ] Create `lib/services/interfaces/database_service_interface.dart`
-- [ ] Create `lib/services/firebase/firestore_service.dart` (base service)
-- [ ] Register service in `lib/di/service_locator.dart`
+#### 1. Create Base Firestore Services (COMPLETED)
+- [x] Create `lib/services/interfaces/database_service_interface.dart`
+- [x] Create `lib/services/firebase/utils/firestore_service.dart` (base service)
+- [x] Register service in `lib/di/service_locator.dart`
 
-#### 2. Create Specialized Firestore Services
-- [ ] Create `lib/services/firebase/user_firestore_service.dart`
-- [ ] Create `lib/services/firebase/event_firestore_service.dart`
-- [ ] Create `lib/services/firebase/budget_firestore_service.dart`
-- [ ] Create `lib/services/firebase/guest_firestore_service.dart`
-- [ ] Create `lib/services/firebase/task_firestore_service.dart`
-- [ ] Create `lib/services/firebase/service_firestore_service.dart`
-- [ ] Create `lib/services/firebase/booking_firestore_service.dart`
-- [ ] Register all services in `lib/di/service_locator.dart`
+#### 2. Create Specialized Firestore Services (IN PROGRESS)
+- [x] Create `lib/services/firebase/firestore/wizard_state_firestore_service.dart`
+- [x] Create `lib/services/firebase/firestore/wizard_connection_firestore_service.dart`
+- [ ] Create `lib/services/firebase/firestore/user_firestore_service.dart`
+- [ ] Create `lib/services/firebase/firestore/event_firestore_service.dart`
+- [ ] Create `lib/services/firebase/firestore/budget_firestore_service.dart`
+- [ ] Create `lib/services/firebase/firestore/guest_firestore_service.dart`
+- [ ] Create `lib/services/firebase/firestore/task_firestore_service.dart`
+- [ ] Create `lib/services/firebase/firestore/service_firestore_service.dart`
+- [ ] Create `lib/services/firebase/firestore/booking_firestore_service.dart`
+- [x] Register wizard services in `lib/di/service_locator.dart`
+- [ ] Register remaining services in `lib/di/service_locator.dart`
 
-#### 3. Update Event-Related Models
+#### 3. Update Event-Related Models (PARTIALLY COMPLETED)
+- [x] Update `lib/models/event_models/wizard_state.dart` with Firebase methods
+- [x] Create `lib/models/event_models/wizard_connection.dart` with Firebase methods
+- [x] Update `lib/providers/core_providers/wizard_provider.dart` to use Firestore
 - [ ] Update `lib/models/event_models/event_template.dart` with Firebase methods
-- [ ] Update `lib/models/event_models/wizard_state.dart` with Firebase methods
-- [ ] Update `lib/providers/core_providers/wizard_provider.dart` to use Firestore
 
 #### 4. Update Planning Tool Models
 - [ ] Update `lib/models/planning_models/budget_item.dart` with Firebase methods
@@ -551,11 +555,11 @@ dependencies:
 
 ### Phase 5: Advanced Firebase Features
 
-#### 1. Firebase Cloud Messaging
-- [ ] Create `lib/services/interfaces/messaging_service_interface.dart`
-- [ ] Create `lib/services/firebase/firebase_messaging_service.dart`
-- [ ] Create `lib/services/notification_service.dart`
-- [ ] Configure FCM in main.dart
+#### 1. Firebase Cloud Messaging (PARTIALLY COMPLETED)
+- [x] Create `lib/services/interfaces/messaging_service_interface.dart`
+- [x] Create `lib/services/firebase/core/firebase_messaging_service.dart`
+- [x] Implement notification handling for different notification types
+- [x] Configure FCM in main.dart
 - [ ] Update `lib/screens/profile/notification_settings_screen.dart`
 
 #### 2. Firebase Analytics
@@ -933,9 +937,9 @@ This registry tracks all files that need Firebase integration. Update this table
 
 | File Path | Firebase Service | Status | Description |
 |-----------|-----------------|--------|-------------|
-| lib/main.dart | All | Partial | App entry point, Firebase initialization |
+| lib/main.dart | All | Complete | App entry point, Firebase initialization |
 | lib/firebase_options.dart | Core | Complete | Firebase configuration options |
-| lib/di/service_locator.dart | All | Pending | Service locator for dependency injection |
+| lib/di/service_locator.dart | All | Partial | Service locator for dependency injection |
 
 ### Models
 
@@ -943,7 +947,8 @@ This registry tracks all files that need Firebase integration. Update this table
 |-----------|-----------------|--------|-------------|
 | lib/models/user_models/user.dart | Auth, Firestore | Pending | User model |
 | lib/models/event_models/event_template.dart | Firestore | Pending | Event template model |
-| lib/models/event_models/wizard_state.dart | Firestore | Pending | Wizard state model |
+| lib/models/event_models/wizard_state.dart | Firestore | Complete | Wizard state model |
+| lib/models/event_models/wizard_connection.dart | Firestore | Complete | Wizard connection model |
 | lib/models/planning_models/budget_item.dart | Firestore | Pending | Budget item model |
 | lib/models/planning_models/guest.dart | Firestore | Pending | Guest model |
 | lib/models/planning_models/task.dart | Firestore | Pending | Task model |
@@ -962,7 +967,7 @@ This registry tracks all files that need Firebase integration. Update this table
 | File Path | Firebase Service | Status | Description |
 |-----------|-----------------|--------|-------------|
 | lib/providers/core_providers/auth_provider.dart | Auth | Pending | Authentication provider |
-| lib/providers/core_providers/wizard_provider.dart | Firestore | Pending | Wizard state provider |
+| lib/providers/core_providers/wizard_provider.dart | Firestore | Complete | Wizard state provider |
 | lib/providers/feature_providers/milestone_provider.dart | Firestore | Pending | Milestone provider |
 | lib/providers/feature_providers/guest_list_provider.dart | Firestore | Pending | Guest list provider |
 | lib/providers/feature_providers/budget_provider.dart | Firestore | Pending | Budget provider |
@@ -971,25 +976,27 @@ This registry tracks all files that need Firebase integration. Update this table
 | lib/providers/feature_providers/suggestion_provider.dart | Firestore | Pending | Suggestion provider |
 | lib/providers/feature_providers/comparison_saving_provider.dart | Firestore | Pending | Comparison saving provider |
 
-### Services (To Be Created)
+### Services
 
 | File Path | Firebase Service | Status | Description |
 |-----------|-----------------|--------|-------------|
 | lib/services/interfaces/auth_service_interface.dart | Auth | Pending | Authentication service interface |
 | lib/services/firebase/firebase_auth_service.dart | Auth | Pending | Firebase authentication implementation |
-| lib/services/interfaces/database_service_interface.dart | Firestore | Pending | Database service interface |
-| lib/services/firebase/firestore_service.dart | Firestore | Pending | Base Firestore service |
-| lib/services/firebase/user_firestore_service.dart | Firestore | Pending | User Firestore service |
-| lib/services/firebase/event_firestore_service.dart | Firestore | Pending | Event Firestore service |
-| lib/services/firebase/budget_firestore_service.dart | Firestore | Pending | Budget Firestore service |
-| lib/services/firebase/guest_firestore_service.dart | Firestore | Pending | Guest Firestore service |
-| lib/services/firebase/task_firestore_service.dart | Firestore | Pending | Task Firestore service |
-| lib/services/firebase/service_firestore_service.dart | Firestore | Pending | Service Firestore service |
-| lib/services/firebase/booking_firestore_service.dart | Firestore | Pending | Booking Firestore service |
-| lib/services/interfaces/storage_service_interface.dart | Storage | Pending | Storage service interface |
-| lib/services/firebase/firebase_storage_service.dart | Storage | Pending | Firebase storage implementation |
-| lib/services/interfaces/messaging_service_interface.dart | FCM | Pending | Messaging service interface |
-| lib/services/firebase/firebase_messaging_service.dart | FCM | Pending | Firebase messaging implementation |
+| lib/services/interfaces/database_service_interface.dart | Firestore | Complete | Database service interface |
+| lib/services/firebase/utils/firestore_service.dart | Firestore | Complete | Base Firestore service |
+| lib/services/firebase/firestore/wizard_state_firestore_service.dart | Firestore | Complete | Wizard state Firestore service |
+| lib/services/firebase/firestore/wizard_connection_firestore_service.dart | Firestore | Complete | Wizard connection Firestore service |
+| lib/services/firebase/firestore/user_firestore_service.dart | Firestore | Pending | User Firestore service |
+| lib/services/firebase/firestore/event_firestore_service.dart | Firestore | Pending | Event Firestore service |
+| lib/services/firebase/firestore/budget_firestore_service.dart | Firestore | Pending | Budget Firestore service |
+| lib/services/firebase/firestore/guest_firestore_service.dart | Firestore | Pending | Guest Firestore service |
+| lib/services/firebase/firestore/task_firestore_service.dart | Firestore | Pending | Task Firestore service |
+| lib/services/firebase/firestore/service_firestore_service.dart | Firestore | Pending | Service Firestore service |
+| lib/services/firebase/firestore/booking_firestore_service.dart | Firestore | Pending | Booking Firestore service |
+| lib/services/interfaces/storage_service_interface.dart | Storage | Complete | Storage service interface |
+| lib/services/firebase/core/firebase_storage_service.dart | Storage | Complete | Firebase storage implementation |
+| lib/services/interfaces/messaging_service_interface.dart | FCM | Complete | Messaging service interface |
+| lib/services/firebase/core/firebase_messaging_service.dart | FCM | Complete | Firebase messaging implementation |
 | lib/services/notification_service.dart | FCM | Pending | Notification handling service |
 | lib/services/interfaces/analytics_service_interface.dart | Analytics | Pending | Analytics service interface |
 | lib/services/firebase/firebase_analytics_service.dart | Analytics | Pending | Firebase analytics implementation |
