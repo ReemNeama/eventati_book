@@ -40,6 +40,9 @@ abstract class AuthServiceInterface {
     String name,
   );
 
+  /// Sign in with Google
+  Future<AuthResult> signInWithGoogle();
+
   /// Sign out the current user
   Future<void> signOut();
 

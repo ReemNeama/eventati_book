@@ -166,6 +166,34 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
+  /// Login with Google
+  Future<bool> loginWithGoogle() async {
+    try {
+      _status = AuthStatus.authenticating;
+      _errorMessage = null;
+      notifyListeners();
+
+      final result = await _authService.signInWithGoogle();
+
+      if (result.isSuccess) {
+        _user = result.user;
+        _status = AuthStatus.authenticated;
+        notifyListeners();
+        return true;
+      } else {
+        _status = AuthStatus.error;
+        _errorMessage = result.errorMessage ?? 'Google login failed';
+        notifyListeners();
+        return false;
+      }
+    } catch (e) {
+      _status = AuthStatus.error;
+      _errorMessage = 'Google login failed: ${e.toString()}';
+      notifyListeners();
+      return false;
+    }
+  }
+
   /// Register a new user
   Future<bool> register(String name, String email, String password) async {
     try {

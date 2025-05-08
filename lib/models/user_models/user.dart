@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 
 class User {
   final String id;
@@ -199,4 +200,45 @@ class User {
 
   /// Check if the user is a planner
   bool get isPlanner => role == 'planner';
+
+  /// Create a User from a Firebase Auth user
+  ///
+  /// This method creates a basic User object from a Firebase Auth user.
+  /// Additional user data should be fetched from Firestore and merged with this user.
+  ///
+  /// [firebaseUser] The Firebase Auth user
+  /// [firestoreData] Optional additional data from Firestore
+  static User fromFirebaseUser(
+    firebase_auth.User firebaseUser, [
+    Map<String, dynamic>? firestoreData,
+  ]) {
+    return User(
+      id: firebaseUser.uid,
+      name: firebaseUser.displayName ?? '',
+      email: firebaseUser.email ?? '',
+      phoneNumber: firebaseUser.phoneNumber,
+      profileImageUrl: firebaseUser.photoURL,
+      createdAt:
+          firestoreData?['createdAt'] != null
+              ? (firestoreData!['createdAt'] as Timestamp).toDate()
+              : firebaseUser.metadata.creationTime ?? DateTime.now(),
+      favoriteVenues:
+          firestoreData?['favoriteVenues'] != null
+              ? List<String>.from(firestoreData!['favoriteVenues'])
+              : [],
+      favoriteServices:
+          firestoreData?['favoriteServices'] != null
+              ? List<String>.from(firestoreData!['favoriteServices'])
+              : [],
+      role: firestoreData?['role'] ?? 'user',
+      hasPremiumSubscription: firestoreData?['hasPremiumSubscription'] ?? false,
+      isBetaTester: firestoreData?['isBetaTester'] ?? false,
+      emailVerified: firebaseUser.emailVerified,
+      subscriptionExpirationDate:
+          firestoreData?['subscriptionExpirationDate'] != null
+              ? (firestoreData!['subscriptionExpirationDate'] as Timestamp)
+                  .toDate()
+              : null,
+    );
+  }
 }

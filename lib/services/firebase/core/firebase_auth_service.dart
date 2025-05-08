@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/services/interfaces/auth_service_interface.dart';
 import 'package:eventati_book/utils/logger.dart';
@@ -8,13 +9,16 @@ import 'package:eventati_book/utils/logger.dart';
 class FirebaseAuthService implements AuthServiceInterface {
   final firebase_auth.FirebaseAuth _firebaseAuth;
   final FirebaseFirestore _firestore;
+  final GoogleSignIn _googleSignIn;
 
   /// Constructor
   FirebaseAuthService({
     firebase_auth.FirebaseAuth? firebaseAuth,
     FirebaseFirestore? firestore,
+    GoogleSignIn? googleSignIn,
   }) : _firebaseAuth = firebaseAuth ?? firebase_auth.FirebaseAuth.instance,
-       _firestore = firestore ?? FirebaseFirestore.instance;
+       _firestore = firestore ?? FirebaseFirestore.instance,
+       _googleSignIn = googleSignIn ?? GoogleSignIn();
 
   @override
   User? get currentUser {
@@ -110,8 +114,90 @@ class FirebaseAuthService implements AuthServiceInterface {
   }
 
   @override
+  Future<AuthResult> signInWithGoogle() async {
+    try {
+      // Begin interactive sign-in process
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      if (googleUser == null) {
+        return AuthResult.failure('Google sign-in was cancelled by the user');
+      }
+
+      // Obtain auth details from the request
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      // Create a new credential for Firebase
+      final credential = firebase_auth.GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      // Sign in to Firebase with the Google credential
+      final userCredential = await _firebaseAuth.signInWithCredential(
+        credential,
+      );
+      final user = userCredential.user;
+
+      if (user == null) {
+        return AuthResult.failure('Google sign-in failed: No user returned');
+      }
+
+      // Check if this is a new user
+      final isNewUser = userCredential.additionalUserInfo?.isNewUser ?? false;
+
+      if (isNewUser) {
+        // Create user document in Firestore for new users
+        final userData = {
+          'name': user.displayName ?? '',
+          'email': user.email ?? '',
+          'profileImageUrl': user.photoURL,
+          'createdAt': FieldValue.serverTimestamp(),
+          'favoriteVenues': <String>[],
+          'favoriteServices': <String>[],
+          'role': 'user',
+          'hasPremiumSubscription': false,
+          'isBetaTester': false,
+          'emailVerified': user.emailVerified,
+          'authProvider': 'google',
+        };
+
+        await _firestore.collection('users').doc(user.uid).set(userData);
+        Logger.i(
+          'Created new user document for Google user: ${user.displayName}',
+          tag: 'FirebaseAuthService',
+        );
+      }
+
+      // Get additional user data from Firestore
+      final userData = await _getUserDataFromFirestore(user.uid);
+      final appUser = _mapFirebaseUserToUser(user, userData);
+
+      return AuthResult.success(appUser);
+    } on firebase_auth.FirebaseAuthException catch (e) {
+      Logger.e(
+        'Firebase Auth error during Google sign-in: ${e.code}',
+        tag: 'FirebaseAuthService',
+      );
+      return AuthResult.failure(_mapFirebaseAuthError(e.code));
+    } catch (e) {
+      Logger.e('Error during Google sign-in: $e', tag: 'FirebaseAuthService');
+      return AuthResult.failure('Google sign-in failed: ${e.toString()}');
+    }
+  }
+
+  @override
   Future<void> signOut() async {
-    await _firebaseAuth.signOut();
+    try {
+      // Sign out from Google if signed in with Google
+      await _googleSignIn.signOut();
+      // Sign out from Firebase
+      await _firebaseAuth.signOut();
+
+      Logger.i('User signed out successfully', tag: 'FirebaseAuthService');
+    } catch (e) {
+      Logger.e('Error signing out: $e', tag: 'FirebaseAuthService');
+      rethrow;
+    }
   }
 
   @override
@@ -258,33 +344,7 @@ class FirebaseAuthService implements AuthServiceInterface {
     firebase_auth.User firebaseUser, [
     Map<String, dynamic>? userData,
   ]) {
-    return User(
-      id: firebaseUser.uid,
-      name: userData?['name'] ?? firebaseUser.displayName ?? 'User',
-      email: firebaseUser.email ?? '',
-      phoneNumber: userData?['phoneNumber'] ?? firebaseUser.phoneNumber,
-      profileImageUrl: userData?['profileImageUrl'] ?? firebaseUser.photoURL,
-      createdAt:
-          userData?['createdAt'] != null
-              ? (userData!['createdAt'] as Timestamp).toDate()
-              : DateTime.now(),
-      favoriteVenues:
-          userData?['favoriteVenues'] != null
-              ? List<String>.from(userData!['favoriteVenues'])
-              : [],
-      favoriteServices:
-          userData?['favoriteServices'] != null
-              ? List<String>.from(userData!['favoriteServices'])
-              : [],
-      role: userData?['role'] ?? 'user',
-      hasPremiumSubscription: userData?['hasPremiumSubscription'] ?? false,
-      isBetaTester: userData?['isBetaTester'] ?? false,
-      emailVerified: userData?['emailVerified'] ?? firebaseUser.emailVerified,
-      subscriptionExpirationDate:
-          userData?['subscriptionExpirationDate'] != null
-              ? (userData!['subscriptionExpirationDate'] as Timestamp).toDate()
-              : null,
-    );
+    return User.fromFirebaseUser(firebaseUser, userData);
   }
 
   String _mapFirebaseAuthError(String errorCode) {

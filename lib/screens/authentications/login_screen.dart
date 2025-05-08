@@ -92,6 +92,61 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  // Method to handle Google login
+  Future<void> _handleGoogleLogin(AuthProvider authProvider) async {
+    // Show loading indicator
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder:
+          (dialogContext) => const AlertDialog(
+            content: Row(
+              children: [
+                CircularProgressIndicator(),
+                SizedBox(width: 20),
+                Text('Logging in with Google...'),
+              ],
+            ),
+          ),
+    );
+
+    // Attempt to login with Google
+    final success = await authProvider.loginWithGoogle();
+
+    // Only proceed if the widget is still mounted
+    if (!mounted) return;
+
+    // Hide loading indicator
+    Navigator.pop(context);
+
+    if (success) {
+      // Show success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Google login successful!',
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.green,
+        ),
+      );
+
+      // Navigate to home screen
+      NavigationUtils.navigateToNamedAndRemoveUntil(context, RouteNames.home);
+    } else {
+      // Show error message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            authProvider.errorMessage ?? 'Google login failed',
+            style: const TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -143,6 +198,29 @@ class _LoginScreenState extends State<LoginScreen> {
                         authProvider.status == AuthStatus.authenticating
                             ? 'Please wait...'
                             : 'Login',
+                  );
+                },
+              ),
+              const SizedBox(height: 20),
+              const Row(
+                children: [
+                  Expanded(child: Divider()),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: Text('OR', style: TextStyle(color: Colors.grey)),
+                  ),
+                  Expanded(child: Divider()),
+                ],
+              ),
+              const SizedBox(height: 20),
+              Consumer<AuthProvider>(
+                builder: (context, authProvider, _) {
+                  return SocialAuthButton(
+                    onPressed: () {
+                      _handleGoogleLogin(authProvider);
+                    },
+                    text: 'Sign in with Google',
+                    imagePath: 'assets/google.png',
                   );
                 },
               ),
