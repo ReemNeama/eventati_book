@@ -4,16 +4,16 @@ import 'package:eventati_book/providers/providers.dart';
 import 'package:eventati_book/routing/route_names.dart';
 import 'package:eventati_book/utils/ui/navigation_utils.dart';
 
-/// A guard that checks if a user has a specific role
+/// A guard that checks if a user is authenticated
+/// Note: Role-based access has been removed from the application
 class RoleGuard {
-  /// Check if the user has the required role
+  /// Check if the user is authenticated
   static bool canActivate(BuildContext context, List<String> allowedRoles) {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    return authProvider.isAuthenticated &&
-        allowedRoles.contains(authProvider.currentUser?.role);
+    return authProvider.isAuthenticated;
   }
 
-  /// Redirect to the unauthorized screen if the user doesn't have the required role
+  /// Redirect to the unauthorized screen if the user is not authenticated
   static void redirectToUnauthorized(BuildContext context) {
     NavigationUtils.navigateToNamedReplacement(
       context,
@@ -21,7 +21,7 @@ class RoleGuard {
     );
   }
 
-  /// Handle navigation to a route that requires a specific role
+  /// Handle navigation to a protected route
   static bool handleNavigation(
     BuildContext context,
     List<String> allowedRoles,

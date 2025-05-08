@@ -41,7 +41,6 @@ class UserFirestoreService {
             userData['favoriteServices'] != null
                 ? List<String>.from(userData['favoriteServices'])
                 : [],
-        role: userData['role'] ?? 'user',
         hasPremiumSubscription: userData['hasPremiumSubscription'] ?? false,
         isBetaTester: userData['isBetaTester'] ?? false,
         subscriptionExpirationDate:
@@ -79,7 +78,6 @@ class UserFirestoreService {
             data['favoriteServices'] != null
                 ? List<String>.from(data['favoriteServices'])
                 : [],
-        role: data['role'] ?? 'user',
         hasPremiumSubscription: data['hasPremiumSubscription'] ?? false,
         isBetaTester: data['isBetaTester'] ?? false,
         subscriptionExpirationDate:

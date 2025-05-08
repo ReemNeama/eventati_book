@@ -3,16 +3,15 @@ import 'package:eventati_book/routing/feature_guards.dart';
 
 /// A widget that wraps a child widget and applies feature guards
 ///
-/// This widget can be used to protect routes based on user roles,
+/// This widget can be used to protect routes based on authentication status,
 /// subscription status, feature flags, booking status, comparison status,
 /// or wizard step completion.
 ///
 /// Example usage:
 /// ```dart
 /// FeatureGuardWrapper(
-///   // Require admin or moderator role
+///   // Require authentication
 ///   roleGuard: true,
-///   allowedRoles: ['admin', 'moderator'],
 ///   // Require premium subscription
 ///   subscriptionGuard: true,
 ///   // Require a specific feature to be enabled
@@ -32,11 +31,8 @@ class FeatureGuardWrapper extends StatelessWidget {
   /// The child widget to display if all guards pass
   final Widget child;
 
-  /// Whether to apply the role guard
+  /// Whether to apply the authentication guard
   final bool roleGuard;
-
-  /// The roles that are allowed to access the route
-  final List<String> allowedRoles;
 
   /// Whether to apply the subscription guard
   final bool subscriptionGuard;
@@ -64,7 +60,6 @@ class FeatureGuardWrapper extends StatelessWidget {
     super.key,
     required this.child,
     this.roleGuard = false,
-    this.allowedRoles = const ['admin'],
     this.subscriptionGuard = false,
     this.featureGuard = false,
     this.requiredFeature = '',
@@ -78,8 +73,8 @@ class FeatureGuardWrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     return Builder(
       builder: (context) {
-        // Check role guard
-        if (roleGuard && !RoleGuard.canActivate(context, allowedRoles)) {
+        // Check authentication guard
+        if (roleGuard && !RoleGuard.canActivate(context, const [])) {
           // Redirect to unauthorized screen
           WidgetsBinding.instance.addPostFrameCallback((_) {
             RoleGuard.redirectToUnauthorized(context);

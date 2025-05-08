@@ -88,7 +88,6 @@ class FirebaseAuthService implements AuthServiceInterface {
         'createdAt': FieldValue.serverTimestamp(),
         'favoriteVenues': <String>[],
         'favoriteServices': <String>[],
-        'role': 'user',
         'hasPremiumSubscription': false,
         'isBetaTester': false,
       };
@@ -154,7 +153,6 @@ class FirebaseAuthService implements AuthServiceInterface {
           'createdAt': FieldValue.serverTimestamp(),
           'favoriteVenues': <String>[],
           'favoriteServices': <String>[],
-          'role': 'user',
           'hasPremiumSubscription': false,
           'isBetaTester': false,
           'emailVerified': user.emailVerified,

@@ -49,11 +49,10 @@ class FeatureGuardDemoScreen extends StatelessWidget {
                       builder:
                           (context) => const FeatureGuardWrapper(
                             roleGuard: true,
-                            allowedRoles: ['admin'],
                             child: _DemoProtectedScreen(
-                              title: 'Admin Area',
+                              title: 'Protected Area',
                               description:
-                                  'This area is only accessible to admins.',
+                                  'This area is only accessible to authenticated users.',
                             ),
                           ),
                     ),
@@ -66,11 +65,10 @@ class FeatureGuardDemoScreen extends StatelessWidget {
                       builder:
                           (context) => const FeatureGuardWrapper(
                             roleGuard: true,
-                            allowedRoles: ['admin', 'moderator'],
                             child: _DemoProtectedScreen(
-                              title: 'Moderator Area',
+                              title: 'Protected Area',
                               description:
-                                  'This area is only accessible to admins and moderators.',
+                                  'This area is only accessible to authenticated users.',
                             ),
                           ),
                     ),
@@ -83,11 +81,10 @@ class FeatureGuardDemoScreen extends StatelessWidget {
                       builder:
                           (context) => const FeatureGuardWrapper(
                             roleGuard: true,
-                            allowedRoles: ['admin', 'vendor'],
                             child: _DemoProtectedScreen(
-                              title: 'Vendor Area',
+                              title: 'Protected Area',
                               description:
-                                  'This area is only accessible to admins and vendors.',
+                                  'This area is only accessible to authenticated users.',
                             ),
                           ),
                     ),
@@ -218,12 +215,11 @@ class FeatureGuardDemoScreen extends StatelessWidget {
                       builder:
                           (context) => const FeatureGuardWrapper(
                             roleGuard: true,
-                            allowedRoles: ['admin'],
                             subscriptionGuard: true,
                             child: _DemoProtectedScreen(
-                              title: 'Admin + Premium',
+                              title: 'Premium Area',
                               description:
-                                  'This area requires admin role and premium subscription.',
+                                  'This area requires authentication and premium subscription.',
                             ),
                           ),
                     ),
@@ -281,24 +277,12 @@ class FeatureGuardDemoScreen extends StatelessWidget {
     );
   }
 
+  // Role toggle has been removed as user roles are no longer used
   Widget _buildRoleToggle(BuildContext context, String role, String label) {
-    final authProvider = Provider.of<AuthProvider>(context);
-    final currentRole = authProvider.currentUser?.role;
-
-    return RadioListTile<String>(
+    return ListTile(
       title: Text(label),
-      value: role,
-      groupValue: currentRole,
-      onChanged: (value) {
-        final user = authProvider.currentUser;
-        if (user != null && value != null) {
-          // In a real app, this would update the user's role
-          // For now, we'll just show a snackbar
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text('Changed role to: $value')));
-        }
-      },
+      subtitle: const Text('User roles have been removed from the application'),
+      enabled: false,
     );
   }
 
