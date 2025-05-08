@@ -26,6 +26,9 @@ class User {
   /// Whether the user's email is verified
   final bool emailVerified;
 
+  /// Authentication provider (email, google, facebook, apple)
+  final String authProvider;
+
   /// Alias for id (for Firebase compatibility)
   String get uid => id;
 
@@ -46,6 +49,7 @@ class User {
     this.isBetaTester = false,
     this.subscriptionExpirationDate,
     this.emailVerified = false,
+    this.authProvider = 'email',
   });
 
   // Create a User from JSON data
@@ -63,6 +67,7 @@ class User {
       hasPremiumSubscription: json['hasPremiumSubscription'] as bool? ?? false,
       isBetaTester: json['isBetaTester'] as bool? ?? false,
       emailVerified: json['emailVerified'] as bool? ?? false,
+      authProvider: json['authProvider'] as String? ?? 'email',
       subscriptionExpirationDate:
           json['subscriptionExpirationDate'] != null
               ? DateTime.parse(json['subscriptionExpirationDate'] as String)
@@ -85,6 +90,7 @@ class User {
       'hasPremiumSubscription': hasPremiumSubscription,
       'isBetaTester': isBetaTester,
       'emailVerified': emailVerified,
+      'authProvider': authProvider,
       'subscriptionExpirationDate':
           subscriptionExpirationDate?.toIso8601String(),
     };
@@ -119,6 +125,7 @@ class User {
       hasPremiumSubscription: data['hasPremiumSubscription'] ?? false,
       isBetaTester: data['isBetaTester'] ?? false,
       emailVerified: data['emailVerified'] ?? false,
+      authProvider: data['authProvider'] ?? 'email',
       subscriptionExpirationDate:
           data['subscriptionExpirationDate'] != null
               ? (data['subscriptionExpirationDate'] as Timestamp).toDate()
@@ -140,6 +147,7 @@ class User {
       'hasPremiumSubscription': hasPremiumSubscription,
       'isBetaTester': isBetaTester,
       'emailVerified': emailVerified,
+      'authProvider': authProvider,
       'subscriptionExpirationDate':
           subscriptionExpirationDate != null
               ? Timestamp.fromDate(subscriptionExpirationDate!)
@@ -161,6 +169,7 @@ class User {
     bool? hasPremiumSubscription,
     bool? isBetaTester,
     bool? emailVerified,
+    String? authProvider,
     DateTime? subscriptionExpirationDate,
   }) {
     return User(
@@ -177,6 +186,7 @@ class User {
           hasPremiumSubscription ?? this.hasPremiumSubscription,
       isBetaTester: isBetaTester ?? this.isBetaTester,
       emailVerified: emailVerified ?? this.emailVerified,
+      authProvider: authProvider ?? this.authProvider,
       subscriptionExpirationDate:
           subscriptionExpirationDate ?? this.subscriptionExpirationDate,
     );
@@ -212,6 +222,21 @@ class User {
     firebase_auth.User firebaseUser, [
     Map<String, dynamic>? firestoreData,
   ]) {
+    // Determine auth provider from Firebase user providers or Firestore data
+    String authProvider = 'email';
+    if (firestoreData != null && firestoreData.containsKey('authProvider')) {
+      authProvider = firestoreData['authProvider'];
+    } else if (firebaseUser.providerData.isNotEmpty) {
+      final providerId = firebaseUser.providerData[0].providerId;
+      if (providerId.contains('google')) {
+        authProvider = 'google';
+      } else if (providerId.contains('facebook')) {
+        authProvider = 'facebook';
+      } else if (providerId.contains('apple')) {
+        authProvider = 'apple';
+      }
+    }
+
     return User(
       id: firebaseUser.uid,
       name: firebaseUser.displayName ?? '',
@@ -234,6 +259,7 @@ class User {
       hasPremiumSubscription: firestoreData?['hasPremiumSubscription'] ?? false,
       isBetaTester: firestoreData?['isBetaTester'] ?? false,
       emailVerified: firebaseUser.emailVerified,
+      authProvider: authProvider,
       subscriptionExpirationDate:
           firestoreData?['subscriptionExpirationDate'] != null
               ? (firestoreData!['subscriptionExpirationDate'] as Timestamp)

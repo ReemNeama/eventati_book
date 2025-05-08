@@ -136,7 +136,7 @@ class AuthProvider with ChangeNotifier {
   }
 
   /// Login with email and password
-  Future<bool> login(String email, String password) async {
+  Future<AuthResult> login(String email, String password) async {
     try {
       _status = AuthStatus.authenticating;
       _errorMessage = null;
@@ -151,23 +151,39 @@ class AuthProvider with ChangeNotifier {
         _user = result.user;
         _status = AuthStatus.authenticated;
         notifyListeners();
-        return true;
+
+        // Check if email is verified for non-social auth users
+        if (_user != null &&
+            !_user!.emailVerified &&
+            _user!.authProvider == 'email') {
+          return AuthResult(
+            isSuccess: true,
+            user: _user,
+            requiresEmailVerification: true,
+          );
+        }
+
+        return AuthResult(
+          isSuccess: true,
+          user: _user,
+          requiresEmailVerification: false,
+        );
       } else {
         _status = AuthStatus.error;
         _errorMessage = result.errorMessage ?? 'Login failed';
         notifyListeners();
-        return false;
+        return AuthResult(isSuccess: false, errorMessage: _errorMessage);
       }
     } catch (e) {
       _status = AuthStatus.error;
       _errorMessage = 'Login failed: ${e.toString()}';
       notifyListeners();
-      return false;
+      return AuthResult(isSuccess: false, errorMessage: _errorMessage);
     }
   }
 
   /// Login with Google
-  Future<bool> loginWithGoogle() async {
+  Future<AuthResult> loginWithGoogle() async {
     try {
       _status = AuthStatus.authenticating;
       _errorMessage = null;
@@ -179,23 +195,27 @@ class AuthProvider with ChangeNotifier {
         _user = result.user;
         _status = AuthStatus.authenticated;
         notifyListeners();
-        return true;
+        return result;
       } else {
         _status = AuthStatus.error;
         _errorMessage = result.errorMessage ?? 'Google login failed';
         notifyListeners();
-        return false;
+        return result;
       }
     } catch (e) {
       _status = AuthStatus.error;
       _errorMessage = 'Google login failed: ${e.toString()}';
       notifyListeners();
-      return false;
+      return AuthResult.failure(_errorMessage!);
     }
   }
 
   /// Register a new user
-  Future<bool> register(String name, String email, String password) async {
+  Future<AuthResult> register(
+    String name,
+    String email,
+    String password,
+  ) async {
     try {
       _status = AuthStatus.authenticating;
       _errorMessage = null;
@@ -211,18 +231,24 @@ class AuthProvider with ChangeNotifier {
         _user = result.user;
         _status = AuthStatus.authenticated;
         notifyListeners();
-        return true;
+
+        // Email verification is always required for new email/password users
+        return AuthResult(
+          isSuccess: true,
+          user: _user,
+          requiresEmailVerification: true,
+        );
       } else {
         _status = AuthStatus.error;
         _errorMessage = result.errorMessage ?? 'Registration failed';
         notifyListeners();
-        return false;
+        return AuthResult.failure(_errorMessage!);
       }
     } catch (e) {
       _status = AuthStatus.error;
       _errorMessage = 'Registration failed: ${e.toString()}';
       notifyListeners();
-      return false;
+      return AuthResult.failure(_errorMessage!);
     }
   }
 
@@ -244,6 +270,38 @@ class AuthProvider with ChangeNotifier {
   Future<bool> resetPassword(String email) async {
     try {
       final result = await _authService.sendPasswordResetEmail(email);
+      if (!result.isSuccess) {
+        _errorMessage = result.errorMessage;
+        notifyListeners();
+      }
+      return result.isSuccess;
+    } catch (e) {
+      _errorMessage = 'Password reset failed: ${e.toString()}';
+      notifyListeners();
+      return false;
+    }
+  }
+
+  /// Verify password reset code
+  Future<bool> verifyPasswordResetCode(String code) async {
+    try {
+      final result = await _authService.verifyPasswordResetCode(code);
+      if (!result.isSuccess) {
+        _errorMessage = result.errorMessage;
+        notifyListeners();
+      }
+      return result.isSuccess;
+    } catch (e) {
+      _errorMessage = 'Verification failed: ${e.toString()}';
+      notifyListeners();
+      return false;
+    }
+  }
+
+  /// Confirm password reset
+  Future<bool> confirmPasswordReset(String code, String newPassword) async {
+    try {
+      final result = await _authService.confirmPasswordReset(code, newPassword);
       if (!result.isSuccess) {
         _errorMessage = result.errorMessage;
         notifyListeners();

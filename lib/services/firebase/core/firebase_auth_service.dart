@@ -213,6 +213,37 @@ class FirebaseAuthService implements AuthServiceInterface {
   }
 
   @override
+  Future<AuthResult> verifyPasswordResetCode(String code) async {
+    try {
+      // If this doesn't throw an exception, the code is valid
+      await _firebaseAuth.verifyPasswordResetCode(code);
+      return AuthResult(isSuccess: true);
+    } on firebase_auth.FirebaseAuthException catch (e) {
+      return AuthResult.failure(_mapFirebaseAuthError(e.code));
+    } catch (e) {
+      return AuthResult.failure('Verification failed: ${e.toString()}');
+    }
+  }
+
+  @override
+  Future<AuthResult> confirmPasswordReset(
+    String code,
+    String newPassword,
+  ) async {
+    try {
+      await _firebaseAuth.confirmPasswordReset(
+        code: code,
+        newPassword: newPassword,
+      );
+      return AuthResult(isSuccess: true);
+    } on firebase_auth.FirebaseAuthException catch (e) {
+      return AuthResult.failure(_mapFirebaseAuthError(e.code));
+    } catch (e) {
+      return AuthResult.failure('Password reset failed: ${e.toString()}');
+    }
+  }
+
+  @override
   Future<AuthResult> verifyEmail() async {
     try {
       final user = _firebaseAuth.currentUser;

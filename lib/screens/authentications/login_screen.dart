@@ -53,7 +53,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     // Attempt to login
-    final success = await authProvider.login(
+    final result = await authProvider.login(
       _emailController.text,
       _passwordController.text,
     );
@@ -64,7 +64,29 @@ class _LoginScreenState extends State<LoginScreen> {
     // Hide loading indicator
     Navigator.pop(context);
 
-    if (success) {
+    if (result.isSuccess) {
+      // Check if email verification is required
+      if (result.requiresEmailVerification) {
+        // Show verification required message
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Please verify your email before continuing.',
+              style: TextStyle(color: Colors.white),
+            ),
+            backgroundColor: Colors.orange,
+          ),
+        );
+
+        // Navigate to verification screen
+        NavigationUtils.navigateToNamed(
+          context,
+          RouteNames.verification,
+          arguments: VerificationArguments(email: _emailController.text),
+        );
+        return;
+      }
+
       // Show success message
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -111,7 +133,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     // Attempt to login with Google
-    final success = await authProvider.loginWithGoogle();
+    final result = await authProvider.loginWithGoogle();
 
     // Only proceed if the widget is still mounted
     if (!mounted) return;
@@ -119,7 +141,7 @@ class _LoginScreenState extends State<LoginScreen> {
     // Hide loading indicator
     Navigator.pop(context);
 
-    if (success) {
+    if (result.isSuccess) {
       // Show success message
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(

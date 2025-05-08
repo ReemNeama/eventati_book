@@ -66,8 +66,16 @@ class AppRouter {
         return route;
 
       case RouteNames.resetPassword:
+        // Check if we have a reset code from deep link
+        final args = settings.arguments;
+        String? oobCode;
+
+        if (args is ResetPasswordArguments) {
+          oobCode = args.oobCode;
+        }
+
         return MaterialPageRoute(
-          builder: (context) => const ResetPasswordScreen(),
+          builder: (context) => ResetPasswordScreen(oobCode: oobCode),
         );
 
       case RouteNames.mainNavigation:

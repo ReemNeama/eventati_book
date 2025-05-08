@@ -51,7 +51,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
 
     // Attempt to register
-    final success = await authProvider.register(
+    final result = await authProvider.register(
       _nameController.text,
       _emailController.text,
       _passwordController.text,
@@ -63,7 +63,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     // Hide loading indicator
     Navigator.pop(context);
 
-    if (success) {
+    if (result.isSuccess) {
       // Show success message
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(

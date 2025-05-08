@@ -56,8 +56,8 @@ class WizardConnection {
     this.serviceRecommendationIds = const [],
     DateTime? createdAt,
     DateTime? updatedAt,
-  })  : createdAt = createdAt ?? DateTime.now(),
-        updatedAt = updatedAt ?? DateTime.now();
+  }) : createdAt = createdAt ?? DateTime.now(),
+       updatedAt = updatedAt ?? DateTime.now();
 
   /// Create a copy of this connection with modified fields
   WizardConnection copyWith({
@@ -122,17 +122,22 @@ class WizardConnection {
       budgetEnabled: json['budgetEnabled'] ?? true,
       guestListEnabled: json['guestListEnabled'] ?? true,
       timelineEnabled: json['timelineEnabled'] ?? true,
-      serviceRecommendationsEnabled: json['serviceRecommendationsEnabled'] ?? true,
+      serviceRecommendationsEnabled:
+          json['serviceRecommendationsEnabled'] ?? true,
       budgetItemIds: List<String>.from(json['budgetItemIds'] ?? []),
       guestGroupIds: List<String>.from(json['guestGroupIds'] ?? []),
       taskIds: List<String>.from(json['taskIds'] ?? []),
-      serviceRecommendationIds: List<String>.from(json['serviceRecommendationIds'] ?? []),
-      createdAt: json['createdAt'] != null
-          ? DateTime.parse(json['createdAt'])
-          : DateTime.now(),
-      updatedAt: json['updatedAt'] != null
-          ? DateTime.parse(json['updatedAt'])
-          : DateTime.now(),
+      serviceRecommendationIds: List<String>.from(
+        json['serviceRecommendationIds'] ?? [],
+      ),
+      createdAt:
+          json['createdAt'] != null
+              ? DateTime.parse(json['createdAt'])
+              : DateTime.now(),
+      updatedAt:
+          json['updatedAt'] != null
+              ? DateTime.parse(json['updatedAt'])
+              : DateTime.now(),
     );
   }
 
@@ -168,17 +173,22 @@ class WizardConnection {
       budgetEnabled: data['budgetEnabled'] ?? true,
       guestListEnabled: data['guestListEnabled'] ?? true,
       timelineEnabled: data['timelineEnabled'] ?? true,
-      serviceRecommendationsEnabled: data['serviceRecommendationsEnabled'] ?? true,
+      serviceRecommendationsEnabled:
+          data['serviceRecommendationsEnabled'] ?? true,
       budgetItemIds: List<String>.from(data['budgetItemIds'] ?? []),
       guestGroupIds: List<String>.from(data['guestGroupIds'] ?? []),
       taskIds: List<String>.from(data['taskIds'] ?? []),
-      serviceRecommendationIds: List<String>.from(data['serviceRecommendationIds'] ?? []),
-      createdAt: data['createdAt'] != null
-          ? (data['createdAt'] as Timestamp).toDate()
-          : DateTime.now(),
-      updatedAt: data['updatedAt'] != null
-          ? (data['updatedAt'] as Timestamp).toDate()
-          : DateTime.now(),
+      serviceRecommendationIds: List<String>.from(
+        data['serviceRecommendationIds'] ?? [],
+      ),
+      createdAt:
+          data['createdAt'] != null
+              ? (data['createdAt'] as Timestamp).toDate()
+              : DateTime.now(),
+      updatedAt:
+          data['updatedAt'] != null
+              ? (data['updatedAt'] as Timestamp).toDate()
+              : DateTime.now(),
     );
   }
 }

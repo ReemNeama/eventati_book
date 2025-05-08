@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/providers/providers.dart';
 import 'package:provider/provider.dart';
+import 'package:eventati_book/routing/routing.dart';
+import 'package:eventati_book/screens/profile/edit_profile_screen.dart';
 
 /// Profile screen that displays user information and settings
 class ProfileScreen extends StatelessWidget {
@@ -21,12 +23,11 @@ class ProfileScreen extends StatelessWidget {
       ),
       body: Consumer<AuthProvider>(
         builder: (context, authProvider, _) {
-          // Mock user data - in a real app, this would come from the auth provider
-          final user = {
-            'name': 'John Doe',
-            'email': 'john.doe@example.com',
-            'profileImage': null, // No image for now
-          };
+          final user = authProvider.user;
+
+          if (user == null) {
+            return const Center(child: Text('No user is logged in'));
+          }
 
           return SingleChildScrollView(
             padding: const EdgeInsets.all(16),
@@ -40,15 +41,22 @@ class ProfileScreen extends StatelessWidget {
                       CircleAvatar(
                         radius: 50,
                         backgroundColor: theme.primaryColor.withAlpha(50),
-                        child: Icon(
-                          Icons.person,
-                          size: 50,
-                          color: theme.primaryColor,
-                        ),
+                        backgroundImage:
+                            user.profileImageUrl != null
+                                ? NetworkImage(user.profileImageUrl!)
+                                : null,
+                        child:
+                            user.profileImageUrl == null
+                                ? Icon(
+                                  Icons.person,
+                                  size: 50,
+                                  color: theme.primaryColor,
+                                )
+                                : null,
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        user['name']!,
+                        user.name,
                         style: const TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
@@ -56,12 +64,35 @@ class ProfileScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        user['email']!,
+                        user.email,
                         style: TextStyle(
                           fontSize: 16,
                           color: isDarkMode ? Colors.white70 : Colors.black54,
                         ),
                       ),
+                      if (!user.emailVerified && user.authProvider == 'email')
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8),
+                          child: TextButton.icon(
+                            onPressed: () {
+                              Navigator.pushNamed(
+                                context,
+                                RouteNames.verification,
+                                arguments: VerificationArguments(
+                                  email: user.email,
+                                ),
+                              );
+                            },
+                            icon: const Icon(
+                              Icons.warning,
+                              color: Colors.orange,
+                            ),
+                            label: const Text(
+                              'Verify Email',
+                              style: TextStyle(color: Colors.orange),
+                            ),
+                          ),
+                        ),
                       const SizedBox(height: 24),
                     ],
                   ),
@@ -78,7 +109,12 @@ class ProfileScreen extends StatelessWidget {
                   icon: Icons.person_outline,
                   title: 'Edit Profile',
                   onTap: () {
-                    // Navigate to edit profile screen
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const EditProfileScreen(),
+                      ),
+                    );
                   },
                 ),
                 _buildSettingItem(

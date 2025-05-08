@@ -14,7 +14,10 @@ class VerificationArguments extends RouteArguments {
 
 /// Arguments for reset password screen
 class ResetPasswordArguments extends RouteArguments {
-  const ResetPasswordArguments() : super();
+  /// The out-of-band code from the password reset link
+  final String oobCode;
+
+  const ResetPasswordArguments({required this.oobCode}) : super();
 }
 
 /// Arguments for main navigation screen

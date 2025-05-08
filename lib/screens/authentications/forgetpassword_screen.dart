@@ -57,19 +57,38 @@ class _ForgetpasswordScreenState extends State<ForgetpasswordScreen> {
     Navigator.pop(context);
 
     if (success) {
-      // Show success message
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Password reset link sent to $email. Please check your inbox.',
-            style: const TextStyle(color: Colors.white),
-          ),
-          backgroundColor: Colors.green,
-        ),
+      // Show success message with detailed instructions
+      showDialog(
+        context: context,
+        builder:
+            (context) => AlertDialog(
+              title: const Text('Password Reset Email Sent'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('A password reset link has been sent to $email.'),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Please check your inbox and follow the instructions to reset your password.',
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Note: The link will expire after 1 hour for security reasons.',
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.pushReplacementNamed(context, RouteNames.login);
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
       );
-
-      // Navigate back to login screen
-      NavigationUtils.navigateToNamedReplacement(context, RouteNames.login);
     } else {
       // Show error message
       ScaffoldMessenger.of(context).showSnackBar(
