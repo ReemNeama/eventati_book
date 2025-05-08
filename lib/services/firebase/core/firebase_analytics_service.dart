@@ -285,6 +285,193 @@ class FirebaseAnalyticsService implements AnalyticsServiceInterface {
   }
 
   @override
+  Future<void> setUserProfileProperties({
+    required String userId,
+    String? displayName,
+    String? email,
+    String? photoUrl,
+    DateTime? createdAt,
+    Map<String, dynamic>? additionalProperties,
+  }) async {
+    try {
+      // Set user ID
+      await setUserId(userId);
+
+      // Set standard profile properties
+      final properties = <String, String>{};
+
+      if (displayName != null) {
+        properties['display_name'] = displayName;
+      }
+
+      if (email != null) {
+        properties['email'] = email;
+      }
+
+      if (photoUrl != null) {
+        properties['photo_url'] = photoUrl;
+      }
+
+      if (createdAt != null) {
+        properties['created_at'] = createdAt.toIso8601String();
+
+        // Calculate account age in days
+        final accountAgeDays = DateTime.now().difference(createdAt).inDays;
+        properties['account_age_days'] = accountAgeDays.toString();
+      }
+
+      // Add additional properties
+      if (additionalProperties != null) {
+        for (final entry in additionalProperties.entries) {
+          properties[entry.key] = entry.value.toString();
+        }
+      }
+
+      // Set all properties
+      await setUserProperties(properties: properties);
+
+      Logger.d(
+        'User profile properties set for user: $userId',
+        tag: 'FirebaseAnalyticsService',
+      );
+    } catch (e) {
+      Logger.e(
+        'Error setting user profile properties: $e',
+        tag: 'FirebaseAnalyticsService',
+      );
+    }
+  }
+
+  @override
+  Future<void> setUserPreferences({
+    required String userId,
+    required Map<String, dynamic> preferences,
+  }) async {
+    try {
+      // Set user ID
+      await setUserId(userId);
+
+      // Convert preferences to string values
+      final properties = <String, String>{};
+
+      for (final entry in preferences.entries) {
+        // Prefix preference keys to avoid collisions
+        properties['pref_${entry.key}'] = entry.value.toString();
+      }
+
+      // Set all properties
+      await setUserProperties(properties: properties);
+
+      // Log an event for preference changes
+      await _analytics.logEvent(
+        name: 'user_preferences_updated',
+        parameters: {
+          'user_id': userId,
+          'preference_count': preferences.length,
+          'timestamp': DateTime.now().millisecondsSinceEpoch,
+        },
+      );
+
+      Logger.d(
+        'User preferences set for user: $userId',
+        tag: 'FirebaseAnalyticsService',
+      );
+    } catch (e) {
+      Logger.e(
+        'Error setting user preferences: $e',
+        tag: 'FirebaseAnalyticsService',
+      );
+    }
+  }
+
+  @override
+  Future<void> setUserSegment({
+    required String userId,
+    required String segmentName,
+    Map<String, dynamic>? segmentProperties,
+  }) async {
+    try {
+      // Set user ID
+      await setUserId(userId);
+
+      // Set segment as a user property
+      await _analytics.setUserProperty(name: 'segment', value: segmentName);
+
+      // Set segment-specific properties
+      if (segmentProperties != null) {
+        final properties = <String, String>{};
+
+        for (final entry in segmentProperties.entries) {
+          // Prefix segment properties to avoid collisions
+          properties['segment_${entry.key}'] = entry.value.toString();
+        }
+
+        // Set all properties
+        await setUserProperties(properties: properties);
+      }
+
+      // Log an event for segment assignment
+      await _analytics.logEvent(
+        name: 'user_segment_assigned',
+        parameters: {
+          'user_id': userId,
+          'segment_name': segmentName,
+          'timestamp': DateTime.now().millisecondsSinceEpoch,
+        },
+      );
+
+      Logger.d(
+        'User segment set for user: $userId - Segment: $segmentName',
+        tag: 'FirebaseAnalyticsService',
+      );
+    } catch (e) {
+      Logger.e(
+        'Error setting user segment: $e',
+        tag: 'FirebaseAnalyticsService',
+      );
+    }
+  }
+
+  @override
+  Future<void> trackUserLifecycleEvent({
+    required String userId,
+    required String eventName,
+    Map<String, dynamic>? parameters,
+  }) async {
+    try {
+      // Set user ID
+      await setUserId(userId);
+
+      // Create parameters map with user ID
+      final eventParameters = <String, dynamic>{
+        'user_id': userId,
+        'timestamp': DateTime.now().millisecondsSinceEpoch,
+      };
+
+      // Add additional parameters
+      if (parameters != null) {
+        eventParameters.addAll(parameters);
+      }
+
+      // Log the lifecycle event
+      await _analytics.logEvent(
+        name: 'user_lifecycle_${eventName.toLowerCase()}',
+        parameters: eventParameters,
+      );
+
+      Logger.d(
+        'User lifecycle event tracked: $eventName for user: $userId',
+        tag: 'FirebaseAnalyticsService',
+      );
+    } catch (e) {
+      Logger.e(
+        'Error tracking user lifecycle event: $e',
+        tag: 'FirebaseAnalyticsService',
+      );
+    }
+  }
+
+  @override
   Future<void> setCurrentScreen(String screenName) async {
     try {
       // Use logScreenView instead of setCurrentScreen (which is deprecated)
@@ -518,6 +705,134 @@ class FirebaseAnalyticsService implements AnalyticsServiceInterface {
   }
 
   @override
+  Future<void> trackConversion({
+    required String conversionName,
+    required String conversionType,
+    double? value,
+    String? currency,
+    Map<String, dynamic>? parameters,
+  }) async {
+    try {
+      final eventParameters = <String, dynamic>{
+        'conversion_name': conversionName,
+        'conversion_type': conversionType,
+        'timestamp': DateTime.now().millisecondsSinceEpoch,
+      };
+
+      if (value != null) {
+        eventParameters['value'] = value;
+      }
+
+      if (currency != null) {
+        eventParameters['currency'] = currency;
+      }
+
+      if (parameters != null) {
+        eventParameters.addAll(parameters);
+      }
+
+      await _analytics.logEvent(
+        name: 'conversion',
+        parameters: eventParameters,
+      );
+
+      Logger.d(
+        'Conversion tracked: $conversionName ($conversionType)',
+        tag: 'FirebaseAnalyticsService',
+      );
+    } catch (e) {
+      Logger.e(
+        'Error tracking conversion: $e',
+        tag: 'FirebaseAnalyticsService',
+      );
+    }
+  }
+
+  @override
+  Future<void> trackFunnelStep({
+    required String funnelName,
+    required int stepNumber,
+    required String stepName,
+    required bool completed,
+    Map<String, dynamic>? parameters,
+  }) async {
+    try {
+      final eventParameters = <String, dynamic>{
+        'funnel_name': funnelName,
+        'step_number': stepNumber,
+        'step_name': stepName,
+        'completed': completed,
+        'timestamp': DateTime.now().millisecondsSinceEpoch,
+      };
+
+      if (parameters != null) {
+        eventParameters.addAll(parameters);
+      }
+
+      await _analytics.logEvent(
+        name: 'funnel_step',
+        parameters: eventParameters,
+      );
+
+      Logger.d(
+        'Funnel step tracked: $funnelName - Step $stepNumber: $stepName (Completed: $completed)',
+        tag: 'FirebaseAnalyticsService',
+      );
+    } catch (e) {
+      Logger.e(
+        'Error tracking funnel step: $e',
+        tag: 'FirebaseAnalyticsService',
+      );
+    }
+  }
+
+  @override
+  Future<void> trackAttribution({
+    required String campaign,
+    required String source,
+    required String medium,
+    String? term,
+    String? content,
+    Map<String, dynamic>? parameters,
+  }) async {
+    try {
+      final eventParameters = <String, dynamic>{
+        'campaign': campaign,
+        'source': source,
+        'medium': medium,
+        'timestamp': DateTime.now().millisecondsSinceEpoch,
+      };
+
+      if (term != null) {
+        eventParameters['term'] = term;
+      }
+
+      if (content != null) {
+        eventParameters['content'] = content;
+      }
+
+      if (parameters != null) {
+        eventParameters.addAll(parameters);
+      }
+
+      await _analytics.logEvent(
+        name: 'attribution',
+        parameters: eventParameters,
+      );
+
+      Logger.d(
+        'Attribution tracked: $campaign / $source / $medium',
+        tag: 'FirebaseAnalyticsService',
+      );
+    } catch (e) {
+      Logger.e(
+        'Error tracking attribution: $e',
+        tag: 'FirebaseAnalyticsService',
+      );
+    }
+  }
+
+  @override
   Future<void> trackAchievementUnlocked({
     required String achievementId,
     required String achievementName,
@@ -668,6 +983,233 @@ class FirebaseAnalyticsService implements AnalyticsServiceInterface {
     } catch (e) {
       Logger.e(
         'Error tracking notification opened: $e',
+        tag: 'FirebaseAnalyticsService',
+      );
+    }
+  }
+
+  @override
+  Future<void> trackFeatureUsage({
+    required String featureName,
+    required String action,
+    Map<String, dynamic>? parameters,
+  }) async {
+    try {
+      await _analytics.logEvent(
+        name: 'feature_usage',
+        parameters: {
+          'feature_name': featureName,
+          'action': action,
+          'timestamp': DateTime.now().millisecondsSinceEpoch,
+          ...?parameters,
+        },
+      );
+
+      Logger.d(
+        'Feature usage tracked: $featureName - $action',
+        tag: 'FirebaseAnalyticsService',
+      );
+    } catch (e) {
+      Logger.e(
+        'Error tracking feature usage: $e',
+        tag: 'FirebaseAnalyticsService',
+      );
+    }
+  }
+
+  @override
+  Future<void> trackUserEngagement({
+    required String activityType,
+    required int timeSpentMs,
+    Map<String, dynamic>? parameters,
+  }) async {
+    try {
+      await _analytics.logEvent(
+        name: 'user_engagement',
+        parameters: {
+          'activity_type': activityType,
+          'time_spent_ms': timeSpentMs,
+          'timestamp': DateTime.now().millisecondsSinceEpoch,
+          ...?parameters,
+        },
+      );
+
+      Logger.d(
+        'User engagement tracked: $activityType - ${timeSpentMs}ms',
+        tag: 'FirebaseAnalyticsService',
+      );
+    } catch (e) {
+      Logger.e(
+        'Error tracking user engagement: $e',
+        tag: 'FirebaseAnalyticsService',
+      );
+    }
+  }
+
+  @override
+  Future<void> trackFormSubmission({
+    required String formName,
+    required bool success,
+    String? errorMessage,
+    Map<String, dynamic>? formData,
+  }) async {
+    try {
+      final parameters = <String, dynamic>{
+        'form_name': formName,
+        'success': success,
+        'timestamp': DateTime.now().millisecondsSinceEpoch,
+      };
+
+      if (errorMessage != null) {
+        parameters['error_message'] = errorMessage;
+      }
+
+      if (formData != null) {
+        // Add form data fields individually to avoid nested objects
+        for (final entry in formData.entries) {
+          // Prefix form data keys to avoid collisions
+          parameters['form_data_${entry.key}'] = entry.value.toString();
+        }
+      }
+
+      await _analytics.logEvent(
+        name: 'form_submission',
+        parameters: parameters,
+      );
+
+      Logger.d(
+        'Form submission tracked: $formName - Success: $success',
+        tag: 'FirebaseAnalyticsService',
+      );
+    } catch (e) {
+      Logger.e(
+        'Error tracking form submission: $e',
+        tag: 'FirebaseAnalyticsService',
+      );
+    }
+  }
+
+  @override
+  Future<void> trackContentView({
+    required String contentType,
+    required String itemId,
+    required String itemName,
+    Map<String, dynamic>? parameters,
+  }) async {
+    try {
+      await _analytics.logEvent(
+        name: 'content_view',
+        parameters: {
+          'content_type': contentType,
+          'item_id': itemId,
+          'item_name': itemName,
+          'timestamp': DateTime.now().millisecondsSinceEpoch,
+          ...?parameters,
+        },
+      );
+
+      Logger.d(
+        'Content view tracked: $contentType - $itemName',
+        tag: 'FirebaseAnalyticsService',
+      );
+    } catch (e) {
+      Logger.e(
+        'Error tracking content view: $e',
+        tag: 'FirebaseAnalyticsService',
+      );
+    }
+  }
+
+  @override
+  Future<void> trackPerformanceMetric({
+    required String metricName,
+    required int valueMs,
+    Map<String, dynamic>? parameters,
+  }) async {
+    try {
+      await _analytics.logEvent(
+        name: 'performance_metric',
+        parameters: {
+          'metric_name': metricName,
+          'value_ms': valueMs,
+          'timestamp': DateTime.now().millisecondsSinceEpoch,
+          ...?parameters,
+        },
+      );
+
+      Logger.d(
+        'Performance metric tracked: $metricName - ${valueMs}ms',
+        tag: 'FirebaseAnalyticsService',
+      );
+    } catch (e) {
+      Logger.e(
+        'Error tracking performance metric: $e',
+        tag: 'FirebaseAnalyticsService',
+      );
+    }
+  }
+
+  @override
+  Future<void> trackWizardCompletion({
+    required String wizardName,
+    required bool completed,
+    required int stepsCompleted,
+    required int totalSteps,
+    Map<String, dynamic>? parameters,
+  }) async {
+    try {
+      await _analytics.logEvent(
+        name: 'wizard_completion',
+        parameters: {
+          'wizard_name': wizardName,
+          'completed': completed,
+          'steps_completed': stepsCompleted,
+          'total_steps': totalSteps,
+          'completion_percentage':
+              totalSteps > 0 ? (stepsCompleted / totalSteps * 100).round() : 0,
+          'timestamp': DateTime.now().millisecondsSinceEpoch,
+          ...?parameters,
+        },
+      );
+
+      Logger.d(
+        'Wizard completion tracked: $wizardName - Completed: $completed ($stepsCompleted/$totalSteps)',
+        tag: 'FirebaseAnalyticsService',
+      );
+    } catch (e) {
+      Logger.e(
+        'Error tracking wizard completion: $e',
+        tag: 'FirebaseAnalyticsService',
+      );
+    }
+  }
+
+  @override
+  Future<void> trackEventPlanningAction({
+    required String eventId,
+    required String eventType,
+    required String actionType,
+    Map<String, dynamic>? parameters,
+  }) async {
+    try {
+      await _analytics.logEvent(
+        name: 'event_planning_action',
+        parameters: {
+          'event_id': eventId,
+          'event_type': eventType,
+          'action_type': actionType,
+          'timestamp': DateTime.now().millisecondsSinceEpoch,
+          ...?parameters,
+        },
+      );
+
+      Logger.d(
+        'Event planning action tracked: $eventType - $actionType',
+        tag: 'FirebaseAnalyticsService',
+      );
+    } catch (e) {
+      Logger.e(
+        'Error tracking event planning action: $e',
         tag: 'FirebaseAnalyticsService',
       );
     }

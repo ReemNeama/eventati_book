@@ -70,6 +70,36 @@ abstract class AnalyticsServiceInterface {
   /// Set user ID
   Future<void> setUserId(String? userId);
 
+  /// Set user profile properties
+  Future<void> setUserProfileProperties({
+    required String userId,
+    String? displayName,
+    String? email,
+    String? photoUrl,
+    DateTime? createdAt,
+    Map<String, dynamic>? additionalProperties,
+  });
+
+  /// Set user preferences
+  Future<void> setUserPreferences({
+    required String userId,
+    required Map<String, dynamic> preferences,
+  });
+
+  /// Set user segment
+  Future<void> setUserSegment({
+    required String userId,
+    required String segmentName,
+    Map<String, dynamic>? segmentProperties,
+  });
+
+  /// Track user lifecycle event
+  Future<void> trackUserLifecycleEvent({
+    required String userId,
+    required String eventName,
+    Map<String, dynamic>? parameters,
+  });
+
   /// Set current screen
   Future<void> setCurrentScreen(String screenName);
 
@@ -127,6 +157,34 @@ abstract class AnalyticsServiceInterface {
     required List<String> itemNames,
   });
 
+  /// Track conversion event
+  Future<void> trackConversion({
+    required String conversionName,
+    required String conversionType,
+    double? value,
+    String? currency,
+    Map<String, dynamic>? parameters,
+  });
+
+  /// Track funnel step
+  Future<void> trackFunnelStep({
+    required String funnelName,
+    required int stepNumber,
+    required String stepName,
+    required bool completed,
+    Map<String, dynamic>? parameters,
+  });
+
+  /// Track attribution
+  Future<void> trackAttribution({
+    required String campaign,
+    required String source,
+    required String medium,
+    String? term,
+    String? content,
+    Map<String, dynamic>? parameters,
+  });
+
   /// Track share event
   Future<void> trackShare({
     required String contentType,
@@ -165,5 +223,59 @@ abstract class AnalyticsServiceInterface {
   Future<void> trackNotificationOpened({
     required String notificationId,
     required String notificationType,
+  });
+
+  /// Track feature usage event
+  Future<void> trackFeatureUsage({
+    required String featureName,
+    required String action,
+    Map<String, dynamic>? parameters,
+  });
+
+  /// Track user engagement event
+  Future<void> trackUserEngagement({
+    required String activityType,
+    required int timeSpentMs,
+    Map<String, dynamic>? parameters,
+  });
+
+  /// Track form submission event
+  Future<void> trackFormSubmission({
+    required String formName,
+    required bool success,
+    String? errorMessage,
+    Map<String, dynamic>? formData,
+  });
+
+  /// Track content view event
+  Future<void> trackContentView({
+    required String contentType,
+    required String itemId,
+    required String itemName,
+    Map<String, dynamic>? parameters,
+  });
+
+  /// Track performance metric
+  Future<void> trackPerformanceMetric({
+    required String metricName,
+    required int valueMs,
+    Map<String, dynamic>? parameters,
+  });
+
+  /// Track wizard completion
+  Future<void> trackWizardCompletion({
+    required String wizardName,
+    required bool completed,
+    required int stepsCompleted,
+    required int totalSteps,
+    Map<String, dynamic>? parameters,
+  });
+
+  /// Track event planning action
+  Future<void> trackEventPlanningAction({
+    required String eventId,
+    required String eventType,
+    required String actionType,
+    Map<String, dynamic>? parameters,
   });
 }

@@ -2,18 +2,15 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:eventati_book/models/models.dart';
-import 'package:eventati_book/services/firebase/firestore/event_firestore_service.dart';
-import 'package:eventati_book/services/firebase/utils/firestore_service.dart';
-import 'package:eventati_book/services/firebase/firestore/guest_firestore_service.dart';
-import 'package:eventati_book/services/firebase/firestore/service_firestore_service.dart';
-import 'package:eventati_book/services/firebase/firestore/task_firestore_service.dart';
-import 'package:eventati_book/services/firebase/firestore/user_firestore_service.dart';
-import 'package:eventati_book/services/interfaces/database_service_interface.dart';
+import 'package:eventati_book/services/firebase/migration/budget_migration_utility.dart';
+import 'package:eventati_book/services/firebase/migration/event_migration_utility.dart';
+import 'package:eventati_book/services/firebase/migration/guest_migration_utility.dart';
+import 'package:eventati_book/services/firebase/migration/migration_result.dart';
+import 'package:eventati_book/services/firebase/migration/task_migration_utility.dart';
+import 'package:eventati_book/services/firebase/migration/user_migration_utility.dart';
 import 'package:eventati_book/utils/logger.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart' show Icons;
 
 /// Service for migrating data from tempDB to Firebase
 class DataMigrationService {
@@ -23,45 +20,18 @@ class DataMigrationService {
   /// Firestore instance - used for direct Firestore operations when needed
   final FirebaseFirestore _firestore;
 
-  /// User Firestore service
-  final UserFirestoreService _userService;
-
-  /// Event Firestore service
-  final EventFirestoreService _eventService;
-
-  /// Service Firestore service
-  final ServiceFirestoreService _serviceService;
-
-  /// Guest Firestore service
-  final GuestFirestoreService _guestService;
-
-  /// Task Firestore service
-  final TaskFirestoreService _taskService;
-
-  /// Database service
-  final DatabaseServiceInterface _databaseService;
-
   /// Constructor
   DataMigrationService({
     firebase_auth.FirebaseAuth? auth,
     FirebaseFirestore? firestore,
-    UserFirestoreService? userService,
-    EventFirestoreService? eventService,
-    ServiceFirestoreService? serviceService,
-    GuestFirestoreService? guestService,
-    TaskFirestoreService? taskService,
-    DatabaseServiceInterface? databaseService,
   }) : _auth = auth ?? firebase_auth.FirebaseAuth.instance,
-       _firestore = firestore ?? FirebaseFirestore.instance,
-       _userService = userService ?? UserFirestoreService(),
-       _eventService = eventService ?? EventFirestoreService(),
-       _serviceService = serviceService ?? ServiceFirestoreService(),
-       _guestService = guestService ?? GuestFirestoreService(),
-       _taskService = taskService ?? TaskFirestoreService(),
-       _databaseService = databaseService ?? FirestoreService();
+       _firestore = firestore ?? FirebaseFirestore.instance;
 
   /// Migrate all data from tempDB to Firebase
-  Future<void> migrateAllData() async {
+  Future<MigrationResult> migrateAllData() async {
+    final startTime = DateTime.now();
+    final results = <MigrationResult>[];
+
     try {
       // Check if platform is supported
       if (!kIsWeb && !Platform.isAndroid && !Platform.isIOS) {
@@ -69,7 +39,16 @@ class DataMigrationService {
           'Firebase is not supported on this platform',
           tag: 'DataMigrationService',
         );
-        return;
+        return MigrationResult.failure(
+          errorMessage: 'Firebase is not supported on this platform',
+          entitiesMigrated: 0,
+          entitiesFailed: 0,
+          migratedIds: const [],
+          failedIds: const [],
+          idMap: const {},
+          startTime: startTime,
+          endTime: DateTime.now(),
+        );
       }
 
       // Check if user is logged in
@@ -80,21 +59,277 @@ class DataMigrationService {
       // Start migration
       Logger.i('Starting data migration...', tag: 'DataMigrationService');
 
-      // Migration is not implemented yet
-      // This is a placeholder for future implementation
+      // 1. Migrate users
+      Logger.i('Migrating users...', tag: 'DataMigrationService');
+      final userMigrationUtility = UserMigrationUtility();
+      final userResult = await userMigrationUtility.migrateAllUsers();
+      results.add(userResult);
+
+      if (!userResult.success) {
+        Logger.e(
+          'User migration failed: ${userResult.errorMessage}',
+          tag: 'DataMigrationService',
+        );
+        return MigrationResult.combine(results);
+      }
+
+      // 2. Migrate events
+      Logger.i('Migrating events...', tag: 'DataMigrationService');
+      final eventMigrationUtility = EventMigrationUtility();
+      final eventResult = await eventMigrationUtility.migrateAllEvents();
+      results.add(eventResult);
+
+      if (!eventResult.success) {
+        Logger.e(
+          'Event migration failed: ${eventResult.errorMessage}',
+          tag: 'DataMigrationService',
+        );
+        return MigrationResult.combine(results);
+      }
+
+      // 3. Migrate planning data for each event
+      for (final eventId in eventResult.idMap.values) {
+        // 3.1 Migrate budget data
+        Logger.i(
+          'Migrating budget data for event $eventId...',
+          tag: 'DataMigrationService',
+        );
+        final budgetMigrationUtility = BudgetMigrationUtility(eventId: eventId);
+        final budgetResult = await budgetMigrationUtility.migrateFullBudget();
+        results.add(budgetResult);
+
+        // 3.2 Migrate guest data
+        Logger.i(
+          'Migrating guest data for event $eventId...',
+          tag: 'DataMigrationService',
+        );
+        final guestMigrationUtility = GuestMigrationUtility(eventId: eventId);
+        final guestResult = await guestMigrationUtility.migrateFullGuestList();
+        results.add(guestResult);
+
+        // 3.3 Migrate task data
+        Logger.i(
+          'Migrating task data for event $eventId...',
+          tag: 'DataMigrationService',
+        );
+        final taskMigrationUtility = TaskMigrationUtility(eventId: eventId);
+        final taskResult = await taskMigrationUtility.migrateFullTaskData();
+        results.add(taskResult);
+      }
+
+      // Migration complete
+      final combinedResult = MigrationResult.combine(results);
+
+      if (combinedResult.success) {
+        Logger.i(
+          'Data migration completed successfully. Migrated ${combinedResult.entitiesMigrated} entities.',
+          tag: 'DataMigrationService',
+        );
+      } else {
+        Logger.w(
+          'Data migration completed with issues. Migrated ${combinedResult.entitiesMigrated} entities, failed ${combinedResult.entitiesFailed} entities.',
+          tag: 'DataMigrationService',
+        );
+      }
+
+      return combinedResult;
+    } catch (e) {
+      Logger.e('Error migrating data: $e', tag: 'DataMigrationService');
+
+      // Attempt rollback if there are any successful migrations
+      if (results.isNotEmpty) {
+        await _rollbackMigration(results);
+      }
+
+      return MigrationResult.failure(
+        errorMessage: 'Error migrating data: $e',
+        exception: e,
+        entitiesMigrated: results.fold(
+          0,
+          (total, result) => total + result.entitiesMigrated,
+        ),
+        entitiesFailed:
+            results.fold(0, (total, result) => total + result.entitiesFailed) +
+            1,
+        migratedIds: results.expand((result) => result.migratedIds).toList(),
+        failedIds: results.expand((result) => result.failedIds).toList(),
+        idMap: results.fold({}, (map, result) => map..addAll(result.idMap)),
+        startTime: startTime,
+        endTime: DateTime.now(),
+      );
+    }
+  }
+
+  /// Rollback a migration
+  Future<void> _rollbackMigration(List<MigrationResult> results) async {
+    try {
+      Logger.i('Rolling back migration...', tag: 'DataMigrationService');
+
+      // Rollback in reverse order (dependencies first)
+      for (final result in results.reversed) {
+        if (result.success && result.migratedIds.isNotEmpty) {
+          // Extract collection path from the first migrated ID
+          final collectionPath = result.migratedIds.first.split('/').first;
+
+          // Delete all migrated documents
+          for (final id in result.migratedIds) {
+            try {
+              await _firestore.collection(collectionPath).doc(id).delete();
+            } catch (e) {
+              Logger.e(
+                'Error deleting document $id during rollback: $e',
+                tag: 'DataMigrationService',
+              );
+            }
+          }
+        }
+      }
+
+      Logger.i('Rollback completed', tag: 'DataMigrationService');
+    } catch (e) {
+      Logger.e('Error during rollback: $e', tag: 'DataMigrationService');
+    }
+  }
+
+  /// Migrate data for a specific user
+  Future<MigrationResult> migrateUserData(String userId) async {
+    final startTime = DateTime.now();
+    final results = <MigrationResult>[];
+
+    try {
+      // Check if platform is supported
+      if (!kIsWeb && !Platform.isAndroid && !Platform.isIOS) {
+        Logger.i(
+          'Firebase is not supported on this platform',
+          tag: 'DataMigrationService',
+        );
+        return MigrationResult.failure(
+          errorMessage: 'Firebase is not supported on this platform',
+          entitiesMigrated: 0,
+          entitiesFailed: 0,
+          migratedIds: const [],
+          failedIds: const [],
+          idMap: const {},
+          startTime: startTime,
+          endTime: DateTime.now(),
+        );
+      }
+
+      // Check if user is logged in
+      if (_auth.currentUser == null) {
+        throw Exception('User must be logged in to migrate data');
+      }
+
+      // Start migration
       Logger.i(
-        'Data migration not implemented yet',
+        'Starting data migration for user $userId...',
         tag: 'DataMigrationService',
       );
 
-      // Migration complete
+      // 1. Migrate user
+      Logger.i('Migrating user $userId...', tag: 'DataMigrationService');
+      final userMigrationUtility = UserMigrationUtility();
+      final userResult = await userMigrationUtility.migrateUser(userId);
+      results.add(userResult);
+
+      if (!userResult.success) {
+        Logger.e(
+          'User migration failed: ${userResult.errorMessage}',
+          tag: 'DataMigrationService',
+        );
+        return MigrationResult.combine(results);
+      }
+
+      // 2. Migrate events for the user
       Logger.i(
-        'Data migration completed successfully',
+        'Migrating events for user $userId...',
         tag: 'DataMigrationService',
       );
+      final eventMigrationUtility = EventMigrationUtility();
+      final eventResult = await eventMigrationUtility.migrateUserEvents(userId);
+      results.add(eventResult);
+
+      if (!eventResult.success) {
+        Logger.e(
+          'Event migration failed: ${eventResult.errorMessage}',
+          tag: 'DataMigrationService',
+        );
+        return MigrationResult.combine(results);
+      }
+
+      // 3. Migrate planning data for each event
+      for (final eventId in eventResult.idMap.values) {
+        // 3.1 Migrate budget data
+        Logger.i(
+          'Migrating budget data for event $eventId...',
+          tag: 'DataMigrationService',
+        );
+        final budgetMigrationUtility = BudgetMigrationUtility(eventId: eventId);
+        final budgetResult = await budgetMigrationUtility.migrateFullBudget();
+        results.add(budgetResult);
+
+        // 3.2 Migrate guest data
+        Logger.i(
+          'Migrating guest data for event $eventId...',
+          tag: 'DataMigrationService',
+        );
+        final guestMigrationUtility = GuestMigrationUtility(eventId: eventId);
+        final guestResult = await guestMigrationUtility.migrateFullGuestList();
+        results.add(guestResult);
+
+        // 3.3 Migrate task data
+        Logger.i(
+          'Migrating task data for event $eventId...',
+          tag: 'DataMigrationService',
+        );
+        final taskMigrationUtility = TaskMigrationUtility(eventId: eventId);
+        final taskResult = await taskMigrationUtility.migrateFullTaskData();
+        results.add(taskResult);
+      }
+
+      // Migration complete
+      final combinedResult = MigrationResult.combine(results);
+
+      if (combinedResult.success) {
+        Logger.i(
+          'Data migration for user $userId completed successfully. Migrated ${combinedResult.entitiesMigrated} entities.',
+          tag: 'DataMigrationService',
+        );
+      } else {
+        Logger.w(
+          'Data migration for user $userId completed with issues. Migrated ${combinedResult.entitiesMigrated} entities, failed ${combinedResult.entitiesFailed} entities.',
+          tag: 'DataMigrationService',
+        );
+      }
+
+      return combinedResult;
     } catch (e) {
-      Logger.e('Error migrating data: $e', tag: 'DataMigrationService');
-      rethrow;
+      Logger.e(
+        'Error migrating data for user $userId: $e',
+        tag: 'DataMigrationService',
+      );
+
+      // Attempt rollback if there are any successful migrations
+      if (results.isNotEmpty) {
+        await _rollbackMigration(results);
+      }
+
+      return MigrationResult.failure(
+        errorMessage: 'Error migrating data for user $userId: $e',
+        exception: e,
+        entitiesMigrated: results.fold(
+          0,
+          (total, result) => total + result.entitiesMigrated,
+        ),
+        entitiesFailed:
+            results.fold(0, (total, result) => total + result.entitiesFailed) +
+            1,
+        migratedIds: results.expand((result) => result.migratedIds).toList(),
+        failedIds: results.expand((result) => result.failedIds).toList(),
+        idMap: results.fold({}, (map, result) => map..addAll(result.idMap)),
+        startTime: startTime,
+        endTime: DateTime.now(),
+      );
     }
   }
 
@@ -103,17 +338,26 @@ class DataMigrationService {
     try {
       // Check if platform is supported
       if (!kIsWeb && !Platform.isAndroid && !Platform.isIOS) {
+        Logger.i(
+          'Firebase is not supported on this platform',
+          tag: 'DataMigrationService',
+        );
         return false;
       }
 
       // Check if user is logged in
       if (_auth.currentUser == null) {
+        Logger.i(
+          'User must be logged in to check migration status',
+          tag: 'DataMigrationService',
+        );
         return false;
       }
 
       // Check if users already exist in Firebase
-      final existingUsers = await _databaseService.getCollection('users');
-      if (existingUsers.isNotEmpty) {
+      final usersCollection = _firestore.collection('users');
+      final querySnapshot = await usersCollection.limit(1).get();
+      if (querySnapshot.docs.isNotEmpty) {
         // If users exist, migration is not needed
         return false;
       }
@@ -122,7 +366,7 @@ class DataMigrationService {
       return true;
     } catch (e) {
       Logger.e(
-        'Error checking if migration is needed: $e',
+        'Error checking migration status: $e',
         tag: 'DataMigrationService',
       );
       return false;
@@ -156,68 +400,32 @@ class DataMigrationService {
         tag: 'DataMigrationService',
       );
 
-      // Create sample user
-      final user = User(
-        id: _auth.currentUser!.uid,
-        name: _auth.currentUser!.displayName ?? 'Sample User',
-        email: _auth.currentUser!.email ?? 'user@example.com',
-        createdAt: DateTime.now(),
-      );
-      await _userService.createUser(user);
+      // Create sample user document directly in Firestore
+      await _firestore.collection('users').doc(_auth.currentUser!.uid).set({
+        'name': _auth.currentUser!.displayName ?? 'Sample User',
+        'email': _auth.currentUser!.email ?? 'user@example.com',
+        'createdAt': FieldValue.serverTimestamp(),
+      });
 
-      // Create sample event
-      final event = EventTemplate(
-        id: 'sample-event',
-        name: 'Sample Event',
-        description: 'This is a sample event created for testing',
-        icon: Icons.event,
-        subtypes: ['wedding', 'celebration'],
-        defaultServices: {'venue': true, 'catering': true, 'photography': true},
-        suggestedTasks: ['Book venue', 'Send invitations', 'Order cake'],
-        userId: _auth.currentUser!.uid,
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-        status: 'active',
-      );
-      await _eventService.createEvent(event);
+      Logger.i('Sample user created', tag: 'DataMigrationService');
 
-      // Create sample venue using the service
-      final venue = Venue(
-        name: 'Sample Venue',
-        description: 'This is a sample venue created for testing',
-        rating: 4.5,
-        venueTypes: ['indoor', 'outdoor'],
-        minCapacity: 50,
-        maxCapacity: 200,
-        pricePerEvent: 5000,
-        imageUrl: 'assets/images/venue_placeholder.jpg',
-        features: ['parking', 'wifi', 'catering'],
-      );
+      // Create sample event document directly in Firestore
+      final eventId = 'sample-event-${DateTime.now().millisecondsSinceEpoch}';
+      await _firestore.collection('events').doc(eventId).set({
+        'name': 'Sample Event',
+        'description': 'This is a sample event created for testing',
+        'type': 'wedding',
+        'date': DateTime.now().add(const Duration(days: 90)),
+        'location': 'Sample Location',
+        'budget': 10000.0,
+        'guestCount': 100,
+        'userId': _auth.currentUser!.uid,
+        'createdAt': FieldValue.serverTimestamp(),
+        'updatedAt': FieldValue.serverTimestamp(),
+        'status': 'active',
+      });
 
-      // Use the service_service to create the venue
-      await _serviceService.createVenue(venue);
-
-      // Create sample guest
-      final guest = Guest(
-        id: 'sample-guest',
-        firstName: 'John',
-        lastName: 'Doe',
-        email: 'john.doe@example.com',
-        phone: '+1234567890',
-        rsvpStatus: RsvpStatus.pending,
-      );
-      await _guestService.addGuest(event.id, guest);
-
-      // Create sample task
-      final task = Task(
-        id: 'sample-task',
-        title: 'Book venue',
-        description: 'Book the venue for the event',
-        dueDate: DateTime.now().add(const Duration(days: 30)),
-        status: TaskStatus.notStarted,
-        categoryId: '1',
-      );
-      await _taskService.addTask(event.id, task);
+      Logger.i('Sample event created', tag: 'DataMigrationService');
 
       // Sample data creation complete
       Logger.i('Sample data created successfully', tag: 'DataMigrationService');
