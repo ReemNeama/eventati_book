@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:eventati_book/models/event_models/event.dart';
 import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/services/firebase/utils/firestore_service.dart';
 import 'package:eventati_book/services/interfaces/database_service_interface.dart';
@@ -346,6 +348,204 @@ class EventFirestoreService {
         'Error deleting saved comparison: $e',
         tag: 'EventFirestoreService',
       );
+      rethrow;
+    }
+  }
+
+  //
+  // Event model methods (using the updated Event model with Firestore support)
+  //
+
+  /// Get an event by ID using the Event model
+  Future<Event?> getEvent(String eventId) async {
+    try {
+      // Get the Firestore instance from the service
+      final firestore = (_firestoreService as FirestoreService).getFirestore();
+
+      // Get the document snapshot directly
+      final doc = await firestore.collection(_collection).doc(eventId).get();
+
+      if (!doc.exists) return null;
+      return Event.fromFirestore(doc);
+    } catch (e) {
+      Logger.e('Error getting event: $e', tag: 'EventFirestoreService');
+      rethrow;
+    }
+  }
+
+  /// Get events for a user using the Event model
+  Future<List<Event>> getEvents(String userId) async {
+    try {
+      // Get the Firestore instance from the service
+      final firestore = (_firestoreService as FirestoreService).getFirestore();
+
+      // Query the collection directly
+      final querySnapshot =
+          await firestore
+              .collection(_collection)
+              .where('userId', isEqualTo: userId)
+              .get();
+
+      return querySnapshot.docs.map((doc) => Event.fromFirestore(doc)).toList();
+    } catch (e) {
+      Logger.e('Error getting events: $e', tag: 'EventFirestoreService');
+      rethrow;
+    }
+  }
+
+  /// Get a stream of events for a user using the Event model
+  Stream<List<Event>> getEventsStream(String userId) {
+    // Get the Firestore instance from the service
+    final firestore = (_firestoreService as FirestoreService).getFirestore();
+
+    // Create a stream directly from Firestore
+    return firestore
+        .collection(_collection)
+        .where('userId', isEqualTo: userId)
+        .snapshots()
+        .map(
+          (snapshot) =>
+              snapshot.docs.map((doc) => Event.fromFirestore(doc)).toList(),
+        );
+  }
+
+  /// Create a new event using the Event model
+  Future<String> createEventWithModel(Event event) async {
+    try {
+      final eventId = await _firestoreService.addDocument(
+        _collection,
+        event.toFirestore(),
+      );
+      return eventId;
+    } catch (e) {
+      Logger.e('Error creating event: $e', tag: 'EventFirestoreService');
+      rethrow;
+    }
+  }
+
+  /// Update an event using the Event model
+  Future<void> updateEventWithModel(Event event) async {
+    try {
+      await _firestoreService.updateDocument(
+        _collection,
+        event.id,
+        event.toFirestore(),
+      );
+    } catch (e) {
+      Logger.e('Error updating event: $e', tag: 'EventFirestoreService');
+      rethrow;
+    }
+  }
+
+  /// Delete an event using the Event model
+  Future<void> deleteEventWithModel(String eventId) async {
+    try {
+      await _firestoreService.deleteDocument(_collection, eventId);
+    } catch (e) {
+      Logger.e('Error deleting event: $e', tag: 'EventFirestoreService');
+      rethrow;
+    }
+  }
+
+  /// Get all events using the Event model
+  Future<List<Event>> getAllEvents() async {
+    try {
+      // Get the Firestore instance from the service
+      final firestore = (_firestoreService as FirestoreService).getFirestore();
+
+      // Get all documents in the collection
+      final querySnapshot = await firestore.collection(_collection).get();
+
+      return querySnapshot.docs.map((doc) => Event.fromFirestore(doc)).toList();
+    } catch (e) {
+      Logger.e('Error getting all events: $e', tag: 'EventFirestoreService');
+      rethrow;
+    }
+  }
+
+  /// Get a stream of all events using the Event model
+  Stream<List<Event>> getAllEventsStream() {
+    // Get the Firestore instance from the service
+    final firestore = (_firestoreService as FirestoreService).getFirestore();
+
+    // Create a stream of all documents in the collection
+    return firestore
+        .collection(_collection)
+        .snapshots()
+        .map(
+          (snapshot) =>
+              snapshot.docs.map((doc) => Event.fromFirestore(doc)).toList(),
+        );
+  }
+
+  /// Get events by type using the Event model
+  Future<List<Event>> getEventsByType(EventType type) async {
+    try {
+      // Get the Firestore instance from the service
+      final firestore = (_firestoreService as FirestoreService).getFirestore();
+
+      // Query events by type
+      final querySnapshot =
+          await firestore
+              .collection(_collection)
+              .where('type', isEqualTo: type.index)
+              .get();
+
+      return querySnapshot.docs.map((doc) => Event.fromFirestore(doc)).toList();
+    } catch (e) {
+      Logger.e(
+        'Error getting events by type: $e',
+        tag: 'EventFirestoreService',
+      );
+      rethrow;
+    }
+  }
+
+  /// Get upcoming events using the Event model
+  Future<List<Event>> getUpcomingEvents(String userId) async {
+    try {
+      // Get the Firestore instance from the service
+      final firestore = (_firestoreService as FirestoreService).getFirestore();
+
+      final now = DateTime.now();
+
+      // Query upcoming events
+      final querySnapshot =
+          await firestore
+              .collection(_collection)
+              .where('userId', isEqualTo: userId)
+              .where('date', isGreaterThanOrEqualTo: Timestamp.fromDate(now))
+              .get();
+
+      return querySnapshot.docs.map((doc) => Event.fromFirestore(doc)).toList();
+    } catch (e) {
+      Logger.e(
+        'Error getting upcoming events: $e',
+        tag: 'EventFirestoreService',
+      );
+      rethrow;
+    }
+  }
+
+  /// Get past events using the Event model
+  Future<List<Event>> getPastEvents(String userId) async {
+    try {
+      // Get the Firestore instance from the service
+      final firestore = (_firestoreService as FirestoreService).getFirestore();
+
+      final now = DateTime.now();
+
+      // Query past events
+      final querySnapshot =
+          await firestore
+              .collection(_collection)
+              .where('userId', isEqualTo: userId)
+              .where('date', isLessThan: Timestamp.fromDate(now))
+              .get();
+
+      return querySnapshot.docs.map((doc) => Event.fromFirestore(doc)).toList();
+    } catch (e) {
+      Logger.e('Error getting past events: $e', tag: 'EventFirestoreService');
       rethrow;
     }
   }

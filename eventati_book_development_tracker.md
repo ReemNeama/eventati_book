@@ -549,7 +549,7 @@
     - [x] Create user profile management
     - [x] Remove user roles for simplified authentication
   - [ ] Cloud Firestore for Other Data Types
-    - [ ] Implement EventFirestoreService
+    - [x] Implement EventFirestoreService
     - [ ] Implement UserFirestoreService
     - [ ] Implement PlanningFirestoreService (budget, tasks, guests)
     - [ ] Implement ServiceFirestoreService
@@ -752,7 +752,7 @@
 
 ## Technical Requirements Checklist
 
-### Backend Setup (35% Complete)
+### Backend Setup (40% Complete)
 - [x] Firebase Authentication configured
   - [x] Firebase project created
   - [x] Firebase configuration files generated
@@ -763,7 +763,7 @@
   - [x] User roles removed for simplified authentication
 - [ ] Cloud Firestore setup
   - [x] Database created
-  - [ ] Collection structure defined
+  - [x] Collection structure defined for events
   - [ ] Security rules configured
   - [ ] Indexes created
 - [ ] Firebase Storage configured

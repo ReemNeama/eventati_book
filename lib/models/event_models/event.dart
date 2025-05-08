@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 /// Enum representing the type of event
@@ -60,6 +61,18 @@ class Event {
   /// Description of the event
   final String? description;
 
+  /// User ID of the event creator
+  final String? userId;
+
+  /// When the event was created
+  final DateTime? createdAt;
+
+  /// When the event was last updated
+  final DateTime? updatedAt;
+
+  /// Status of the event (draft, active, completed, etc.)
+  final String? status;
+
   /// Creates a new Event
   const Event({
     required this.id,
@@ -70,6 +83,10 @@ class Event {
     required this.budget,
     required this.guestCount,
     this.description,
+    this.userId,
+    this.createdAt,
+    this.updatedAt,
+    this.status,
   });
 
   /// Creates a copy of this Event with the given fields replaced with the new values
@@ -82,6 +99,10 @@ class Event {
     double? budget,
     int? guestCount,
     String? description,
+    String? userId,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    String? status,
   }) {
     return Event(
       id: id ?? this.id,
@@ -92,6 +113,10 @@ class Event {
       budget: budget ?? this.budget,
       guestCount: guestCount ?? this.guestCount,
       description: description ?? this.description,
+      userId: userId ?? this.userId,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      status: status ?? this.status,
     );
   }
 
@@ -106,6 +131,16 @@ class Event {
       budget: json['budget'] as double,
       guestCount: json['guestCount'] as int,
       description: json['description'] as String?,
+      userId: json['userId'] as String?,
+      createdAt:
+          json['createdAt'] != null
+              ? DateTime.parse(json['createdAt'] as String)
+              : null,
+      updatedAt:
+          json['updatedAt'] != null
+              ? DateTime.parse(json['updatedAt'] as String)
+              : null,
+      status: json['status'] as String?,
     );
   }
 
@@ -120,11 +155,85 @@ class Event {
       'budget': budget,
       'guestCount': guestCount,
       'description': description,
+      'userId': userId,
+      'createdAt': createdAt?.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
+      'status': status,
     };
   }
 
   @override
   String toString() {
-    return 'Event{id: $id, name: $name, type: ${type.displayName}, date: $date, location: $location, budget: $budget, guestCount: $guestCount, description: $description}';
+    return 'Event{id: $id, name: $name, type: ${type.displayName}, date: $date, location: $location, budget: $budget, guestCount: $guestCount, description: $description, userId: $userId, status: $status}';
+  }
+
+  /// Creates an Event from a Firestore document
+  factory Event.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>?;
+    if (data == null) {
+      throw Exception('Document data was null');
+    }
+
+    return Event(
+      id: doc.id,
+      name: data['name'] ?? '',
+      type: _getEventTypeFromFirestore(data['type']),
+      date:
+          data['date'] != null
+              ? (data['date'] as Timestamp).toDate()
+              : DateTime.now(),
+      location: data['location'] ?? '',
+      budget: (data['budget'] ?? 0.0).toDouble(),
+      guestCount: (data['guestCount'] ?? 0) as int,
+      description: data['description'],
+      userId: data['userId'],
+      createdAt:
+          data['createdAt'] != null
+              ? (data['createdAt'] as Timestamp).toDate()
+              : null,
+      updatedAt:
+          data['updatedAt'] != null
+              ? (data['updatedAt'] as Timestamp).toDate()
+              : null,
+      status: data['status'],
+    );
+  }
+
+  /// Helper method to get EventType from Firestore data
+  static EventType _getEventTypeFromFirestore(dynamic typeData) {
+    if (typeData is int) {
+      return EventType.values[typeData];
+    } else if (typeData is String) {
+      try {
+        return EventType.values.firstWhere(
+          (e) =>
+              e.toString().split('.').last.toLowerCase() ==
+              typeData.toLowerCase(),
+        );
+      } catch (_) {
+        return EventType.other;
+      }
+    }
+    return EventType.other;
+  }
+
+  /// Converts this Event to a Firestore document
+  Map<String, dynamic> toFirestore() {
+    return {
+      'name': name,
+      'type': type.index,
+      'date': Timestamp.fromDate(date),
+      'location': location,
+      'budget': budget,
+      'guestCount': guestCount,
+      'description': description,
+      'userId': userId,
+      'createdAt':
+          createdAt != null
+              ? Timestamp.fromDate(createdAt!)
+              : FieldValue.serverTimestamp(),
+      'updatedAt': FieldValue.serverTimestamp(),
+      'status': status ?? 'active',
+    };
   }
 }
