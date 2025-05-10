@@ -2,6 +2,11 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:eventati_book/models/event_models/event.dart';
+import 'package:eventati_book/models/notification_models/notification_channel.dart';
+import 'package:eventati_book/models/notification_models/notification_settings.dart'
+    as app_settings;
+import 'package:eventati_book/models/notification_models/notification_topic.dart';
 import 'package:eventati_book/services/interfaces/messaging_service_interface.dart';
 import 'package:eventati_book/utils/logger.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -29,6 +34,9 @@ class FirebaseMessagingService implements MessagingServiceInterface {
 
   /// Function to handle notification tap
   Function(String?)? _onNotificationTap;
+
+  /// User notification settings
+  app_settings.NotificationSettings? _userNotificationSettings;
 
   /// Constructor
   FirebaseMessagingService({
@@ -69,6 +77,12 @@ class FirebaseMessagingService implements MessagingServiceInterface {
       // Initialize local notifications
       await _initializeLocalNotifications();
 
+      // Create notification channels
+      await _createNotificationChannels();
+
+      // Load user notification settings
+      await _loadUserNotificationSettings();
+
       // Get the initial FCM token
       final token = await getToken();
       Logger.i('FCM Token: $token', tag: 'FirebaseMessagingService');
@@ -97,6 +111,65 @@ class FirebaseMessagingService implements MessagingServiceInterface {
         'Error initializing messaging service: $e',
         tag: 'FirebaseMessagingService',
       );
+    }
+  }
+
+  /// Create notification channels
+  Future<void> _createNotificationChannels() async {
+    try {
+      if (Platform.isAndroid) {
+        // Create all predefined channels
+        for (final channel in NotificationChannels.all) {
+          await _localNotifications
+              .resolvePlatformSpecificImplementation<
+                AndroidFlutterLocalNotificationsPlugin
+              >()
+              ?.createNotificationChannel(channel.toAndroidChannel());
+        }
+
+        Logger.i(
+          'Created ${NotificationChannels.all.length} notification channels',
+          tag: 'FirebaseMessagingService',
+        );
+      }
+    } catch (e) {
+      Logger.e(
+        'Error creating notification channels: $e',
+        tag: 'FirebaseMessagingService',
+      );
+    }
+  }
+
+  /// Load user notification settings
+  Future<void> _loadUserNotificationSettings() async {
+    try {
+      if (_auth.currentUser != null) {
+        final settingsDoc =
+            await _firestore
+                .collection('users')
+                .doc(_auth.currentUser!.uid)
+                .collection('settings')
+                .doc('notifications')
+                .get();
+
+        _userNotificationSettings = app_settings
+            .NotificationSettings.fromDocumentSnapshot(settingsDoc);
+
+        Logger.i(
+          'Loaded user notification settings',
+          tag: 'FirebaseMessagingService',
+        );
+      } else {
+        _userNotificationSettings =
+            app_settings.NotificationSettings.defaultSettings();
+      }
+    } catch (e) {
+      Logger.e(
+        'Error loading user notification settings: $e',
+        tag: 'FirebaseMessagingService',
+      );
+      _userNotificationSettings =
+          app_settings.NotificationSettings.defaultSettings();
     }
   }
 
@@ -173,10 +246,69 @@ class FirebaseMessagingService implements MessagingServiceInterface {
               'subscribed': true,
               'subscribedAt': FieldValue.serverTimestamp(),
             });
+
+        // Update user notification settings
+        if (_userNotificationSettings != null) {
+          _userNotificationSettings = _userNotificationSettings!
+              .updateTopicSetting(topic, true);
+
+          // Save updated settings to Firestore
+          await _firestore
+              .collection('users')
+              .doc(_auth.currentUser!.uid)
+              .collection('settings')
+              .doc('notifications')
+              .set(_userNotificationSettings!.toFirestore());
+        }
       }
+
+      Logger.i('Subscribed to topic: $topic', tag: 'FirebaseMessagingService');
     } catch (e) {
       Logger.e(
         'Error subscribing to topic: $e',
+        tag: 'FirebaseMessagingService',
+      );
+    }
+  }
+
+  /// Subscribe to topics for event type
+  Future<void> subscribeToEventTypeTopics(String eventType) async {
+    try {
+      // Get topics for event type
+      final EventType type;
+      switch (eventType.toLowerCase()) {
+        case 'wedding':
+          type = EventType.wedding;
+          break;
+        case 'business_event':
+        case 'business':
+          type = EventType.business;
+          break;
+        case 'celebration':
+          type = EventType.celebration;
+          break;
+        default:
+          Logger.w(
+            'Unknown event type: $eventType',
+            tag: 'FirebaseMessagingService',
+          );
+          return;
+      }
+
+      final topics = NotificationTopics.getForEventType(type);
+
+      // Subscribe to each topic
+      for (final topic in topics) {
+        await subscribeToTopic(topic.topicId);
+      }
+
+      Logger.i(
+        'Subscribed to ${topics.length} topics for event type: ${type.name}',
+        tag: 'FirebaseMessagingService',
+      );
+    } catch (e) {
+      Logger.e(
+        'Error subscribing to event type topics: $e',
         tag: 'FirebaseMessagingService',
       );
     }
@@ -685,22 +817,178 @@ class FirebaseMessagingService implements MessagingServiceInterface {
   @override
   Future<Map<String, bool>> getNotificationSettings() async {
     try {
-      final settings = await _messaging.getNotificationSettings();
-      return {
+      // Get Firebase Messaging notification settings
+      final messagingSettings = await _messaging.getNotificationSettings();
+      final authorizationMap = {
         'authorized':
-            settings.authorizationStatus == AuthorizationStatus.authorized,
+            messagingSettings.authorizationStatus ==
+            AuthorizationStatus.authorized,
         'provisional':
-            settings.authorizationStatus == AuthorizationStatus.provisional,
-        'denied': settings.authorizationStatus == AuthorizationStatus.denied,
+            messagingSettings.authorizationStatus ==
+            AuthorizationStatus.provisional,
+        'denied':
+            messagingSettings.authorizationStatus == AuthorizationStatus.denied,
         'notDetermined':
-            settings.authorizationStatus == AuthorizationStatus.notDetermined,
+            messagingSettings.authorizationStatus ==
+            AuthorizationStatus.notDetermined,
       };
+
+      // Get user notification settings from Firestore
+      if (_auth.currentUser != null) {
+        try {
+          final settingsDoc =
+              await _firestore
+                  .collection('users')
+                  .doc(_auth.currentUser!.uid)
+                  .collection('settings')
+                  .doc('notifications')
+                  .get();
+
+          if (settingsDoc.exists) {
+            final userSettings = app_settings
+                .NotificationSettings.fromDocumentSnapshot(settingsDoc);
+            _userNotificationSettings = userSettings;
+
+            // Convert topic settings to a flat map
+            final Map<String, bool> topicSettings = {};
+            for (final entry in userSettings.topicSettings.entries) {
+              topicSettings[entry.key] = entry.value;
+            }
+
+            // Combine authorization and user settings
+            return {
+              ...authorizationMap,
+              'allNotificationsEnabled': userSettings.allNotificationsEnabled,
+              'pushNotificationsEnabled': userSettings.pushNotificationsEnabled,
+              'emailNotificationsEnabled':
+                  userSettings.emailNotificationsEnabled,
+              'inAppNotificationsEnabled':
+                  userSettings.inAppNotificationsEnabled,
+              ...topicSettings,
+            };
+          }
+        } catch (e) {
+          Logger.e(
+            'Error getting user notification settings: $e',
+            tag: 'FirebaseMessagingService',
+          );
+        }
+      }
+
+      return authorizationMap;
     } catch (e) {
       Logger.e(
         'Error getting notification settings: $e',
         tag: 'FirebaseMessagingService',
       );
       return {};
+    }
+  }
+
+  @override
+  Future<void> updateNotificationSettings(Map<String, bool> settings) async {
+    try {
+      if (_auth.currentUser == null) {
+        throw Exception('User not logged in');
+      }
+
+      // Extract topic settings
+      final Map<String, bool> topicSettings = {};
+      final keysToRemove = <String>[];
+
+      for (final entry in settings.entries) {
+        // Skip non-topic settings
+        if ([
+          'allNotificationsEnabled',
+          'pushNotificationsEnabled',
+          'emailNotificationsEnabled',
+          'inAppNotificationsEnabled',
+          'authorized',
+          'provisional',
+          'denied',
+          'notDetermined',
+        ].contains(entry.key)) {
+          continue;
+        }
+
+        // Add to topic settings
+        topicSettings[entry.key] = entry.value;
+        keysToRemove.add(entry.key);
+      }
+
+      // Remove topic settings from main settings
+      final Map<String, bool> mainSettings = Map.from(settings);
+      for (final key in keysToRemove) {
+        mainSettings.remove(key);
+      }
+
+      // Create notification settings object
+      final userSettings = app_settings.NotificationSettings(
+        allNotificationsEnabled:
+            mainSettings['allNotificationsEnabled'] ?? true,
+        topicSettings: topicSettings,
+        pushNotificationsEnabled:
+            mainSettings['pushNotificationsEnabled'] ?? true,
+        emailNotificationsEnabled:
+            mainSettings['emailNotificationsEnabled'] ?? true,
+        inAppNotificationsEnabled:
+            mainSettings['inAppNotificationsEnabled'] ?? true,
+      );
+
+      // Save to Firestore
+      await _firestore
+          .collection('users')
+          .doc(_auth.currentUser!.uid)
+          .collection('settings')
+          .doc('notifications')
+          .set(userSettings.toFirestore());
+
+      // Update local settings
+      _userNotificationSettings = userSettings;
+
+      // Subscribe/unsubscribe to topics based on settings
+      await _syncTopicSubscriptions();
+
+      Logger.i(
+        'Notification settings updated',
+        tag: 'FirebaseMessagingService',
+      );
+    } catch (e) {
+      Logger.e(
+        'Error updating notification settings: $e',
+        tag: 'FirebaseMessagingService',
+      );
+      rethrow;
+    }
+  }
+
+  /// Sync topic subscriptions based on user settings
+  Future<void> _syncTopicSubscriptions() async {
+    try {
+      if (_auth.currentUser == null || _userNotificationSettings == null) {
+        return;
+      }
+
+      // Get all topics
+      final allTopics = NotificationTopics.all;
+
+      // Subscribe or unsubscribe based on settings
+      for (final topic in allTopics) {
+        final isEnabled = _userNotificationSettings!.isTopicEnabled(topic.id);
+
+        if (isEnabled) {
+          await _messaging.subscribeToTopic(topic.topicId);
+        } else {
+          await _messaging.unsubscribeFromTopic(topic.topicId);
+        }
+      }
+
+      Logger.i('Topic subscriptions synced', tag: 'FirebaseMessagingService');
+    } catch (e) {
+      Logger.e(
+        'Error syncing topic subscriptions: $e',
+        tag: 'FirebaseMessagingService',
+      );
     }
   }
 
@@ -923,22 +1211,8 @@ class FirebaseMessagingService implements MessagingServiceInterface {
     }
   }
 
-  @override
-  Future<void> updateNotificationSettings(Map<String, bool> settings) async {
-    try {
-      // This is not directly supported by Firebase Messaging
-      // We would need to use platform-specific code
-      Logger.w(
-        'Updating notification settings is not supported directly',
-        tag: 'FirebaseMessagingService',
-      );
-    } catch (e) {
-      Logger.e(
-        'Error updating notification settings: $e',
-        tag: 'FirebaseMessagingService',
-      );
-    }
-  }
+  // This method is replaced by the implementation above
+  // Keeping this comment to avoid confusion
 
   @override
   Future<void> registerDevice({

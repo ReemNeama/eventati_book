@@ -1,5 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eventati_book/services/interfaces/database_service_interface.dart';
+import 'package:eventati_book/services/firebase/utils/firebase_exceptions.dart';
+import 'package:eventati_book/services/firebase/utils/network_connectivity_service.dart';
+import 'package:eventati_book/services/firebase/utils/offline_persistence_manager.dart';
 import 'package:eventati_book/utils/logger.dart';
 
 // We don't need to define QueryOperator enum here as we'll use FilterOperation from the interface
@@ -9,9 +12,75 @@ class FirestoreService implements DatabaseServiceInterface {
   /// Firestore instance
   final FirebaseFirestore _firestore;
 
+  /// Network connectivity service
+  final NetworkConnectivityService _connectivityService =
+      NetworkConnectivityService();
+
+  /// Offline persistence manager
+  final OfflinePersistenceManager _persistenceManager =
+      OfflinePersistenceManager();
+
+  /// Whether to throw exceptions when offline
+  bool _throwWhenOffline = false;
+
   /// Constructor
   FirestoreService({FirebaseFirestore? firestore})
-    : _firestore = firestore ?? FirebaseFirestore.instance;
+    : _firestore = firestore ?? FirebaseFirestore.instance {
+    // Initialize with default settings
+    _init();
+  }
+
+  /// Initialize the service
+  void _init() {
+    // Listen for connectivity changes
+    _connectivityService.connectionStream.listen(_handleConnectivityChange);
+  }
+
+  /// Handle connectivity changes
+  void _handleConnectivityChange(bool isConnected) {
+    Logger.d(
+      'Connectivity changed: ${isConnected ? 'Online' : 'Offline'}',
+      tag: 'FirestoreService',
+    );
+  }
+
+  /// Check if device is connected to the internet
+  Future<bool> _checkConnectivity() async {
+    final isConnected = await _connectivityService.isConnected();
+    if (!isConnected && _throwWhenOffline) {
+      throw NetworkConnectivityException(
+        'No internet connection. Please check your connection and try again.',
+      );
+    }
+    return isConnected;
+  }
+
+  /// Set whether to throw exceptions when offline
+  void setThrowWhenOffline(bool throwWhenOffline) {
+    _throwWhenOffline = throwWhenOffline;
+  }
+
+  /// Enable offline persistence
+  Future<void> enableOfflinePersistence({
+    int cacheSizeBytes = 100000000,
+  }) async {
+    await _persistenceManager.enablePersistence(cacheSizeBytes: cacheSizeBytes);
+  }
+
+  /// Disable offline persistence
+  Future<void> disableOfflinePersistence() async {
+    await _persistenceManager.disablePersistence();
+  }
+
+  /// Clear offline persistence cache
+  Future<void> clearOfflinePersistence() async {
+    await _persistenceManager.clearPersistence();
+  }
+
+  /// Wait for pending writes to be acknowledged by the server
+  Future<void> waitForPendingWrites() async {
+    await _persistenceManager.waitForPendingWrites();
+  }
 
   @override
   Future<Map<String, dynamic>?> getDocument(
@@ -19,13 +88,36 @@ class FirestoreService implements DatabaseServiceInterface {
     String documentId,
   ) async {
     try {
+      // Check connectivity
+      await _checkConnectivity();
+
       final docSnapshot =
           await _firestore.collection(collection).doc(documentId).get();
       if (!docSnapshot.exists) return null;
       return docSnapshot.data();
     } catch (e) {
       Logger.e('Error getting document: $e', tag: 'FirestoreService');
-      rethrow;
+
+      if (e is FirebaseException) {
+        throw FirestoreException.fromFirebaseException(
+          e,
+          operation: 'getDocument',
+          collection: collection,
+          documentId: documentId,
+          stackTrace: StackTrace.current,
+        );
+      } else if (e is NetworkConnectivityException) {
+        rethrow;
+      } else {
+        throw FirestoreException(
+          'Error getting document: $e',
+          operation: 'getDocument',
+          collection: collection,
+          documentId: documentId,
+          originalException: e,
+          stackTrace: StackTrace.current,
+        );
+      }
     }
   }
 
@@ -36,6 +128,9 @@ class FirestoreService implements DatabaseServiceInterface {
     T Function(Map<String, dynamic> data, String id) fromMap,
   ) async {
     try {
+      // Check connectivity
+      await _checkConnectivity();
+
       final docSnapshot =
           await _firestore.collection(collection).doc(documentId).get();
       if (!docSnapshot.exists) return null;
@@ -44,20 +139,61 @@ class FirestoreService implements DatabaseServiceInterface {
       return fromMap(data, documentId);
     } catch (e) {
       Logger.e('Error getting document as type: $e', tag: 'FirestoreService');
-      rethrow;
+
+      if (e is FirebaseException) {
+        throw FirestoreException.fromFirebaseException(
+          e,
+          operation: 'getDocumentAs',
+          collection: collection,
+          documentId: documentId,
+          stackTrace: StackTrace.current,
+        );
+      } else if (e is NetworkConnectivityException) {
+        rethrow;
+      } else {
+        throw FirestoreException(
+          'Error getting document as type: $e',
+          operation: 'getDocumentAs',
+          collection: collection,
+          documentId: documentId,
+          originalException: e,
+          stackTrace: StackTrace.current,
+        );
+      }
     }
   }
 
   @override
   Future<List<Map<String, dynamic>>> getCollection(String collection) async {
     try {
+      // Check connectivity
+      await _checkConnectivity();
+
       final querySnapshot = await _firestore.collection(collection).get();
       return querySnapshot.docs
           .map((doc) => {'id': doc.id, ...doc.data()})
           .toList();
     } catch (e) {
       Logger.e('Error getting collection: $e', tag: 'FirestoreService');
-      rethrow;
+
+      if (e is FirebaseException) {
+        throw FirestoreException.fromFirebaseException(
+          e,
+          operation: 'getCollection',
+          collection: collection,
+          stackTrace: StackTrace.current,
+        );
+      } else if (e is NetworkConnectivityException) {
+        rethrow;
+      } else {
+        throw FirestoreException(
+          'Error getting collection: $e',
+          operation: 'getCollection',
+          collection: collection,
+          originalException: e,
+          stackTrace: StackTrace.current,
+        );
+      }
     }
   }
 
@@ -131,11 +267,32 @@ class FirestoreService implements DatabaseServiceInterface {
     Map<String, dynamic> data,
   ) async {
     try {
+      // Check connectivity
+      await _checkConnectivity();
+
       final docRef = await _firestore.collection(collection).add(data);
       return docRef.id;
     } catch (e) {
       Logger.e('Error adding document: $e', tag: 'FirestoreService');
-      rethrow;
+
+      if (e is FirebaseException) {
+        throw FirestoreException.fromFirebaseException(
+          e,
+          operation: 'addDocument',
+          collection: collection,
+          stackTrace: StackTrace.current,
+        );
+      } else if (e is NetworkConnectivityException) {
+        rethrow;
+      } else {
+        throw FirestoreException(
+          'Error adding document: $e',
+          operation: 'addDocument',
+          collection: collection,
+          originalException: e,
+          stackTrace: StackTrace.current,
+        );
+      }
     }
   }
 
@@ -146,10 +303,33 @@ class FirestoreService implements DatabaseServiceInterface {
     Map<String, dynamic> data,
   ) async {
     try {
+      // Check connectivity
+      await _checkConnectivity();
+
       await _firestore.collection(collection).doc(documentId).set(data);
     } catch (e) {
       Logger.e('Error setting document: $e', tag: 'FirestoreService');
-      rethrow;
+
+      if (e is FirebaseException) {
+        throw FirestoreException.fromFirebaseException(
+          e,
+          operation: 'setDocument',
+          collection: collection,
+          documentId: documentId,
+          stackTrace: StackTrace.current,
+        );
+      } else if (e is NetworkConnectivityException) {
+        rethrow;
+      } else {
+        throw FirestoreException(
+          'Error setting document: $e',
+          operation: 'setDocument',
+          collection: collection,
+          documentId: documentId,
+          originalException: e,
+          stackTrace: StackTrace.current,
+        );
+      }
     }
   }
 

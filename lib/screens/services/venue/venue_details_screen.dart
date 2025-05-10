@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/utils/utils.dart';
+import 'package:eventati_book/utils/logger.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/widgets/details/package_card.dart';
@@ -9,8 +10,10 @@ import 'package:eventati_book/widgets/details/info_card.dart';
 import 'package:eventati_book/widgets/details/detail_tab_bar.dart';
 import 'package:eventati_book/widgets/details/image_placeholder.dart';
 import 'package:eventati_book/widgets/details/chip_group.dart';
+import 'package:eventati_book/widgets/common/image_gallery.dart';
 import 'package:eventati_book/providers/providers.dart';
 import 'package:provider/provider.dart';
+
 import 'package:eventati_book/routing/routing.dart';
 
 class VenueDetailsScreen extends StatefulWidget {
@@ -114,10 +117,43 @@ class _VenueDetailsScreenState extends State<VenueDetailsScreen>
     ),
   ];
 
+  List<String> _venueImages = [];
+  bool _isLoadingImages = false;
+
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _loadVenueImages();
+  }
+
+  /// Load venue images from Firebase Storage
+  Future<void> _loadVenueImages() async {
+    setState(() {
+      _isLoadingImages = true;
+    });
+
+    try {
+      // Start with the main image if it exists
+      if (widget.venue.imageUrl.isNotEmpty &&
+          !widget.venue.imageUrl.startsWith('assets/')) {
+        _venueImages = [widget.venue.imageUrl];
+      }
+
+      // Add any additional images from the imageUrls list
+      if (widget.venue.imageUrls.isNotEmpty) {
+        _venueImages.addAll(widget.venue.imageUrls);
+      }
+
+      // Remove duplicates
+      _venueImages = _venueImages.toSet().toList();
+    } catch (e) {
+      Logger.e('Error loading venue images: $e', tag: 'VenueDetailsScreen');
+    } finally {
+      setState(() {
+        _isLoadingImages = false;
+      });
+    }
   }
 
   @override
@@ -392,18 +428,30 @@ class _VenueDetailsScreenState extends State<VenueDetailsScreen>
     );
   }
 
-  /// Builds the venue image placeholder
+  /// Builds the venue image gallery
   Widget _buildVenueImage() {
-    return const Column(
+    return Column(
       children: [
-        ImagePlaceholder(
-          height: 200,
-          width: double.infinity,
-          borderRadius: AppConstants.mediumBorderRadius,
-          icon: Icons.image,
-          iconSize: 50,
-        ),
-        SizedBox(height: AppConstants.mediumPadding),
+        if (_isLoadingImages)
+          const Center(child: CircularProgressIndicator())
+        else if (_venueImages.isEmpty)
+          const ImagePlaceholder(
+            height: 200,
+            width: double.infinity,
+            borderRadius: AppConstants.mediumBorderRadius,
+            icon: Icons.image,
+            iconSize: 50,
+          )
+        else
+          ImageGallery(
+            imageUrls: _venueImages,
+            height: 250,
+            width: double.infinity,
+            borderRadius: AppConstants.mediumBorderRadius,
+            enableFullScreen: true,
+            emptyText: 'No images available for this venue',
+          ),
+        const SizedBox(height: AppConstants.mediumPadding),
       ],
     );
   }

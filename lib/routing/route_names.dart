@@ -51,6 +51,9 @@ class RouteNames {
   static const String plannerDetails = '/services/planners/details';
   static const String serviceComparison = '/services/comparison';
 
+  // Event routes
+  static const String eventDetails = '/events/details';
+
   // Event planning routes
   static const String eventPlanning = '/event-planning';
   static const String budget = '/event-planning/budget';

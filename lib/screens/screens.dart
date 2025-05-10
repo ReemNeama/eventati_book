@@ -18,6 +18,7 @@ export 'homepage/event_checklist_selection_screen.dart';
 
 // Event screens
 export 'events/user_events_screen.dart';
+export 'events/event_details_screen.dart';
 
 // Profile screens
 export 'profile/profile_screen.dart';

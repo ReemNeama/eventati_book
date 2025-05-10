@@ -9,6 +9,7 @@ import 'package:eventati_book/routing/routing.dart';
 import 'package:eventati_book/di/service_locator.dart';
 import 'package:eventati_book/di/providers_manager.dart';
 import 'package:eventati_book/services/services.dart';
+import 'package:eventati_book/services/firebase/core/firebase_messaging_service.dart';
 import 'package:eventati_book/utils/error_utils.dart';
 import 'firebase_options.dart';
 
@@ -29,6 +30,10 @@ void main() async {
 
   // Initialize the service locator
   ServiceLocator().initialize();
+
+  // Initialize Firebase Messaging Service
+  final messagingService = FirebaseMessagingService();
+  await messagingService.initialize();
 
   // Set up error handling
   FlutterError.onError = (FlutterErrorDetails details) {

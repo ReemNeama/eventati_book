@@ -238,6 +238,13 @@ class AppRouter {
           builder: (context) => const PersonalizedRecommendationsScreen(),
         );
 
+      case RouteNames.eventDetails:
+        // In a real app, you would fetch the event from Firestore using the eventId
+        // For now, we'll redirect to the UserEventsScreen
+        return MaterialPageRoute(
+          builder: (context) => const UserEventsScreen(),
+        );
+
       default:
         return null;
     }

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/providers/providers.dart';
+import 'package:eventati_book/widgets/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:eventati_book/routing/routing.dart';
 import 'package:eventati_book/screens/profile/edit_profile_screen.dart';
+import 'package:eventati_book/screens/settings/notification_settings_screen.dart';
 
 /// Profile screen that displays user information and settings
 class ProfileScreen extends StatelessWidget {
@@ -38,22 +40,28 @@ class ProfileScreen extends StatelessWidget {
                 Center(
                   child: Column(
                     children: [
-                      CircleAvatar(
-                        radius: 50,
-                        backgroundColor: theme.primaryColor.withAlpha(50),
-                        backgroundImage:
-                            user.profileImageUrl != null
-                                ? NetworkImage(user.profileImageUrl!)
-                                : null,
-                        child:
-                            user.profileImageUrl == null
-                                ? Icon(
-                                  Icons.person,
-                                  size: 50,
-                                  color: theme.primaryColor,
-                                )
-                                : null,
-                      ),
+                      user.profileImageUrl != null
+                          ? ClipOval(
+                            child: CachedNetworkImageWidget(
+                              imageUrl: user.profileImageUrl!,
+                              width: 100,
+                              height: 100,
+                              fit: BoxFit.cover,
+                              placeholderIcon: Icons.person,
+                              backgroundColor: theme.primaryColor.withAlpha(50),
+                              placeholderIconColor: theme.primaryColor,
+                              semanticLabel: 'Profile image for ${user.name}',
+                            ),
+                          )
+                          : CircleAvatar(
+                            radius: 50,
+                            backgroundColor: theme.primaryColor.withAlpha(50),
+                            child: Icon(
+                              Icons.person,
+                              size: 50,
+                              color: theme.primaryColor,
+                            ),
+                          ),
                       const SizedBox(height: 16),
                       Text(
                         user.name,
@@ -122,7 +130,14 @@ class ProfileScreen extends StatelessWidget {
                   icon: Icons.notifications_outlined,
                   title: 'Notifications',
                   onTap: () {
-                    // Navigate to notifications settings
+                    // Navigate to notification settings screen
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder:
+                            (context) => const NotificationSettingsScreen(),
+                      ),
+                    );
                   },
                 ),
                 _buildSettingItem(

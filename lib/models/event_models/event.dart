@@ -73,6 +73,9 @@ class Event {
   /// Status of the event (draft, active, completed, etc.)
   final String? status;
 
+  /// List of image URLs for the event
+  final List<String> imageUrls;
+
   /// Creates a new Event
   const Event({
     required this.id,
@@ -87,6 +90,7 @@ class Event {
     this.createdAt,
     this.updatedAt,
     this.status,
+    this.imageUrls = const [],
   });
 
   /// Creates a copy of this Event with the given fields replaced with the new values
@@ -103,6 +107,7 @@ class Event {
     DateTime? createdAt,
     DateTime? updatedAt,
     String? status,
+    List<String>? imageUrls,
   }) {
     return Event(
       id: id ?? this.id,
@@ -117,6 +122,7 @@ class Event {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       status: status ?? this.status,
+      imageUrls: imageUrls ?? this.imageUrls,
     );
   }
 
@@ -141,6 +147,10 @@ class Event {
               ? DateTime.parse(json['updatedAt'] as String)
               : null,
       status: json['status'] as String?,
+      imageUrls:
+          json['imageUrls'] != null
+              ? List<String>.from(json['imageUrls'] as List)
+              : [],
     );
   }
 
@@ -159,6 +169,7 @@ class Event {
       'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
       'status': status,
+      'imageUrls': imageUrls,
     };
   }
 
@@ -196,6 +207,8 @@ class Event {
               ? (data['updatedAt'] as Timestamp).toDate()
               : null,
       status: data['status'],
+      imageUrls:
+          data['imageUrls'] != null ? List<String>.from(data['imageUrls']) : [],
     );
   }
 
@@ -234,6 +247,7 @@ class Event {
               : FieldValue.serverTimestamp(),
       'updatedAt': FieldValue.serverTimestamp(),
       'status': status ?? 'active',
+      'imageUrls': imageUrls,
     };
   }
 }

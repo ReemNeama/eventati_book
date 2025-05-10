@@ -18,6 +18,10 @@ This document outlines the comprehensive plan for implementing Firebase as the b
 - Service locator has been updated to register Firebase services
 - Vendor recommendation Firestore service has been implemented
 - Task dependency UI integration has been completed
+- Firebase Storage service has been implemented with image compression
+- File utilities have been updated to use Firebase Storage
+- Profile image upload has been updated to use Firebase Storage
+- Firebase Storage security rules have been created
 - All code quality issues have been fixed (0 problems)
 
 ## Keeping This Plan Updated
@@ -57,6 +61,10 @@ This will ensure a smooth transition to Firebase when the project is ready for b
 - Service locator has been updated to register all Firebase services
 - Vendor recommendation Firestore service has been implemented
 - Task dependency UI integration has been completed
+- Firebase Storage service has been implemented with image compression
+- File utilities have been updated to use Firebase Storage
+- Profile image upload has been updated to use Firebase Storage
+- Firebase Storage security rules have been created
 - All code quality issues have been fixed (0 problems)
 
 ## Firebase Services to Implement
@@ -64,7 +72,7 @@ This will ensure a smooth transition to Firebase when the project is ready for b
 1. **Firebase Authentication**
    - User authentication (login, registration, password reset)
    - Email/password authentication
-   - Social authentication (Google, Facebook, Apple) if needed
+   - Social authentication (Google and Apple only)
    - Email verification
    - User profile management
 
@@ -79,8 +87,10 @@ This will ensure a smooth transition to Firebase when the project is ready for b
    - Store user profile images
    - Store venue and service images
    - Store event-related files and images
+   - Image galleries for venues, events, and services
    - Secure access control
    - Upload/download progress tracking
+   - Image compression and optimization
 
 4. **Firebase Cloud Messaging (FCM)**
    - Push notifications for event reminders
@@ -335,9 +345,20 @@ bookings/
 ```
 /users/{userId}/profile_image
 /events/{eventId}/images/{imageId}
-/services/{serviceType}/{serviceId}/{imageId}
-/guests/{eventId}/{guestId}/photo
+/events/{eventId}/thumbnails/{imageId}
+/venues/{venueId}/images/{imageId}
+/venues/{venueId}/thumbnails/{imageId}
+/services/{serviceType}/{serviceId}/images/{imageId}
+/services/{serviceType}/{serviceId}/thumbnails/{imageId}
 ```
+
+**Important Note on Vendor Implementation:**
+- Vendors will have their own separate admin projects/applications where they can upload their details and images
+- The Eventati Book app will only display vendor information, handle bookings, and process payments
+- The app will not include functionality for vendors to upload images directly
+- The Firebase Storage structure for services will be used to store images that are uploaded through the vendor admin projects
+- The Eventati Book app will only read from these storage locations, not write to them
+- Security rules reflect this: users can read service images but only admin accounts can write to them
 
 ## Files to Modify or Create
 
@@ -566,20 +587,21 @@ dependencies:
 
 ### Phase 4: Firebase Storage Implementation
 
-#### 1. Create Storage Service
-- [ ] Create `lib/services/interfaces/storage_service_interface.dart`
-- [ ] Create `lib/services/firebase/firebase_storage_service.dart`
-- [ ] Register service in `lib/di/service_locator.dart`
+#### 1. Create Storage Service (COMPLETED)
+- [x] Create `lib/services/interfaces/storage_service_interface.dart`
+- [x] Create `lib/services/firebase/firebase_storage_service.dart`
+- [x] Register service in `lib/di/service_locator.dart`
 
-#### 2. Update File Utilities
-- [ ] Update `lib/utils/file_utils.dart` to use Firebase Storage
-- [ ] Implement image upload and download functionality
-- [ ] Add progress tracking for uploads
+#### 2. Update File Utilities (COMPLETED)
+- [x] Update `lib/utils/file_utils.dart` to use Firebase Storage
+- [x] Implement image upload and download functionality
+- [x] Add progress tracking for uploads
 
-#### 3. Update UI Components
-- [ ] Update `lib/screens/profile/profile_screen.dart` for profile image upload
-- [ ] Update `lib/widgets/event_planning/guest_list/guest_form_screen.dart` for guest photos
-- [ ] Update any other screens that handle file uploads
+#### 3. Update UI Components (PARTIALLY COMPLETED)
+- [x] Update `lib/screens/profile/profile_screen.dart` for profile image upload
+- [ ] Implement image galleries for venues, events, and services
+- [ ] Update venue and event screens for image uploads
+- [ ] Update service screens for image uploads
 
 ### Phase 5: Advanced Firebase Features
 

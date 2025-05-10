@@ -1,4 +1,4 @@
-import 'package:eventati_book/models/models.dart';
+import 'package:eventati_book/models/user_models/user.dart';
 
 /// Temporary database for user data
 class UserDB {

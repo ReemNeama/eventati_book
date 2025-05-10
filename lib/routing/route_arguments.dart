@@ -161,6 +161,13 @@ class VendorCommunicationArguments extends RouteArguments {
   }) : super();
 }
 
+/// Arguments for event details screen
+class EventDetailsArguments extends RouteArguments {
+  final String eventId;
+
+  const EventDetailsArguments({required this.eventId}) : super();
+}
+
 /// Arguments for task Firestore test screen
 class TaskFirestoreTestArguments extends RouteArguments {
   final String eventId;

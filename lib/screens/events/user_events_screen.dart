@@ -3,6 +3,8 @@ import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/routing/routing.dart';
+import 'package:eventati_book/screens/events/event_details_screen.dart';
+import 'package:eventati_book/models/event_models/event.dart';
 
 /// Screen that displays all events created or saved by the user
 class UserEventsScreen extends StatefulWidget {
@@ -84,6 +86,41 @@ class _UserEventsScreenState extends State<UserEventsScreen> {
     );
   }
 
+  /// Navigate to event details screen
+  void _navigateToEventDetails(Map<String, dynamic> eventData, int index) {
+    // Create an Event object from the mock data
+    final event = Event(
+      id: index.toString(), // In a real app, this would be a real ID
+      name: eventData['name'],
+      type: _getEventTypeFromString(eventData['type']),
+      date: eventData['date'],
+      location: 'Sample Location', // Mock data
+      budget: 5000.0, // Mock data
+      guestCount: eventData['guests'],
+      description: 'This is a sample event description.', // Mock data
+    );
+
+    // Navigate to the event details screen
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => EventDetailsScreen(event: event)),
+    );
+  }
+
+  /// Convert string event type to EventType enum
+  EventType _getEventTypeFromString(String typeString) {
+    switch (typeString.toLowerCase()) {
+      case 'wedding':
+        return EventType.wedding;
+      case 'business event':
+        return EventType.business;
+      case 'celebration':
+        return EventType.celebration;
+      default:
+        return EventType.other;
+    }
+  }
+
   Widget _buildEventsList() {
     return ListView.builder(
       padding: const EdgeInsets.all(16),
@@ -152,7 +189,7 @@ class _UserEventsScreenState extends State<UserEventsScreen> {
                   );
                 } else if (value == 'details') {
                   // Navigate to event details
-                  // This would be implemented based on event type
+                  _navigateToEventDetails(event, index);
                 }
               },
               itemBuilder:
@@ -181,7 +218,7 @@ class _UserEventsScreenState extends State<UserEventsScreen> {
             ),
             onTap: () {
               // Navigate to event details
-              // This would be implemented based on event type
+              _navigateToEventDetails(event, index);
             },
           ),
         );

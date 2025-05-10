@@ -10,6 +10,7 @@ class Venue {
   final int maxCapacity;
   final double pricePerEvent;
   final String imageUrl;
+  final List<String> imageUrls;
   final List<String> features;
   final String? userId;
   final DateTime? createdAt;
@@ -25,6 +26,7 @@ class Venue {
     required this.maxCapacity,
     required this.pricePerEvent,
     required this.imageUrl,
+    this.imageUrls = const [],
     required this.features,
     this.userId,
     this.createdAt,
@@ -48,6 +50,8 @@ class Venue {
       maxCapacity: data['maxCapacity'] ?? 0,
       pricePerEvent: (data['pricePerEvent'] ?? 0).toDouble(),
       imageUrl: data['imageUrl'] ?? '',
+      imageUrls:
+          data['imageUrls'] != null ? List<String>.from(data['imageUrls']) : [],
       features: List<String>.from(data['features'] ?? []),
       userId: data['userId'],
       createdAt:
@@ -72,6 +76,7 @@ class Venue {
       'maxCapacity': maxCapacity,
       'pricePerEvent': pricePerEvent,
       'imageUrl': imageUrl,
+      'imageUrls': imageUrls,
       'features': features,
       'userId': userId,
       'createdAt':
@@ -93,6 +98,7 @@ class Venue {
     int? maxCapacity,
     double? pricePerEvent,
     String? imageUrl,
+    List<String>? imageUrls,
     List<String>? features,
     String? userId,
     DateTime? createdAt,
@@ -108,6 +114,7 @@ class Venue {
       maxCapacity: maxCapacity ?? this.maxCapacity,
       pricePerEvent: pricePerEvent ?? this.pricePerEvent,
       imageUrl: imageUrl ?? this.imageUrl,
+      imageUrls: imageUrls ?? this.imageUrls,
       features: features ?? this.features,
       userId: userId ?? this.userId,
       createdAt: createdAt ?? this.createdAt,

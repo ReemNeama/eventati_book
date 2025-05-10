@@ -3,10 +3,13 @@ import 'dart:typed_data';
 
 import 'package:eventati_book/services/firebase/core/firebase_storage_service.dart';
 import 'package:eventati_book/services/interfaces/storage_service_interface.dart';
+import 'package:eventati_book/utils/image_utils.dart';
 import 'package:eventati_book/utils/logger.dart';
+import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
+import 'package:uuid/uuid.dart';
 
 /// Utility functions for file operations
 class FileUtils {
@@ -214,5 +217,237 @@ class FileUtils {
       return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
     }
     return '${(bytes / (1024 * 1024 * 1024)).toStringAsFixed(1)} GB';
+  }
+
+  /// Upload a profile image to Firebase Storage
+  static Future<String?> uploadProfileImage(
+    String userId,
+    File imageFile, {
+    Function(double)? onProgress,
+  }) async {
+    try {
+      // Get the Firebase Storage service
+      final storage = storageService as FirebaseStorageService;
+
+      // Generate the storage path
+      final storagePath = FirebaseStorageService.userProfileImagePath(userId);
+
+      // Upload the image with compression
+      return await storage.uploadImageWithCompression(
+        storagePath,
+        imageFile,
+        maxWidth: ImageUtils.profileImageMaxDimension,
+        maxHeight: ImageUtils.profileImageMaxDimension,
+        quality: ImageUtils.profileImageQuality,
+        onProgress: onProgress,
+        metadata: {
+          'userId': userId,
+          'contentType': 'profile_image',
+          'uploadedAt': DateTime.now().toIso8601String(),
+        },
+      );
+    } catch (e) {
+      Logger.e('Error uploading profile image: $e', tag: 'FileUtils');
+      return null;
+    }
+  }
+
+  /// Upload an event image to Firebase Storage
+  static Future<Map<String, String>?> uploadEventImage(
+    String eventId,
+    File imageFile, {
+    Function(double)? onMainProgress,
+    Function(double)? onThumbnailProgress,
+  }) async {
+    try {
+      // Generate a unique ID for the image
+      final imageId = const Uuid().v4();
+
+      // Get the Firebase Storage service
+      final storage = storageService as FirebaseStorageService;
+
+      // Generate the storage paths
+      final mainPath = FirebaseStorageService.eventImagePath(eventId, imageId);
+      final thumbnailPath = FirebaseStorageService.eventThumbnailPath(
+        eventId,
+        imageId,
+      );
+
+      // Upload the image with thumbnail
+      return await storage.uploadImageWithThumbnail(
+        mainPath,
+        thumbnailPath,
+        imageFile,
+        maxWidth: ImageUtils.venueImageMaxDimension,
+        maxHeight: ImageUtils.venueImageMaxDimension,
+        quality: ImageUtils.venueImageQuality,
+        onMainProgress: onMainProgress,
+        onThumbnailProgress: onThumbnailProgress,
+        metadata: {
+          'eventId': eventId,
+          'imageId': imageId,
+          'contentType': 'event_image',
+          'uploadedAt': DateTime.now().toIso8601String(),
+        },
+      );
+    } catch (e) {
+      Logger.e('Error uploading event image: $e', tag: 'FileUtils');
+      return null;
+    }
+  }
+
+  /// Upload a venue image to Firebase Storage
+  static Future<Map<String, String>?> uploadVenueImage(
+    String venueId,
+    File imageFile, {
+    Function(double)? onMainProgress,
+    Function(double)? onThumbnailProgress,
+  }) async {
+    try {
+      // Generate a unique ID for the image
+      final imageId = const Uuid().v4();
+
+      // Get the Firebase Storage service
+      final storage = storageService as FirebaseStorageService;
+
+      // Generate the storage paths
+      final mainPath = FirebaseStorageService.venueImagePath(venueId, imageId);
+      final thumbnailPath = FirebaseStorageService.venueThumbnailPath(
+        venueId,
+        imageId,
+      );
+
+      // Upload the image with thumbnail
+      return await storage.uploadImageWithThumbnail(
+        mainPath,
+        thumbnailPath,
+        imageFile,
+        maxWidth: ImageUtils.venueImageMaxDimension,
+        maxHeight: ImageUtils.venueImageMaxDimension,
+        quality: ImageUtils.venueImageQuality,
+        onMainProgress: onMainProgress,
+        onThumbnailProgress: onThumbnailProgress,
+        metadata: {
+          'venueId': venueId,
+          'imageId': imageId,
+          'contentType': 'venue_image',
+          'uploadedAt': DateTime.now().toIso8601String(),
+        },
+      );
+    } catch (e) {
+      Logger.e('Error uploading venue image: $e', tag: 'FileUtils');
+      return null;
+    }
+  }
+
+  /// Upload a guest photo to Firebase Storage
+  static Future<String?> uploadGuestPhoto(
+    String eventId,
+    String guestId,
+    File imageFile, {
+    Function(double)? onProgress,
+  }) async {
+    try {
+      // Get the Firebase Storage service
+      final storage = storageService as FirebaseStorageService;
+
+      // Generate the storage path
+      final storagePath = FirebaseStorageService.guestPhotoPath(
+        eventId,
+        guestId,
+      );
+
+      // Upload the image with compression
+      return await storage.uploadImageWithCompression(
+        storagePath,
+        imageFile,
+        maxWidth: ImageUtils.profileImageMaxDimension,
+        maxHeight: ImageUtils.profileImageMaxDimension,
+        quality: ImageUtils.profileImageQuality,
+        onProgress: onProgress,
+        metadata: {
+          'eventId': eventId,
+          'guestId': guestId,
+          'contentType': 'guest_photo',
+          'uploadedAt': DateTime.now().toIso8601String(),
+        },
+      );
+    } catch (e) {
+      Logger.e('Error uploading guest photo: $e', tag: 'FileUtils');
+      return null;
+    }
+  }
+
+  /// IMPORTANT: This method is for demonstration purposes only.
+  /// In the actual Eventati Book app, vendors will have their own separate admin projects/applications
+  /// where they can upload their details and images. The Eventati Book app will only display vendor
+  /// information, handle bookings, and process payments. The app will not include functionality for
+  /// vendors to upload images directly.
+  ///
+  /// Upload a service image to Firebase Storage - FOR DEMONSTRATION PURPOSES ONLY
+  /// This should NOT be used in the production app as vendors will use separate admin projects for uploads.
+  static Future<Map<String, String>?> uploadServiceImage(
+    String serviceType,
+    String serviceId,
+    File imageFile, {
+    Function(double)? onMainProgress,
+    Function(double)? onThumbnailProgress,
+  }) async {
+    // This method is intentionally left as a demonstration only.
+    // In production, this functionality should be removed or disabled.
+    Logger.w(
+      'Service image upload functionality should not be used in production. '
+      'Vendors will use separate admin projects for uploads.',
+      tag: 'FileUtils',
+    );
+
+    try {
+      // Generate a unique ID for the image
+      final imageId = const Uuid().v4();
+
+      // Get the Firebase Storage service
+      final storage = storageService as FirebaseStorageService;
+
+      // Generate the storage paths
+      final mainPath = FirebaseStorageService.serviceImagePath(
+        serviceType,
+        serviceId,
+        imageId,
+      );
+      final thumbnailPath = FirebaseStorageService.serviceThumbnailPath(
+        serviceType,
+        serviceId,
+        imageId,
+      );
+
+      // Upload the image with thumbnail
+      return await storage.uploadImageWithThumbnail(
+        mainPath,
+        thumbnailPath,
+        imageFile,
+        maxWidth: ImageUtils.venueImageMaxDimension,
+        maxHeight: ImageUtils.venueImageMaxDimension,
+        quality: ImageUtils.venueImageQuality,
+        onMainProgress: onMainProgress,
+        onThumbnailProgress: onThumbnailProgress,
+        metadata: {
+          'serviceType': serviceType,
+          'serviceId': serviceId,
+          'imageId': imageId,
+          'contentType': 'service_image',
+          'uploadedAt': DateTime.now().toIso8601String(),
+          'demo_only': 'true', // Mark as demo only
+        },
+      );
+    } catch (e) {
+      Logger.e('Error uploading service image: $e', tag: 'FileUtils');
+      return null;
+    }
+  }
+
+  /// Get the current user ID
+  static String? getCurrentUserId() {
+    final user = firebase_auth.FirebaseAuth.instance.currentUser;
+    return user?.uid;
   }
 }

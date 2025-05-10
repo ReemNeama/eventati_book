@@ -8,14 +8,14 @@ class ConversionFunnels {
   static const int bookingCheckout = 4;
   static const int bookingPayment = 5;
   static const int bookingConfirmation = 6;
-  
+
   /// Registration funnel steps
   static const String registrationFunnel = 'registration_funnel';
   static const int registrationStart = 1;
   static const int registrationForm = 2;
   static const int registrationVerification = 3;
   static const int registrationComplete = 4;
-  
+
   /// Event creation funnel steps
   static const String eventCreationFunnel = 'event_creation_funnel';
   static const int eventTypeSelection = 1;
@@ -24,13 +24,13 @@ class ConversionFunnels {
   static const int eventGuestEstimation = 4;
   static const int eventBudgetEstimation = 5;
   static const int eventComplete = 6;
-  
+
   /// Wizard funnel steps
   static const String wizardFunnel = 'wizard_funnel';
   static const int wizardStart = 1;
   static const int wizardStepComplete = 2;
   static const int wizardComplete = 3;
-  
+
   /// Get step name for a funnel
   static String getStepName(String funnelName, int stepNumber) {
     switch (funnelName) {
@@ -46,7 +46,7 @@ class ConversionFunnels {
         return 'Step $stepNumber';
     }
   }
-  
+
   /// Get booking step name
   static String _getBookingStepName(int stepNumber) {
     switch (stepNumber) {
@@ -66,7 +66,7 @@ class ConversionFunnels {
         return 'Step $stepNumber';
     }
   }
-  
+
   /// Get registration step name
   static String _getRegistrationStepName(int stepNumber) {
     switch (stepNumber) {
@@ -82,7 +82,7 @@ class ConversionFunnels {
         return 'Step $stepNumber';
     }
   }
-  
+
   /// Get event creation step name
   static String _getEventCreationStepName(int stepNumber) {
     switch (stepNumber) {
@@ -102,7 +102,7 @@ class ConversionFunnels {
         return 'Step $stepNumber';
     }
   }
-  
+
   /// Get wizard step name
   static String _getWizardStepName(int stepNumber) {
     switch (stepNumber) {

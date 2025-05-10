@@ -1,12 +1,12 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:eventati_book/providers/providers.dart';
-import 'package:eventati_book/utils/utils.dart';
+import 'package:eventati_book/utils/utils.dart' hide FileUtils;
+import 'package:eventati_book/utils/file_utils.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 
 /// Screen for editing user profile information
 class EditProfileScreen extends StatefulWidget {
@@ -25,6 +25,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   bool _isUploading = false;
   bool _isSaving = false;
   String? _uploadError;
+  double _uploadProgress = 0.0;
 
   @override
   void initState() {
@@ -73,28 +74,31 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     setState(() {
       _isUploading = true;
       _uploadError = null;
+      _uploadProgress = 0.0;
     });
 
     try {
-      // Create a reference to the location where we'll store the file
-      final storageRef = FirebaseStorage.instance
-          .ref()
-          .child('users')
-          .child(userId)
-          .child('profile_image');
-
-      // Upload the file
-      final uploadTask = storageRef.putFile(_imageFile!);
-
-      // Wait for the upload to complete
-      final snapshot = await uploadTask;
-
-      // Get the download URL
-      final downloadUrl = await snapshot.ref.getDownloadURL();
+      // Upload the profile image using FileUtils
+      final downloadUrl = await FileUtils.uploadProfileImage(
+        userId,
+        _imageFile!,
+        onProgress: (progress) {
+          setState(() {
+            _uploadProgress = progress;
+          });
+        },
+      );
 
       setState(() {
         _isUploading = false;
       });
+
+      if (downloadUrl == null) {
+        setState(() {
+          _uploadError = 'Failed to upload image: Unknown error';
+        });
+        return null;
+      }
 
       return downloadUrl;
     } catch (e) {
@@ -247,6 +251,30 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       ],
                     ),
                   ),
+                  if (_isUploading)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Column(
+                        children: [
+                          const Text(
+                            'Uploading image...',
+                            style: TextStyle(fontSize: 12),
+                          ),
+                          const SizedBox(height: 4),
+                          LinearProgressIndicator(
+                            value: _uploadProgress,
+                            backgroundColor: Colors.grey[300],
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              primaryColor,
+                            ),
+                          ),
+                          Text(
+                            '${(_uploadProgress * 100).toInt()}%',
+                            style: const TextStyle(fontSize: 12),
+                          ),
+                        ],
+                      ),
+                    ),
                   if (_uploadError != null)
                     Padding(
                       padding: const EdgeInsets.only(top: 8),

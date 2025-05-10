@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:eventati_book/services/interfaces/storage_service_interface.dart';
+import 'package:eventati_book/utils/image_utils.dart';
 import 'package:eventati_book/utils/logger.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path/path.dart' as path_util;
@@ -288,5 +289,209 @@ class FirebaseStorageService implements StorageServiceInterface {
     final extension = path_util.extension(fileName);
     final timestamp = DateTime.now().millisecondsSinceEpoch;
     return '$userId/$folder/$timestamp$extension';
+  }
+
+  /// Upload an image file with compression
+  ///
+  /// [path] The path to store the file at
+  /// [file] The image file to upload
+  /// [maxWidth] Maximum width of the compressed image
+  /// [maxHeight] Maximum height of the compressed image
+  /// [quality] JPEG quality (0-100)
+  /// [onProgress] Callback for upload progress (0.0 to 1.0)
+  /// [metadata] Optional metadata for the file
+  /// Returns the download URL for the uploaded file
+  Future<String> uploadImageWithCompression(
+    String path,
+    File file, {
+    int maxWidth = ImageUtils.venueImageMaxDimension,
+    int maxHeight = ImageUtils.venueImageMaxDimension,
+    int quality = ImageUtils.venueImageQuality,
+    Function(double)? onProgress,
+    Map<String, String>? metadata,
+  }) async {
+    try {
+      // Compress the image
+      final compressedFile = await ImageUtils.compressImage(
+        file,
+        maxWidth: maxWidth,
+        maxHeight: maxHeight,
+        quality: quality,
+      );
+
+      // Add image dimensions to metadata
+      final size = await ImageUtils.getImageDimensions(compressedFile);
+      final fileSize = await ImageUtils.getFileSizeInKB(compressedFile);
+      final format = ImageUtils.getImageFormat(compressedFile);
+
+      final imageMetadata = {
+        'width': size.width.toInt().toString(),
+        'height': size.height.toInt().toString(),
+        'size_kb': fileSize.toInt().toString(),
+        'format': format,
+        'compressed': 'true',
+        'original_name': path_util.basename(file.path),
+      };
+
+      // Merge with provided metadata
+      final mergedMetadata = {...imageMetadata, ...(metadata ?? {})};
+
+      // Upload the compressed file with progress tracking
+      return await uploadFileWithProgress(
+        path,
+        compressedFile,
+        onProgress: onProgress,
+        metadata: mergedMetadata,
+      );
+    } catch (e) {
+      Logger.e(
+        'Error uploading image with compression: $e',
+        tag: 'FirebaseStorageService',
+      );
+      rethrow;
+    }
+  }
+
+  /// Upload an image with thumbnail generation
+  ///
+  /// [mainPath] The path to store the main image at
+  /// [thumbnailPath] The path to store the thumbnail at
+  /// [file] The image file to upload
+  /// [maxWidth] Maximum width of the compressed main image
+  /// [maxHeight] Maximum height of the compressed main image
+  /// [quality] JPEG quality for the main image (0-100)
+  /// [thumbnailMaxDimension] Maximum dimension for the thumbnail
+  /// [thumbnailQuality] JPEG quality for the thumbnail (0-100)
+  /// [onMainProgress] Callback for main image upload progress (0.0 to 1.0)
+  /// [onThumbnailProgress] Callback for thumbnail upload progress (0.0 to 1.0)
+  /// [metadata] Optional metadata for both files
+  /// Returns a map with download URLs for both the main image and thumbnail
+  Future<Map<String, String>> uploadImageWithThumbnail(
+    String mainPath,
+    String thumbnailPath,
+    File file, {
+    int maxWidth = ImageUtils.venueImageMaxDimension,
+    int maxHeight = ImageUtils.venueImageMaxDimension,
+    int quality = ImageUtils.venueImageQuality,
+    int thumbnailMaxDimension = ImageUtils.thumbnailMaxDimension,
+    int thumbnailQuality = ImageUtils.thumbnailQuality,
+    Function(double)? onMainProgress,
+    Function(double)? onThumbnailProgress,
+    Map<String, String>? metadata,
+  }) async {
+    try {
+      // Compress the main image
+      final compressedFile = await ImageUtils.compressImage(
+        file,
+        maxWidth: maxWidth,
+        maxHeight: maxHeight,
+        quality: quality,
+      );
+
+      // Create a thumbnail
+      final thumbnailFile = await ImageUtils.createThumbnail(
+        file,
+        maxDimension: thumbnailMaxDimension,
+        quality: thumbnailQuality,
+      );
+
+      // Add image dimensions to metadata
+      final size = await ImageUtils.getImageDimensions(compressedFile);
+      final fileSize = await ImageUtils.getFileSizeInKB(compressedFile);
+      final format = ImageUtils.getImageFormat(compressedFile);
+
+      final imageMetadata = {
+        'width': size.width.toInt().toString(),
+        'height': size.height.toInt().toString(),
+        'size_kb': fileSize.toInt().toString(),
+        'format': format,
+        'compressed': 'true',
+        'original_name': path_util.basename(file.path),
+      };
+
+      // Merge with provided metadata
+      final mergedMetadata = {...imageMetadata, ...(metadata ?? {})};
+
+      // Upload both files concurrently
+      final mainUploadFuture = uploadFileWithProgress(
+        mainPath,
+        compressedFile,
+        onProgress: onMainProgress,
+        metadata: mergedMetadata,
+      );
+
+      final thumbnailUploadFuture = uploadFileWithProgress(
+        thumbnailPath,
+        thumbnailFile,
+        onProgress: onThumbnailProgress,
+        metadata: {
+          ...mergedMetadata,
+          'is_thumbnail': 'true',
+          'thumbnail_dimension': thumbnailMaxDimension.toString(),
+        },
+      );
+
+      // Wait for both uploads to complete
+      final results = await Future.wait([
+        mainUploadFuture,
+        thumbnailUploadFuture,
+      ]);
+
+      return {'mainUrl': results[0], 'thumbnailUrl': results[1]};
+    } catch (e) {
+      Logger.e(
+        'Error uploading image with thumbnail: $e',
+        tag: 'FirebaseStorageService',
+      );
+      rethrow;
+    }
+  }
+
+  /// Generate a path for a user profile image
+  static String userProfileImagePath(String userId) {
+    return 'users/$userId/profile_image';
+  }
+
+  /// Generate a path for an event image
+  static String eventImagePath(String eventId, String imageId) {
+    return 'events/$eventId/images/$imageId';
+  }
+
+  /// Generate a path for an event thumbnail
+  static String eventThumbnailPath(String eventId, String imageId) {
+    return 'events/$eventId/thumbnails/$imageId';
+  }
+
+  /// Generate a path for a venue image
+  static String venueImagePath(String venueId, String imageId) {
+    return 'venues/$venueId/images/$imageId';
+  }
+
+  /// Generate a path for a venue thumbnail
+  static String venueThumbnailPath(String venueId, String imageId) {
+    return 'venues/$venueId/thumbnails/$imageId';
+  }
+
+  /// Generate a path for a guest photo
+  static String guestPhotoPath(String eventId, String guestId) {
+    return 'guests/$eventId/$guestId/photo';
+  }
+
+  /// Generate a path for a service image (catering, photographer, etc.)
+  static String serviceImagePath(
+    String serviceType,
+    String serviceId,
+    String imageId,
+  ) {
+    return 'services/$serviceType/$serviceId/images/$imageId';
+  }
+
+  /// Generate a path for a service thumbnail
+  static String serviceThumbnailPath(
+    String serviceType,
+    String serviceId,
+    String imageId,
+  ) {
+    return 'services/$serviceType/$serviceId/thumbnails/$imageId';
   }
 }

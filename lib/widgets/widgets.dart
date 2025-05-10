@@ -22,6 +22,8 @@ export 'common/loading_indicator.dart'; // Loading spinner/indicator
 export 'common/confirmation_dialog.dart'; // Dialog for confirming actions
 export 'common/route_guard_wrapper.dart'; // Wrapper for applying route guards
 export 'common/feature_guard_wrapper.dart'; // Wrapper for applying feature guards
+export 'common/cached_network_image_widget.dart'; // Widget for displaying cached network images
+export 'common/image_gallery.dart'; // Widget for displaying image galleries
 
 // -------------------------
 // AUTHENTICATION WIDGETS
