@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
+import 'package:eventati_book/models/feature_models/comparison_annotation.dart';
 
 /// Model representing a saved comparison
 class SavedComparison {
@@ -33,6 +34,9 @@ class SavedComparison {
   /// Optional name of the event associated with this comparison
   final String? eventName;
 
+  /// Optional list of annotations/highlights for this comparison
+  final List<ComparisonAnnotation>? annotations;
+
   /// Constructor
   SavedComparison({
     required this.id,
@@ -45,6 +49,7 @@ class SavedComparison {
     this.notes = '',
     this.eventId,
     this.eventName,
+    this.annotations,
   });
 
   /// Create a copy of this saved comparison with modified fields
@@ -59,6 +64,7 @@ class SavedComparison {
     String? notes,
     String? eventId,
     String? eventName,
+    List<ComparisonAnnotation>? annotations,
   }) {
     return SavedComparison(
       id: id ?? this.id,
@@ -71,6 +77,7 @@ class SavedComparison {
       notes: notes ?? this.notes,
       eventId: eventId ?? this.eventId,
       eventName: eventName ?? this.eventName,
+      annotations: annotations ?? this.annotations,
     );
   }
 
@@ -87,6 +94,7 @@ class SavedComparison {
       'notes': notes,
       'eventId': eventId,
       'eventName': eventName,
+      'annotations': annotations?.map((a) => a.toMap()).toList(),
     };
   }
 
@@ -113,6 +121,12 @@ class SavedComparison {
         notes: json['notes'] as String? ?? '',
         eventId: json['eventId'] as String?,
         eventName: json['eventName'] as String?,
+        annotations:
+            json['annotations'] != null
+                ? (json['annotations'] as List)
+                    .map((a) => ComparisonAnnotation.fromMap(a))
+                    .toList()
+                : null,
       );
     } catch (e) {
       debugPrint('Error parsing SavedComparison from JSON: $e');
@@ -142,6 +156,7 @@ class SavedComparison {
       'notes': notes,
       'eventId': eventId,
       'eventName': eventName,
+      'annotations': annotations?.map((a) => a.toMap()).toList(),
     };
   }
 
@@ -173,6 +188,16 @@ class SavedComparison {
         notes: data['notes'] as String? ?? '',
         eventId: data['eventId'] as String?,
         eventName: data['eventName'] as String?,
+        annotations:
+            data['annotations'] != null
+                ? (data['annotations'] as List)
+                    .map(
+                      (a) => ComparisonAnnotation.fromMap(
+                        a as Map<String, dynamic>,
+                      ),
+                    )
+                    .toList()
+                : null,
       );
     } catch (e) {
       debugPrint('Error parsing SavedComparison from Firestore: $e');
@@ -204,7 +229,8 @@ class SavedComparison {
         other.title == title &&
         other.notes == notes &&
         other.eventId == eventId &&
-        other.eventName == eventName;
+        other.eventName == eventName &&
+        listEquals(other.annotations, annotations);
   }
 
   @override
@@ -218,6 +244,7 @@ class SavedComparison {
         title.hashCode ^
         notes.hashCode ^
         eventId.hashCode ^
-        eventName.hashCode;
+        eventName.hashCode ^
+        annotations.hashCode;
   }
 }

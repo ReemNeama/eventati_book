@@ -45,6 +45,8 @@ models/
 ├── barrel_model/               # Legacy models folder
 ├── event_models/               # Event-related models
 ├── feature_models/             # Feature-specific models
+│   ├── saved_comparison.dart     # Saved comparison model
+│   └── comparison_annotation.dart # Comparison annotation model
 ├── planning_models/            # Planning tool models
 ├── service_models/             # Service-related models
 ├── service_options/            # Service options models
@@ -92,6 +94,8 @@ screens/
     ├── photographer/           # Photographer screens
     ├── planner/                # Planner screens
     └── comparison/             # Comparison screens
+            ├── service_comparison_screen.dart  # Service comparison screen
+            └── saved_comparisons_screen.dart   # Saved comparisons screen
 ```
 
 ## Dependency Injection Directory
@@ -163,6 +167,8 @@ utils/
 ├── core/                       # Core utilities
 ├── formatting/                 # Formatting utilities
 ├── service/                    # Service-related utilities
+│   ├── file_utils.dart           # File handling utilities
+│   └── pdf_export_utils.dart     # PDF export utilities
 ├── ui/                         # UI-related utilities
 └── [various utility files]     # Legacy utility files
 ```
@@ -186,6 +192,8 @@ widgets/
 ├── milestones/                 # Milestone widgets
 ├── responsive/                 # Responsive design widgets
 └── services/                   # Service widgets
+    └── comparison/             # Comparison widgets
+        └── annotation_dialog.dart  # Annotation dialog widget
 ```
 
 ## File Naming Conventions

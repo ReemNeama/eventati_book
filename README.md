@@ -21,6 +21,7 @@ Eventati Book is designed to help users advertise and manage venues for differen
 
 3. **Comprehensive All-in-One Platform**
    - Users can compare different services (venues, caterers, photographers)
+   - Save, annotate, and share service comparisons with PDF export
    - Everything is integrated in one place - browsing, purchasing, and management
    - The unified experience makes event planning significantly easier
 

@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:eventati_book/models/models.dart';
+import 'package:eventati_book/models/feature_models/comparison_annotation.dart';
 import 'package:eventati_book/providers/providers.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/utils.dart';
+import 'package:eventati_book/utils/service/pdf_export_utils.dart';
 import 'package:eventati_book/widgets/common/empty_state.dart';
 import 'package:eventati_book/widgets/common/error_message.dart';
+import 'package:eventati_book/widgets/services/comparison/annotation_dialog.dart';
 
 /// Screen to display and manage saved comparisons
 class SavedComparisonsScreen extends StatefulWidget {
@@ -331,6 +335,18 @@ class _SavedComparisonsScreenState extends State<SavedComparisonsScreen> {
                     label: const Text('View'),
                     onPressed: () => _viewComparison(comparison),
                   ),
+                  // Annotations button
+                  TextButton.icon(
+                    icon: const Icon(Icons.note_add),
+                    label: const Text('Notes'),
+                    onPressed: () => _manageAnnotations(comparison),
+                  ),
+                  // Share button
+                  TextButton.icon(
+                    icon: const Icon(Icons.share),
+                    label: const Text('Share'),
+                    onPressed: () => _shareComparison(comparison),
+                  ),
                   // Edit button
                   TextButton.icon(
                     icon: const Icon(Icons.edit),
@@ -450,6 +466,418 @@ class _SavedComparisonsScreenState extends State<SavedComparisonsScreen> {
             },
           ),
     );
+  }
+
+  /// Manage annotations for a saved comparison
+  void _manageAnnotations(SavedComparison comparison) {
+    // Get the list of annotations (or empty list if null)
+    final annotations = comparison.annotations ?? [];
+
+    // Show a dialog with the list of annotations
+    showDialog(
+      context: context,
+      builder:
+          (dialogContext) => AlertDialog(
+            title: Text('Annotations for ${comparison.title}'),
+            content: SizedBox(
+              width: double.maxFinite,
+              child:
+                  annotations.isEmpty
+                      ? const Center(
+                        child: Text(
+                          'No annotations yet. Add notes and highlights to help you remember important details.',
+                          textAlign: TextAlign.center,
+                        ),
+                      )
+                      : ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: annotations.length,
+                        itemBuilder: (context, index) {
+                          final annotation = annotations[index];
+                          return Card(
+                            margin: const EdgeInsets.only(bottom: 8),
+                            child: ListTile(
+                              title: Text(annotation.title),
+                              subtitle: Text(
+                                annotation.content,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              leading: CircleAvatar(
+                                backgroundColor: annotation.color,
+                                child: const Icon(
+                                  Icons.note,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              trailing: IconButton(
+                                icon: const Icon(Icons.delete),
+                                onPressed: () {
+                                  // Remove the annotation
+                                  final updatedAnnotations =
+                                      List<ComparisonAnnotation>.from(
+                                        annotations,
+                                      );
+                                  updatedAnnotations.removeAt(index);
+
+                                  // Update the comparison
+                                  _updateComparisonAnnotations(
+                                    comparison,
+                                    updatedAnnotations,
+                                    dialogContext,
+                                  );
+                                },
+                              ),
+                              onTap: () {
+                                // Edit the annotation
+                                _editAnnotation(
+                                  comparison,
+                                  annotation,
+                                  annotations,
+                                  dialogContext,
+                                );
+                              },
+                            ),
+                          );
+                        },
+                      ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(),
+                child: const Text('Close'),
+              ),
+              TextButton(
+                onPressed: () {
+                  // Add a new annotation
+                  _addAnnotation(comparison, annotations, dialogContext);
+                },
+                child: const Text('Add Annotation'),
+              ),
+            ],
+          ),
+    );
+  }
+
+  /// Add a new annotation to a comparison
+  void _addAnnotation(
+    SavedComparison comparison,
+    List<ComparisonAnnotation> existingAnnotations,
+    BuildContext dialogContext,
+  ) {
+    // Create lists of service IDs and names for the dropdown
+    final serviceIds = comparison.serviceIds;
+    final serviceNames = comparison.serviceNames;
+
+    // Create a list of common features for the dropdown
+    final features = [
+      'Price',
+      'Quality',
+      'Availability',
+      'Location',
+      'Amenities',
+      'Reviews',
+      'Packages',
+      'Staff',
+    ];
+
+    // Show the annotation dialog
+    showDialog(
+      context: dialogContext,
+      builder:
+          (context) => AnnotationDialog(
+            serviceIds: serviceIds,
+            serviceNames: serviceNames,
+            features: features,
+          ),
+    ).then((result) {
+      if (result != null && result is ComparisonAnnotation) {
+        // Add the new annotation to the list
+        final updatedAnnotations = List<ComparisonAnnotation>.from(
+          existingAnnotations,
+        );
+        updatedAnnotations.add(result);
+
+        // Update the comparison
+        _updateComparisonAnnotations(
+          comparison,
+          updatedAnnotations,
+          dialogContext,
+        );
+      }
+    });
+  }
+
+  /// Edit an existing annotation
+  void _editAnnotation(
+    SavedComparison comparison,
+    ComparisonAnnotation annotation,
+    List<ComparisonAnnotation> existingAnnotations,
+    BuildContext dialogContext,
+  ) {
+    // Create lists of service IDs and names for the dropdown
+    final serviceIds = comparison.serviceIds;
+    final serviceNames = comparison.serviceNames;
+
+    // Create a list of common features for the dropdown
+    final features = [
+      'Price',
+      'Quality',
+      'Availability',
+      'Location',
+      'Amenities',
+      'Reviews',
+      'Packages',
+      'Staff',
+    ];
+
+    // Show the annotation dialog
+    showDialog(
+      context: dialogContext,
+      builder:
+          (context) => AnnotationDialog(
+            annotation: annotation,
+            serviceIds: serviceIds,
+            serviceNames: serviceNames,
+            features: features,
+          ),
+    ).then((result) {
+      if (result != null && result is ComparisonAnnotation) {
+        // Replace the edited annotation in the list
+        final updatedAnnotations = List<ComparisonAnnotation>.from(
+          existingAnnotations,
+        );
+        final index = updatedAnnotations.indexWhere(
+          (a) => a.id == annotation.id,
+        );
+        if (index != -1) {
+          updatedAnnotations[index] = result;
+
+          // Update the comparison
+          _updateComparisonAnnotations(
+            comparison,
+            updatedAnnotations,
+            dialogContext,
+          );
+        }
+      }
+    });
+  }
+
+  /// Update the annotations for a comparison
+  void _updateComparisonAnnotations(
+    SavedComparison comparison,
+    List<ComparisonAnnotation> annotations,
+    BuildContext dialogContext,
+  ) {
+    // Create an updated comparison with the new annotations
+    final updatedComparison = comparison.copyWith(annotations: annotations);
+
+    // Store a reference to the provider
+    final provider = Provider.of<ComparisonSavingProvider>(
+      context,
+      listen: false,
+    );
+
+    // Store the dialog context navigator
+    final navigator = Navigator.of(dialogContext);
+
+    // Update the comparison
+    provider.updateSavedComparison(updatedComparison).then((success) {
+      if (success && mounted) {
+        // Show success message
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Annotations updated successfully')),
+        );
+
+        // Refresh the list
+        provider.refreshData();
+
+        // Close the dialog if it's still open and we're still mounted
+        if (mounted && navigator.canPop()) {
+          navigator.pop();
+        }
+
+        // Show the annotations dialog again with the updated list
+        if (mounted) {
+          _manageAnnotations(updatedComparison);
+        }
+      } else if (mounted) {
+        // Show error message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to update annotations: ${provider.error}'),
+          ),
+        );
+      }
+    });
+  }
+
+  /// Share a comparison as a PDF
+  void _shareComparison(SavedComparison comparison) {
+    // Show a dialog with sharing options
+    showDialog(
+      context: context,
+      builder:
+          (dialogContext) => AlertDialog(
+            title: const Text('Share Comparison'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.picture_as_pdf),
+                  title: const Text('Export as PDF'),
+                  subtitle: const Text(
+                    'Create a PDF document of this comparison',
+                  ),
+                  onTap: () {
+                    Navigator.of(dialogContext).pop();
+                    _exportToPDF(comparison);
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.print),
+                  title: const Text('Print'),
+                  subtitle: const Text('Print this comparison'),
+                  onTap: () {
+                    Navigator.of(dialogContext).pop();
+                    _printComparison(comparison);
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.email),
+                  title: const Text('Email'),
+                  subtitle: const Text('Send this comparison via email'),
+                  onTap: () {
+                    Navigator.of(dialogContext).pop();
+                    _emailComparison(comparison);
+                  },
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(),
+                child: const Text('Cancel'),
+              ),
+            ],
+          ),
+    );
+  }
+
+  /// Export a comparison to PDF
+  Future<void> _exportToPDF(SavedComparison comparison) async {
+    try {
+      // Show a loading indicator
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Generating PDF...'),
+          duration: Duration(seconds: 1),
+        ),
+      );
+
+      // Generate the PDF
+      final pdfBytes = await PDFExportUtils.generateComparisonPDF(
+        comparison,
+        includeNotes: true,
+        includeHighlights: true,
+      );
+
+      // Create a filename
+      final fileName =
+          '${comparison.title.replaceAll(' ', '_')}_comparison.pdf';
+
+      // Share the PDF
+      await PDFExportUtils.sharePDF(
+        pdfBytes,
+        fileName,
+        subject: 'Eventati Book Comparison: ${comparison.title}',
+        text:
+            'Here is your comparison of ${comparison.serviceNames.join(', ')}.',
+      );
+    } catch (e) {
+      // Show error message
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to export PDF: $e')));
+      }
+    }
+  }
+
+  /// Print a comparison
+  Future<void> _printComparison(SavedComparison comparison) async {
+    try {
+      // Show a loading indicator
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Preparing document for printing...'),
+          duration: Duration(seconds: 1),
+        ),
+      );
+
+      // Generate the PDF
+      final pdfBytes = await PDFExportUtils.generateComparisonPDF(
+        comparison,
+        includeNotes: true,
+        includeHighlights: true,
+      );
+
+      // Print the PDF
+      await PDFExportUtils.printPDF(
+        pdfBytes,
+        'Eventati Book Comparison: ${comparison.title}',
+      );
+    } catch (e) {
+      // Show error message
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to print comparison: $e')),
+        );
+      }
+    }
+  }
+
+  /// Email a comparison
+  Future<void> _emailComparison(SavedComparison comparison) async {
+    try {
+      // Show a loading indicator
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Preparing email...'),
+          duration: Duration(seconds: 1),
+        ),
+      );
+
+      // Generate the PDF
+      final pdfBytes = await PDFExportUtils.generateComparisonPDF(
+        comparison,
+        includeNotes: true,
+        includeHighlights: true,
+      );
+
+      // Create a filename
+      final fileName =
+          '${comparison.title.replaceAll(' ', '_')}_comparison.pdf';
+
+      // Save the PDF to a file
+      final filePath = await PDFExportUtils.savePDF(pdfBytes, fileName);
+
+      // Share the PDF via email
+      await Share.shareXFiles(
+        [XFile(filePath)],
+        subject: 'Eventati Book Comparison: ${comparison.title}',
+        text:
+            'Here is your comparison of ${comparison.serviceNames.join(', ')}.',
+      );
+    } catch (e) {
+      // Show error message
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to email comparison: $e')),
+        );
+      }
+    }
   }
 
   /// Delete a saved comparison
