@@ -5,7 +5,7 @@ import 'package:eventati_book/services/interfaces/crashlytics_service_interface.
 import 'package:eventati_book/services/interfaces/database_service_interface.dart';
 import 'package:eventati_book/services/interfaces/messaging_service_interface.dart';
 import 'package:eventati_book/services/interfaces/storage_service_interface.dart';
-import 'package:eventati_book/services/supabase/utils/data_migration_service.dart';
+
 import 'package:eventati_book/services/supabase/core/supabase_auth_service.dart';
 import 'package:eventati_book/services/supabase/core/posthog_crashlytics_service.dart';
 import 'package:eventati_book/services/supabase/core/custom_messaging_service.dart';
@@ -14,6 +14,10 @@ import 'package:eventati_book/services/supabase/utils/database_service.dart';
 import 'package:eventati_book/services/supabase/core/supabase_storage_service.dart';
 import 'package:eventati_book/services/supabase/database/user_database_service.dart';
 import 'package:eventati_book/services/supabase/database/vendor_recommendation_database_service.dart';
+import 'package:eventati_book/services/supabase/database/event_database_service.dart';
+import 'package:eventati_book/services/supabase/database/budget_database_service.dart';
+import 'package:eventati_book/services/supabase/database/guest_database_service.dart';
+import 'package:eventati_book/services/supabase/database/booking_database_service.dart';
 import 'package:eventati_book/utils/file_utils.dart';
 
 /// Simple service locator for dependency injection
@@ -57,15 +61,6 @@ class ServiceLocator {
     registerSingleton<AnalyticsServiceInterface>(AnalyticsService());
     registerSingleton<CrashlyticsServiceInterface>(PostHogCrashlyticsService());
 
-    // Register data migration service
-    registerSingleton<DataMigrationService>(
-      DataMigrationService(
-        authService: get<AuthServiceInterface>(),
-        databaseService: get<DatabaseServiceInterface>(),
-        storageService: get<StorageServiceInterface>(),
-      ),
-    );
-
     // Initialize FileUtils with the storage service
     FileUtils.setStorageService(get<StorageServiceInterface>());
 
@@ -105,6 +100,38 @@ class ServiceLocator {
     return get<VendorRecommendationDatabaseService>();
   }
 
+  /// Get the event database service
+  EventDatabaseService get eventDatabaseService {
+    if (!_services.containsKey(EventDatabaseService)) {
+      registerSingleton<EventDatabaseService>(EventDatabaseService());
+    }
+    return get<EventDatabaseService>();
+  }
+
+  /// Get the budget database service
+  BudgetDatabaseService get budgetDatabaseService {
+    if (!_services.containsKey(BudgetDatabaseService)) {
+      registerSingleton<BudgetDatabaseService>(BudgetDatabaseService());
+    }
+    return get<BudgetDatabaseService>();
+  }
+
+  /// Get the guest database service
+  GuestDatabaseService get guestDatabaseService {
+    if (!_services.containsKey(GuestDatabaseService)) {
+      registerSingleton<GuestDatabaseService>(GuestDatabaseService());
+    }
+    return get<GuestDatabaseService>();
+  }
+
+  /// Get the booking database service
+  BookingDatabaseService get bookingDatabaseService {
+    if (!_services.containsKey(BookingDatabaseService)) {
+      registerSingleton<BookingDatabaseService>(BookingDatabaseService());
+    }
+    return get<BookingDatabaseService>();
+  }
+
   /// Get the storage service
   StorageServiceInterface get storageService => get<StorageServiceInterface>();
 
@@ -119,9 +146,6 @@ class ServiceLocator {
   /// Get the crashlytics service
   CrashlyticsServiceInterface get crashlyticsService =>
       get<CrashlyticsServiceInterface>();
-
-  /// Get the data migration service
-  DataMigrationService get dataMigrationService => get<DataMigrationService>();
 }
 
 /// Global instance of the service locator

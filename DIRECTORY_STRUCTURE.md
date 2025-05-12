@@ -28,7 +28,6 @@ lib/
 ├── screens/            # UI screens
 ├── services/           # Business logic services
 ├── styles/             # Styling constants
-├── tempDB/             # Temporary mock data
 ├── utils/              # Utility functions
 └── widgets/            # Reusable UI components
 ```
@@ -144,18 +143,6 @@ styles/
 └── wizard_styles.dart          # Wizard-specific styles
 ```
 
-## TempDB Directory
-
-The tempDB directory contains temporary mock data for development.
-
-```
-tempDB/
-├── README.md                   # Documentation
-├── services.dart               # Mock service data
-├── users.dart                  # Mock user data
-└── venues.dart                 # Mock venue data
-```
-
 ## Utils Directory
 
 The utils directory contains utility functions and constants.
@@ -217,7 +204,6 @@ When adding new files to the project, follow these guidelines:
 5. **New Utilities**: Add to the appropriate subfolder in `utils/`
 6. **New Services**: Add to the `services/` directory
 7. **New Styles**: Add to the `styles/` directory
-8. **New Mock Data**: Add to the `tempDB/` directory
 
 ## Barrel Files
 

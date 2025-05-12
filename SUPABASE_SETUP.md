@@ -299,13 +299,4 @@ class PostHogOptions {
 
 After completing the setup, run the app to verify that everything is working correctly.
 
-## 9. Data Migration
 
-If you need to migrate data from a temporary database to Supabase, use the `DataMigrationService` provided in the app:
-
-```dart
-final migrationService = serviceLocator.get<DataMigrationService>();
-final result = await migrationService.migrateAllData();
-```
-
-This will migrate all user data, events, budget items, guests, tasks, and bookings from the temporary database to Supabase.

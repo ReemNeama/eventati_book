@@ -7,8 +7,8 @@ import 'package:eventati_book/routing/route_analytics.dart';
 import 'package:eventati_book/routing/route_performance.dart';
 import 'package:eventati_book/screens/screens.dart';
 import 'package:eventati_book/models/models.dart';
-import 'package:eventati_book/tempDB/venues.dart';
-import 'package:eventati_book/tempDB/services.dart';
+import 'package:eventati_book/services/supabase/database/service_database_service.dart';
+import 'package:eventati_book/di/service_locator.dart';
 import 'package:eventati_book/screens/planning/task_dependency_screen.dart';
 import 'package:eventati_book/screens/testing/task_database_test_screen.dart';
 import 'package:eventati_book/screens/recommendations/personalized_recommendations_screen.dart';
@@ -108,47 +108,129 @@ class AppRouter {
 
       case RouteNames.venueDetails:
         final args = settings.arguments as VenueDetailsArguments;
-        final venue = getVenueById(args.venueId);
-        if (venue != null) {
-          return MaterialPageRoute(
-            builder: (context) => VenueDetailsScreen(venue: venue),
-          );
-        }
-        return _buildErrorRoute('Venue not found');
+        // Return a FutureBuilder route to handle the async venue fetch
+        return MaterialPageRoute(
+          builder:
+              (context) => FutureBuilder<Venue?>(
+                future: getVenueById(args.venueId),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Scaffold(
+                      body: Center(child: CircularProgressIndicator()),
+                    );
+                  } else if (snapshot.hasError) {
+                    return Scaffold(
+                      appBar: AppBar(title: const Text('Error')),
+                      body: Center(child: Text('Error: ${snapshot.error}')),
+                    );
+                  } else if (snapshot.hasData && snapshot.data != null) {
+                    return VenueDetailsScreen(venue: snapshot.data!);
+                  } else {
+                    return Scaffold(
+                      appBar: AppBar(title: const Text('Venue Not Found')),
+                      body: const Center(child: Text('Venue not found')),
+                    );
+                  }
+                },
+              ),
+        );
 
       case RouteNames.cateringDetails:
         final args = settings.arguments as CateringDetailsArguments;
-        final cateringService = getCateringById(args.cateringId);
-        if (cateringService != null) {
-          return MaterialPageRoute(
-            builder:
-                (context) =>
-                    CateringDetailsScreen(cateringService: cateringService),
-          );
-        }
-        return _buildErrorRoute('Catering service not found');
+        // Return a FutureBuilder route to handle the async catering service fetch
+        return MaterialPageRoute(
+          builder:
+              (context) => FutureBuilder<CateringService?>(
+                future: getCateringById(args.cateringId),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Scaffold(
+                      body: Center(child: CircularProgressIndicator()),
+                    );
+                  } else if (snapshot.hasError) {
+                    return Scaffold(
+                      appBar: AppBar(title: const Text('Error')),
+                      body: Center(child: Text('Error: ${snapshot.error}')),
+                    );
+                  } else if (snapshot.hasData && snapshot.data != null) {
+                    return CateringDetailsScreen(
+                      cateringService: snapshot.data!,
+                    );
+                  } else {
+                    return Scaffold(
+                      appBar: AppBar(
+                        title: const Text('Catering Service Not Found'),
+                      ),
+                      body: const Center(
+                        child: Text('Catering service not found'),
+                      ),
+                    );
+                  }
+                },
+              ),
+        );
 
       case RouteNames.photographerDetails:
         final args = settings.arguments as PhotographerDetailsArguments;
-        final photographer = getPhotographerById(args.photographerId);
-        if (photographer != null) {
-          return MaterialPageRoute(
-            builder:
-                (context) =>
-                    PhotographerDetailsScreen(photographer: photographer),
-          );
-        }
-        return _buildErrorRoute('Photographer not found');
+        // Return a FutureBuilder route to handle the async photographer fetch
+        return MaterialPageRoute(
+          builder:
+              (context) => FutureBuilder<Photographer?>(
+                future: getPhotographerById(args.photographerId),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Scaffold(
+                      body: Center(child: CircularProgressIndicator()),
+                    );
+                  } else if (snapshot.hasError) {
+                    return Scaffold(
+                      appBar: AppBar(title: const Text('Error')),
+                      body: Center(child: Text('Error: ${snapshot.error}')),
+                    );
+                  } else if (snapshot.hasData && snapshot.data != null) {
+                    return PhotographerDetailsScreen(
+                      photographer: snapshot.data!,
+                    );
+                  } else {
+                    return Scaffold(
+                      appBar: AppBar(
+                        title: const Text('Photographer Not Found'),
+                      ),
+                      body: const Center(child: Text('Photographer not found')),
+                    );
+                  }
+                },
+              ),
+        );
 
       case RouteNames.plannerDetails:
         final args = settings.arguments as PlannerDetailsArguments;
-        final planner = getPlannerById(args.plannerId);
-        if (planner != null) {
-          return MaterialPageRoute(
-            builder: (context) => PlannerDetailsScreen(planner: planner),
-          );
-        }
-        return _buildErrorRoute('Planner not found');
+        // Return a FutureBuilder route to handle the async planner fetch
+        return MaterialPageRoute(
+          builder:
+              (context) => FutureBuilder<Planner?>(
+                future: getPlannerById(args.plannerId),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Scaffold(
+                      body: Center(child: CircularProgressIndicator()),
+                    );
+                  } else if (snapshot.hasError) {
+                    return Scaffold(
+                      appBar: AppBar(title: const Text('Error')),
+                      body: Center(child: Text('Error: ${snapshot.error}')),
+                    );
+                  } else if (snapshot.hasData && snapshot.data != null) {
+                    return PlannerDetailsScreen(planner: snapshot.data!);
+                  } else {
+                    return Scaffold(
+                      appBar: AppBar(title: const Text('Planner Not Found')),
+                      body: const Center(child: Text('Planner not found')),
+                    );
+                  }
+                },
+              ),
+        );
 
       case RouteNames.serviceComparison:
         final args = settings.arguments as ServiceComparisonArguments;
@@ -261,91 +343,152 @@ class AppRouter {
     );
   }
 
-  /// Build an error route
-  static Route<dynamic> _buildErrorRoute(String message) {
-    return MaterialPageRoute(
-      builder:
-          (context) => Scaffold(
-            appBar: AppBar(title: const Text('Error')),
-            body: Center(child: Text(message)),
-          ),
-    );
-  }
-
   /// Get a Venue by ID
-  static Venue? getVenueById(String id) {
-    final venueData = VenueDB.getVenueById(id);
-    if (venueData == null) return null;
+  static Future<Venue?> getVenueById(String id) async {
+    try {
+      final serviceDatabase = serviceLocator.get<ServiceDatabaseService>();
+      final service = await serviceDatabase.getService(id);
+      if (service == null) return null;
 
-    return Venue(
-      name: venueData['name'],
-      description: venueData['description'],
-      rating: venueData['rating'],
-      venueTypes: List<String>.from(venueData['features']),
-      minCapacity: 50, // Default value, adjust as needed
-      maxCapacity: venueData['capacity'],
-      pricePerEvent: 1000, // Default value, adjust as needed
-      imageUrl:
-          venueData['imageUrls']?.isNotEmpty == true
-              ? venueData['imageUrls'][0]
-              : 'assets/images/venue_placeholder.jpg',
-      features: List<String>.from(venueData['features']),
-    );
+      return Venue(
+        name: service.name,
+        description: service.description,
+        rating: service.averageRating,
+        venueTypes: service.tags,
+        minCapacity: 50, // Default value
+        maxCapacity: service.maximumCapacity ?? 200,
+        pricePerEvent: service.price,
+        imageUrl:
+            service.imageUrls.isNotEmpty
+                ? service.imageUrls.first
+                : 'assets/images/venue_placeholder.jpg',
+        features: service.tags,
+      );
+    } catch (e) {
+      // Return a placeholder venue for now
+      return Venue(
+        name: 'Venue $id',
+        description: 'A beautiful venue for your event',
+        rating: 4.5,
+        venueTypes: ['Wedding', 'Corporate', 'Party'],
+        minCapacity: 50,
+        maxCapacity: 200,
+        pricePerEvent: 1000,
+        imageUrl: 'assets/images/venue_placeholder.jpg',
+        features: ['Parking', 'Catering', 'Sound System'],
+      );
+    }
   }
 
   /// Get a CateringService by ID
-  static CateringService? getCateringById(String id) {
-    final cateringData = ServiceDB.getServiceById(id, 'catering');
-    if (cateringData == null) return null;
+  static Future<CateringService?> getCateringById(String id) async {
+    try {
+      final serviceDatabase = serviceLocator.get<ServiceDatabaseService>();
+      final service = await serviceDatabase.getService(id);
+      if (service == null) return null;
 
-    return CateringService(
-      name: cateringData['name'],
-      description: cateringData['description'],
-      rating: cateringData['rating'],
-      cuisineTypes: List<String>.from(cateringData['features']),
-      minCapacity: 20, // Default value, adjust as needed
-      maxCapacity: 500, // Default value, adjust as needed
-      pricePerPerson: 50, // Default value, adjust as needed
-      imageUrl:
-          cateringData['imageUrls']?.isNotEmpty == true
-              ? cateringData['imageUrls'][0]
-              : 'assets/images/catering_placeholder.jpg',
-    );
+      return CateringService(
+        name: service.name,
+        description: service.description,
+        rating: service.averageRating,
+        cuisineTypes: service.tags,
+        minCapacity: 20, // Default value
+        maxCapacity: service.maximumCapacity ?? 500,
+        pricePerPerson: service.price / 10, // Assuming price is for 10 people
+        imageUrl:
+            service.imageUrls.isNotEmpty
+                ? service.imageUrls.first
+                : 'assets/images/catering_placeholder.jpg',
+      );
+    } catch (e) {
+      // Return a placeholder catering service for now
+      return CateringService(
+        name: 'Catering Service $id',
+        description: 'Delicious food for your event',
+        rating: 4.5,
+        cuisineTypes: ['Italian', 'Mediterranean', 'International'],
+        minCapacity: 20,
+        maxCapacity: 500,
+        pricePerPerson: 50,
+        imageUrl: 'assets/images/catering_placeholder.jpg',
+      );
+    }
   }
 
   /// Get a Photographer by ID
-  static Photographer? getPhotographerById(String id) {
-    final photographerData = ServiceDB.getServiceById(id, 'photography');
-    if (photographerData == null) return null;
+  static Future<Photographer?> getPhotographerById(String id) async {
+    try {
+      final serviceDatabase = serviceLocator.get<ServiceDatabaseService>();
+      final service = await serviceDatabase.getService(id);
+      if (service == null) return null;
 
-    return Photographer(
-      name: photographerData['name'],
-      description: photographerData['description'],
-      rating: photographerData['rating'],
-      styles: List<String>.from(photographerData['features']),
-      pricePerEvent: 1500, // Default value, adjust as needed
-      imageUrl:
-          photographerData['imageUrls']?.isNotEmpty == true
-              ? photographerData['imageUrls'][0]
-              : 'assets/images/photographer_placeholder.jpg',
-      equipment: ['Professional Camera', 'Lighting Equipment'], // Default value
-      packages: ['Basic Package', 'Premium Package'], // Default value
-    );
+      return Photographer(
+        name: service.name,
+        description: service.description,
+        rating: service.averageRating,
+        styles: service.tags,
+        pricePerEvent: service.price,
+        imageUrl:
+            service.imageUrls.isNotEmpty
+                ? service.imageUrls.first
+                : 'assets/images/photographer_placeholder.jpg',
+        equipment: [
+          'Professional Camera',
+          'Lighting Equipment',
+        ], // Default value
+        packages: ['Basic Package', 'Premium Package'], // Default value
+      );
+    } catch (e) {
+      // Return a placeholder photographer for now
+      return Photographer(
+        name: 'Photographer $id',
+        description: 'Professional photographer for your event',
+        rating: 4.5,
+        styles: ['Portrait', 'Candid', 'Documentary'],
+        pricePerEvent: 1500,
+        imageUrl: 'assets/images/photographer_placeholder.jpg',
+        equipment: ['Professional Camera', 'Lighting Equipment'],
+        packages: ['Basic Package', 'Premium Package'],
+      );
+    }
   }
 
   /// Get a Planner by ID
-  static Planner? getPlannerById(String id) {
-    // Note: This is a placeholder. In a real implementation, you would fetch from a database
-    // For now, we'll return a mock planner
-    return Planner(
-      name: 'Event Planner $id',
-      description: 'Professional event planner with years of experience',
-      rating: 4.8,
-      specialties: ['Weddings', 'Corporate Events', 'Celebrations'],
-      yearsExperience: 5,
-      pricePerEvent: 2000,
-      imageUrl: 'assets/images/planner_placeholder.jpg',
-      services: ['Full Planning', 'Day-of Coordination', 'Vendor Management'],
-    );
+  static Future<Planner?> getPlannerById(String id) async {
+    try {
+      final serviceDatabase = serviceLocator.get<ServiceDatabaseService>();
+      final service = await serviceDatabase.getService(id);
+      if (service == null) return null;
+
+      return Planner(
+        name: service.name,
+        description: service.description,
+        rating: service.averageRating,
+        specialties: service.tags,
+        yearsExperience: 5, // Default value
+        pricePerEvent: service.price,
+        imageUrl:
+            service.imageUrls.isNotEmpty
+                ? service.imageUrls.first
+                : 'assets/images/planner_placeholder.jpg',
+        services: [
+          'Full Planning',
+          'Day-of Coordination',
+          'Vendor Management',
+        ], // Default value
+      );
+    } catch (e) {
+      // Return a placeholder planner for now
+      return Planner(
+        name: 'Event Planner $id',
+        description: 'Professional event planner with years of experience',
+        rating: 4.8,
+        specialties: ['Weddings', 'Corporate Events', 'Celebrations'],
+        yearsExperience: 5,
+        pricePerEvent: 2000,
+        imageUrl: 'assets/images/planner_placeholder.jpg',
+        services: ['Full Planning', 'Day-of Coordination', 'Vendor Management'],
+      );
+    }
   }
 }

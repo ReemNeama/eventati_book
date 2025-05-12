@@ -23,7 +23,6 @@ supabase/
 │   ├── user_database_service.dart
 │   └── database.dart      # Barrel file for database services
 ├── utils/                 # Utility services
-│   ├── data_migration_service.dart
 │   ├── database_service.dart
 │   └── utils.dart         # Barrel file for utility services
 ├── supabase.dart          # Main barrel file for all Supabase services
@@ -80,4 +79,3 @@ Database services handle data operations for specific data types:
 Utility services provide common functionality:
 
 - **DatabaseService**: Base service for database operations
-- **DataMigrationService**: Handles data migration from legacy storage to Supabase

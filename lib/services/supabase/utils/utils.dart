@@ -4,4 +4,4 @@
 library;
 
 export 'database_service.dart';
-export 'data_migration_service.dart';
+export 'supabase_exceptions.dart';

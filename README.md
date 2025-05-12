@@ -41,7 +41,6 @@ lib/
 ├── screens/        # UI screens
 ├── services/       # Business logic services
 ├── styles/         # Theme and styling
-├── tempDB/         # Temporary mock data
 ├── utils/          # Utility functions
 ├── widgets/        # Reusable UI components
 └── main.dart       # Application entry point
@@ -58,6 +57,8 @@ Comprehensive documentation is available in the `docs/` directory:
 - **[Booking Integration](docs/booking_integration.md)**: Booking system integration with services
 - **[Event Planning Tools](docs/event_planning_tools.md)**: Event planning tools flow and components
 - **[Event Wizard Flow](docs/event_wizard_flow.md)**: Event wizard flow and components
+- **[Supabase Setup](SUPABASE_SETUP.md)**: Detailed setup instructions for Supabase
+- **[Supabase Migration](SUPABASE_MIGRATION.md)**: Documentation of the migration from Firebase/tempDB to Supabase
 
 ## Development Recommendations
 
