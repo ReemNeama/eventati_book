@@ -1,13 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:eventati_book/di/service_locator.dart';
 import 'package:eventati_book/models/models.dart';
-import 'package:eventati_book/services/firebase/firestore/vendor_recommendation_firestore_service.dart';
+import 'package:eventati_book/services/supabase/database/vendor_recommendation_database_service.dart';
 import 'package:eventati_book/utils/logger.dart';
 
 /// Provider for service recommendations based on wizard data
 class ServiceRecommendationProvider with ChangeNotifier {
   /// Vendor recommendation service
-  final VendorRecommendationFirestoreService _recommendationService;
+  final VendorRecommendationDatabaseService _recommendationService;
 
   /// Current wizard state
   WizardState? _wizardState;
@@ -26,11 +26,11 @@ class ServiceRecommendationProvider with ChangeNotifier {
 
   /// Constructor
   ServiceRecommendationProvider({
-    VendorRecommendationFirestoreService? recommendationService,
+    VendorRecommendationDatabaseService? recommendationService,
     WizardState? initialWizardState,
   }) : _recommendationService =
            recommendationService ??
-           serviceLocator.vendorRecommendationFirestoreService {
+           serviceLocator.vendorRecommendationDatabaseService {
     if (initialWizardState != null) {
       _wizardState = initialWizardState;
       _loadRecommendations();

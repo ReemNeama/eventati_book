@@ -27,7 +27,7 @@ This document provides a detailed breakdown of the timeline and checklist compon
 │  │TaskFormScreen   │──┼─┼────────┼──────────┼─┼───────────┐           │
 │  └─────────────────┘  │ │        │          │ │           │           │
 │                       │ │        │          │ │  ┌────────▼────────┐  │
-│                       │ │        │          │ │  │ TempDB/Firebase │  │
+│                       │ │        │          │ │  │ TempDB/Supabase │  │
 │                       │ │        │          │ │  └─────────────────┘  │
 │                       │ │                   │ │                       │
 └───────────────────────┘ └───────────────────┘ └───────────────────────┘
@@ -366,22 +366,22 @@ This document provides a detailed breakdown of the timeline and checklist compon
 └─────────────────────────────────────────────────────────────────────────┘
 ```
 
-## Future Firebase Implementation
+## Supabase Implementation
 
-When Firebase is implemented, the timeline and checklist system will use Firebase Firestore:
+The timeline and checklist system uses Supabase Database:
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
-│                       FIREBASE TIMELINE STORAGE                         │
+│                       SUPABASE TIMELINE STORAGE                         │
 └───────────────────────────────────┬─────────────────────────────────────┘
                                     │
                 ┌───────────────────┼───────────────────┐
                 │                   │                   │
                 ▼                   ▼                   ▼
 ┌───────────────────────┐ ┌───────────────────┐ ┌───────────────────────┐
-│  TASK COLLECTION      │ │  CATEGORY COLLECTION│ │  EVENT COLLECTION    │
+│  TASKS TABLE          │ │  CATEGORIES TABLE │ │  EVENTS TABLE        │
 │                       │ │                   │ │                        │
-│  - Task documents     │ │  - Category docs  │ │  - Event documents    │
+│  - Task records       │ │  - Category records│ │  - Event records     │
 │  - Status tracking    │ │  - Category icons │ │  - Timeline refs      │
 │  - Task metadata      │ │  - Category colors│ │  - Event metadata     │
 └───────────────────────┘ └───────────────────┘ └───────────────────────┘

@@ -321,8 +321,11 @@ class _TaskDependencyScreenState extends State<TaskDependencyScreen>
                                   () => TaskCategory(
                                     id: '0',
                                     name: 'Unknown',
-                                    icon: Icons.help_outline,
-                                    color: Colors.grey,
+                                    description: '',
+                                    icon: 'help_outline',
+                                    color: '#9E9E9E',
+                                    createdAt: DateTime.now(),
+                                    updatedAt: DateTime.now(),
                                   ),
                             );
 
@@ -388,8 +391,11 @@ class _TaskDependencyScreenState extends State<TaskDependencyScreen>
                                   () => TaskCategory(
                                     id: '0',
                                     name: 'Unknown',
-                                    icon: Icons.help_outline,
-                                    color: Colors.grey,
+                                    description: '',
+                                    icon: 'help_outline',
+                                    color: '#9E9E9E',
+                                    createdAt: DateTime.now(),
+                                    updatedAt: DateTime.now(),
                                   ),
                             );
 
@@ -530,8 +536,11 @@ class _TaskDependencyScreenState extends State<TaskDependencyScreen>
                                   () => TaskCategory(
                                     id: '0',
                                     name: 'Unknown',
-                                    icon: Icons.help_outline,
-                                    color: Colors.grey,
+                                    description: '',
+                                    icon: 'help_outline',
+                                    color: '#9E9E9E',
+                                    createdAt: DateTime.now(),
+                                    updatedAt: DateTime.now(),
                                   ),
                             );
 
@@ -541,8 +550,11 @@ class _TaskDependencyScreenState extends State<TaskDependencyScreen>
                                   () => TaskCategory(
                                     id: '0',
                                     name: 'Unknown',
-                                    icon: Icons.help_outline,
-                                    color: Colors.grey,
+                                    description: '',
+                                    icon: 'help_outline',
+                                    color: '#9E9E9E',
+                                    createdAt: DateTime.now(),
+                                    updatedAt: DateTime.now(),
                                   ),
                             );
 
@@ -557,8 +569,10 @@ class _TaskDependencyScreenState extends State<TaskDependencyScreen>
                                     Row(
                                       children: [
                                         Icon(
-                                          prerequisiteCategory.icon,
-                                          color: prerequisiteCategory.color,
+                                          prerequisiteCategory.getIconData(),
+                                          color:
+                                              prerequisiteCategory
+                                                  .getColorObject(),
                                           size: 20,
                                         ),
                                         const SizedBox(width: 8),
@@ -591,8 +605,10 @@ class _TaskDependencyScreenState extends State<TaskDependencyScreen>
                                     Row(
                                       children: [
                                         Icon(
-                                          dependentCategory.icon,
-                                          color: dependentCategory.color,
+                                          dependentCategory.getIconData(),
+                                          color:
+                                              dependentCategory
+                                                  .getColorObject(),
                                           size: 20,
                                         ),
                                         const SizedBox(width: 8),

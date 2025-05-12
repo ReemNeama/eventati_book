@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/services/wizard_connection_service.dart';
-import 'package:eventati_book/services/firebase/firestore/wizard_state_firestore_service.dart';
+import 'package:eventati_book/services/supabase/database/wizard_state_database_service.dart';
 
 /// Provider to manage the state of the event wizard throughout the application.
 ///
@@ -56,12 +56,12 @@ class WizardProvider extends ChangeNotifier {
   /// Current event ID
   String? _eventId;
 
-  /// Whether to use Firebase for persistence
-  bool _useFirebase = false;
+  /// Whether to use Supabase for persistence
+  bool _useSupabase = false;
 
-  /// Firestore service for wizard state
-  final WizardStateFirestoreService _firestoreService =
-      WizardStateFirestoreService();
+  /// Database service for wizard state
+  final WizardStateDatabaseService _databaseService =
+      WizardStateDatabaseService();
 
   /// Get the current wizard state
   WizardState? get state => _state;
@@ -72,37 +72,37 @@ class WizardProvider extends ChangeNotifier {
   /// Get the error message if any
   String? get error => _error;
 
-  /// Get whether Firebase is being used for persistence
-  bool get useFirebase => _useFirebase;
+  /// Get whether Supabase is being used for persistence
+  bool get useSupabase => _useSupabase;
 
-  /// Set whether to use Firebase for persistence
-  set useFirebase(bool value) {
-    _useFirebase = value;
+  /// Set whether to use Supabase for persistence
+  set useSupabase(bool value) {
+    _useSupabase = value;
     notifyListeners();
   }
 
-  /// Initialize with user and event IDs for Firebase persistence
+  /// Initialize with user and event IDs for Supabase persistence
   void initializeWithIds(String userId, String eventId) {
     _userId = userId;
     _eventId = eventId;
-    _useFirebase = true;
+    _useSupabase = true;
     notifyListeners();
   }
 
-  /// Explicitly save the current state to Firebase
-  Future<void> saveStateToFirebase() async {
+  /// Explicitly save the current state to Supabase
+  Future<void> saveStateToSupabase() async {
     if (_state == null ||
-        !_useFirebase ||
+        !_useSupabase ||
         _userId == null ||
         _eventId == null) {
       return;
     }
 
     try {
-      await _firestoreService.saveWizardState(_userId!, _eventId!, _state!);
-      debugPrint('Explicitly saved wizard state to Firebase');
+      await _databaseService.saveWizardState(_state!);
+      debugPrint('Explicitly saved wizard state to Supabase');
     } catch (e) {
-      _error = 'Failed to save wizard state to Firebase: $e';
+      _error = 'Failed to save wizard state to Supabase: $e';
       debugPrint(_error);
       notifyListeners();
     }
@@ -355,10 +355,12 @@ class WizardProvider extends ChangeNotifier {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove('wizard_${_state!.template.id}');
 
-      // If Firebase is enabled, also clear from Firestore
-      if (_useFirebase && _userId != null && _eventId != null) {
-        await _firestoreService.deleteWizardState(_userId!, _eventId!);
-        debugPrint('Deleted wizard state from Firebase');
+      // If Supabase is enabled, also clear from database
+      if (_useSupabase && _userId != null && _eventId != null) {
+        // Create a unique ID for the wizard state based on user and event
+        final stateId = '${_userId!}_${_eventId!}_${_state!.template.id}';
+        await _databaseService.deleteWizardState(stateId);
+        debugPrint('Deleted wizard state from Supabase');
       }
 
       _state = null;
@@ -369,7 +371,7 @@ class WizardProvider extends ChangeNotifier {
     }
   }
 
-  /// Save the current state to storage (SharedPreferences or Firebase)
+  /// Save the current state to storage (SharedPreferences or Supabase)
   Future<void> _saveState() async {
     if (_state == null) return;
 
@@ -379,10 +381,10 @@ class WizardProvider extends ChangeNotifier {
       final jsonData = jsonEncode(_state!.toJson());
       await prefs.setString('wizard_${_state!.template.id}', jsonData);
 
-      // If Firebase is enabled, also save to Firestore
-      if (_useFirebase && _userId != null && _eventId != null) {
-        await _firestoreService.saveWizardState(_userId!, _eventId!, _state!);
-        debugPrint('Saved wizard state to Firebase');
+      // If Supabase is enabled, also save to database
+      if (_useSupabase && _userId != null && _eventId != null) {
+        await _databaseService.saveWizardState(_state!);
+        debugPrint('Saved wizard state to Supabase');
       }
     } catch (e) {
       _error = 'Failed to save wizard state: $e';
@@ -390,23 +392,22 @@ class WizardProvider extends ChangeNotifier {
     }
   }
 
-  /// Load a saved state from storage (SharedPreferences or Firebase)
+  /// Load a saved state from storage (SharedPreferences or Supabase)
   Future<WizardState?> _loadSavedState(String templateId) async {
     try {
-      // If Firebase is enabled, try to load from Firestore first
-      if (_useFirebase && _userId != null && _eventId != null) {
-        final firebaseState = await _firestoreService.getWizardState(
-          _userId!,
-          _eventId!,
-        );
+      // If Supabase is enabled, try to load from database first
+      if (_useSupabase && _userId != null && _eventId != null) {
+        // Create a unique ID for the wizard state based on user and event
+        final stateId = '${_userId!}_${_eventId!}_$templateId';
+        final supabaseState = await _databaseService.getWizardState(stateId);
 
-        if (firebaseState != null) {
-          debugPrint('Loaded wizard state from Firebase');
-          return firebaseState;
+        if (supabaseState != null) {
+          debugPrint('Loaded wizard state from Supabase');
+          return supabaseState;
         }
       }
 
-      // Fall back to SharedPreferences if Firebase is disabled or no data found
+      // Fall back to SharedPreferences if Supabase is disabled or no data found
       final prefs = await SharedPreferences.getInstance();
       final jsonData = prefs.getString('wizard_$templateId');
 

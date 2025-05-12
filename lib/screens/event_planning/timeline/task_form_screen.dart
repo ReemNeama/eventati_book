@@ -101,7 +101,11 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                       value: category.id,
                       child: Row(
                         children: [
-                          Icon(category.icon, size: 20, color: category.color),
+                          Icon(
+                            category.getIconData(),
+                            size: 20,
+                            color: category.getColorObject(),
+                          ),
                           const SizedBox(width: 8),
                           Text(category.name),
                         ],

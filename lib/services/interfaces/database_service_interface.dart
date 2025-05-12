@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 /// Interface for database services
 abstract class DatabaseServiceInterface {
   /// Get a document by ID
@@ -161,11 +159,11 @@ abstract class DatabaseServiceInterface {
 
   /// Run a transaction
   Future<T> runTransaction<T>(
-    Future<T> Function(Transaction transaction) transactionFunction,
+    Future<T> Function(dynamic transaction) transactionFunction,
   );
 }
 
-/// Query filter for Firestore queries
+/// Query filter for database queries
 class QueryFilter {
   /// Field to filter on
   final String field;
@@ -184,7 +182,7 @@ class QueryFilter {
   });
 }
 
-/// Filter operations for Firestore queries
+/// Filter operations for database queries
 enum FilterOperation {
   /// Equal to
   equalTo,
@@ -215,9 +213,15 @@ enum FilterOperation {
 
   /// Not in array
   whereNotIn,
+
+  /// Is null
+  isNull,
+
+  /// Is not null
+  isNotNull,
 }
 
-/// Batch operation for Firestore batch writes
+/// Batch operation for database batch writes
 class BatchOperation {
   /// Type of operation
   final BatchOperationType type;

@@ -6,7 +6,7 @@ import 'package:eventati_book/services/task_template_service.dart';
 import 'package:eventati_book/services/wizard/budget_items_builder.dart';
 import 'package:eventati_book/services/wizard/guest_groups_builder.dart';
 import 'package:eventati_book/services/wizard/specialized_task_templates.dart';
-import 'package:eventati_book/services/firebase/firestore/wizard_connection_firestore_service.dart';
+import 'package:eventati_book/services/supabase/database/wizard_connection_database_service.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/logger.dart';
@@ -36,8 +36,8 @@ class WizardConnectionService {
     // Connect to service screens for recommendations
     connectToServiceScreens(context, wizardData);
 
-    // Persist connections to Firebase if user and event IDs are available
-    await persistConnectionsToFirebase(context, wizardData);
+    // Persist connections to Supabase if user and event IDs are available
+    await persistConnectionsToSupabase(context, wizardData);
 
     // Show success message after async operations complete
     // We'll use the stored scaffoldMessenger which doesn't depend on context
@@ -58,8 +58,8 @@ class WizardConnectionService {
     );
   }
 
-  /// Persist wizard connections to Firebase
-  static Future<void> persistConnectionsToFirebase(
+  /// Persist wizard connections to Supabase
+  static Future<void> persistConnectionsToSupabase(
     BuildContext context,
     Map<String, dynamic> wizardData,
   ) async {
@@ -70,18 +70,18 @@ class WizardConnectionService {
         listen: false,
       );
 
-      // Check if Firebase persistence is enabled
-      if (wizardProvider.useFirebase) {
+      // Check if Supabase persistence is enabled
+      if (wizardProvider.useSupabase) {
         Logger.i(
-          'Persisting wizard connections to Firebase',
+          'Persisting wizard connections to Supabase',
           tag: 'WizardConnectionService',
         );
 
-        // Check if the wizard provider has Firebase persistence enabled
+        // Check if the wizard provider has Supabase persistence enabled
         // This means it has user and event IDs
-        if (!wizardProvider.useFirebase) {
+        if (!wizardProvider.useSupabase) {
           Logger.w(
-            'Firebase persistence is not enabled in WizardProvider',
+            'Supabase persistence is not enabled in WizardProvider',
             tag: 'WizardConnectionService',
           );
           return;
@@ -145,16 +145,16 @@ class WizardConnectionService {
             budgetItemIds: budgetItemIds,
           );
 
-          // Save the connection to Firebase
-          final firestoreService = WizardConnectionFirestoreService();
-          await firestoreService.saveWizardConnection(
+          // Save the connection to Supabase
+          final databaseService = WizardConnectionDatabaseService();
+          await databaseService.saveWizardConnection(
             userId,
             eventId,
-            updatedConnection.toFirestore(),
+            updatedConnection.toJson(),
           );
 
           Logger.i(
-            'Saved wizard connection to Firebase with ${budgetItemIds.length} budget items',
+            'Saved wizard connection to Supabase with ${budgetItemIds.length} budget items',
             tag: 'WizardConnectionService',
           );
         } catch (e) {
@@ -164,20 +164,20 @@ class WizardConnectionService {
           );
 
           // Save the connection without budget items
-          final firestoreService = WizardConnectionFirestoreService();
-          await firestoreService.saveWizardConnection(
+          final databaseService = WizardConnectionDatabaseService();
+          await databaseService.saveWizardConnection(
             userId,
             eventId,
-            connection.toFirestore(),
+            connection.toJson(),
           );
         }
 
-        // The WizardProvider will handle saving the wizard state to Firebase
-        await wizardProvider.saveStateToFirebase();
+        // The WizardProvider will handle saving the wizard state to Supabase
+        await wizardProvider.saveStateToSupabase();
       }
     } catch (e) {
       Logger.e(
-        'Error persisting wizard connections to Firebase: $e',
+        'Error persisting wizard connections to Supabase: $e',
         tag: 'WizardConnectionService',
       );
     }

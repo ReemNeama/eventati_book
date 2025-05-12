@@ -29,7 +29,7 @@ class _VenueGalleryExampleState extends State<VenueGalleryExample> {
   }
 
   void _loadImages() {
-    // In a real app, you would load the images from Firebase Storage
+    // In a real app, you would load the images from Supabase Storage
     // For this example, we'll use the venue's imageUrl
     setState(() {
       if (widget.venue.imageUrl.isNotEmpty) {

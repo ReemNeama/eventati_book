@@ -1,5 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:eventati_book/utils/database_utils.dart';
 
 class BudgetCategory {
   final String id;
@@ -8,21 +8,21 @@ class BudgetCategory {
 
   BudgetCategory({required this.id, required this.name, required this.icon});
 
-  /// Convert to Firestore data
-  Map<String, dynamic> toFirestore() {
+  /// Convert to database document
+  Map<String, dynamic> toDatabaseDoc() {
     return {
       'name': name,
       'iconCodePoint': icon.codePoint,
       'iconFontFamily': icon.fontFamily,
       'iconFontPackage': icon.fontPackage,
-      'createdAt': FieldValue.serverTimestamp(),
+      'createdAt': DbFieldValue.serverTimestamp(),
     };
   }
 
-  /// Create from Firestore document
-  factory BudgetCategory.fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>?;
-    if (data == null) {
+  /// Create from database document
+  factory BudgetCategory.fromDatabaseDoc(DbDocumentSnapshot doc) {
+    final data = doc.getData();
+    if (data.isEmpty) {
       throw Exception('Document data was null');
     }
 
@@ -143,8 +143,8 @@ class BudgetItem {
     );
   }
 
-  /// Convert to Firestore data
-  Map<String, dynamic> toFirestore() {
+  /// Convert to database document
+  Map<String, dynamic> toDatabaseDoc() {
     return {
       'categoryId': categoryId,
       'description': description,
@@ -152,22 +152,27 @@ class BudgetItem {
       'actualCost': actualCost,
       'isPaid': isPaid,
       'paymentDate':
-          paymentDate != null ? Timestamp.fromDate(paymentDate!) : null,
+          paymentDate != null
+              ? DbTimestamp.fromDate(paymentDate!).toIso8601String()
+              : null,
       'notes': notes,
       'vendorName': vendorName,
       'vendorContact': vendorContact,
-      'dueDate': dueDate != null ? Timestamp.fromDate(dueDate!) : null,
+      'dueDate':
+          dueDate != null
+              ? DbTimestamp.fromDate(dueDate!).toIso8601String()
+              : null,
       'isBooked': isBooked,
       'bookingId': bookingId,
-      'createdAt': FieldValue.serverTimestamp(),
-      'updatedAt': FieldValue.serverTimestamp(),
+      'createdAt': DbFieldValue.serverTimestamp(),
+      'updatedAt': DbFieldValue.serverTimestamp(),
     };
   }
 
-  /// Create from Firestore document
-  factory BudgetItem.fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>?;
-    if (data == null) {
+  /// Create from database document
+  factory BudgetItem.fromDatabaseDoc(DbDocumentSnapshot doc) {
+    final data = doc.getData();
+    if (data.isEmpty) {
       throw Exception('Document data was null');
     }
 
@@ -181,15 +186,12 @@ class BudgetItem {
       isPaid: data['isPaid'] ?? false,
       paymentDate:
           data['paymentDate'] != null
-              ? (data['paymentDate'] as Timestamp).toDate()
+              ? DateTime.parse(data['paymentDate'])
               : null,
       notes: data['notes'],
       vendorName: data['vendorName'],
       vendorContact: data['vendorContact'],
-      dueDate:
-          data['dueDate'] != null
-              ? (data['dueDate'] as Timestamp).toDate()
-              : null,
+      dueDate: data['dueDate'] != null ? DateTime.parse(data['dueDate']) : null,
       isBooked: data['isBooked'] ?? false,
       bookingId: data['bookingId'],
     );

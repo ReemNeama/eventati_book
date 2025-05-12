@@ -1,9 +1,9 @@
-/// Interface for Firebase Cloud Messaging services
+/// Interface for messaging and notification services
 abstract class MessagingServiceInterface {
   /// Initialize the messaging service
   Future<void> initialize();
 
-  /// Get the FCM token for the current device
+  /// Get the messaging token for the current device
   Future<String?> getToken();
 
   /// Subscribe to a topic
@@ -54,10 +54,10 @@ abstract class MessagingServiceInterface {
   /// Handle notification tap
   void handleNotificationTap(Function(String?) onTap);
 
-  /// Save the FCM token to the user's profile
+  /// Save the messaging token to the user's profile
   Future<void> saveTokenToDatabase(String? token);
 
-  /// Delete the FCM token from the user's profile
+  /// Delete the messaging token from the user's profile
   Future<void> deleteToken();
 
   /// Send a message to a specific user

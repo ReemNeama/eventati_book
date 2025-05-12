@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/di/service_locator.dart';
 import 'package:eventati_book/models/models.dart';
-import 'package:eventati_book/services/firebase/firestore/vendor_recommendation_firestore_service.dart';
+import 'package:eventati_book/services/supabase/database/vendor_recommendation_database_service.dart';
 import 'package:eventati_book/utils/logger.dart';
 
 /// Provider for recommending services based on event wizard data.
@@ -78,9 +78,9 @@ class ServiceRecommendationProvider extends ChangeNotifier {
   bool _showOnlyRecommended = false;
 
   /// Vendor recommendation service
-  final VendorRecommendationFirestoreService _recommendationService;
+  final VendorRecommendationDatabaseService _recommendationService;
 
-  /// List of personalized recommendations from Firestore
+  /// List of personalized recommendations from database
   List<Suggestion> _personalizedRecommendations = [];
 
   /// Whether the provider is loading data
@@ -91,11 +91,11 @@ class ServiceRecommendationProvider extends ChangeNotifier {
 
   /// Constructor
   ServiceRecommendationProvider({
-    VendorRecommendationFirestoreService? recommendationService,
+    VendorRecommendationDatabaseService? recommendationService,
     WizardState? initialWizardState,
   }) : _recommendationService =
            recommendationService ??
-           serviceLocator.vendorRecommendationFirestoreService {
+           serviceLocator.vendorRecommendationDatabaseService {
     if (initialWizardState != null) {
       _wizardState = initialWizardState;
       _loadPersonalizedRecommendations();

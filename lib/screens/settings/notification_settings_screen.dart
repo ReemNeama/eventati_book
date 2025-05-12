@@ -3,8 +3,7 @@ import 'package:eventati_book/models/notification_models/notification_settings.d
 import 'package:eventati_book/models/notification_models/notification_topic.dart';
 import 'package:eventati_book/utils/logger.dart';
 import 'package:eventati_book/utils/ui/ui_utils.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// Screen for managing notification settings
 class NotificationSettingsScreen extends StatefulWidget {
@@ -27,13 +26,10 @@ class _NotificationSettingsScreenState
   /// User notification settings
   NotificationSettings? _settings;
 
-  // Firebase messaging service is not used directly in this screen
+  // Supabase client is used for authentication and database access
 
-  /// Firebase auth instance
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-
-  /// Firestore instance
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  /// Supabase client instance
+  final SupabaseClient _supabase = Supabase.instance.client;
 
   @override
   void initState() {
@@ -49,20 +45,25 @@ class _NotificationSettingsScreenState
     });
 
     try {
-      if (_auth.currentUser == null) {
+      final user = _supabase.auth.currentUser;
+      if (user == null) {
         throw Exception('User not logged in');
       }
 
-      final settingsDoc =
-          await _firestore
-              .collection('users')
-              .doc(_auth.currentUser!.uid)
-              .collection('settings')
-              .doc('notifications')
-              .get();
+      final response =
+          await _supabase
+              .from('user_notification_settings')
+              .select()
+              .eq('user_id', user.id)
+              .single();
 
       setState(() {
-        _settings = NotificationSettings.fromDocumentSnapshot(settingsDoc);
+        try {
+          final data = Map<String, dynamic>.from(response);
+          _settings = NotificationSettings.fromDatabaseDoc(data);
+        } catch (e) {
+          _settings = NotificationSettings.defaultSettings();
+        }
         _isLoading = false;
       });
     } catch (e) {
@@ -86,7 +87,8 @@ class _NotificationSettingsScreenState
     });
 
     try {
-      if (_auth.currentUser == null) {
+      final user = _supabase.auth.currentUser;
+      if (user == null) {
         throw Exception('User not logged in');
       }
 
@@ -94,12 +96,10 @@ class _NotificationSettingsScreenState
         throw Exception('Settings not initialized');
       }
 
-      await _firestore
-          .collection('users')
-          .doc(_auth.currentUser!.uid)
-          .collection('settings')
-          .doc('notifications')
-          .set(_settings!.toFirestore());
+      await _supabase.from('user_notification_settings').upsert({
+        'user_id': user.id,
+        ..._settings!.toDatabaseDoc(),
+      });
 
       if (mounted) {
         UIUtils.showSuccessSnackBar(context, 'Notification settings saved');

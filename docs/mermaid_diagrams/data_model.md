@@ -14,7 +14,7 @@ erDiagram
         bool isEmailVerified
         datetime createdAt
     }
-    
+
     EVENT {
         string id PK
         string userId FK
@@ -27,7 +27,7 @@ erDiagram
         datetime createdAt
         datetime updatedAt
     }
-    
+
     BUDGET {
         string id PK
         string eventId FK
@@ -35,7 +35,7 @@ erDiagram
         datetime createdAt
         datetime updatedAt
     }
-    
+
     BUDGET_ITEM {
         string id PK
         string budgetId FK
@@ -49,7 +49,7 @@ erDiagram
         bool isBooked
         string bookingId FK
     }
-    
+
     GUEST_LIST {
         string id PK
         string eventId FK
@@ -57,7 +57,7 @@ erDiagram
         datetime createdAt
         datetime updatedAt
     }
-    
+
     GUEST {
         string id PK
         string guestListId FK
@@ -69,14 +69,14 @@ erDiagram
         bool plusOne
         string notes
     }
-    
+
     TIMELINE {
         string id PK
         string eventId FK
         datetime createdAt
         datetime updatedAt
     }
-    
+
     MILESTONE {
         string id PK
         string timelineId FK
@@ -86,14 +86,14 @@ erDiagram
         bool isCompleted
         string category
     }
-    
+
     SERVICE_CATEGORY {
         string id PK
         string name
         string description
         string iconUrl
     }
-    
+
     SERVICE {
         string id PK
         string categoryId FK
@@ -108,7 +108,7 @@ erDiagram
         string[] images
         string[] features
     }
-    
+
     BOOKING {
         string id PK
         string eventId FK
@@ -120,7 +120,7 @@ erDiagram
         string notes
         datetime createdAt
     }
-    
+
     MESSAGE {
         string id PK
         string bookingId FK
@@ -130,7 +130,7 @@ erDiagram
         datetime timestamp
         bool isRead
     }
-    
+
     SUGGESTION {
         string id PK
         string eventId FK
@@ -140,24 +140,24 @@ erDiagram
         bool isSaved
         datetime createdAt
     }
-    
+
     USER ||--o{ EVENT : "creates"
     EVENT ||--o| BUDGET : "has"
     EVENT ||--o| GUEST_LIST : "has"
     EVENT ||--o| TIMELINE : "has"
     EVENT ||--o{ BOOKING : "has"
     EVENT ||--o{ SUGGESTION : "receives"
-    
+
     BUDGET ||--o{ BUDGET_ITEM : "contains"
     GUEST_LIST ||--o{ GUEST : "contains"
     TIMELINE ||--o{ MILESTONE : "contains"
-    
+
     SERVICE_CATEGORY ||--o{ SERVICE : "contains"
     SERVICE ||--o{ BOOKING : "receives"
-    
+
     BOOKING ||--o{ MESSAGE : "has"
     BOOKING ||--o| BUDGET_ITEM : "linked to"
-    
+
     USER ||--o{ MESSAGE : "sends/receives"
 ```
 
@@ -175,7 +175,7 @@ classDiagram
         +fromJson(Map json)
         +toJson() Map
     }
-    
+
     class Event {
         +String id
         +String userId
@@ -190,7 +190,7 @@ classDiagram
         +fromJson(Map json)
         +toJson() Map
     }
-    
+
     class Budget {
         +String id
         +String eventId
@@ -203,7 +203,7 @@ classDiagram
         +fromJson(Map json)
         +toJson() Map
     }
-    
+
     class BudgetItem {
         +String id
         +String budgetId
@@ -221,7 +221,7 @@ classDiagram
         +fromJson(Map json)
         +toJson() Map
     }
-    
+
     class GuestList {
         +String id
         +String eventId
@@ -235,7 +235,7 @@ classDiagram
         +fromJson(Map json)
         +toJson() Map
     }
-    
+
     class Guest {
         +String id
         +String guestListId
@@ -249,7 +249,7 @@ classDiagram
         +fromJson(Map json)
         +toJson() Map
     }
-    
+
     class Timeline {
         +String id
         +String eventId
@@ -262,7 +262,7 @@ classDiagram
         +fromJson(Map json)
         +toJson() Map
     }
-    
+
     class Milestone {
         +String id
         +String timelineId
@@ -276,7 +276,7 @@ classDiagram
         +fromJson(Map json)
         +toJson() Map
     }
-    
+
     class ServiceCategory {
         +String id
         +String name
@@ -285,7 +285,7 @@ classDiagram
         +fromJson(Map json)
         +toJson() Map
     }
-    
+
     class Service {
         +String id
         +String categoryId
@@ -304,7 +304,7 @@ classDiagram
         +fromJson(Map json)
         +toJson() Map
     }
-    
+
     class Booking {
         +String id
         +String eventId
@@ -318,7 +318,7 @@ classDiagram
         +fromJson(Map json)
         +toJson() Map
     }
-    
+
     class Message {
         +String id
         +String bookingId
@@ -330,7 +330,7 @@ classDiagram
         +fromJson(Map json)
         +toJson() Map
     }
-    
+
     class Suggestion {
         +String id
         +String eventId
@@ -342,24 +342,24 @@ classDiagram
         +fromJson(Map json)
         +toJson() Map
     }
-    
+
     User "1" -- "many" Event : creates
     Event "1" -- "1" Budget : has
     Event "1" -- "1" GuestList : has
     Event "1" -- "1" Timeline : has
     Event "1" -- "many" Booking : has
     Event "1" -- "many" Suggestion : receives
-    
+
     Budget "1" -- "many" BudgetItem : contains
     GuestList "1" -- "many" Guest : contains
     Timeline "1" -- "many" Milestone : contains
-    
+
     ServiceCategory "1" -- "many" Service : contains
     Service "1" -- "many" Booking : receives
-    
+
     Booking "1" -- "many" Message : has
     Booking "1" -- "0..1" BudgetItem : "linked to"
-    
+
     User "1" -- "many" Message : "sends/receives"
 ```
 
@@ -370,7 +370,7 @@ flowchart TD
     %% External entities
     User((User))
     Vendor((Vendor))
-    
+
     %% Processes
     AuthProcess[Authentication Process]
     EventCreationProcess[Event Creation Process]
@@ -379,7 +379,7 @@ flowchart TD
     TimelineProcess[Timeline Management Process]
     ServiceBookingProcess[Service Booking Process]
     MessagingProcess[Messaging Process]
-    
+
     %% Data stores
     UserStore[(User Data)]
     EventStore[(Event Data)]
@@ -389,7 +389,7 @@ flowchart TD
     ServiceStore[(Service Data)]
     BookingStore[(Booking Data)]
     MessageStore[(Message Data)]
-    
+
     %% Data flows - User to processes
     User -->|Login/Register| AuthProcess
     User -->|Create Event| EventCreationProcess
@@ -398,12 +398,12 @@ flowchart TD
     User -->|Track Timeline| TimelineProcess
     User -->|Book Services| ServiceBookingProcess
     User -->|Send Messages| MessagingProcess
-    
+
     %% Data flows - Vendor to processes
     Vendor -->|Login/Register| AuthProcess
     Vendor -->|Manage Services| ServiceBookingProcess
     Vendor -->|Send Messages| MessagingProcess
-    
+
     %% Data flows - Processes to data stores
     AuthProcess -->|Store User Data| UserStore
     EventCreationProcess -->|Store Event Data| EventStore
@@ -413,7 +413,7 @@ flowchart TD
     ServiceBookingProcess -->|Store Service Data| ServiceStore
     ServiceBookingProcess -->|Store Booking Data| BookingStore
     MessagingProcess -->|Store Message Data| MessageStore
-    
+
     %% Data flows - Data stores to processes
     UserStore -->|Retrieve User Data| AuthProcess
     EventStore -->|Retrieve Event Data| EventCreationProcess
@@ -423,13 +423,13 @@ flowchart TD
     ServiceStore -->|Retrieve Service Data| ServiceBookingProcess
     BookingStore -->|Retrieve Booking Data| ServiceBookingProcess
     MessageStore -->|Retrieve Message Data| MessagingProcess
-    
+
     %% Cross-process data flows
     EventCreationProcess -->|Initialize| BudgetManagementProcess
     EventCreationProcess -->|Initialize| GuestManagementProcess
     EventCreationProcess -->|Initialize| TimelineProcess
     ServiceBookingProcess -->|Update| BudgetManagementProcess
-    
+
     %% Process to user data flows
     AuthProcess -->|Authentication Result| User
     EventCreationProcess -->|Event Creation Result| User
@@ -441,69 +441,73 @@ flowchart TD
     MessagingProcess -->|Message Delivery| Vendor
 ```
 
-## Firebase Collections Structure
+## Supabase Database Structure
 
 ```mermaid
 graph TD
-    %% Root collections
-    Firebase[Firebase] --> Users[Users Collection]
-    Firebase --> Events[Events Collection]
-    Firebase --> Budgets[Budgets Collection]
-    Firebase --> GuestLists[Guest Lists Collection]
-    Firebase --> Timelines[Timelines Collection]
-    Firebase --> Services[Services Collection]
-    Firebase --> Bookings[Bookings Collection]
-    Firebase --> Messages[Messages Collection]
-    Firebase --> Suggestions[Suggestions Collection]
-    
-    %% Users collection
-    Users --> User1[User Document]
+    %% Root tables
+    Supabase[Supabase] --> Users[Users Table]
+    Supabase --> Events[Events Table]
+    Supabase --> Budgets[Budgets Table]
+    Supabase --> GuestLists[Guest Lists Table]
+    Supabase --> Timelines[Timelines Table]
+    Supabase --> Services[Services Table]
+    Supabase --> Bookings[Bookings Table]
+    Supabase --> Messages[Messages Table]
+    Supabase --> Suggestions[Suggestions Table]
+
+    %% Users table
+    Users --> User1[User Row]
     User1 --> UserData1[User Data]
-    
-    %% Events collection
-    Events --> Event1[Event Document]
+
+    %% Events table
+    Events --> Event1[Event Row]
     Event1 --> EventData1[Event Data]
-    
-    %% Budgets collection
-    Budgets --> Budget1[Budget Document]
+
+    %% Budgets table
+    Budgets --> Budget1[Budget Row]
     Budget1 --> BudgetData1[Budget Data]
-    Budget1 --> BudgetItems1[Budget Items Subcollection]
-    BudgetItems1 --> BudgetItem1[Budget Item Document]
+
+    %% Budget Items table
+    BudgetItems[Budget Items Table] --> BudgetItem1[Budget Item Row]
     BudgetItem1 --> BudgetItemData1[Budget Item Data]
-    
-    %% Guest Lists collection
-    GuestLists --> GuestList1[Guest List Document]
+
+    %% Guest Lists table
+    GuestLists --> GuestList1[Guest List Row]
     GuestList1 --> GuestListData1[Guest List Data]
-    GuestList1 --> Guests1[Guests Subcollection]
-    Guests1 --> Guest1[Guest Document]
+
+    %% Guests table
+    Guests[Guests Table] --> Guest1[Guest Row]
     Guest1 --> GuestData1[Guest Data]
-    
-    %% Timelines collection
-    Timelines --> Timeline1[Timeline Document]
+
+    %% Timelines table
+    Timelines --> Timeline1[Timeline Row]
     Timeline1 --> TimelineData1[Timeline Data]
-    Timeline1 --> Milestones1[Milestones Subcollection]
-    Milestones1 --> Milestone1[Milestone Document]
+
+    %% Milestones table
+    Milestones[Milestones Table] --> Milestone1[Milestone Row]
     Milestone1 --> MilestoneData1[Milestone Data]
-    
-    %% Services collection
-    Services --> ServiceCategories[Service Categories Subcollection]
-    ServiceCategories --> Category1[Category Document]
+
+    %% Service Categories table
+    ServiceCategories[Service Categories Table] --> Category1[Category Row]
     Category1 --> CategoryData1[Category Data]
-    Services --> Service1[Service Document]
+
+    %% Services table
+    Services --> Service1[Service Row]
     Service1 --> ServiceData1[Service Data]
-    
-    %% Bookings collection
-    Bookings --> Booking1[Booking Document]
+
+    %% Bookings table
+    Bookings --> Booking1[Booking Row]
     Booking1 --> BookingData1[Booking Data]
-    
-    %% Messages collection
-    Messages --> Message1[Message Document]
+
+    %% Messages table
+    Messages --> Message1[Message Row]
     Message1 --> MessageData1[Message Data]
-    
-    %% Suggestions collection
-    Suggestions --> Suggestion1[Suggestion Document]
+
+    %% Suggestions table
+    Suggestions --> Suggestion1[Suggestion Row]
     Suggestion1 --> SuggestionData1[Suggestion Data]
-    
+
     %% Relationships
     UserData1 -.-> |userId| EventData1
     EventData1 -.-> |eventId| BudgetData1
@@ -532,7 +536,7 @@ classDiagram
         +fromJson(Map json)*
         +toJson() Map*
     }
-    
+
     class UserModel {
         +String name
         +String email
@@ -541,7 +545,7 @@ classDiagram
         +fromJson(Map json)
         +toJson() Map
     }
-    
+
     class EventModel {
         +String userId
         +String name
@@ -554,7 +558,7 @@ classDiagram
         +fromJson(Map json)
         +toJson() Map
     }
-    
+
     class BudgetModel {
         +String eventId
         +double totalBudget
@@ -565,7 +569,7 @@ classDiagram
         +fromJson(Map json)
         +toJson() Map
     }
-    
+
     class BudgetItemModel {
         +String budgetId
         +String category
@@ -582,7 +586,7 @@ classDiagram
         +fromJson(Map json)
         +toJson() Map
     }
-    
+
     class GuestListModel {
         +String eventId
         +int estimatedCount
@@ -594,7 +598,7 @@ classDiagram
         +fromJson(Map json)
         +toJson() Map
     }
-    
+
     class GuestModel {
         +String guestListId
         +String name
@@ -607,7 +611,7 @@ classDiagram
         +fromJson(Map json)
         +toJson() Map
     }
-    
+
     class TimelineModel {
         +String eventId
         +DateTime updatedAt
@@ -618,7 +622,7 @@ classDiagram
         +fromJson(Map json)
         +toJson() Map
     }
-    
+
     class MilestoneModel {
         +String timelineId
         +String title
@@ -631,7 +635,7 @@ classDiagram
         +fromJson(Map json)
         +toJson() Map
     }
-    
+
     class ServiceCategoryModel {
         +String name
         +String description
@@ -639,7 +643,7 @@ classDiagram
         +fromJson(Map json)
         +toJson() Map
     }
-    
+
     class ServiceModel {
         +String categoryId
         +String name
@@ -657,7 +661,7 @@ classDiagram
         +fromJson(Map json)
         +toJson() Map
     }
-    
+
     class BookingModel {
         +String eventId
         +String serviceId
@@ -669,7 +673,7 @@ classDiagram
         +fromJson(Map json)
         +toJson() Map
     }
-    
+
     class MessageModel {
         +String bookingId
         +String senderId
@@ -680,7 +684,7 @@ classDiagram
         +fromJson(Map json)
         +toJson() Map
     }
-    
+
     class SuggestionModel {
         +String eventId
         +String serviceId
@@ -690,7 +694,7 @@ classDiagram
         +fromJson(Map json)
         +toJson() Map
     }
-    
+
     BaseModel <|-- UserModel
     BaseModel <|-- EventModel
     BaseModel <|-- BudgetModel
@@ -720,18 +724,18 @@ graph TD
     BookingProvider[Booking Provider]
     MessagingProvider[Messaging Provider]
     SuggestionProvider[Suggestion Provider]
-    
+
     %% Dependencies
     AuthProvider --> EventProvider
     EventProvider --> BudgetProvider
     EventProvider --> GuestListProvider
     EventProvider --> TimelineProvider
     EventProvider --> SuggestionProvider
-    
+
     ServiceProvider --> BookingProvider
     BookingProvider --> BudgetProvider
     BookingProvider --> MessagingProvider
-    
+
     %% Model dependencies
     AuthProvider --> UserModel[User Model]
     EventProvider --> EventModel[Event Model]
@@ -746,7 +750,7 @@ graph TD
     BookingProvider --> BookingModel[Booking Model]
     MessagingProvider --> MessageModel[Message Model]
     SuggestionProvider --> SuggestionModel[Suggestion Model]
-    
+
     %% Service dependencies
     AuthProvider --> AuthService[Auth Service]
     EventProvider --> EventService[Event Service]
@@ -757,7 +761,7 @@ graph TD
     BookingProvider --> BookingService[Booking Service]
     MessagingProvider --> MessagingService[Messaging Service]
     SuggestionProvider --> SuggestionService[Suggestion Service]
-    
+
     %% Data storage
     AuthService --> DataStorage[Data Storage]
     EventService --> DataStorage

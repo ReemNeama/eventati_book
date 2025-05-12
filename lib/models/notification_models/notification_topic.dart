@@ -41,6 +41,33 @@ class NotificationTopic {
     this.defaultEnabled = true,
   });
 
+  /// Create from JSON data
+  factory NotificationTopic.fromJson(Map<String, dynamic> json) {
+    return NotificationTopic(
+      id: json['topic'] ?? json['id'] ?? '',
+      name: json['display_name'] ?? json['name'] ?? '',
+      description: json['description'] ?? '',
+      category: _categoryFromString(json['category'] ?? 'system'),
+      defaultEnabled: json['default_enabled'] ?? true,
+    );
+  }
+
+  /// Convert category string to enum
+  static NotificationTopicCategory _categoryFromString(String category) {
+    switch (category.toLowerCase()) {
+      case 'event_type':
+      case 'eventtype':
+        return NotificationTopicCategory.eventType;
+      case 'feature':
+        return NotificationTopicCategory.feature;
+      case 'marketing':
+        return NotificationTopicCategory.marketing;
+      case 'system':
+      default:
+        return NotificationTopicCategory.system;
+    }
+  }
+
   /// Get the topic ID with prefix based on category
   String get topicId {
     switch (category) {

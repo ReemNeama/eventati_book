@@ -113,7 +113,7 @@ This diagram shows the dependencies between different components in the applicat
                 │                   │                   │
                 ▼                   ▼                   ▼
 ┌───────────────────────┐ ┌───────────────────┐ ┌───────────────────────┐
-│       MODELS          │ │      TEMPDB       │ │      (FIREBASE)       │
+│       MODELS          │ │      TEMPDB       │ │      SUPABASE         │
 │                       │ │                   │ │                        │
 │  Dependencies:        │ │  Dependencies:    │ │  Dependencies:        │
 │  - None               │ │  - Models         │ │  - Models             │
@@ -239,10 +239,10 @@ This diagram shows the external package dependencies of the application:
 │  - intl               │ │  - flutter_rating_bar│  - path_provider     │
 │  - uuid               │ │  - image_picker   │ │  - path               │
 │  - collection         │ │  - flutter_slidable│ │  - url_launcher      │
-│                       │ │  - table_calendar  │ │  - firebase_core     │
-│                       │ │  - flutter_form_builder│ - firebase_auth    │
-│                       │ │  - flutter_datetime_picker│ - cloud_firestore│
-│                       │ │                   │ │  - firebase_storage   │
+│                       │ │  - table_calendar  │ │  - supabase_flutter  │
+│                       │ │  - flutter_form_builder│ - supabase_auth    │
+│                       │ │  - flutter_datetime_picker│ - posthog_flutter│
+│                       │ │                   │ │  - storage_client     │
 └───────────────────────┘ └───────────────────┘ └───────────────────────┘
 ```
 

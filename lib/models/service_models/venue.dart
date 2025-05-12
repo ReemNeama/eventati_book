@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:eventati_book/utils/database_utils.dart';
 
 class Venue {
   final String id;
@@ -33,10 +33,10 @@ class Venue {
     this.updatedAt,
   });
 
-  /// Create a Venue from a Firestore document
-  factory Venue.fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>?;
-    if (data == null) {
+  /// Create a Venue from a database document
+  factory Venue.fromDatabaseDoc(DbDocumentSnapshot doc) {
+    final data = doc.getData();
+    if (data.isEmpty) {
       throw Exception('Document data was null');
     }
 
@@ -55,18 +55,14 @@ class Venue {
       features: List<String>.from(data['features'] ?? []),
       userId: data['userId'],
       createdAt:
-          data['createdAt'] != null
-              ? (data['createdAt'] as Timestamp).toDate()
-              : null,
+          data['createdAt'] != null ? DateTime.parse(data['createdAt']) : null,
       updatedAt:
-          data['updatedAt'] != null
-              ? (data['updatedAt'] as Timestamp).toDate()
-              : null,
+          data['updatedAt'] != null ? DateTime.parse(data['updatedAt']) : null,
     );
   }
 
-  /// Convert Venue to Firestore data
-  Map<String, dynamic> toFirestore() {
+  /// Convert Venue to database document
+  Map<String, dynamic> toDatabaseDoc() {
     return {
       'name': name,
       'description': description,
@@ -81,9 +77,9 @@ class Venue {
       'userId': userId,
       'createdAt':
           createdAt != null
-              ? Timestamp.fromDate(createdAt!)
-              : FieldValue.serverTimestamp(),
-      'updatedAt': FieldValue.serverTimestamp(),
+              ? DbTimestamp.fromDate(createdAt!).toIso8601String()
+              : DbFieldValue.serverTimestamp(),
+      'updatedAt': DbFieldValue.serverTimestamp(),
     };
   }
 

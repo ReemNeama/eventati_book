@@ -520,11 +520,14 @@ class _SavedComparisonsScreenState extends State<SavedComparisonsScreen> {
                                       );
                                   updatedAnnotations.removeAt(index);
 
+                                  // Store the dialog context navigator
+                                  final navigator = Navigator.of(dialogContext);
+
                                   // Update the comparison
                                   _updateComparisonAnnotations(
                                     comparison,
                                     updatedAnnotations,
-                                    dialogContext,
+                                    navigator,
                                   );
                                 },
                               ),
@@ -582,6 +585,9 @@ class _SavedComparisonsScreenState extends State<SavedComparisonsScreen> {
     ];
 
     // Show the annotation dialog
+    // Store the navigator before the async operation
+    final navigator = Navigator.of(dialogContext);
+
     showDialog(
       context: dialogContext,
       builder:
@@ -599,11 +605,13 @@ class _SavedComparisonsScreenState extends State<SavedComparisonsScreen> {
         updatedAnnotations.add(result);
 
         // Update the comparison
-        _updateComparisonAnnotations(
-          comparison,
-          updatedAnnotations,
-          dialogContext,
-        );
+        if (mounted) {
+          _updateComparisonAnnotations(
+            comparison,
+            updatedAnnotations,
+            navigator,
+          );
+        }
       }
     });
   }
@@ -632,6 +640,9 @@ class _SavedComparisonsScreenState extends State<SavedComparisonsScreen> {
     ];
 
     // Show the annotation dialog
+    // Store the navigator before the async operation
+    final navigator = Navigator.of(dialogContext);
+
     showDialog(
       context: dialogContext,
       builder:
@@ -654,11 +665,13 @@ class _SavedComparisonsScreenState extends State<SavedComparisonsScreen> {
           updatedAnnotations[index] = result;
 
           // Update the comparison
-          _updateComparisonAnnotations(
-            comparison,
-            updatedAnnotations,
-            dialogContext,
-          );
+          if (mounted) {
+            _updateComparisonAnnotations(
+              comparison,
+              updatedAnnotations,
+              navigator,
+            );
+          }
         }
       }
     });
@@ -668,25 +681,23 @@ class _SavedComparisonsScreenState extends State<SavedComparisonsScreen> {
   void _updateComparisonAnnotations(
     SavedComparison comparison,
     List<ComparisonAnnotation> annotations,
-    BuildContext dialogContext,
+    NavigatorState navigator,
   ) {
     // Create an updated comparison with the new annotations
     final updatedComparison = comparison.copyWith(annotations: annotations);
 
-    // Store a reference to the provider
+    // Store a reference to the provider and scaffold messenger
     final provider = Provider.of<ComparisonSavingProvider>(
       context,
       listen: false,
     );
-
-    // Store the dialog context navigator
-    final navigator = Navigator.of(dialogContext);
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
 
     // Update the comparison
     provider.updateSavedComparison(updatedComparison).then((success) {
       if (success && mounted) {
         // Show success message
-        ScaffoldMessenger.of(context).showSnackBar(
+        scaffoldMessenger.showSnackBar(
           const SnackBar(content: Text('Annotations updated successfully')),
         );
 
@@ -704,7 +715,7 @@ class _SavedComparisonsScreenState extends State<SavedComparisonsScreen> {
         }
       } else if (mounted) {
         // Show error message
-        ScaffoldMessenger.of(context).showSnackBar(
+        scaffoldMessenger.showSnackBar(
           SnackBar(
             content: Text('Failed to update annotations: ${provider.error}'),
           ),

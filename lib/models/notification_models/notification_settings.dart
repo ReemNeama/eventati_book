@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:eventati_book/utils/database_utils.dart';
 import 'package:eventati_book/models/notification_models/notification_topic.dart';
 
 /// Class representing user notification settings
@@ -88,8 +88,8 @@ class NotificationSettings {
     return copyWith(topicSettings: updatedSettings);
   }
 
-  /// Convert to Firestore data
-  Map<String, dynamic> toFirestore() {
+  /// Convert to JSON data
+  Map<String, dynamic> toJson() {
     return {
       'allNotificationsEnabled': allNotificationsEnabled,
       'topicSettings': topicSettings,
@@ -99,8 +99,13 @@ class NotificationSettings {
     };
   }
 
-  /// Create from Firestore data
-  factory NotificationSettings.fromFirestore(Map<String, dynamic>? data) {
+  /// Convert to database document
+  Map<String, dynamic> toDatabaseDoc() {
+    return toJson();
+  }
+
+  /// Create from JSON data
+  factory NotificationSettings.fromJson(Map<String, dynamic>? data) {
     if (data == null) {
       return NotificationSettings.defaultSettings();
     }
@@ -114,9 +119,16 @@ class NotificationSettings {
     );
   }
 
-  /// Create from DocumentSnapshot
-  factory NotificationSettings.fromDocumentSnapshot(DocumentSnapshot snapshot) {
-    final data = snapshot.data() as Map<String, dynamic>?;
-    return NotificationSettings.fromFirestore(data);
+  /// Create from database document
+  factory NotificationSettings.fromDatabaseDoc(Map<String, dynamic>? data) {
+    return NotificationSettings.fromJson(data);
+  }
+
+  /// Create from database document
+  factory NotificationSettings.fromDocumentSnapshot(
+    DbDocumentSnapshot snapshot,
+  ) {
+    final data = snapshot.getData();
+    return NotificationSettings.fromDatabaseDoc(data);
   }
 }

@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:eventati_book/models/models.dart';
-import 'package:eventati_book/services/firebase/firestore/task_firestore_service.dart';
+import 'package:eventati_book/services/supabase/database/task_database_service.dart';
 
 /// Represents a dependency between two tasks
 class TaskDependency {
@@ -83,8 +83,8 @@ class TaskProvider extends ChangeNotifier {
   /// Error message if an operation fails
   String? _error;
 
-  /// Firestore service for tasks
-  final TaskFirestoreService _taskFirestoreService;
+  /// Task database service
+  final TaskDatabaseService _taskDatabaseService;
 
   /// Stream subscriptions
   StreamSubscription<List<Task>>? _tasksSubscription;
@@ -96,10 +96,10 @@ class TaskProvider extends ChangeNotifier {
   /// Automatically loads task data when instantiated
   TaskProvider({
     required this.eventId,
-    TaskFirestoreService? taskFirestoreService,
-    bool loadFromFirestore = true,
-  }) : _taskFirestoreService = taskFirestoreService ?? TaskFirestoreService() {
-    if (loadFromFirestore) {
+    TaskDatabaseService? taskDatabaseService,
+    bool loadFromDatabase = true,
+  }) : _taskDatabaseService = taskDatabaseService ?? TaskDatabaseService() {
+    if (loadFromDatabase) {
       _loadTasks();
     } else {
       // For testing purposes, load mock data
@@ -113,26 +113,38 @@ class TaskProvider extends ChangeNotifier {
       TaskCategory(
         id: '1',
         name: 'Venue',
-        icon: Icons.location_on,
-        color: Colors.blue,
+        description: 'Tasks related to venue selection and booking',
+        icon: 'location_on',
+        color: '#2196F3',
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
       ),
       TaskCategory(
         id: '2',
         name: 'Catering',
-        icon: Icons.restaurant,
-        color: Colors.orange,
+        description: 'Tasks related to food and beverage planning',
+        icon: 'restaurant',
+        color: '#FF9800',
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
       ),
       TaskCategory(
         id: '3',
         name: 'Invitations',
-        icon: Icons.mail,
-        color: Colors.green,
+        description: 'Tasks related to guest invitations and RSVPs',
+        icon: 'mail',
+        color: '#4CAF50',
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
       ),
       TaskCategory(
         id: '4',
         name: 'Decorations',
-        icon: Icons.celebration,
-        color: Colors.purple,
+        description: 'Tasks related to event decorations and setup',
+        icon: 'celebration',
+        color: '#9C27B0',
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
       ),
     ];
 
@@ -291,7 +303,7 @@ class TaskProvider extends ChangeNotifier {
   /// Loads the task data for the event
   ///
   /// This is called automatically when the provider is created.
-  /// Fetches data from Firestore and sets up stream subscriptions.
+  /// Fetches data from Supabase and sets up stream subscriptions.
   Future<void> _loadTasks() async {
     _isLoading = true;
     _error = null;
@@ -299,7 +311,7 @@ class TaskProvider extends ChangeNotifier {
 
     try {
       // Subscribe to tasks stream
-      _tasksSubscription = _taskFirestoreService
+      _tasksSubscription = _taskDatabaseService
           .getTasksStream(eventId)
           .listen(
             (tasks) {
@@ -313,7 +325,7 @@ class TaskProvider extends ChangeNotifier {
           );
 
       // Subscribe to categories stream
-      _categoriesSubscription = _taskFirestoreService
+      _categoriesSubscription = _taskDatabaseService
           .getTaskCategoriesStream(eventId)
           .listen(
             (categories) {
@@ -327,7 +339,7 @@ class TaskProvider extends ChangeNotifier {
           );
 
       // Subscribe to dependencies stream
-      _dependenciesSubscription = _taskFirestoreService
+      _dependenciesSubscription = _taskDatabaseService
           .getTaskDependenciesStream(eventId)
           .listen(
             (dependencies) {
@@ -341,9 +353,9 @@ class TaskProvider extends ChangeNotifier {
           );
 
       // Initial load
-      _tasks = await _taskFirestoreService.getTasks(eventId);
-      _categories = await _taskFirestoreService.getTaskCategories(eventId);
-      _dependencies = await _taskFirestoreService.getTaskDependencies(eventId);
+      _tasks = await _taskDatabaseService.getTasks(eventId);
+      _categories = await _taskDatabaseService.getTaskCategories(eventId);
+      _dependencies = await _taskDatabaseService.getTaskDependencies(eventId);
 
       _isLoading = false;
       notifyListeners();
@@ -360,7 +372,7 @@ class TaskProvider extends ChangeNotifier {
   ///
   /// If a task with the same ID already exists, it will be updated.
   /// Otherwise, a new task will be added to the list.
-  /// Persists the task to Firestore.
+  /// Persists the task to the database.
   /// Notifies listeners when the operation completes.
   Future<void> addTask(Task task) async {
     _isLoading = true;
@@ -369,13 +381,13 @@ class TaskProvider extends ChangeNotifier {
 
     try {
       if (task.id.isEmpty || task.id == 'temp_id') {
-        // Add task to Firestore
-        await _taskFirestoreService.addTask(eventId, task);
+        // Add task to database
+        await _taskDatabaseService.addTask(eventId, task);
 
         // The task will be added to _tasks via the stream subscription
       } else {
         // Update existing task
-        await _taskFirestoreService.updateTask(eventId, task);
+        await _taskDatabaseService.updateTask(eventId, task);
 
         // The task will be updated in _tasks via the stream subscription
       }
@@ -395,7 +407,7 @@ class TaskProvider extends ChangeNotifier {
   ///
   /// For each task, if a task with the same ID already exists, it will be updated.
   /// Otherwise, a new task will be added to the list.
-  /// Persists the tasks to Firestore.
+  /// Persists the tasks to the database.
   /// Notifies listeners when the operation completes.
   Future<void> addTasks(List<Task> tasks) async {
     _isLoading = true;
@@ -405,11 +417,11 @@ class TaskProvider extends ChangeNotifier {
     try {
       for (final task in tasks) {
         if (task.id.isEmpty || task.id == 'temp_id') {
-          // Add task to Firestore
-          await _taskFirestoreService.addTask(eventId, task);
+          // Add task to database
+          await _taskDatabaseService.addTask(eventId, task);
         } else {
           // Update existing task
-          await _taskFirestoreService.updateTask(eventId, task);
+          await _taskDatabaseService.updateTask(eventId, task);
         }
       }
 
@@ -426,7 +438,7 @@ class TaskProvider extends ChangeNotifier {
   ///
   /// [task] The updated task (must have the same ID as an existing task)
   ///
-  /// Updates the task in Firestore.
+  /// Updates the task in the database.
   /// Notifies listeners when the operation completes.
   Future<void> updateTask(Task task) async {
     _isLoading = true;
@@ -434,7 +446,7 @@ class TaskProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await _taskFirestoreService.updateTask(eventId, task);
+      await _taskDatabaseService.updateTask(eventId, task);
 
       // The task will be updated in _tasks via the stream subscription
 
@@ -451,7 +463,7 @@ class TaskProvider extends ChangeNotifier {
   ///
   /// [taskId] The ID of the task to remove
   ///
-  /// Deletes the task from Firestore.
+  /// Deletes the task from the database.
   /// Notifies listeners when the operation completes.
   Future<void> deleteTask(String taskId) async {
     _isLoading = true;
@@ -459,7 +471,7 @@ class TaskProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await _taskFirestoreService.deleteTask(eventId, taskId);
+      await _taskDatabaseService.deleteTask(eventId, taskId);
 
       // The task will be removed from _tasks via the stream subscription
 
@@ -484,7 +496,7 @@ class TaskProvider extends ChangeNotifier {
   ///
   /// This is a convenience method for updating just the status of a task
   /// without having to update the entire task object.
-  /// Updates the task in Firestore.
+  /// Updates the task in the database.
   /// Notifies listeners when the operation completes.
   Future<void> updateTaskStatus(String taskId, TaskStatus status) async {
     _isLoading = true;
@@ -498,7 +510,7 @@ class TaskProvider extends ChangeNotifier {
           status: status,
           completedDate: status == TaskStatus.completed ? DateTime.now() : null,
         );
-        await _taskFirestoreService.updateTask(eventId, task);
+        await _taskDatabaseService.updateTask(eventId, task);
       }
 
       _isLoading = false;
@@ -560,8 +572,11 @@ class TaskProvider extends ChangeNotifier {
         dependentTaskId: dependentTaskId,
       );
 
-      // Add dependency to Firestore
-      await _taskFirestoreService.addTaskDependency(eventId, dependency);
+      // Add dependency to local list
+      _dependencies.add(dependency);
+
+      // Add dependency to database
+      await _taskDatabaseService.addTaskDependency(eventId, dependency);
 
       // The dependency will be added to _dependencies via the stream subscription
 
@@ -584,8 +599,8 @@ class TaskProvider extends ChangeNotifier {
     String dependentTaskId,
   ) async {
     try {
-      // Remove dependency from Firestore
-      await _taskFirestoreService.removeTaskDependency(
+      // Remove dependency from database
+      await _taskDatabaseService.removeTaskDependency(
         eventId,
         prerequisiteTaskId,
         dependentTaskId,

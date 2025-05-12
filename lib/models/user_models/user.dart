@@ -1,5 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
+import 'package:eventati_book/utils/database_utils.dart';
 
 class User {
   final String id;
@@ -26,7 +25,7 @@ class User {
   /// Authentication provider (email, google, facebook, apple)
   final String authProvider;
 
-  /// Alias for id (for Firebase compatibility)
+  /// Alias for id (for compatibility with other systems)
   String get uid => id;
 
   /// Alias for name (for compatibility)
@@ -90,10 +89,10 @@ class User {
     };
   }
 
-  /// Create a User from a Firestore document
-  factory User.fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>?;
-    if (data == null) {
+  /// Create a User from a database document
+  factory User.fromDatabaseDoc(DbDocumentSnapshot doc) {
+    final data = doc.getData();
+    if (data.isEmpty) {
       throw Exception('Document data was null');
     }
 
@@ -105,7 +104,7 @@ class User {
       profileImageUrl: data['profileImageUrl'],
       createdAt:
           data['createdAt'] != null
-              ? (data['createdAt'] as Timestamp).toDate()
+              ? DateTime.parse(data['createdAt'])
               : DateTime.now(),
       favoriteVenues:
           data['favoriteVenues'] != null
@@ -121,19 +120,19 @@ class User {
       authProvider: data['authProvider'] ?? 'email',
       subscriptionExpirationDate:
           data['subscriptionExpirationDate'] != null
-              ? (data['subscriptionExpirationDate'] as Timestamp).toDate()
+              ? DateTime.parse(data['subscriptionExpirationDate'])
               : null,
     );
   }
 
-  /// Convert User to Firestore data
-  Map<String, dynamic> toFirestore() {
+  /// Convert User to database data
+  Map<String, dynamic> toDatabaseDoc() {
     return {
       'name': name,
       'email': email,
       'phoneNumber': phoneNumber,
       'profileImageUrl': profileImageUrl,
-      'createdAt': Timestamp.fromDate(createdAt),
+      'createdAt': DbTimestamp.fromDate(createdAt).toIso8601String(),
       'favoriteVenues': favoriteVenues,
       'favoriteServices': favoriteServices,
       'hasPremiumSubscription': hasPremiumSubscription,
@@ -142,7 +141,9 @@ class User {
       'authProvider': authProvider,
       'subscriptionExpirationDate':
           subscriptionExpirationDate != null
-              ? Timestamp.fromDate(subscriptionExpirationDate!)
+              ? DbTimestamp.fromDate(
+                subscriptionExpirationDate!,
+              ).toIso8601String()
               : null,
     };
   }
@@ -189,58 +190,52 @@ class User {
     return subscriptionExpirationDate!.isAfter(DateTime.now());
   }
 
-  /// Create a User from a Firebase Auth user
+  /// Create a User from a Supabase Auth user
   ///
-  /// This method creates a basic User object from a Firebase Auth user.
-  /// Additional user data should be fetched from Firestore and merged with this user.
+  /// This method creates a basic User object from a Supabase Auth user.
+  /// Additional user data should be fetched from the database and merged with this user.
   ///
-  /// [firebaseUser] The Firebase Auth user
-  /// [firestoreData] Optional additional data from Firestore
-  static User fromFirebaseUser(
-    firebase_auth.User firebaseUser, [
-    Map<String, dynamic>? firestoreData,
+  /// [supabaseUser] The Supabase Auth user
+  /// [userData] Optional additional data from the database
+  static User fromSupabaseUser(
+    User supabaseUser, [
+    Map<String, dynamic>? userData,
   ]) {
-    // Determine auth provider from Firebase user providers or Firestore data
+    // Determine auth provider
     String authProvider = 'email';
-    if (firestoreData != null && firestoreData.containsKey('authProvider')) {
-      authProvider = firestoreData['authProvider'];
-    } else if (firebaseUser.providerData.isNotEmpty) {
-      final providerId = firebaseUser.providerData[0].providerId;
-      if (providerId.contains('google')) {
-        authProvider = 'google';
-      } else if (providerId.contains('facebook')) {
-        authProvider = 'facebook';
-      } else if (providerId.contains('apple')) {
-        authProvider = 'apple';
-      }
+    if (userData != null && userData.containsKey('authProvider')) {
+      authProvider = userData['authProvider'];
+    } else if (supabaseUser.email.contains('google')) {
+      authProvider = 'google';
+    } else if (supabaseUser.email.contains('apple')) {
+      authProvider = 'apple';
     }
 
     return User(
-      id: firebaseUser.uid,
-      name: firebaseUser.displayName ?? '',
-      email: firebaseUser.email ?? '',
-      phoneNumber: firebaseUser.phoneNumber,
-      profileImageUrl: firebaseUser.photoURL,
+      id: supabaseUser.id,
+      name: userData?['name'] ?? supabaseUser.email.split('@')[0],
+      email: supabaseUser.email,
+      phoneNumber: userData?['phoneNumber'],
+      profileImageUrl: userData?['profileImageUrl'],
       createdAt:
-          firestoreData?['createdAt'] != null
-              ? (firestoreData!['createdAt'] as Timestamp).toDate()
-              : firebaseUser.metadata.creationTime ?? DateTime.now(),
+          userData?['createdAt'] != null
+              ? DateTime.parse(userData!['createdAt'])
+              : DateTime.now(),
       favoriteVenues:
-          firestoreData?['favoriteVenues'] != null
-              ? List<String>.from(firestoreData!['favoriteVenues'])
+          userData?['favoriteVenues'] != null
+              ? List<String>.from(userData!['favoriteVenues'])
               : [],
       favoriteServices:
-          firestoreData?['favoriteServices'] != null
-              ? List<String>.from(firestoreData!['favoriteServices'])
+          userData?['favoriteServices'] != null
+              ? List<String>.from(userData!['favoriteServices'])
               : [],
-      hasPremiumSubscription: firestoreData?['hasPremiumSubscription'] ?? false,
-      isBetaTester: firestoreData?['isBetaTester'] ?? false,
-      emailVerified: firebaseUser.emailVerified,
+      hasPremiumSubscription: userData?['hasPremiumSubscription'] ?? false,
+      isBetaTester: userData?['isBetaTester'] ?? false,
+      emailVerified: userData?['emailVerified'] ?? false,
       authProvider: authProvider,
       subscriptionExpirationDate:
-          firestoreData?['subscriptionExpirationDate'] != null
-              ? (firestoreData!['subscriptionExpirationDate'] as Timestamp)
-                  .toDate()
+          userData?['subscriptionExpirationDate'] != null
+              ? DateTime.parse(userData!['subscriptionExpirationDate'])
               : null,
     );
   }

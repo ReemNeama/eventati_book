@@ -23,12 +23,14 @@ class AuthResult {
   });
 
   /// Create a successful result with a user
-  factory AuthResult.success(User user) {
+  factory AuthResult.success(User? user) {
     return AuthResult(
       isSuccess: true,
       user: user,
       requiresEmailVerification:
-          !user.emailVerified && user.authProvider == 'email',
+          user != null
+              ? (!user.emailVerified && user.authProvider == 'email')
+              : false,
     );
   }
 
@@ -61,6 +63,9 @@ abstract class AuthServiceInterface {
 
   /// Sign in with Google
   Future<AuthResult> signInWithGoogle();
+
+  /// Sign in with Apple
+  Future<AuthResult> signInWithApple();
 
   /// Sign out the current user
   Future<void> signOut();

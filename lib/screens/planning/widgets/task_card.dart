@@ -135,22 +135,22 @@ class TaskCard extends StatelessWidget {
                   // Category
                   if (category != null)
                     Chip(
-                      backgroundColor: category!.color.withAlpha(
+                      backgroundColor: category!.getColorObject().withAlpha(
                         51,
                       ), // 0.2 * 255 = 51
                       label: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(
-                            category!.icon,
+                            category!.getIconData(),
                             size: 16,
-                            color: category!.color,
+                            color: category!.getColorObject(),
                           ),
                           const SizedBox(width: 4),
                           Text(
                             category!.name,
                             style: TextStyle(
-                              color: category!.color,
+                              color: category!.getColorObject(),
                               fontWeight: FontWeight.bold,
                             ),
                           ),

@@ -207,7 +207,7 @@ void main() {
                   create:
                       (_) => TaskProvider(
                         eventId: 'test_event',
-                        loadFromFirestore: false, // Use mock data for tests
+                        loadFromDatabase: false, // Use mock data for tests
                       ),
                 ),
                 ChangeNotifierProvider(

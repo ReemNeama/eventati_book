@@ -235,10 +235,11 @@ When importing files, follow these guidelines:
 3. **Specific Imports**: Use specific imports when only a few items are needed from a large barrel file
 4. **Avoid Circular Dependencies**: Be careful not to create circular dependencies between files
 
-## Future Firebase Implementation
+## Supabase Implementation
 
-When Firebase is implemented, the following changes will be made:
+The application uses Supabase for backend services:
 
-1. **New Services**: Add Firebase-specific services to the `services/` directory
-2. **Remove TempDB**: Replace `tempDB/` with actual Firebase data
-3. **Update Providers**: Modify providers to use Firebase services instead of mock data
+1. **Supabase Services**: Supabase-specific services are in the `services/supabase/` directory
+2. **Database**: Supabase provides the database functionality
+3. **Authentication**: Supabase handles user authentication
+4. **Storage**: Supabase Storage is used for file storage

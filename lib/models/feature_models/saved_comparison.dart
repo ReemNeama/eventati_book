@@ -1,5 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
+import 'package:eventati_book/utils/database_utils.dart';
 import 'package:eventati_book/models/feature_models/comparison_annotation.dart';
 
 /// Model representing a saved comparison
@@ -144,14 +144,14 @@ class SavedComparison {
     }
   }
 
-  /// Convert to Firestore
-  Map<String, dynamic> toFirestore() {
+  /// Convert to database document
+  Map<String, dynamic> toDatabaseDoc() {
     return {
       'userId': userId,
       'serviceType': serviceType,
       'serviceIds': serviceIds,
       'serviceNames': serviceNames,
-      'createdAt': Timestamp.fromDate(createdAt),
+      'createdAt': DbTimestamp.fromDate(createdAt).toIso8601String(),
       'title': title,
       'notes': notes,
       'eventId': eventId,
@@ -160,11 +160,11 @@ class SavedComparison {
     };
   }
 
-  /// Create from Firestore
-  factory SavedComparison.fromFirestore(DocumentSnapshot doc) {
+  /// Create from database document
+  factory SavedComparison.fromDatabaseDoc(DbDocumentSnapshot doc) {
     try {
-      final data = doc.data() as Map<String, dynamic>?;
-      if (data == null) {
+      final data = doc.getData();
+      if (data.isEmpty) {
         throw Exception('Document data was null');
       }
 
@@ -182,7 +182,7 @@ class SavedComparison {
                 : <String>[],
         createdAt:
             data['createdAt'] != null
-                ? (data['createdAt'] as Timestamp).toDate()
+                ? DateTime.parse(data['createdAt'])
                 : DateTime.now(),
         title: data['title'] as String? ?? 'Untitled Comparison',
         notes: data['notes'] as String? ?? '',
@@ -200,7 +200,7 @@ class SavedComparison {
                 : null,
       );
     } catch (e) {
-      debugPrint('Error parsing SavedComparison from Firestore: $e');
+      debugPrint('Error parsing SavedComparison from database: $e');
       // Return a default comparison in case of parsing error
       return SavedComparison(
         id: '',

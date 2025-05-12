@@ -215,7 +215,7 @@ class AuthProvider extends ChangeNotifier {
   User? _currentUser;
   String? _errorMessage;
   bool _isLoading = false;
-  
+
   // Getters
   AuthState get authState => _authState;
   User? get currentUser => _currentUser;
@@ -223,7 +223,7 @@ class AuthProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   bool get isAuthenticated => _authState == AuthState.authenticated;
   bool get needsVerification => _authState == AuthState.verificationRequired;
-  
+
   // State transition methods
   Future<void> login(String email, String password) async {
     _setAuthenticating();
@@ -234,7 +234,7 @@ class AuthProvider extends ChangeNotifier {
       _setAuthenticationFailed(e.toString());
     }
   }
-  
+
   Future<void> register(String name, String email, String password) async {
     _setAuthenticating();
     try {
@@ -244,7 +244,7 @@ class AuthProvider extends ChangeNotifier {
       _setAuthenticationFailed(e.toString());
     }
   }
-  
+
   Future<void> verifyEmail(String code) async {
     _isLoading = true;
     notifyListeners();
@@ -259,12 +259,12 @@ class AuthProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
-  
+
   void logout() {
     // Logout logic
     _setUnauthenticated();
   }
-  
+
   // Private state transition helpers
   void _setUnauthenticated() {
     _authState = AuthState.unauthenticated;
@@ -273,14 +273,14 @@ class AuthProvider extends ChangeNotifier {
     _isLoading = false;
     notifyListeners();
   }
-  
+
   void _setAuthenticating() {
     _authState = AuthState.authenticating;
     _errorMessage = null;
     _isLoading = true;
     notifyListeners();
   }
-  
+
   void _setAuthenticated(User user) {
     _authState = AuthState.authenticated;
     _currentUser = user;
@@ -288,7 +288,7 @@ class AuthProvider extends ChangeNotifier {
     _isLoading = false;
     notifyListeners();
   }
-  
+
   void _setVerificationRequired(User user) {
     _authState = AuthState.verificationRequired;
     _currentUser = user;
@@ -296,7 +296,7 @@ class AuthProvider extends ChangeNotifier {
     _isLoading = false;
     notifyListeners();
   }
-  
+
   void _setAuthenticationFailed(String message) {
     _authState = AuthState.authenticationFailed;
     _errorMessage = message;
@@ -352,28 +352,29 @@ if (authProvider.needsVerification) {
 }
 ```
 
-## Firebase Authentication Integration
+## Supabase Authentication Integration
 
-When Firebase is implemented, the state transitions will be handled by Firebase Authentication:
+When Supabase is implemented, the state transitions will be handled by Supabase Authentication:
 
 ```dart
 Future<void> login(String email, String password) async {
   _setAuthenticating();
   try {
-    // Firebase Authentication
-    UserCredential userCredential = await FirebaseAuth.instance
-        .signInWithEmailAndPassword(email: email, password: password);
-    
-    // Get user data from Firestore
-    DocumentSnapshot userDoc = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(userCredential.user!.uid)
-        .get();
-    
-    User user = User.fromFirestore(userDoc);
+    // Supabase Authentication
+    final response = await _supabase.auth
+        .signInWithPassword(email: email, password: password);
+
+    // Get user data from Supabase
+    final userData = await _supabase
+        .from('users')
+        .select()
+        .eq('id', response.user!.id)
+        .single();
+
+    User user = User.fromDatabaseDoc(userData);
     _setAuthenticated(user);
-  } on FirebaseAuthException catch (e) {
-    _setAuthenticationFailed(_mapFirebaseError(e.code));
+  } on AuthException catch (e) {
+    _setAuthenticationFailed(_mapAuthError(e.message));
   } catch (e) {
     _setAuthenticationFailed(e.toString());
   }

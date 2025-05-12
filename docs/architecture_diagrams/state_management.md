@@ -237,7 +237,7 @@ The application uses different strategies for state persistence:
                 │                   │                   │
                 ▼                   ▼                   ▼
 ┌───────────────────────┐ ┌───────────────────┐ ┌───────────────────────┐
-│   SHARED PREFERENCES  │ │     TEMP DB       │ │      FIREBASE         │
+│   SHARED PREFERENCES  │ │     TEMP DB       │ │      SUPABASE         │
 │                       │ │                   │ │                        │
 │  ┌─────────────────┐  │ │ ┌─────────────┐   │ │  ┌─────────────────┐  │
 │  │  User Settings  │  │ │ │  App Data   │   │ │  │  User Data      │  │
@@ -365,6 +365,6 @@ Planned enhancements for state management include:
 
 1. **Redux Integration**: For more complex state management needs
 2. **Bloc Pattern**: For specific features requiring reactive programming
-3. **Persistent State**: More comprehensive state persistence with Firebase
+3. **Persistent State**: More comprehensive state persistence with Supabase
 4. **State Synchronization**: Real-time state synchronization across devices
 5. **Optimistic Updates**: Implementing optimistic UI updates for better UX

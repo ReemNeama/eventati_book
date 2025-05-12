@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/screens/settings/notification_settings_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// Screen for app settings
 class SettingsScreen extends StatelessWidget {
@@ -36,7 +36,7 @@ class SettingsScreen extends StatelessWidget {
             }),
             _buildListTile(context, 'Sign Out', Icons.exit_to_app, () async {
               // Sign out
-              await FirebaseAuth.instance.signOut();
+              await Supabase.instance.client.auth.signOut();
               // Navigate to login screen
               if (context.mounted) {
                 Navigator.of(context).pushReplacementNamed('/login');

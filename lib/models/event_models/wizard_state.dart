@@ -1,9 +1,12 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:eventati_book/utils/database_utils.dart';
 import 'event_template.dart';
 
 /// Represents the current state of the event wizard
 class WizardState {
+  /// Unique identifier for the wizard state
+  final String id;
+
   /// The template for the event type
   final EventTemplate template;
 
@@ -56,6 +59,7 @@ class WizardState {
   final DateTime lastUpdated;
 
   WizardState({
+    String? id,
     required this.template,
     this.currentStep = 0,
     this.totalSteps = 4,
@@ -73,11 +77,13 @@ class WizardState {
     this.teardownHours = 2,
     this.isCompleted = false,
     DateTime? lastUpdated,
-  }) : selectedServices = selectedServices ?? template.defaultServices,
+  }) : id = id ?? DateTime.now().millisecondsSinceEpoch.toString(),
+       selectedServices = selectedServices ?? template.defaultServices,
        lastUpdated = lastUpdated ?? DateTime.now();
 
   /// Create a copy of this state with modified fields
   WizardState copyWith({
+    String? id,
     EventTemplate? template,
     int? currentStep,
     int? totalSteps,
@@ -96,6 +102,7 @@ class WizardState {
     bool? isCompleted,
   }) {
     return WizardState(
+      id: id ?? this.id,
       template: template ?? this.template,
       currentStep: currentStep ?? this.currentStep,
       totalSteps: totalSteps ?? this.totalSteps,
@@ -146,6 +153,7 @@ class WizardState {
   /// Convert the wizard state to a JSON map
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'templateId': template.id,
       'currentStep': currentStep,
       'totalSteps': totalSteps,
@@ -180,6 +188,7 @@ class WizardState {
     if (template == null) return null;
 
     return WizardState(
+      id: json['id'],
       template: template,
       currentStep: json['currentStep'] ?? 0,
       totalSteps: json['totalSteps'] ?? 4,
@@ -210,15 +219,19 @@ class WizardState {
     );
   }
 
-  /// Convert to Firestore
-  Map<String, dynamic> toFirestore() {
+  /// Convert to database document
+  Map<String, dynamic> toDatabaseDoc() {
     return {
+      'id': id,
       'templateId': template.id,
       'currentStep': currentStep,
       'totalSteps': totalSteps,
       'eventName': eventName,
       'selectedEventType': selectedEventType,
-      'eventDate': eventDate != null ? Timestamp.fromDate(eventDate!) : null,
+      'eventDate':
+          eventDate != null
+              ? DbTimestamp.fromDate(eventDate!).toIso8601String()
+              : null,
       'guestCount': guestCount,
       'selectedServices': selectedServices,
       'eventDuration': eventDuration,
@@ -235,27 +248,26 @@ class WizardState {
       'needsTeardown': needsTeardown,
       'teardownHours': teardownHours,
       'isCompleted': isCompleted,
-      'lastUpdated': Timestamp.fromDate(lastUpdated),
+      'lastUpdated': DbTimestamp.fromDate(lastUpdated).toIso8601String(),
     };
   }
 
-  /// Create from Firestore
-  static WizardState? fromFirestore(Map<String, dynamic> data, String eventId) {
+  /// Create from database document
+  static WizardState? fromDatabaseDoc(Map<String, dynamic> data, String docId) {
     final templateId = data['templateId'];
     final template = EventTemplates.findById(templateId);
 
     if (template == null) return null;
 
     return WizardState(
+      id: data['id'] ?? docId,
       template: template,
       currentStep: data['currentStep'] ?? 0,
       totalSteps: data['totalSteps'] ?? 4,
       eventName: data['eventName'] ?? '',
       selectedEventType: data['selectedEventType'],
       eventDate:
-          data['eventDate'] != null
-              ? (data['eventDate'] as Timestamp).toDate()
-              : null,
+          data['eventDate'] != null ? DateTime.parse(data['eventDate']) : null,
       guestCount: data['guestCount'],
       selectedServices: Map<String, bool>.from(data['selectedServices'] ?? {}),
       eventDuration: data['eventDuration'] ?? 1,
@@ -274,7 +286,7 @@ class WizardState {
       isCompleted: data['isCompleted'] ?? false,
       lastUpdated:
           data['lastUpdated'] != null
-              ? (data['lastUpdated'] as Timestamp).toDate()
+              ? DateTime.parse(data['lastUpdated'])
               : DateTime.now(),
     );
   }

@@ -1,5 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:eventati_book/utils/database_utils.dart';
 
 /// Defines a template for an event type with predefined services and subtypes
 class EventTemplate {
@@ -112,8 +112,8 @@ class EventTemplate {
     );
   }
 
-  /// Convert to Firestore
-  Map<String, dynamic> toFirestore() {
+  /// Convert to database document
+  Map<String, dynamic> toDatabaseDoc() {
     return {
       'name': name,
       'description': description,
@@ -124,20 +124,20 @@ class EventTemplate {
       'userId': userId,
       'createdAt':
           createdAt != null
-              ? Timestamp.fromDate(createdAt!)
-              : FieldValue.serverTimestamp(),
+              ? DbTimestamp.fromDate(createdAt!).toIso8601String()
+              : DbFieldValue.serverTimestamp(),
       'updatedAt':
           updatedAt != null
-              ? Timestamp.fromDate(updatedAt!)
-              : FieldValue.serverTimestamp(),
+              ? DbTimestamp.fromDate(updatedAt!).toIso8601String()
+              : DbFieldValue.serverTimestamp(),
       'status': status,
     };
   }
 
-  /// Create from Firestore
-  factory EventTemplate.fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>?;
-    if (data == null) {
+  /// Create from database document
+  factory EventTemplate.fromDatabaseDoc(DbDocumentSnapshot doc) {
+    final data = doc.getData();
+    if (data.isEmpty) {
       throw Exception('Document data was null');
     }
 
@@ -151,13 +151,9 @@ class EventTemplate {
       suggestedTasks: List<String>.from(data['suggestedTasks'] ?? []),
       userId: data['userId'],
       createdAt:
-          data['createdAt'] != null
-              ? (data['createdAt'] as Timestamp).toDate()
-              : null,
+          data['createdAt'] != null ? DateTime.parse(data['createdAt']) : null,
       updatedAt:
-          data['updatedAt'] != null
-              ? (data['updatedAt'] as Timestamp).toDate()
-              : null,
+          data['updatedAt'] != null ? DateTime.parse(data['updatedAt']) : null,
       status: data['status'],
     );
   }

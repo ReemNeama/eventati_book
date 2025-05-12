@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:eventati_book/utils/database_utils.dart';
 
 class Photographer {
   final String id;
@@ -29,10 +29,10 @@ class Photographer {
     this.updatedAt,
   });
 
-  /// Create a Photographer from a Firestore document
-  factory Photographer.fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>?;
-    if (data == null) {
+  /// Create a Photographer from a database document
+  factory Photographer.fromDatabaseDoc(DbDocumentSnapshot doc) {
+    final data = doc.getData();
+    if (data.isEmpty) {
       throw Exception('Document data was null');
     }
 
@@ -48,18 +48,14 @@ class Photographer {
       packages: List<String>.from(data['packages'] ?? []),
       userId: data['userId'],
       createdAt:
-          data['createdAt'] != null
-              ? (data['createdAt'] as Timestamp).toDate()
-              : null,
+          data['createdAt'] != null ? DateTime.parse(data['createdAt']) : null,
       updatedAt:
-          data['updatedAt'] != null
-              ? (data['updatedAt'] as Timestamp).toDate()
-              : null,
+          data['updatedAt'] != null ? DateTime.parse(data['updatedAt']) : null,
     );
   }
 
-  /// Convert Photographer to Firestore data
-  Map<String, dynamic> toFirestore() {
+  /// Convert Photographer to database document
+  Map<String, dynamic> toDatabaseDoc() {
     return {
       'name': name,
       'description': description,
@@ -72,9 +68,9 @@ class Photographer {
       'userId': userId,
       'createdAt':
           createdAt != null
-              ? Timestamp.fromDate(createdAt!)
-              : FieldValue.serverTimestamp(),
-      'updatedAt': FieldValue.serverTimestamp(),
+              ? DbTimestamp.fromDate(createdAt!).toIso8601String()
+              : DbFieldValue.serverTimestamp(),
+      'updatedAt': DbFieldValue.serverTimestamp(),
     };
   }
 

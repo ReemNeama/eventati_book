@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:eventati_book/utils/database_utils.dart';
 
 enum RsvpStatus { pending, confirmed, declined, tentative }
 
@@ -33,22 +33,22 @@ class GuestGroup {
     );
   }
 
-  /// Convert to Firestore data
-  Map<String, dynamic> toFirestore() {
+  /// Convert to database document
+  Map<String, dynamic> toDatabaseDoc() {
     return {
       'name': name,
       'description': description,
       'color': color,
       // Don't store guests here, they are stored in a subcollection
-      'createdAt': FieldValue.serverTimestamp(),
-      'updatedAt': FieldValue.serverTimestamp(),
+      'createdAt': DbFieldValue.serverTimestamp(),
+      'updatedAt': DbFieldValue.serverTimestamp(),
     };
   }
 
-  /// Create from Firestore document
-  factory GuestGroup.fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>?;
-    if (data == null) {
+  /// Create from database document
+  factory GuestGroup.fromDatabaseDoc(DbDocumentSnapshot doc) {
+    final data = doc.getData();
+    if (data.isEmpty) {
       throw Exception('Document data was null');
     }
 
@@ -156,8 +156,8 @@ class Guest {
     );
   }
 
-  /// Convert to Firestore data
-  Map<String, dynamic> toFirestore() {
+  /// Convert to database document
+  Map<String, dynamic> toDatabaseDoc() {
     return {
       'firstName': firstName,
       'lastName': lastName,
@@ -167,20 +167,20 @@ class Guest {
       'rsvpStatus': rsvpStatus.toString().split('.').last,
       'rsvpResponseDate':
           rsvpResponseDate != null
-              ? Timestamp.fromDate(rsvpResponseDate!)
+              ? DbTimestamp.fromDate(rsvpResponseDate!).toIso8601String()
               : null,
       'plusOne': plusOne,
       'plusOneCount': plusOneCount,
       'notes': notes,
-      'createdAt': FieldValue.serverTimestamp(),
-      'updatedAt': FieldValue.serverTimestamp(),
+      'createdAt': DbFieldValue.serverTimestamp(),
+      'updatedAt': DbFieldValue.serverTimestamp(),
     };
   }
 
-  /// Create from Firestore document
-  factory Guest.fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>?;
-    if (data == null) {
+  /// Create from database document
+  factory Guest.fromDatabaseDoc(DbDocumentSnapshot doc) {
+    final data = doc.getData();
+    if (data.isEmpty) {
       throw Exception('Document data was null');
     }
 
@@ -194,7 +194,7 @@ class Guest {
       rsvpStatus: _parseRsvpStatus(data['rsvpStatus']),
       rsvpResponseDate:
           data['rsvpResponseDate'] != null
-              ? (data['rsvpResponseDate'] as Timestamp).toDate()
+              ? DateTime.parse(data['rsvpResponseDate'])
               : null,
       plusOne: data['plusOne'] ?? false,
       plusOneCount: data['plusOneCount'],

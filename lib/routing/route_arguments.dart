@@ -168,9 +168,9 @@ class EventDetailsArguments extends RouteArguments {
   const EventDetailsArguments({required this.eventId}) : super();
 }
 
-/// Arguments for task Firestore test screen
-class TaskFirestoreTestArguments extends RouteArguments {
+/// Arguments for task database test screen
+class TaskDatabaseTestArguments extends RouteArguments {
   final String eventId;
 
-  const TaskFirestoreTestArguments({required this.eventId}) : super();
+  const TaskDatabaseTestArguments({required this.eventId}) : super();
 }

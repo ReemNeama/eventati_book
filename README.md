@@ -29,7 +29,7 @@ Eventati Book is designed to help users advertise and manage venues for differen
 
 - **Frontend**: Flutter for cross-platform mobile development
 - **State Management**: Provider pattern
-- **Backend**: Firebase (Authentication, Firestore, Cloud Functions)
+- **Backend**: Supabase (Authentication, Database, Storage)
 - **Design Pattern**: Feature-first architecture with clean separation of concerns
 
 ## Project Structure
@@ -68,7 +68,7 @@ Comprehensive documentation is available in the `docs/` directory:
    - Implement comparison features last
 
 2. **Technical Recommendations**
-   - Use Firebase for authentication and data persistence
+   - Use Supabase for authentication and data persistence
    - Implement proper error handling and loading states
    - Ensure responsive design works across different devices
    - Maintain consistent styling using the styles system

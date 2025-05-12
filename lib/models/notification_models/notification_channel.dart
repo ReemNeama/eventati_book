@@ -34,6 +34,38 @@ class NotificationChannel {
     this.showBadge = true,
   });
 
+  /// Create from JSON data
+  factory NotificationChannel.fromJson(Map<String, dynamic> json) {
+    return NotificationChannel(
+      id: json['channel_id'] ?? json['id'] ?? '',
+      name: json['name'] ?? '',
+      description: json['description'] ?? '',
+      importance: _importanceFromString(json['importance'] ?? 'default'),
+      enableLights: json['enable_lights'] ?? true,
+      enableVibration: json['enable_vibration'] ?? true,
+      showBadge: json['show_badge'] ?? true,
+    );
+  }
+
+  /// Convert importance string to enum
+  static Importance _importanceFromString(String importance) {
+    switch (importance.toLowerCase()) {
+      case 'high':
+        return Importance.high;
+      case 'max':
+        return Importance.max;
+      case 'low':
+        return Importance.low;
+      case 'min':
+        return Importance.min;
+      case 'none':
+        return Importance.none;
+      case 'default':
+      default:
+        return Importance.defaultImportance;
+    }
+  }
+
   /// Convert to AndroidNotificationChannel
   AndroidNotificationChannel toAndroidChannel() {
     return AndroidNotificationChannel(

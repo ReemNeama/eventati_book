@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:eventati_book/models/feature_models/comparison_annotation.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
-import 'package:eventati_book/utils/utils.dart';
-import 'package:eventati_book/utils/constants/app_constants.dart';
+import 'package:eventati_book/utils/ui/ui_utils.dart';
+
+// Constants for padding and border radius
+const double smallPadding = 8.0;
+const double mediumPadding = 16.0;
+const double smallBorderRadius = 8.0;
 
 /// Dialog for adding or editing an annotation
 class AnnotationDialog extends StatefulWidget {
@@ -55,7 +59,7 @@ class _AnnotationDialogState extends State<AnnotationDialog> {
   @override
   void initState() {
     super.initState();
-    
+
     // If editing an existing annotation, populate the form
     if (widget.annotation != null) {
       _titleController.text = widget.annotation!.title;
@@ -77,9 +81,11 @@ class _AnnotationDialogState extends State<AnnotationDialog> {
   Widget build(BuildContext context) {
     final isDarkMode = UIUtils.isDarkMode(context);
     final primaryColor = isDarkMode ? AppColorsDark.primary : AppColors.primary;
-    
+
     return AlertDialog(
-      title: Text(widget.annotation == null ? 'Add Annotation' : 'Edit Annotation'),
+      title: Text(
+        widget.annotation == null ? 'Add Annotation' : 'Edit Annotation',
+      ),
       content: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -101,8 +107,8 @@ class _AnnotationDialogState extends State<AnnotationDialog> {
                   return null;
                 },
               ),
-              const SizedBox(height: AppConstants.mediumPadding),
-              
+              const SizedBox(height: mediumPadding),
+
               // Content field
               TextFormField(
                 controller: _contentController,
@@ -118,8 +124,8 @@ class _AnnotationDialogState extends State<AnnotationDialog> {
                   return null;
                 },
               ),
-              const SizedBox(height: AppConstants.mediumPadding),
-              
+              const SizedBox(height: mediumPadding),
+
               // Service dropdown
               if (widget.serviceIds.isNotEmpty)
                 DropdownButtonFormField<String?>(
@@ -147,8 +153,8 @@ class _AnnotationDialogState extends State<AnnotationDialog> {
                     });
                   },
                 ),
-              const SizedBox(height: AppConstants.mediumPadding),
-              
+              const SizedBox(height: mediumPadding),
+
               // Feature dropdown
               if (widget.features.isNotEmpty)
                 DropdownButtonFormField<String?>(
@@ -175,41 +181,43 @@ class _AnnotationDialogState extends State<AnnotationDialog> {
                     });
                   },
                 ),
-              const SizedBox(height: AppConstants.mediumPadding),
-              
+              const SizedBox(height: mediumPadding),
+
               // Color selection
               Text(
                 'Highlight Color',
                 style: Theme.of(context).textTheme.titleSmall,
               ),
-              const SizedBox(height: AppConstants.smallPadding),
+              const SizedBox(height: smallPadding),
               Wrap(
-                spacing: AppConstants.smallPadding,
-                runSpacing: AppConstants.smallPadding,
-                children: _highlightColors.map((color) {
-                  final isSelected = _selectedColor.value == color.value;
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _selectedColor = color;
-                      });
-                    },
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: color,
-                        border: Border.all(
-                          color: isSelected ? primaryColor : Colors.grey,
-                          width: isSelected ? 3 : 1,
+                spacing: smallPadding,
+                runSpacing: smallPadding,
+                children:
+                    _highlightColors.map((color) {
+                      final isSelected =
+                          _selectedColor.toARGB32() == color.toARGB32();
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _selectedColor = color;
+                          });
+                        },
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: color,
+                            border: Border.all(
+                              color: isSelected ? primaryColor : Colors.grey,
+                              width: isSelected ? 3 : 1,
+                            ),
+                            borderRadius: BorderRadius.circular(
+                              smallBorderRadius,
+                            ),
+                          ),
                         ),
-                        borderRadius: BorderRadius.circular(
-                          AppConstants.smallBorderRadius,
-                        ),
-                      ),
-                    ),
-                  );
-                }).toList(),
+                      );
+                    }).toList(),
               ),
             ],
           ),
@@ -235,7 +243,7 @@ class _AnnotationDialogState extends State<AnnotationDialog> {
                 color: _selectedColor,
                 createdAt: widget.annotation?.createdAt,
               );
-              
+
               // Return the annotation
               Navigator.of(context).pop(annotation);
             }

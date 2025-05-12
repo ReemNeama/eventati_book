@@ -14,7 +14,7 @@ This document provides a visual representation of the Eventati Book application'
 │                               MAIN.DART                                 │
 │                                                                         │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐    │
-│  │ App Theme   │  │ Provider    │  │ Routes      │  │ Firebase    │    │
+│  │ App Theme   │  │ Provider    │  │ Routes      │  │ Supabase    │    │
 │  │ Configuration│  │ Registration│  │ Configuration│  │ Initialization│  │
 │  └─────────────┘  └─────────────┘  └─────────────┘  └─────────────┘    │
 └───────────────────────────────────┬─────────────────────────────────────┘
@@ -39,7 +39,7 @@ This document provides a visual representation of the Eventati Book application'
 │  └────────┬────────┘  │ │ └──────┬──────┘   │ │  └────────┬────────┘  │
 │           │           │ │        │          │ │           │           │
 │  ┌────────▼────────┐  │ │ ┌──────▼──────┐   │ │  ┌────────▼────────┐  │
-│  │    Styles       │◄─┼─┼─┤   Utils     │◄──┼─┼──┤  (Firebase)     │  │
+│  │    Styles       │◄─┼─┼─┤   Utils     │◄──┼─┼──┤  (Supabase)     │  │
 │  └─────────────────┘  │ │ └─────────────┘   │ │  └─────────────────┘  │
 │                       │ │                   │ │                        │
 └───────────────────────┘ └───────────────────┘ └───────────────────────┘
@@ -149,7 +149,7 @@ This document provides a visual representation of the Eventati Book application'
                 │                   │                   │
                 ▼                   ▼                   ▼
 ┌───────────────────────┐ ┌───────────────────┐ ┌───────────────────────┐
-│       MODELS          │ │      TEMPDB       │ │      (FIREBASE)       │
+│       MODELS          │ │      TEMPDB       │ │      (SUPABASE)       │
 │                       │ │                   │ │                        │
 │  ┌─────────────────┐  │ │ ┌─────────────┐   │ │  ┌─────────────────┐  │
 │  │  Event Models   │  │ │ │  services   │   │ │  │  Authentication │  │
@@ -159,7 +159,7 @@ This document provides a visual representation of the Eventati Book application'
 │  └─────────────────┘  │ │ │ - photography│  │ │  └─────────────────┘  │
 │                       │ │ │ - planners  │   │ │                        │
 │  ┌─────────────────┐  │ │ └─────────────┘   │ │  ┌─────────────────┐  │
-│  │  User Models    │  │ │                   │ │  │    Firestore    │  │
+│  │  User Models    │  │ │                   │ │  │    Database     │  │
 │  │                 │  │ │ ┌─────────────┐   │ │  │                 │  │
 │  │ - user          │  │ │ │    users    │   │ │  │ - Events        │  │
 │  └─────────────────┘  │ │ │             │   │ │  │ - Services      │  │
@@ -208,7 +208,7 @@ This document provides a visual representation of the Eventati Book application'
 ┌──────────────┐     ┌──────────────┐     ┌──────────────┐     ┌──────────────┐
 │              │     │              │     │              │     │              │
 │    Models    │◀────│   TempDB     │◀────│   Services   │◀────│    Utils     │
-│              │     │  (Firebase)  │     │              │     │              │
+│              │     │  (Supabase)  │     │              │     │              │
 │              │     │              │     │              │     │              │
 └──────────────┘     └──────────────┘     └──────────────┘     └──────────────┘
       │                                          │
@@ -238,15 +238,15 @@ This document provides a visual representation of the Eventati Book application'
 3. **Services implement business logic**: Services contain core business logic
 4. **Models represent data**: Models define the structure of application data
 5. **Utils provide helper functions**: Utilities provide common functionality
-6. **TempDB simulates backend**: TempDB provides mock data (to be replaced with Firebase)
+6. **TempDB simulates backend**: TempDB provides mock data (to be replaced with Supabase)
 7. **Styles define appearance**: Styles define the visual appearance of the UI
 
-## Future Firebase Integration
+## Supabase Integration
 
-When Firebase is implemented, the TempDB layer will be replaced with Firebase services:
+The TempDB layer has been replaced with Supabase services:
 
-1. **Authentication**: Firebase Authentication for user management
-2. **Firestore**: Cloud Firestore for structured data storage
-3. **Storage**: Cloud Storage for files and images
-4. **Functions**: Cloud Functions for server-side logic
-5. **Messaging**: Firebase Cloud Messaging for notifications
+1. **Authentication**: Supabase Authentication for user management
+2. **Database**: Supabase PostgreSQL for structured data storage
+3. **Storage**: Supabase Storage for files and images
+4. **Functions**: Supabase Edge Functions for server-side logic
+5. **Realtime**: Supabase Realtime for live updates

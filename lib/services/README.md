@@ -7,7 +7,7 @@ This directory contains service classes that handle business logic and data oper
 Services in this application are responsible for:
 - Providing data to the UI layer
 - Processing business logic
-- Connecting to external data sources (will be replaced with Firebase in the future)
+- Connecting to external data sources (using Supabase)
 - Implementing reusable functionality across the application
 
 ## Current Services
@@ -20,14 +20,14 @@ Services in this application are responsible for:
   - Transfers data from completed wizard to planning tools
   - Initializes planning tools with event-specific data
 
-## Future Services
+## Supabase Services
 
-When Firebase is implemented, the following services will be added:
-- **AuthService**: Handle user authentication
-- **EventService**: Manage event data
-- **BookingService**: Handle service bookings
-- **NotificationService**: Manage user notifications
-- **StorageService**: Handle file uploads and storage
+The following Supabase services are implemented:
+- **SupabaseAuthService**: Handles user authentication
+- **EventDatabaseService**: Manages event data
+- **BookingDatabaseService**: Handles service bookings
+- **CustomMessagingService**: Manages user notifications
+- **SupabaseStorageService**: Handles file uploads and storage
 
 ## Usage Guidelines
 
@@ -54,7 +54,7 @@ Services should be used by providers to separate business logic from state manag
 ```dart
 class TaskProvider extends ChangeNotifier {
   List<Task> _tasks = [];
-  
+
   void loadTasksForEvent(String eventType) {
     _tasks = TaskTemplateService.getTasksForEventType(eventType);
     notifyListeners();

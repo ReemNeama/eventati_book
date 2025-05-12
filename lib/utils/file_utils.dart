@@ -1,14 +1,14 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:eventati_book/services/firebase/core/firebase_storage_service.dart';
 import 'package:eventati_book/services/interfaces/storage_service_interface.dart';
+import 'package:eventati_book/services/supabase/core/supabase_storage_service.dart';
 import 'package:eventati_book/utils/image_utils.dart';
 import 'package:eventati_book/utils/logger.dart';
-import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 
 /// Utility functions for file operations
@@ -23,7 +23,7 @@ class FileUtils {
 
   /// Get the storage service
   static StorageServiceInterface get storageService {
-    _storageService ??= FirebaseStorageService();
+    _storageService ??= SupabaseStorageService();
     return _storageService!;
   }
 
@@ -97,7 +97,7 @@ class FileUtils {
     }
   }
 
-  /// Upload a file to Firebase Storage
+  /// Upload a file to Supabase Storage
   static Future<String?> uploadFile(
     String userId,
     String folder,
@@ -107,8 +107,7 @@ class FileUtils {
   }) async {
     try {
       final fileName = path.basename(file.path);
-      final storagePath = (storageService as FirebaseStorageService)
-          .generatePath(userId, folder, fileName);
+      final storagePath = '$userId/$folder/$fileName';
 
       if (onProgress != null) {
         return await storageService.uploadFileWithProgress(
@@ -130,7 +129,7 @@ class FileUtils {
     }
   }
 
-  /// Upload image data to Firebase Storage
+  /// Upload image data to Supabase Storage
   static Future<String?> uploadImageData(
     String userId,
     String folder,
@@ -140,8 +139,7 @@ class FileUtils {
     Map<String, String>? metadata,
   }) async {
     try {
-      final storagePath = (storageService as FirebaseStorageService)
-          .generatePath(userId, folder, fileName);
+      final storagePath = '$userId/$folder/$fileName';
 
       if (onProgress != null) {
         return await storageService.uploadDataWithProgress(
@@ -163,7 +161,7 @@ class FileUtils {
     }
   }
 
-  /// Download a file from Firebase Storage
+  /// Download a file from Supabase Storage
   static Future<File?> downloadFile(
     String storagePath,
     String localFileName, {
@@ -188,7 +186,7 @@ class FileUtils {
     }
   }
 
-  /// Delete a file from Firebase Storage
+  /// Delete a file from Supabase Storage
   static Future<bool> deleteStorageFile(String storagePath) async {
     try {
       await storageService.deleteFile(storagePath);
@@ -199,7 +197,7 @@ class FileUtils {
     }
   }
 
-  /// Get a download URL for a file in Firebase Storage
+  /// Get a download URL for a file in Supabase Storage
   static Future<String?> getDownloadURL(String storagePath) async {
     try {
       return await storageService.getDownloadURL(storagePath);
@@ -219,18 +217,18 @@ class FileUtils {
     return '${(bytes / (1024 * 1024 * 1024)).toStringAsFixed(1)} GB';
   }
 
-  /// Upload a profile image to Firebase Storage
+  /// Upload a profile image to Supabase Storage
   static Future<String?> uploadProfileImage(
     String userId,
     File imageFile, {
     Function(double)? onProgress,
   }) async {
     try {
-      // Get the Firebase Storage service
-      final storage = storageService as FirebaseStorageService;
+      // Get the storage service
+      final storage = storageService;
 
       // Generate the storage path
-      final storagePath = FirebaseStorageService.userProfileImagePath(userId);
+      final storagePath = 'profiles/$userId/profile.jpg';
 
       // Upload the image with compression
       return await storage.uploadImageWithCompression(
@@ -252,7 +250,7 @@ class FileUtils {
     }
   }
 
-  /// Upload an event image to Firebase Storage
+  /// Upload an event image to Supabase Storage
   static Future<Map<String, String>?> uploadEventImage(
     String eventId,
     File imageFile, {
@@ -263,24 +261,21 @@ class FileUtils {
       // Generate a unique ID for the image
       final imageId = const Uuid().v4();
 
-      // Get the Firebase Storage service
-      final storage = storageService as FirebaseStorageService;
+      // Get the storage service
+      final storage = storageService;
 
       // Generate the storage paths
-      final mainPath = FirebaseStorageService.eventImagePath(eventId, imageId);
-      final thumbnailPath = FirebaseStorageService.eventThumbnailPath(
-        eventId,
-        imageId,
-      );
+      final mainPath = 'events/$eventId/images/$imageId.jpg';
+      final thumbnailPath = 'events/$eventId/thumbnails/$imageId.jpg';
 
       // Upload the image with thumbnail
-      return await storage.uploadImageWithThumbnail(
+      final result = await storage.uploadImageWithThumbnail(
         mainPath,
         thumbnailPath,
         imageFile,
-        maxWidth: ImageUtils.venueImageMaxDimension,
-        maxHeight: ImageUtils.venueImageMaxDimension,
-        quality: ImageUtils.venueImageQuality,
+        maxWidth: ImageUtils.eventImageMaxWidth,
+        maxHeight: ImageUtils.eventImageMaxHeight,
+        quality: ImageUtils.eventImageQuality,
         onMainProgress: onMainProgress,
         onThumbnailProgress: onThumbnailProgress,
         metadata: {
@@ -290,13 +285,15 @@ class FileUtils {
           'uploadedAt': DateTime.now().toIso8601String(),
         },
       );
+
+      return result;
     } catch (e) {
       Logger.e('Error uploading event image: $e', tag: 'FileUtils');
       return null;
     }
   }
 
-  /// Upload a venue image to Firebase Storage
+  /// Upload a venue image to Supabase Storage
   static Future<Map<String, String>?> uploadVenueImage(
     String venueId,
     File imageFile, {
@@ -307,23 +304,20 @@ class FileUtils {
       // Generate a unique ID for the image
       final imageId = const Uuid().v4();
 
-      // Get the Firebase Storage service
-      final storage = storageService as FirebaseStorageService;
+      // Get the storage service
+      final storage = storageService;
 
       // Generate the storage paths
-      final mainPath = FirebaseStorageService.venueImagePath(venueId, imageId);
-      final thumbnailPath = FirebaseStorageService.venueThumbnailPath(
-        venueId,
-        imageId,
-      );
+      final mainPath = 'venues/$venueId/images/$imageId.jpg';
+      final thumbnailPath = 'venues/$venueId/thumbnails/$imageId.jpg';
 
       // Upload the image with thumbnail
-      return await storage.uploadImageWithThumbnail(
+      final result = await storage.uploadImageWithThumbnail(
         mainPath,
         thumbnailPath,
         imageFile,
-        maxWidth: ImageUtils.venueImageMaxDimension,
-        maxHeight: ImageUtils.venueImageMaxDimension,
+        maxWidth: ImageUtils.venueImageMaxWidth,
+        maxHeight: ImageUtils.venueImageMaxHeight,
         quality: ImageUtils.venueImageQuality,
         onMainProgress: onMainProgress,
         onThumbnailProgress: onThumbnailProgress,
@@ -334,13 +328,15 @@ class FileUtils {
           'uploadedAt': DateTime.now().toIso8601String(),
         },
       );
+
+      return result;
     } catch (e) {
       Logger.e('Error uploading venue image: $e', tag: 'FileUtils');
       return null;
     }
   }
 
-  /// Upload a guest photo to Firebase Storage
+  /// Upload a guest photo to Supabase Storage
   static Future<String?> uploadGuestPhoto(
     String eventId,
     String guestId,
@@ -348,23 +344,22 @@ class FileUtils {
     Function(double)? onProgress,
   }) async {
     try {
-      // Get the Firebase Storage service
-      final storage = storageService as FirebaseStorageService;
+      // Get the storage service
+      final storage = storageService;
 
       // Generate the storage path
-      final storagePath = FirebaseStorageService.guestPhotoPath(
-        eventId,
-        guestId,
+      final storagePath = 'events/$eventId/guests/$guestId/photo.jpg';
+
+      // Compress the image
+      final compressedImage = await ImageUtils.compressImage(
+        imageFile,
+        quality: ImageUtils.profileImageQuality,
       );
 
-      // Upload the image with compression
-      return await storage.uploadImageWithCompression(
+      // Upload the image
+      return await storage.uploadFile(
         storagePath,
-        imageFile,
-        maxWidth: ImageUtils.profileImageMaxDimension,
-        maxHeight: ImageUtils.profileImageMaxDimension,
-        quality: ImageUtils.profileImageQuality,
-        onProgress: onProgress,
+        compressedImage,
         metadata: {
           'eventId': eventId,
           'guestId': guestId,
@@ -384,7 +379,7 @@ class FileUtils {
   /// information, handle bookings, and process payments. The app will not include functionality for
   /// vendors to upload images directly.
   ///
-  /// Upload a service image to Firebase Storage - FOR DEMONSTRATION PURPOSES ONLY
+  /// Upload a service image to Supabase Storage - FOR DEMONSTRATION PURPOSES ONLY
   /// This should NOT be used in the production app as vendors will use separate admin projects for uploads.
   static Future<Map<String, String>?> uploadServiceImage(
     String serviceType,
@@ -405,28 +400,21 @@ class FileUtils {
       // Generate a unique ID for the image
       final imageId = const Uuid().v4();
 
-      // Get the Firebase Storage service
-      final storage = storageService as FirebaseStorageService;
+      // Get the storage service
+      final storage = storageService;
 
       // Generate the storage paths
-      final mainPath = FirebaseStorageService.serviceImagePath(
-        serviceType,
-        serviceId,
-        imageId,
-      );
-      final thumbnailPath = FirebaseStorageService.serviceThumbnailPath(
-        serviceType,
-        serviceId,
-        imageId,
-      );
+      final mainPath = 'services/$serviceType/$serviceId/images/$imageId.jpg';
+      final thumbnailPath =
+          'services/$serviceType/$serviceId/thumbnails/$imageId.jpg';
 
       // Upload the image with thumbnail
-      return await storage.uploadImageWithThumbnail(
+      final result = await storage.uploadImageWithThumbnail(
         mainPath,
         thumbnailPath,
         imageFile,
-        maxWidth: ImageUtils.venueImageMaxDimension,
-        maxHeight: ImageUtils.venueImageMaxDimension,
+        maxWidth: ImageUtils.venueImageMaxWidth,
+        maxHeight: ImageUtils.venueImageMaxHeight,
         quality: ImageUtils.venueImageQuality,
         onMainProgress: onMainProgress,
         onThumbnailProgress: onThumbnailProgress,
@@ -439,6 +427,8 @@ class FileUtils {
           'demo_only': 'true', // Mark as demo only
         },
       );
+
+      return result;
     } catch (e) {
       Logger.e('Error uploading service image: $e', tag: 'FileUtils');
       return null;
@@ -447,7 +437,7 @@ class FileUtils {
 
   /// Get the current user ID
   static String? getCurrentUserId() {
-    final user = firebase_auth.FirebaseAuth.instance.currentUser;
-    return user?.uid;
+    final user = Supabase.instance.client.auth.currentUser;
+    return user?.id;
   }
 }

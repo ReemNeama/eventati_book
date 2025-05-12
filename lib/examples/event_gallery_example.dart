@@ -29,7 +29,7 @@ class _EventGalleryExampleState extends State<EventGalleryExample> {
   }
 
   void _loadImages() {
-    // In a real app, you would load the images from Firebase Storage
+    // In a real app, you would load the images from Supabase Storage
     // For this example, we'll use a placeholder
     setState(() {
       _imageUrls = [];

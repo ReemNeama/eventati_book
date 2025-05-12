@@ -29,7 +29,7 @@ This document provides a detailed breakdown of the messaging and vendor communic
 │           │           │ │        │          │ │  └────────┬────────┘  │
 │           │           │ │        │          │ │           │           │
 │           │           │ │        │          │ │  ┌────────▼────────┐  │
-│           │           │ │        │          │ │  │ TempDB/Firebase │  │
+│           │           │ │        │          │ │  │ TempDB/Supabase │  │
 │           │           │ │        │          │ │  └─────────────────┘  │
 │                       │ │                   │ │                       │
 └───────────────────────┘ └───────────────────┘ └───────────────────────┘
@@ -335,22 +335,22 @@ This document provides a detailed breakdown of the messaging and vendor communic
 └─────────────────────────────────────────────────────────────────────────┘
 ```
 
-## Future Firebase Implementation
+## Supabase Implementation
 
-When Firebase is implemented, the messaging and vendor communication system will use Firebase Firestore:
+The messaging and vendor communication system uses Supabase Database:
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
-│                       FIREBASE MESSAGING STORAGE                        │
+│                       SUPABASE MESSAGING STORAGE                        │
 └───────────────────────────────────┬─────────────────────────────────────┘
                                     │
                 ┌───────────────────┼───────────────────┐
                 │                   │                   │
                 ▼                   ▼                   ▼
 ┌───────────────────────┐ ┌───────────────────┐ ┌───────────────────────┐
-│  VENDOR COLLECTION    │ │  MESSAGE COLLECTION│ │  EVENT COLLECTION     │
+│  VENDORS TABLE        │ │  MESSAGES TABLE   │ │  EVENTS TABLE         │
 │                       │ │                   │ │                        │
-│  - Vendor documents   │ │  - Message docs   │ │  - Event documents    │
+│  - Vendor records     │ │  - Message records│ │  - Event records      │
 │  - Contact info       │ │  - Read status    │ │  - Vendor refs        │
 │  - Service details    │ │  - Attachments    │ │  - Event metadata     │
 └───────────────────────┘ └───────────────────┘ └───────────────────────┘

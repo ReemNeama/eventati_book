@@ -32,7 +32,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
     _loadEventImages();
   }
 
-  /// Load event images from Firebase Storage
+  /// Load event images from storage
   Future<void> _loadEventImages() async {
     setState(() {
       _isLoadingImages = true;

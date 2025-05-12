@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 /// in the application, such as screen views, user actions, and errors.
 ///
 /// This is a mock implementation that logs events to the console.
-/// In a real app, this would use Firebase Analytics or another analytics provider.
+/// In a real app, this would use PostHog or another analytics provider.
 class AnalyticsService {
   /// Creates a new AnalyticsService
   AnalyticsService();
@@ -18,7 +18,7 @@ class AnalyticsService {
   /// Track a screen view
   ///
   /// This is a mock implementation that logs to the console.
-  /// In a real app, this would use Firebase Analytics or another analytics provider.
+  /// In a real app, this would use PostHog or another analytics provider.
   Future<void> trackScreenView(
     String screenName, {
     Map<String, dynamic>? parameters,
@@ -32,7 +32,7 @@ class AnalyticsService {
   /// Track a user action
   ///
   /// This is a mock implementation that logs to the console.
-  /// In a real app, this would use Firebase Analytics or another analytics provider.
+  /// In a real app, this would use PostHog or another analytics provider.
   Future<void> trackUserAction(
     String action, {
     Map<String, dynamic>? parameters,
@@ -46,7 +46,7 @@ class AnalyticsService {
   /// Track an error
   ///
   /// This is a mock implementation that logs to the console.
-  /// In a real app, this would use Firebase Analytics or another analytics provider.
+  /// In a real app, this would use PostHog or another analytics provider.
   Future<void> trackError(
     String error, {
     Map<String, dynamic>? parameters,
@@ -60,7 +60,7 @@ class AnalyticsService {
   /// Track a login event
   ///
   /// This is a mock implementation that logs to the console.
-  /// In a real app, this would use Firebase Analytics or another analytics provider.
+  /// In a real app, this would use PostHog or another analytics provider.
   Future<void> trackLogin({String? method}) async {
     // Log in debug mode
     if (kDebugMode) {
@@ -71,7 +71,7 @@ class AnalyticsService {
   /// Track a sign-up event
   ///
   /// This is a mock implementation that logs to the console.
-  /// In a real app, this would use Firebase Analytics or another analytics provider.
+  /// In a real app, this would use PostHog or another analytics provider.
   Future<void> trackSignUp({String? method}) async {
     // Log in debug mode
     if (kDebugMode) {
@@ -82,7 +82,7 @@ class AnalyticsService {
   /// Track a search event
   ///
   /// This is a mock implementation that logs to the console.
-  /// In a real app, this would use Firebase Analytics or another analytics provider.
+  /// In a real app, this would use PostHog or another analytics provider.
   Future<void> trackSearch(String searchTerm) async {
     // Log in debug mode
     if (kDebugMode) {
@@ -93,7 +93,7 @@ class AnalyticsService {
   /// Track a booking event
   ///
   /// This is a mock implementation that logs to the console.
-  /// In a real app, this would use Firebase Analytics or another analytics provider.
+  /// In a real app, this would use PostHog or another analytics provider.
   Future<void> trackBooking({
     required String serviceType,
     required String serviceId,
@@ -111,7 +111,7 @@ class AnalyticsService {
   /// Track a comparison event
   ///
   /// This is a mock implementation that logs to the console.
-  /// In a real app, this would use Firebase Analytics or another analytics provider.
+  /// In a real app, this would use PostHog or another analytics provider.
   Future<void> trackComparison({
     required String serviceType,
     required List<String> serviceIds,
@@ -128,7 +128,7 @@ class AnalyticsService {
   /// Track a filter event
   ///
   /// This is a mock implementation that logs to the console.
-  /// In a real app, this would use Firebase Analytics or another analytics provider.
+  /// In a real app, this would use PostHog or another analytics provider.
   Future<void> trackFilter({
     required String serviceType,
     required Map<String, dynamic> filters,
@@ -142,7 +142,7 @@ class AnalyticsService {
   /// Track a sort event
   ///
   /// This is a mock implementation that logs to the console.
-  /// In a real app, this would use Firebase Analytics or another analytics provider.
+  /// In a real app, this would use PostHog or another analytics provider.
   Future<void> trackSort({
     required String serviceType,
     required String sortBy,
@@ -157,7 +157,7 @@ class AnalyticsService {
   /// Set user properties
   ///
   /// This is a mock implementation that logs to the console.
-  /// In a real app, this would use Firebase Analytics or another analytics provider.
+  /// In a real app, this would use PostHog or another analytics provider.
   Future<void> setUserProperties({
     String? userId,
     Map<String, String>? properties,

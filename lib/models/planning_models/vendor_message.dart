@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:eventati_book/utils/database_utils.dart';
 
 class Vendor {
   final String id;
@@ -57,8 +57,8 @@ class Vendor {
     );
   }
 
-  /// Convert to Firestore data
-  Map<String, dynamic> toFirestore() {
+  /// Convert to database document
+  Map<String, dynamic> toDatabaseDoc() {
     return {
       'name': name,
       'serviceType': serviceType,
@@ -69,15 +69,15 @@ class Vendor {
       'website': website,
       'rating': rating,
       'imageUrl': imageUrl,
-      'createdAt': FieldValue.serverTimestamp(),
-      'updatedAt': FieldValue.serverTimestamp(),
+      'createdAt': DbFieldValue.serverTimestamp(),
+      'updatedAt': DbFieldValue.serverTimestamp(),
     };
   }
 
-  /// Create from Firestore document
-  factory Vendor.fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>?;
-    if (data == null) {
+  /// Create from database document
+  factory Vendor.fromDatabaseDoc(DbDocumentSnapshot doc) {
+    final data = doc.getData();
+    if (data.isEmpty) {
       throw Exception('Document data was null');
     }
 
@@ -156,26 +156,26 @@ class Message {
     );
   }
 
-  /// Convert to Firestore data
-  Map<String, dynamic> toFirestore() {
+  /// Convert to database document
+  Map<String, dynamic> toDatabaseDoc() {
     return {
       'vendorId': vendorId,
       'content': content,
-      'timestamp': Timestamp.fromDate(timestamp),
+      'timestamp': DbTimestamp.fromDate(timestamp).toIso8601String(),
       'isFromUser': isFromUser,
       'attachments': attachments,
       'isRead': isRead,
       'userId': userId,
       'eventId': eventId,
       'replyToMessageId': replyToMessageId,
-      'createdAt': FieldValue.serverTimestamp(),
+      'createdAt': DbFieldValue.serverTimestamp(),
     };
   }
 
-  /// Create from Firestore document
-  factory Message.fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>?;
-    if (data == null) {
+  /// Create from database document
+  factory Message.fromDatabaseDoc(DbDocumentSnapshot doc) {
+    final data = doc.getData();
+    if (data.isEmpty) {
       throw Exception('Document data was null');
     }
 
@@ -185,7 +185,7 @@ class Message {
       content: data['content'] ?? '',
       timestamp:
           data['timestamp'] != null
-              ? (data['timestamp'] as Timestamp).toDate()
+              ? DateTime.parse(data['timestamp'])
               : DateTime.now(),
       isFromUser: data['isFromUser'] ?? true,
       attachments:
@@ -253,23 +253,24 @@ class Conversation {
     );
   }
 
-  /// Convert to Firestore data
-  Map<String, dynamic> toFirestore() {
+  /// Convert to database document
+  Map<String, dynamic> toDatabaseDoc() {
     return {
       'vendorId': vendorId,
-      'lastMessageTime': Timestamp.fromDate(lastMessageTime),
+      'lastMessageTime':
+          DbTimestamp.fromDate(lastMessageTime).toIso8601String(),
       'hasUnreadMessages': hasUnreadMessages,
       'vendorName': vendorName,
       'vendorImageUrl': vendorImageUrl,
       'eventId': eventId,
-      'updatedAt': FieldValue.serverTimestamp(),
+      'updatedAt': DbFieldValue.serverTimestamp(),
     };
   }
 
-  /// Create from Firestore document
-  factory Conversation.fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>?;
-    if (data == null) {
+  /// Create from database document
+  factory Conversation.fromDatabaseDoc(DbDocumentSnapshot doc) {
+    final data = doc.getData();
+    if (data.isEmpty) {
       throw Exception('Document data was null');
     }
 
@@ -278,7 +279,7 @@ class Conversation {
       messages: [], // Messages are loaded separately from a subcollection
       lastMessageTime:
           data['lastMessageTime'] != null
-              ? (data['lastMessageTime'] as Timestamp).toDate()
+              ? DateTime.parse(data['lastMessageTime'])
               : DateTime.now(),
       hasUnreadMessages: data['hasUnreadMessages'] ?? false,
       vendorName: data['vendorName'],

@@ -1,5 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:eventati_book/utils/database_utils.dart';
 
 enum TaskStatus { notStarted, inProgress, completed, overdue }
 
@@ -18,22 +18,22 @@ class TaskCategory {
     required this.color,
   });
 
-  /// Convert to Firestore data
-  Map<String, dynamic> toFirestore() {
+  /// Convert to database data
+  Map<String, dynamic> toDatabaseDoc() {
     return {
       'name': name,
       'iconCodePoint': icon.codePoint,
       'iconFontFamily': icon.fontFamily,
       'iconFontPackage': icon.fontPackage,
       'colorARGB': [color.a, color.r, color.g, color.b],
-      'createdAt': FieldValue.serverTimestamp(),
+      'createdAt': DbFieldValue.serverTimestamp(),
     };
   }
 
-  /// Create from Firestore document
-  factory TaskCategory.fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>?;
-    if (data == null) {
+  /// Create from database document
+  factory TaskCategory.fromDatabaseDoc(DbDocumentSnapshot doc) {
+    final data = doc.getData();
+    if (data.isEmpty) {
       throw Exception('Document data was null');
     }
 
@@ -174,32 +174,34 @@ class Task {
     );
   }
 
-  /// Convert to Firestore data
-  Map<String, dynamic> toFirestore() {
+  /// Convert to database data
+  Map<String, dynamic> toDatabaseDoc() {
     return {
       'title': title,
       'description': description,
-      'dueDate': Timestamp.fromDate(dueDate),
+      'dueDate': DbTimestamp.fromDate(dueDate).toIso8601String(),
       'status': status.toString().split('.').last,
       'categoryId': categoryId,
       'assignedTo': assignedTo,
       'isImportant': isImportant,
       'notes': notes,
       'completedDate':
-          completedDate != null ? Timestamp.fromDate(completedDate!) : null,
+          completedDate != null
+              ? DbTimestamp.fromDate(completedDate!).toIso8601String()
+              : null,
       'priority': priority.toString().split('.').last,
       'isServiceRelated': isServiceRelated,
       'serviceId': serviceId,
       'dependencies': dependencies,
-      'createdAt': FieldValue.serverTimestamp(),
-      'updatedAt': FieldValue.serverTimestamp(),
+      'createdAt': DbFieldValue.serverTimestamp(),
+      'updatedAt': DbFieldValue.serverTimestamp(),
     };
   }
 
-  /// Create from Firestore document
-  factory Task.fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>?;
-    if (data == null) {
+  /// Create from database document
+  factory Task.fromDatabaseDoc(DbDocumentSnapshot doc) {
+    final data = doc.getData();
+    if (data.isEmpty) {
       throw Exception('Document data was null');
     }
 
@@ -209,7 +211,7 @@ class Task {
       description: data['description'],
       dueDate:
           data['dueDate'] != null
-              ? (data['dueDate'] as Timestamp).toDate()
+              ? DateTime.parse(data['dueDate'])
               : DateTime.now(),
       status: _parseTaskStatus(data['status']),
       categoryId: data['categoryId'] ?? '',
@@ -218,7 +220,7 @@ class Task {
       notes: data['notes'],
       completedDate:
           data['completedDate'] != null
-              ? (data['completedDate'] as Timestamp).toDate()
+              ? DateTime.parse(data['completedDate'])
               : null,
       priority: _parseTaskPriority(data['priority']),
       isServiceRelated: data['isServiceRelated'] ?? false,

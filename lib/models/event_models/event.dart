@@ -1,5 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:eventati_book/utils/database_utils.dart';
 
 /// Enum representing the type of event
 enum EventType { wedding, business, celebration, other }
@@ -178,42 +178,36 @@ class Event {
     return 'Event{id: $id, name: $name, type: ${type.displayName}, date: $date, location: $location, budget: $budget, guestCount: $guestCount, description: $description, userId: $userId, status: $status}';
   }
 
-  /// Creates an Event from a Firestore document
-  factory Event.fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>?;
-    if (data == null) {
+  /// Creates an Event from a database document
+  factory Event.fromDatabaseDoc(DbDocumentSnapshot doc) {
+    final data = doc.getData();
+    if (data.isEmpty) {
       throw Exception('Document data was null');
     }
 
     return Event(
       id: doc.id,
       name: data['name'] ?? '',
-      type: _getEventTypeFromFirestore(data['type']),
+      type: _getEventTypeFromDatabase(data['type']),
       date:
-          data['date'] != null
-              ? (data['date'] as Timestamp).toDate()
-              : DateTime.now(),
+          data['date'] != null ? DateTime.parse(data['date']) : DateTime.now(),
       location: data['location'] ?? '',
       budget: (data['budget'] ?? 0.0).toDouble(),
       guestCount: (data['guestCount'] ?? 0) as int,
       description: data['description'],
       userId: data['userId'],
       createdAt:
-          data['createdAt'] != null
-              ? (data['createdAt'] as Timestamp).toDate()
-              : null,
+          data['createdAt'] != null ? DateTime.parse(data['createdAt']) : null,
       updatedAt:
-          data['updatedAt'] != null
-              ? (data['updatedAt'] as Timestamp).toDate()
-              : null,
+          data['updatedAt'] != null ? DateTime.parse(data['updatedAt']) : null,
       status: data['status'],
       imageUrls:
           data['imageUrls'] != null ? List<String>.from(data['imageUrls']) : [],
     );
   }
 
-  /// Helper method to get EventType from Firestore data
-  static EventType _getEventTypeFromFirestore(dynamic typeData) {
+  /// Helper method to get EventType from database data
+  static EventType _getEventTypeFromDatabase(dynamic typeData) {
     if (typeData is int) {
       return EventType.values[typeData];
     } else if (typeData is String) {
@@ -230,12 +224,12 @@ class Event {
     return EventType.other;
   }
 
-  /// Converts this Event to a Firestore document
-  Map<String, dynamic> toFirestore() {
+  /// Converts this Event to a database document
+  Map<String, dynamic> toDatabaseDoc() {
     return {
       'name': name,
       'type': type.index,
-      'date': Timestamp.fromDate(date),
+      'date': DbTimestamp.fromDate(date).toIso8601String(),
       'location': location,
       'budget': budget,
       'guestCount': guestCount,
@@ -243,9 +237,9 @@ class Event {
       'userId': userId,
       'createdAt':
           createdAt != null
-              ? Timestamp.fromDate(createdAt!)
-              : FieldValue.serverTimestamp(),
-      'updatedAt': FieldValue.serverTimestamp(),
+              ? DbTimestamp.fromDate(createdAt!).toIso8601String()
+              : DbFieldValue.serverTimestamp(),
+      'updatedAt': DbFieldValue.serverTimestamp(),
       'status': status ?? 'active',
       'imageUrls': imageUrls,
     };

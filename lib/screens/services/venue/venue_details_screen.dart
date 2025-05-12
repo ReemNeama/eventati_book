@@ -127,7 +127,7 @@ class _VenueDetailsScreenState extends State<VenueDetailsScreen>
     _loadVenueImages();
   }
 
-  /// Load venue images from Firebase Storage
+  /// Load venue images from storage
   Future<void> _loadVenueImages() async {
     setState(() {
       _isLoadingImages = true;

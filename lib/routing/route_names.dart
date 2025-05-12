@@ -68,5 +68,5 @@ class RouteNames {
   static const String profile = '/profile';
 
   // Testing routes
-  static const String taskFirestoreTest = '/testing/task-firestore';
+  static const String taskDatabaseTest = '/testing/task-database';
 }

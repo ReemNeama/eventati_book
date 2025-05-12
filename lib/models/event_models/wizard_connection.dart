@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:eventati_book/utils/database_utils.dart';
 
 /// Represents the connection between the wizard and planning tools
 class WizardConnection {
@@ -94,55 +94,55 @@ class WizardConnection {
     );
   }
 
-  /// Convert to JSON
+  /// Convert to JSON for Supabase
   Map<String, dynamic> toJson() {
     return {
-      'userId': userId,
-      'eventId': eventId,
-      'wizardStateId': wizardStateId,
-      'budgetEnabled': budgetEnabled,
-      'guestListEnabled': guestListEnabled,
-      'timelineEnabled': timelineEnabled,
-      'serviceRecommendationsEnabled': serviceRecommendationsEnabled,
-      'budgetItemIds': budgetItemIds,
-      'guestGroupIds': guestGroupIds,
-      'taskIds': taskIds,
-      'serviceRecommendationIds': serviceRecommendationIds,
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt.toIso8601String(),
+      'user_id': userId,
+      'event_id': eventId,
+      'wizard_state_id': wizardStateId,
+      'budget_enabled': budgetEnabled,
+      'guest_list_enabled': guestListEnabled,
+      'timeline_enabled': timelineEnabled,
+      'service_recommendations_enabled': serviceRecommendationsEnabled,
+      'budget_item_ids': budgetItemIds,
+      'guest_group_ids': guestGroupIds,
+      'task_ids': taskIds,
+      'service_recommendation_ids': serviceRecommendationIds,
+      'created_at': createdAt.toIso8601String(),
+      'updated_at': updatedAt.toIso8601String(),
     };
   }
 
-  /// Create from JSON
+  /// Create from JSON from Supabase
   factory WizardConnection.fromJson(Map<String, dynamic> json) {
     return WizardConnection(
-      userId: json['userId'] ?? '',
-      eventId: json['eventId'] ?? '',
-      wizardStateId: json['wizardStateId'] ?? '',
-      budgetEnabled: json['budgetEnabled'] ?? true,
-      guestListEnabled: json['guestListEnabled'] ?? true,
-      timelineEnabled: json['timelineEnabled'] ?? true,
+      userId: json['user_id'] ?? '',
+      eventId: json['event_id'] ?? '',
+      wizardStateId: json['wizard_state_id'] ?? '',
+      budgetEnabled: json['budget_enabled'] ?? true,
+      guestListEnabled: json['guest_list_enabled'] ?? true,
+      timelineEnabled: json['timeline_enabled'] ?? true,
       serviceRecommendationsEnabled:
-          json['serviceRecommendationsEnabled'] ?? true,
-      budgetItemIds: List<String>.from(json['budgetItemIds'] ?? []),
-      guestGroupIds: List<String>.from(json['guestGroupIds'] ?? []),
-      taskIds: List<String>.from(json['taskIds'] ?? []),
+          json['service_recommendations_enabled'] ?? true,
+      budgetItemIds: List<String>.from(json['budget_item_ids'] ?? []),
+      guestGroupIds: List<String>.from(json['guest_group_ids'] ?? []),
+      taskIds: List<String>.from(json['task_ids'] ?? []),
       serviceRecommendationIds: List<String>.from(
-        json['serviceRecommendationIds'] ?? [],
+        json['service_recommendation_ids'] ?? [],
       ),
       createdAt:
-          json['createdAt'] != null
-              ? DateTime.parse(json['createdAt'])
+          json['created_at'] != null
+              ? DateTime.parse(json['created_at'])
               : DateTime.now(),
       updatedAt:
-          json['updatedAt'] != null
-              ? DateTime.parse(json['updatedAt'])
+          json['updated_at'] != null
+              ? DateTime.parse(json['updated_at'])
               : DateTime.now(),
     );
   }
 
-  /// Convert to Firestore
-  Map<String, dynamic> toFirestore() {
+  /// Convert to database document
+  Map<String, dynamic> toDatabaseDoc() {
     return {
       'userId': userId,
       'eventId': eventId,
@@ -155,13 +155,16 @@ class WizardConnection {
       'guestGroupIds': guestGroupIds,
       'taskIds': taskIds,
       'serviceRecommendationIds': serviceRecommendationIds,
-      'createdAt': FieldValue.serverTimestamp(),
-      'updatedAt': FieldValue.serverTimestamp(),
+      'createdAt': DbFieldValue.serverTimestamp(),
+      'updatedAt': DbFieldValue.serverTimestamp(),
     };
   }
 
-  /// Create from Firestore
-  factory WizardConnection.fromFirestore(Map<String, dynamic> data, String id) {
+  /// Create from database document
+  factory WizardConnection.fromDatabaseDoc(
+    Map<String, dynamic> data,
+    String id,
+  ) {
     final parts = id.split('_');
     final userId = parts.isNotEmpty ? parts[0] : '';
     final eventId = parts.length > 1 ? parts[1] : '';
@@ -183,11 +186,11 @@ class WizardConnection {
       ),
       createdAt:
           data['createdAt'] != null
-              ? (data['createdAt'] as Timestamp).toDate()
+              ? DateTime.parse(data['createdAt'])
               : DateTime.now(),
       updatedAt:
           data['updatedAt'] != null
-              ? (data['updatedAt'] as Timestamp).toDate()
+              ? DateTime.parse(data['updatedAt'])
               : DateTime.now(),
     );
   }

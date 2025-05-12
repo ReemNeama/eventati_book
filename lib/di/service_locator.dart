@@ -5,16 +5,15 @@ import 'package:eventati_book/services/interfaces/crashlytics_service_interface.
 import 'package:eventati_book/services/interfaces/database_service_interface.dart';
 import 'package:eventati_book/services/interfaces/messaging_service_interface.dart';
 import 'package:eventati_book/services/interfaces/storage_service_interface.dart';
-import 'package:eventati_book/services/firebase/utils/data_migration_service.dart';
-import 'package:eventati_book/services/firebase/core/firebase_analytics_service.dart';
-import 'package:eventati_book/services/firebase/core/firebase_auth_service.dart';
-import 'package:eventati_book/services/firebase/core/firebase_crashlytics_service.dart';
-import 'package:eventati_book/services/firebase/core/firebase_messaging_service.dart';
-import 'package:eventati_book/services/firebase/utils/firestore_service.dart';
-import 'package:eventati_book/services/firebase/core/firebase_storage_service.dart';
-import 'package:eventati_book/services/firebase/firestore/user_firestore_service.dart';
-import 'package:eventati_book/services/firebase/firestore/event_firestore_service.dart';
-import 'package:eventati_book/services/firebase/firestore/vendor_recommendation_firestore_service.dart';
+import 'package:eventati_book/services/supabase/utils/data_migration_service.dart';
+import 'package:eventati_book/services/supabase/core/supabase_auth_service.dart';
+import 'package:eventati_book/services/supabase/core/posthog_crashlytics_service.dart';
+import 'package:eventati_book/services/supabase/core/custom_messaging_service.dart';
+import 'package:eventati_book/services/analytics_service.dart';
+import 'package:eventati_book/services/supabase/utils/database_service.dart';
+import 'package:eventati_book/services/supabase/core/supabase_storage_service.dart';
+import 'package:eventati_book/services/supabase/database/user_database_service.dart';
+import 'package:eventati_book/services/supabase/database/vendor_recommendation_database_service.dart';
 import 'package:eventati_book/utils/file_utils.dart';
 
 /// Simple service locator for dependency injection
@@ -50,21 +49,22 @@ class ServiceLocator {
     // Register core services
     registerSingleton<NavigationService>(NavigationService());
 
-    // Register Firebase services
-    registerSingleton<AuthServiceInterface>(FirebaseAuthService());
-    registerSingleton<DatabaseServiceInterface>(FirestoreService());
-    registerSingleton<StorageServiceInterface>(FirebaseStorageService());
-    registerSingleton<MessagingServiceInterface>(FirebaseMessagingService());
-    registerSingleton<AnalyticsServiceInterface>(FirebaseAnalyticsService());
-    registerSingleton<CrashlyticsServiceInterface>(
-      FirebaseCrashlyticsService(),
+    // Register Supabase services
+    registerSingleton<AuthServiceInterface>(SupabaseAuthService());
+    registerSingleton<DatabaseServiceInterface>(DatabaseService());
+    registerSingleton<StorageServiceInterface>(SupabaseStorageService());
+    registerSingleton<MessagingServiceInterface>(CustomMessagingService());
+    registerSingleton<AnalyticsServiceInterface>(AnalyticsService());
+    registerSingleton<CrashlyticsServiceInterface>(PostHogCrashlyticsService());
+
+    // Register data migration service
+    registerSingleton<DataMigrationService>(
+      DataMigrationService(
+        authService: get<AuthServiceInterface>(),
+        databaseService: get<DatabaseServiceInterface>(),
+        storageService: get<StorageServiceInterface>(),
+      ),
     );
-    registerSingleton<UserFirestoreService>(UserFirestoreService());
-    registerSingleton<EventFirestoreService>(EventFirestoreService());
-    registerSingleton<VendorRecommendationFirestoreService>(
-      VendorRecommendationFirestoreService(),
-    );
-    registerSingleton<DataMigrationService>(DataMigrationService());
 
     // Initialize FileUtils with the storage service
     FileUtils.setStorageService(get<StorageServiceInterface>());
@@ -85,17 +85,25 @@ class ServiceLocator {
   DatabaseServiceInterface get databaseService =>
       get<DatabaseServiceInterface>();
 
-  /// Get the user Firestore service
-  UserFirestoreService get userFirestoreService => get<UserFirestoreService>();
+  // Database service getters
 
-  /// Get the event Firestore service
-  EventFirestoreService get eventFirestoreService =>
-      get<EventFirestoreService>();
+  /// Get the user database service
+  UserDatabaseService get userDatabaseService {
+    if (!_services.containsKey(UserDatabaseService)) {
+      registerSingleton<UserDatabaseService>(UserDatabaseService());
+    }
+    return get<UserDatabaseService>();
+  }
 
-  /// Get the vendor recommendation Firestore service
-  VendorRecommendationFirestoreService
-  get vendorRecommendationFirestoreService =>
-      get<VendorRecommendationFirestoreService>();
+  /// Get the vendor recommendation database service
+  VendorRecommendationDatabaseService get vendorRecommendationDatabaseService {
+    if (!_services.containsKey(VendorRecommendationDatabaseService)) {
+      registerSingleton<VendorRecommendationDatabaseService>(
+        VendorRecommendationDatabaseService(),
+      );
+    }
+    return get<VendorRecommendationDatabaseService>();
+  }
 
   /// Get the storage service
   StorageServiceInterface get storageService => get<StorageServiceInterface>();

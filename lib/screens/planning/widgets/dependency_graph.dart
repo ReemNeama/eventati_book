@@ -178,8 +178,11 @@ class _DependencyGraphState extends State<DependencyGraph> {
             () => TaskCategory(
               id: '0',
               name: 'Unknown',
-              icon: Icons.help_outline,
-              color: Colors.grey,
+              description: '',
+              icon: 'help_outline',
+              color: '#9E9E9E',
+              createdAt: DateTime.now(),
+              updatedAt: DateTime.now(),
             ),
       );
 

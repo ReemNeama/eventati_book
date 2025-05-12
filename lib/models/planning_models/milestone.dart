@@ -1,5 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:eventati_book/utils/database_utils.dart';
 import 'package:eventati_book/models/event_models/wizard_state.dart';
 
 /// Status of a milestone
@@ -417,8 +417,8 @@ class Milestone {
     );
   }
 
-  /// Convert to Firestore
-  Map<String, dynamic> toFirestore() {
+  /// Convert to database document
+  Map<String, dynamic> toDatabaseDoc() {
     return {
       'title': title,
       'description': description,
@@ -427,20 +427,22 @@ class Milestone {
       'applicableEventTypes': applicableEventTypes,
       'status': status.toString(),
       'completedDate':
-          completedDate != null ? Timestamp.fromDate(completedDate!) : null,
+          completedDate != null
+              ? DbTimestamp.fromDate(completedDate!).toIso8601String()
+              : null,
       'rewardText': rewardText,
       'isHidden': isHidden,
       'isTemplate': isTemplate,
     };
   }
 
-  /// Create from Firestore
-  factory Milestone.fromFirestore(
-    DocumentSnapshot doc,
+  /// Create from database document
+  factory Milestone.fromDatabaseDoc(
+    DbDocumentSnapshot doc,
     MilestoneCriteria criteria,
   ) {
-    final data = doc.data() as Map<String, dynamic>?;
-    if (data == null) {
+    final data = doc.getData();
+    if (data.isEmpty) {
       throw Exception('Document data was null');
     }
 
@@ -465,7 +467,7 @@ class Milestone {
       ),
       completedDate:
           data['completedDate'] != null
-              ? (data['completedDate'] as Timestamp).toDate()
+              ? DateTime.parse(data['completedDate'])
               : null,
       criteria: criteria,
       rewardText: data['rewardText'] ?? 'Milestone completed!',

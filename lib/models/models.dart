@@ -36,7 +36,8 @@ export 'planning_models/budget_item.dart'; // Budget item for financial planning
 export 'planning_models/guest.dart'; // Guest information for guest lists
 export 'planning_models/milestone.dart'; // Milestone tracking
 export 'planning_models/milestone_factory.dart'; // Factory for creating milestones
-export 'planning_models/task.dart'; // Tasks for checklists and timelines
+export 'planning_models/task.dart'
+    hide TaskCategory; // Tasks for checklists and timelines
 export 'planning_models/vendor_message.dart'; // Messages exchanged with vendors
 
 // -------------------------

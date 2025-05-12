@@ -18,7 +18,7 @@ import 'package:eventati_book/models/models.dart';
 ///
 /// Note: The current implementation uses SharedPreferences for local storage,
 /// which has limitations for complex data structures. This will be replaced
-/// with Firebase Firestore in the future for better persistence and synchronization.
+/// with Supabase in the future for better persistence and synchronization.
 ///
 /// Usage example:
 /// ```dart

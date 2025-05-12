@@ -69,14 +69,12 @@ class _TimelineScreenState extends State<TimelineScreen>
             ),
             IconButton(
               icon: const Icon(Icons.cloud_upload),
-              tooltip: 'Firestore Test',
+              tooltip: 'Database Test',
               onPressed: () {
                 NavigationUtils.navigateToNamed(
                   context,
-                  RouteNames.taskFirestoreTest,
-                  arguments: TaskFirestoreTestArguments(
-                    eventId: widget.eventId,
-                  ),
+                  RouteNames.taskDatabaseTest,
+                  arguments: TaskDatabaseTestArguments(eventId: widget.eventId),
                 );
               },
             ),
@@ -199,8 +197,11 @@ class _TimelineScreenState extends State<TimelineScreen>
           () => TaskCategory(
             id: '',
             name: 'Unknown',
-            icon: Icons.help_outline,
-            color: Colors.grey,
+            description: '',
+            icon: 'help_outline',
+            color: '#9E9E9E',
+            createdAt: DateTime.now(),
+            updatedAt: DateTime.now(),
           ),
     );
 
@@ -283,7 +284,11 @@ class _TimelineScreenState extends State<TimelineScreen>
                     children: [
                       Row(
                         children: [
-                          Icon(category.icon, color: category.color, size: 16),
+                          Icon(
+                            category.getIconData(),
+                            color: category.getColorObject(),
+                            size: 16,
+                          ),
                           const SizedBox(width: 8),
                           Text(
                             category.name,

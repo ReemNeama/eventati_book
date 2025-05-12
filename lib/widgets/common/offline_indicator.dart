@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:eventati_book/services/firebase/utils/network_connectivity_service.dart';
+import 'package:eventati_book/services/utils/network_connectivity_service.dart';
 
 /// Widget that shows an indicator when the device is offline
 class OfflineIndicator extends StatefulWidget {

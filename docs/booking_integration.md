@@ -38,9 +38,9 @@ This document provides a visual representation of how the booking system integra
                                     │
                                     ▼
 ┌─────────────────────────────────────────────────────────────────────────┐
-│                           TEMPDB / FIREBASE                             │
+│                           TEMPDB / SUPABASE                             │
 │                                                                         │
-│  Stores booking data (currently in TempDB, will be Firebase in future)  │
+│  Stores booking data (currently in TempDB, will be Supabase in future)  │
 └─────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -245,7 +245,7 @@ This document provides a visual representation of how the booking system integra
 - **Date and Time**: Event date and time range
 - **Guest Count**: Expected number of guests
 - **Setup Options**: Room layout, seating arrangements
-- **Additional Services**: 
+- **Additional Services**:
   - A/V equipment
   - Decoration packages
   - Catering options (if provided by venue)
@@ -255,7 +255,7 @@ This document provides a visual representation of how the booking system integra
 
 - **Date and Time**: Service date and time
 - **Guest Count**: Number of guests to serve
-- **Menu Selection**: 
+- **Menu Selection**:
   - Package selection (Bronze, Silver, Gold)
   - Specific dishes from menu
   - Dietary restrictions
@@ -299,12 +299,12 @@ Booking {
   totalPrice: double,
   createdAt: DateTime,
   updatedAt: DateTime,
-  
+
   // Contact information
   contactName: string,
   contactEmail: string,
   contactPhone: string,
-  
+
   // Service-specific options (stored as JSON)
   options: {
     // Varies by service type
@@ -316,10 +316,10 @@ Booking {
     hoursOfCoverage: int,
     // etc.
   },
-  
+
   // Special requests
   specialRequests: string,
-  
+
   // Price breakdown
   priceBreakdown: {
     basePrice: double,

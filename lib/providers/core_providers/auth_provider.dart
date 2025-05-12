@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/services/interfaces/auth_service_interface.dart';
-import 'package:eventati_book/services/firebase/firestore/user_firestore_service.dart';
+import 'package:eventati_book/services/supabase/database/user_database_service.dart';
 import 'package:eventati_book/di/service_locator.dart';
 
 /// Authentication states
@@ -60,12 +60,12 @@ enum AuthStatus {
 /// }
 /// ```
 class AuthProvider with ChangeNotifier {
-  /// Firebase authentication service
+  /// Authentication service
   final AuthServiceInterface _authService = serviceLocator.authService;
 
-  /// User Firestore service
-  final UserFirestoreService _userFirestoreService =
-      serviceLocator.userFirestoreService;
+  /// User database service
+  final UserDatabaseService _userDatabaseService =
+      serviceLocator.userDatabaseService;
 
   /// Current authentication status
   AuthStatus _status = AuthStatus.unauthenticated;
@@ -362,8 +362,8 @@ class AuthProvider with ChangeNotifier {
         return true;
       }
 
-      // Add to favorites in Firestore
-      await _userFirestoreService.addFavoriteVenue(_user!.id, venueId);
+      // Add to favorites in database
+      await _userDatabaseService.addFavoriteVenue(_user!.id, venueId);
 
       // Update local state
       final updatedFavorites = List<String>.from(_user!.favoriteVenues)
@@ -389,8 +389,8 @@ class AuthProvider with ChangeNotifier {
         return false;
       }
 
-      // Remove from favorites in Firestore
-      await _userFirestoreService.removeFavoriteVenue(_user!.id, venueId);
+      // Remove from favorites in database
+      await _userDatabaseService.removeFavoriteVenue(_user!.id, venueId);
 
       // Update local state
       final updatedFavorites = List<String>.from(_user!.favoriteVenues)
@@ -421,8 +421,8 @@ class AuthProvider with ChangeNotifier {
         return true;
       }
 
-      // Add to favorites in Firestore
-      await _userFirestoreService.addFavoriteService(_user!.id, serviceId);
+      // Add to favorites in database
+      await _userDatabaseService.addFavoriteService(_user!.id, serviceId);
 
       // Update local state
       final updatedFavorites = List<String>.from(_user!.favoriteServices)
@@ -448,8 +448,8 @@ class AuthProvider with ChangeNotifier {
         return false;
       }
 
-      // Remove from favorites in Firestore
-      await _userFirestoreService.removeFavoriteService(_user!.id, serviceId);
+      // Remove from favorites in database
+      await _userDatabaseService.removeFavoriteService(_user!.id, serviceId);
 
       // Update local state
       final updatedFavorites = List<String>.from(_user!.favoriteServices)

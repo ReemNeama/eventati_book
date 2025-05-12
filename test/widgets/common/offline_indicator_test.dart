@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:eventati_book/services/firebase/utils/network_connectivity_service.dart';
+import 'package:eventati_book/services/utils/network_connectivity_service.dart';
 import 'package:eventati_book/widgets/common/offline_indicator.dart';
 
 // Mock classes

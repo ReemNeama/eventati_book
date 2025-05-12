@@ -1,5 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:eventati_book/utils/database_utils.dart';
 import 'package:eventati_book/models/event_models/wizard_state.dart';
 
 /// Categories for different types of suggestions
@@ -345,8 +345,8 @@ class Suggestion {
     );
   }
 
-  /// Convert to Firestore
-  Map<String, dynamic> toFirestore() {
+  /// Convert to database document
+  Map<String, dynamic> toDatabaseDoc() {
     return {
       'title': title,
       'description': description,
@@ -359,15 +359,15 @@ class Suggestion {
       'imageUrl': imageUrl,
       'actionUrl': actionUrl,
       'isCustom': isCustom,
-      'createdAt': FieldValue.serverTimestamp(),
-      'updatedAt': FieldValue.serverTimestamp(),
+      'createdAt': DbFieldValue.serverTimestamp(),
+      'updatedAt': DbFieldValue.serverTimestamp(),
     };
   }
 
-  /// Create from Firestore
-  factory Suggestion.fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>?;
-    if (data == null) {
+  /// Create from database document
+  factory Suggestion.fromDatabaseDoc(DbDocumentSnapshot doc) {
+    final data = doc.getData();
+    if (data.isEmpty) {
       throw Exception('Document data was null');
     }
 
@@ -437,7 +437,7 @@ class Suggestion {
 class SuggestionTemplates {
   /// Get all predefined suggestions
   static List<Suggestion> getPredefinedSuggestions() {
-    // Create a list of predefined suggestions for Firestore
+    // Create a list of predefined suggestions for the database
     final List<Suggestion> suggestions = [];
 
     // Venue suggestions

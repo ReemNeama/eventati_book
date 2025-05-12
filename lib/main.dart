@@ -1,7 +1,9 @@
 // Import Flutter packages
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
+import 'package:flutter/foundation.dart';
 
 // Import app modules
 import 'package:eventati_book/styles/app_theme.dart';
@@ -9,31 +11,54 @@ import 'package:eventati_book/routing/routing.dart';
 import 'package:eventati_book/di/service_locator.dart';
 import 'package:eventati_book/di/providers_manager.dart';
 import 'package:eventati_book/services/services.dart';
-import 'package:eventati_book/services/firebase/core/firebase_messaging_service.dart';
+import 'package:eventati_book/services/supabase/core/posthog_crashlytics_service.dart';
+import 'package:eventati_book/services/interfaces/crashlytics_service_interface.dart';
+import 'package:eventati_book/services/interfaces/messaging_service_interface.dart';
+import 'package:eventati_book/services/supabase/core/custom_messaging_service.dart';
 import 'package:eventati_book/utils/error_utils.dart';
-import 'firebase_options.dart';
+import 'package:eventati_book/config/supabase_options.dart';
+import 'package:eventati_book/config/posthog_options.dart';
 
 void main() async {
   // Ensure Flutter is initialized
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase (only for supported platforms)
+  // Initialize Supabase
   try {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
+    await Supabase.initialize(
+      url: SupabaseOptions.supabaseUrl,
+      anonKey: SupabaseOptions.supabaseAnonKey,
+      debug: kDebugMode,
     );
   } catch (e) {
-    // Handle initialization error for unsupported platforms
-    debugPrint('Firebase initialization failed: $e');
-    // Continue without Firebase on unsupported platforms
+    debugPrint('Supabase initialization failed: $e');
+  }
+
+  // Initialize PostHog
+  try {
+    // Initialize PostHog with the API key and host from PostHogOptions
+    final config = PostHogConfig(PostHogOptions.apiKey);
+    config.host = PostHogOptions.apiHost;
+    config.debug = PostHogOptions.debug;
+    config.captureApplicationLifecycleEvents =
+        PostHogOptions.captureAppLifecycleEvents;
+    config.sessionReplay = PostHogOptions.sessionReplay;
+
+    await Posthog().setup(config);
+    debugPrint('PostHog initialized successfully');
+  } catch (e) {
+    debugPrint('PostHog initialization failed: $e');
   }
 
   // Initialize the service locator
   ServiceLocator().initialize();
 
-  // Initialize Firebase Messaging Service
-  final messagingService = FirebaseMessagingService();
+  // Initialize Custom Messaging Service
+  final messagingService = CustomMessagingService();
   await messagingService.initialize();
+  ServiceLocator().registerSingleton<MessagingServiceInterface>(
+    messagingService,
+  );
 
   // Set up error handling
   FlutterError.onError = (FlutterErrorDetails details) {
@@ -48,7 +73,7 @@ void main() async {
     );
   };
 
-  // Initialize analytics service (mock implementation for now)
+  // Initialize analytics service
   final analyticsService = AnalyticsService();
   ServiceLocator().registerSingleton<AnalyticsService>(analyticsService);
 
@@ -61,6 +86,23 @@ void main() async {
 
   // Initialize route performance
   RoutePerformance.instance.initialize(analyticsService);
+
+  // Initialize PostHog crashlytics service
+  final crashlyticsService = PostHogCrashlyticsService();
+  await crashlyticsService.initialize();
+  ServiceLocator().registerSingleton<CrashlyticsServiceInterface>(
+    crashlyticsService,
+  );
+
+  // Example error to verify PostHog is working
+  try {
+    throw Exception('This is a test error for PostHog');
+  } catch (e, stackTrace) {
+    await Posthog().capture(
+      eventName: 'test_error',
+      properties: {'error': e.toString(), 'stackTrace': stackTrace.toString()},
+    );
+  }
 
   runApp(
     MultiProvider(

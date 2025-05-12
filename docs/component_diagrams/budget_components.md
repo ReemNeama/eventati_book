@@ -21,7 +21,7 @@ This document provides a detailed breakdown of the budget management components 
 │  └────────┬────────┘  │ │        │          │ │  └────────┬────────┘  │
 │           │           │ │        │          │ │           │           │
 │  ┌────────▼────────┐  │ │        │          │ │  ┌────────▼────────┐  │
-│  │BudgetDetails    │──┼─┼────────┼──────────┼─┼──┤ TempDB/Firebase │  │
+│  │BudgetDetails    │──┼─┼────────┼──────────┼─┼──┤ TempDB/Supabase │  │
 │  │Screen           │  │ │        │          │ │  └────────┬────────┘  │
 │  └────────┬────────┘  │ │        │          │ │           │           │
 │           │           │ │        │          │ │           │           │

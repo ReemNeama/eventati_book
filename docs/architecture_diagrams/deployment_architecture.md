@@ -4,7 +4,7 @@ This document provides a detailed overview of the deployment architecture for th
 
 ## Deployment Overview
 
-The Eventati Book application follows a client-server architecture with a Flutter mobile application as the client and Firebase as the backend service. This architecture provides scalability, reliability, and ease of deployment.
+The Eventati Book application follows a client-server architecture with a Flutter mobile application as the client and Supabase as the backend service. This architecture provides scalability, reliability, and ease of deployment.
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
@@ -17,7 +17,7 @@ The Eventati Book application follows a client-server architecture with a Flutte
 │                                                                         │
 │  ┌─────────────────┐                          ┌─────────────────┐       │
 │  │                 │                          │                 │       │
-│  │  Mobile Client  │◀─────── API ────────────▶│  Firebase      │       │
+│  │  Mobile Client  │◀─────── API ────────────▶│  Supabase      │       │
 │  │  (Flutter App)  │                          │  Backend       │       │
 │  │                 │                          │                 │       │
 │  └─────────────────┘                          └─────────────────┘       │
@@ -57,7 +57,7 @@ The client-side architecture consists of the Flutter application deployed to mob
 
 ## Backend Architecture
 
-The backend architecture consists of Firebase services:
+The backend architecture consists of Supabase services:
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
@@ -68,7 +68,7 @@ The backend architecture consists of Firebase services:
                 │                   │                   │
                 ▼                   ▼                   ▼
 ┌───────────────────────┐ ┌───────────────────┐ ┌───────────────────────┐
-│  FIREBASE AUTH        │ │  CLOUD FIRESTORE  │ │  CLOUD STORAGE        │
+│  SUPABASE AUTH        │ │  POSTGRES DB      │ │  SUPABASE STORAGE     │
 │                       │ │                   │ │                        │
 │  ┌─────────────────┐  │ │ ┌─────────────────┐│ │  ┌─────────────────┐  │
 │  │  User Accounts  │  │ │ │  Collections   ││ │  │  Images         │  │
@@ -86,7 +86,7 @@ The backend architecture consists of Firebase services:
                 │                   │                   │
                 ▼                   ▼                   ▼
 ┌───────────────────────┐ ┌───────────────────┐ ┌───────────────────────┐
-│  CLOUD FUNCTIONS      │ │  CLOUD MESSAGING  │ │  FIREBASE ANALYTICS   │
+│  EDGE FUNCTIONS       │ │  REALTIME         │ │  POSTHOG ANALYTICS    │
 │                       │ │                   │ │                        │
 │  ┌─────────────────┐  │ │ ┌─────────────────┐│ │  ┌─────────────────┐  │
 │  │  Triggers       │  │ │ │  Notifications  ││ │  │  User Analytics │  │
@@ -114,7 +114,7 @@ This diagram illustrates how data flows between the client and backend:
 
 ┌─────────────┐                                              ┌─────────────┐
 │             │                                              │             │
-│  Flutter    │                                              │  Firebase   │
+│  Flutter    │                                              │  Supabase   │
 │  Client     │                                              │  Backend    │
 │             │                                              │             │
 └─────────────┘                                              └─────────────┘
@@ -125,10 +125,10 @@ This diagram illustrates how data flows between the client and backend:
       │  2. Authentication Response (JWT Token)                    │
       │ ◀─────────────────────────────────────────────────────────│
       │                                                            │
-      │  3. Firestore Read/Write Operations                        │
+      │  3. Database Read/Write Operations                          │
       │ ─────────────────────────────────────────────────────────▶│
       │                                                            │
-      │  4. Firestore Data Updates                                 │
+      │  4. Database Data Updates                                  │
       │ ◀─────────────────────────────────────────────────────────│
       │                                                            │
       │  5. Storage Upload/Download                                │
@@ -137,10 +137,10 @@ This diagram illustrates how data flows between the client and backend:
       │  6. Storage URLs/Data                                      │
       │ ◀─────────────────────────────────────────────────────────│
       │                                                            │
-      │  7. Cloud Function API Calls                               │
+      │  7. Edge Function API Calls                                 │
       │ ─────────────────────────────────────────────────────────▶│
       │                                                            │
-      │  8. Cloud Function Responses                               │
+      │  8. Edge Function Responses                                │
       │ ◀─────────────────────────────────────────────────────────│
       │                                                            │
       │  9. Analytics Events                                       │
@@ -167,7 +167,7 @@ The security architecture ensures that data is protected and only accessible to 
 │  AUTHENTICATION       │ │  AUTHORIZATION    │ │  DATA PROTECTION      │
 │                       │ │                   │ │                        │
 │  ┌─────────────────┐  │ │ ┌─────────────────┐│ │  ┌─────────────────┐  │
-│  │  Firebase Auth  │  │ │ │  Firestore     ││ │  │  Data Encryption │  │
+│  │  Supabase Auth  │  │ │ │  Postgres      ││ │  │  Data Encryption │  │
 │  │                 │  │ │ │  Security Rules││ │  │                 │  │
 │  │  - Email/Password│  │ │                 ││ │  │  - In Transit   │  │
 │  │  - Google Sign-in│  │ │  - User-based   ││ │  │  - At Rest      │  │
@@ -202,7 +202,7 @@ The scalability architecture ensures that the application can handle increasing 
 │  HORIZONTAL SCALING   │ │  VERTICAL SCALING │ │  LOAD BALANCING       │
 │                       │ │                   │ │                        │
 │  ┌─────────────────┐  │ │ ┌─────────────────┐│ │  ┌─────────────────┐  │
-│  │  Firebase       │  │ │ │  Firestore     ││ │  │  Cloud Functions │  │
+│  │  Supabase      │  │ │ │  Postgres      ││ │  │  Edge Functions  │  │
 │  │  Auto-scaling   │  │ │ │  Capacity      ││ │  │  Load Balancing  │  │
 │  └─────────────────┘  │ │ └─────────────────┘│ │  └─────────────────┘  │
 │                       │ │                   │ │                        │
@@ -234,7 +234,7 @@ The deployment process for the Eventati Book application:
                                                                   ▼
 ┌─────────────┐     ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
 │             │     │             │     │             │     │             │
-│  App Store  │◀────│  Play Store │◀────│  Firebase   │◀────│  Release    │
+│  App Store  │◀────│  Play Store │◀────│  Supabase   │◀────│  Release    │
 │  Deployment │     │  Deployment │     │  Deployment │     │  Management │
 │             │     │             │     │             │     │             │
 └─────────────┘     └─────────────┘     └─────────────┘     └─────────────┘
@@ -257,8 +257,8 @@ The monitoring and analytics architecture ensures that the application's perform
 │  MONITORING           │ │                   │ │                        │
 │                       │ │                   │ │                        │
 │  ┌─────────────────┐  │ │ ┌─────────────────┐│ │  ┌─────────────────┐  │
-│  │  Firebase       │  │ │ │  Firebase      ││ │  │  Firebase       │  │
-│  │  Performance    │  │ │ │  Analytics     ││ │  │  Crashlytics    │  │
+│  │  Supabase      │  │ │ │  PostHog       ││ │  │  PostHog        │  │
+│  │  Performance    │  │ │ │  Analytics     ││ │  │  Error Tracking │  │
 │  │  Monitoring     │  │ │ │                ││ │  │                 │  │
 │  └─────────────────┘  │ │ │  - User Sessions││ │  │  - Crash Reports│  │
 │                       │ │ │  - Screen Views ││ │  │  - Error Logs   │  │
@@ -295,7 +295,7 @@ The disaster recovery architecture ensures that data can be recovered in case of
 │  DATA BACKUP          │ │  REDUNDANCY       │ │  RECOVERY PROCEDURES  │
 │                       │ │                   │ │                        │
 │  ┌─────────────────┐  │ │ ┌─────────────────┐│ │  ┌─────────────────┐  │
-│  │  Firestore      │  │ │ │  Multi-region  ││ │  │  Recovery Time   │  │
+│  │  Database       │  │ │ │  Multi-region  ││ │  │  Recovery Time   │  │
 │  │  Backups        │  │ │ │  Deployment    ││ │  │  Objectives      │  │
 │  └─────────────────┘  │ │ └─────────────────┘│ │  └─────────────────┘  │
 │                       │ │                   │ │                        │

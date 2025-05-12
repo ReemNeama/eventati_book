@@ -14,7 +14,7 @@ Welcome to the Eventati Book documentation. This directory contains comprehensiv
 - **[state_management.md](architecture_diagrams/state_management.md)**: Detailed state management architecture with provider patterns
 - **[dependency_diagram.md](architecture_diagrams/dependency_diagram.md)**: Component dependencies and relationships
 - **[navigation_flow.md](architecture_diagrams/navigation_flow.md)**: Navigation architecture and screen flows
-- **[deployment_architecture.md](architecture_diagrams/deployment_architecture.md)**: Deployment architecture with Firebase backend
+- **[deployment_architecture.md](architecture_diagrams/deployment_architecture.md)**: Deployment architecture with Supabase backend
 
 ### Core Features
 

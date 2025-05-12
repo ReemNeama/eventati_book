@@ -125,4 +125,48 @@ abstract class StorageServiceInterface {
     String localPath, {
     Function(double)? onProgress,
   });
+
+  /// Upload an image with compression
+  ///
+  /// [path] The path to store the file at
+  /// [file] The image file to upload
+  /// [maxWidth] Maximum width of the image
+  /// [maxHeight] Maximum height of the image
+  /// [quality] JPEG quality (0-100)
+  /// [onProgress] Callback for upload progress (0.0 to 1.0)
+  /// [metadata] Optional metadata for the file
+  /// Returns the download URL for the uploaded file
+  Future<String> uploadImageWithCompression(
+    String path,
+    File file, {
+    int? maxWidth,
+    int? maxHeight,
+    int? quality,
+    Function(double)? onProgress,
+    Map<String, String>? metadata,
+  });
+
+  /// Upload an image with a thumbnail
+  ///
+  /// [mainPath] The path to upload the main image to
+  /// [thumbnailPath] The path to upload the thumbnail to
+  /// [file] The image file to upload
+  /// [maxWidth] Maximum width of the main image
+  /// [maxHeight] Maximum height of the main image
+  /// [quality] JPEG quality (0-100)
+  /// [onMainProgress] Optional callback for main image upload progress
+  /// [onThumbnailProgress] Optional callback for thumbnail upload progress
+  /// [metadata] Optional metadata to set on the files
+  /// Returns a map with 'mainUrl' and 'thumbnailUrl' keys
+  Future<Map<String, String>> uploadImageWithThumbnail(
+    String mainPath,
+    String thumbnailPath,
+    File file, {
+    int? maxWidth,
+    int? maxHeight,
+    int? quality,
+    Function(double)? onMainProgress,
+    Function(double)? onThumbnailProgress,
+    Map<String, String>? metadata,
+  });
 }

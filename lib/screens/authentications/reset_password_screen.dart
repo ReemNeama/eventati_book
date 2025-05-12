@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:eventati_book/routing/routing.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
-  final String? oobCode; // Out-of-band code from Firebase password reset link
+  final String? oobCode; // Out-of-band code from password reset link
 
   const ResetPasswordScreen({super.key, this.oobCode});
 

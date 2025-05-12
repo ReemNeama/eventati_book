@@ -10,7 +10,6 @@ import 'package:printing/printing.dart';
 import 'package:share_plus/share_plus.dart';
 
 import 'package:eventati_book/models/models.dart';
-import 'package:eventati_book/utils/utils.dart';
 
 /// Utility class for exporting data to PDF format
 class PDFExportUtils {
@@ -45,120 +44,137 @@ class PDFExportUtils {
         theme: theme,
         pageFormat: PdfPageFormat.a4,
         margin: const pw.EdgeInsets.all(32),
-        header: (context) => _buildHeader(
-          context,
-          comparison.title,
-          comparison.serviceType,
-        ),
+        header:
+            (context) =>
+                _buildHeader(context, comparison.title, comparison.serviceType),
         footer: (context) => _buildFooter(context, formattedDate),
-        build: (context) => [
-          // Event information (if available)
-          if (comparison.eventName != null && comparison.eventName!.isNotEmpty)
-            pw.Container(
-              padding: const pw.EdgeInsets.only(bottom: 16),
-              child: pw.Row(
-                children: [
-                  pw.Text('Event: ', style: pw.TextStyle(font: boldFont)),
-                  pw.Text(comparison.eventName!),
-                ],
-              ),
-            ),
-
-          // Services being compared
-          pw.Container(
-            padding: const pw.EdgeInsets.only(bottom: 16),
-            child: pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.start,
-              children: [
-                pw.Text('Services Compared:',
-                    style: pw.TextStyle(font: boldFont)),
-                pw.SizedBox(height: 8),
-                pw.Column(
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                  children: comparison.serviceNames
-                      .map((name) => pw.Padding(
-                            padding: const pw.EdgeInsets.only(bottom: 4),
-                            child: pw.Text('• $name'),
-                          ))
-                      .toList(),
-                ),
-              ],
-            ),
-          ),
-
-          // Notes (if available and included)
-          if (includeNotes &&
-              comparison.notes.isNotEmpty)
-            pw.Container(
-              padding: const pw.EdgeInsets.only(bottom: 16),
-              child: pw.Column(
-                crossAxisAlignment: pw.CrossAxisAlignment.start,
-                children: [
-                  pw.Text('Notes:', style: pw.TextStyle(font: boldFont)),
-                  pw.SizedBox(height: 8),
-                  pw.Text(comparison.notes),
-                ],
-              ),
-            ),
-
-          // Annotations (if available and included)
-          if (includeHighlights &&
-              comparison.annotations != null &&
-              comparison.annotations!.isNotEmpty)
-            pw.Container(
-              padding: const pw.EdgeInsets.only(bottom: 16),
-              child: pw.Column(
-                crossAxisAlignment: pw.CrossAxisAlignment.start,
-                children: [
-                  pw.Text('Highlights:', style: pw.TextStyle(font: boldFont)),
-                  pw.SizedBox(height: 8),
-                  pw.Column(
-                    crossAxisAlignment: pw.CrossAxisAlignment.start,
-                    children: comparison.annotations!
-                        .map((annotation) => pw.Padding(
-                              padding: const pw.EdgeInsets.only(bottom: 8),
-                              child: pw.Column(
-                                crossAxisAlignment: pw.CrossAxisAlignment.start,
-                                children: [
-                                  pw.Text(annotation.title,
-                                      style: pw.TextStyle(font: boldFont)),
-                                  pw.SizedBox(height: 4),
-                                  pw.Text(annotation.content),
-                                ],
-                              ),
-                            ))
-                        .toList(),
+        build:
+            (context) => [
+              // Event information (if available)
+              if (comparison.eventName != null &&
+                  comparison.eventName!.isNotEmpty)
+                pw.Container(
+                  padding: const pw.EdgeInsets.only(bottom: 16),
+                  child: pw.Row(
+                    children: [
+                      pw.Text('Event: ', style: pw.TextStyle(font: boldFont)),
+                      pw.Text(comparison.eventName!),
+                    ],
                   ),
-                ],
-              ),
-            ),
+                ),
 
-          // Comparison date
-          pw.Container(
-            padding: const pw.EdgeInsets.only(bottom: 16),
-            child: pw.Row(
-              children: [
-                pw.Text('Comparison Date: ',
-                    style: pw.TextStyle(font: boldFont)),
-                pw.Text(formattedDate),
-              ],
-            ),
-          ),
-
-          // Disclaimer
-          pw.Container(
-            padding: const pw.EdgeInsets.only(top: 16),
-            child: pw.Text(
-              'This comparison was generated by Eventati Book. '
-              'The information provided is based on the data available at the time of comparison.',
-              style: pw.TextStyle(
-                font: italicFont,
-                fontSize: 10,
-                color: PdfColors.grey700,
+              // Services being compared
+              pw.Container(
+                padding: const pw.EdgeInsets.only(bottom: 16),
+                child: pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    pw.Text(
+                      'Services Compared:',
+                      style: pw.TextStyle(font: boldFont),
+                    ),
+                    pw.SizedBox(height: 8),
+                    pw.Column(
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children:
+                          comparison.serviceNames
+                              .map(
+                                (name) => pw.Padding(
+                                  padding: const pw.EdgeInsets.only(bottom: 4),
+                                  child: pw.Text('• $name'),
+                                ),
+                              )
+                              .toList(),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ),
-        ],
+
+              // Notes (if available and included)
+              if (includeNotes && comparison.notes.isNotEmpty)
+                pw.Container(
+                  padding: const pw.EdgeInsets.only(bottom: 16),
+                  child: pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
+                    children: [
+                      pw.Text('Notes:', style: pw.TextStyle(font: boldFont)),
+                      pw.SizedBox(height: 8),
+                      pw.Text(comparison.notes),
+                    ],
+                  ),
+                ),
+
+              // Annotations (if available and included)
+              if (includeHighlights &&
+                  comparison.annotations != null &&
+                  comparison.annotations!.isNotEmpty)
+                pw.Container(
+                  padding: const pw.EdgeInsets.only(bottom: 16),
+                  child: pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
+                    children: [
+                      pw.Text(
+                        'Highlights:',
+                        style: pw.TextStyle(font: boldFont),
+                      ),
+                      pw.SizedBox(height: 8),
+                      pw.Column(
+                        crossAxisAlignment: pw.CrossAxisAlignment.start,
+                        children:
+                            comparison.annotations!
+                                .map(
+                                  (annotation) => pw.Padding(
+                                    padding: const pw.EdgeInsets.only(
+                                      bottom: 8,
+                                    ),
+                                    child: pw.Column(
+                                      crossAxisAlignment:
+                                          pw.CrossAxisAlignment.start,
+                                      children: [
+                                        pw.Text(
+                                          annotation.title,
+                                          style: pw.TextStyle(font: boldFont),
+                                        ),
+                                        pw.SizedBox(height: 4),
+                                        pw.Text(annotation.content),
+                                      ],
+                                    ),
+                                  ),
+                                )
+                                .toList(),
+                      ),
+                    ],
+                  ),
+                ),
+
+              // Comparison date
+              pw.Container(
+                padding: const pw.EdgeInsets.only(bottom: 16),
+                child: pw.Row(
+                  children: [
+                    pw.Text(
+                      'Comparison Date: ',
+                      style: pw.TextStyle(font: boldFont),
+                    ),
+                    pw.Text(formattedDate),
+                  ],
+                ),
+              ),
+
+              // Disclaimer
+              pw.Container(
+                padding: const pw.EdgeInsets.only(top: 16),
+                child: pw.Text(
+                  'This comparison was generated by Eventati Book. '
+                  'The information provided is based on the data available at the time of comparison.',
+                  style: pw.TextStyle(
+                    font: italicFont,
+                    fontSize: 10,
+                    color: PdfColors.grey700,
+                  ),
+                ),
+              ),
+            ],
       ),
     );
 
@@ -176,10 +192,7 @@ class PDFExportUtils {
       padding: const pw.EdgeInsets.only(bottom: 16),
       decoration: const pw.BoxDecoration(
         border: pw.Border(
-          bottom: pw.BorderSide(
-            color: PdfColors.grey300,
-            width: 1,
-          ),
+          bottom: pw.BorderSide(color: PdfColors.grey300, width: 1),
         ),
       ),
       child: pw.Row(
@@ -207,10 +220,7 @@ class PDFExportUtils {
           ),
           pw.Text(
             'Eventati Book',
-            style: const pw.TextStyle(
-              fontSize: 16,
-              color: PdfColors.grey700,
-            ),
+            style: const pw.TextStyle(fontSize: 16, color: PdfColors.grey700),
           ),
         ],
       ),
@@ -223,10 +233,7 @@ class PDFExportUtils {
       padding: const pw.EdgeInsets.only(top: 16),
       decoration: const pw.BoxDecoration(
         border: pw.Border(
-          top: pw.BorderSide(
-            color: PdfColors.grey300,
-            width: 1,
-          ),
+          top: pw.BorderSide(color: PdfColors.grey300, width: 1),
         ),
       ),
       child: pw.Row(
@@ -234,17 +241,11 @@ class PDFExportUtils {
         children: [
           pw.Text(
             date,
-            style: const pw.TextStyle(
-              fontSize: 12,
-              color: PdfColors.grey700,
-            ),
+            style: const pw.TextStyle(fontSize: 12, color: PdfColors.grey700),
           ),
           pw.Text(
             'Page ${context.pageNumber} of ${context.pagesCount}',
-            style: const pw.TextStyle(
-              fontSize: 12,
-              color: PdfColors.grey700,
-            ),
+            style: const pw.TextStyle(fontSize: 12, color: PdfColors.grey700),
           ),
         ],
       ),
@@ -280,21 +281,14 @@ class PDFExportUtils {
       final filePath = await savePDF(pdfBytes, fileName);
 
       // Share the file
-      await Share.shareXFiles(
-        [XFile(filePath)],
-        subject: subject,
-        text: text,
-      );
+      await Share.shareXFiles([XFile(filePath)], subject: subject, text: text);
     } catch (e) {
       throw Exception('Failed to share PDF: $e');
     }
   }
 
   /// Print a PDF document
-  static Future<void> printPDF(
-    Uint8List pdfBytes,
-    String documentName,
-  ) async {
+  static Future<void> printPDF(Uint8List pdfBytes, String documentName) async {
     try {
       await Printing.layoutPdf(
         onLayout: (format) => pdfBytes,

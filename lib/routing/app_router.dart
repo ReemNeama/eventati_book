@@ -10,7 +10,7 @@ import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/tempDB/venues.dart';
 import 'package:eventati_book/tempDB/services.dart';
 import 'package:eventati_book/screens/planning/task_dependency_screen.dart';
-import 'package:eventati_book/screens/testing/task_firestore_test_screen.dart';
+import 'package:eventati_book/screens/testing/task_database_test_screen.dart';
 import 'package:eventati_book/screens/recommendations/personalized_recommendations_screen.dart';
 
 /// Router class for handling all navigation in the app
@@ -227,10 +227,10 @@ class AppRouter {
               ),
         );
 
-      case RouteNames.taskFirestoreTest:
-        final args = settings.arguments as TaskFirestoreTestArguments;
+      case RouteNames.taskDatabaseTest:
+        final args = settings.arguments as TaskDatabaseTestArguments;
         return MaterialPageRoute(
-          builder: (context) => TaskFirestoreTestScreen(eventId: args.eventId),
+          builder: (context) => TaskDatabaseTestScreen(eventId: args.eventId),
         );
 
       case RouteNames.personalizedRecommendations:
@@ -239,7 +239,7 @@ class AppRouter {
         );
 
       case RouteNames.eventDetails:
-        // In a real app, you would fetch the event from Firestore using the eventId
+        // In a real app, you would fetch the event from the database using the eventId
         // For now, we'll redirect to the UserEventsScreen
         return MaterialPageRoute(
           builder: (context) => const UserEventsScreen(),

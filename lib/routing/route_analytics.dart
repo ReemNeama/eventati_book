@@ -113,7 +113,7 @@ class AnalyticsRouteObserver extends RouteObserver<PageRoute<dynamic>> {
             ? {'arguments': arguments.toString()}
             : null;
 
-    // Track screen view using Firebase Analytics
+    // Track screen view using analytics service
     _analyticsService.trackScreenView(screenName, parameters: parameters);
 
     // Also track in RouteAnalytics for consistency

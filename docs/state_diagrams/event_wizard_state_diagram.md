@@ -303,10 +303,10 @@ class EventWizardProvider extends ChangeNotifier {
   int _currentStep = 0;
   bool _isLoading = false;
   String? _errorMessage;
-  
+
   // Event data
   Map<String, dynamic> _eventData = {};
-  
+
   // Getters
   EventWizardState get wizardState => _wizardState;
   EventType? get eventType => _eventType;
@@ -314,7 +314,7 @@ class EventWizardProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
   Map<String, dynamic> get eventData => _eventData;
-  
+
   // State transition methods
   void selectEventType(EventType type) {
     _eventType = type;
@@ -322,7 +322,7 @@ class EventWizardProvider extends ChangeNotifier {
     _currentStep = 1;
     notifyListeners();
   }
-  
+
   void goToNextStep() {
     if (_currentStep < getMaxSteps() - 1) {
       _currentStep++;
@@ -330,7 +330,7 @@ class EventWizardProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
-  
+
   void goToPreviousStep() {
     if (_currentStep > 0) {
       _currentStep--;
@@ -338,23 +338,23 @@ class EventWizardProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
-  
+
   void updateEventData(String key, dynamic value) {
     _eventData[key] = value;
     notifyListeners();
   }
-  
+
   Future<void> createEvent() async {
     _isLoading = true;
     notifyListeners();
-    
+
     try {
       // Create event logic
       // Save to database
-      
+
       _wizardState = EventWizardState.eventCreated;
       notifyListeners();
-      
+
       // After a delay, move to suggestions
       await Future.delayed(Duration(seconds: 2));
       _wizardState = EventWizardState.suggestions;
@@ -367,17 +367,17 @@ class EventWizardProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
-  
+
   void goToEventDashboard() {
     _wizardState = EventWizardState.eventDashboard;
     notifyListeners();
   }
-  
+
   // Helper methods
   int getMaxSteps() {
     return 7; // Total number of steps in the wizard
   }
-  
+
   void _updateWizardState() {
     switch (_currentStep) {
       case 0:
@@ -546,39 +546,41 @@ Each event type (Wedding, Celebration, Business Event) has specific variations i
 - **Services**: Emphasizes venue, AV equipment, catering, accommodations
 - **Preferences**: Includes branding requirements, presentation needs
 
-## Firebase Integration
+## Supabase Integration
 
-When Firebase is implemented, the event creation will store data in Firestore:
+When Supabase is implemented, the event creation will store data in the database:
 
 ```dart
 Future<void> createEvent() async {
   _isLoading = true;
   notifyListeners();
-  
+
   try {
     // Get current user ID
-    String userId = FirebaseAuth.instance.currentUser!.uid;
-    
-    // Create event document in Firestore
-    DocumentReference eventRef = await FirebaseFirestore.instance
-        .collection('events')
-        .add({
-          'userId': userId,
-          'eventType': _eventType.toString(),
-          'createdAt': FieldValue.serverTimestamp(),
-          'updatedAt': FieldValue.serverTimestamp(),
+    String userId = _supabase.auth.currentUser!.id;
+
+    // Create event record in the database
+    final response = await _supabase
+        .from('events')
+        .insert({
+          'user_id': userId,
+          'event_type': _eventType.toString(),
+          'created_at': DateTime.now().toIso8601String(),
+          'updated_at': DateTime.now().toIso8601String(),
           ..._eventData, // Spread all event data
-        });
-    
+        })
+        .select()
+        .single();
+
     // Store event ID
-    String eventId = eventRef.id;
-    
+    String eventId = response['id'];
+
     // Create initial planning tools data
     await _createInitialPlanningData(eventId);
-    
+
     _wizardState = EventWizardState.eventCreated;
     notifyListeners();
-    
+
     // After a delay, move to suggestions
     await Future.delayed(Duration(seconds: 2));
     _wizardState = EventWizardState.suggestions;
@@ -593,32 +595,32 @@ Future<void> createEvent() async {
 }
 
 Future<void> _createInitialPlanningData(String eventId) async {
-  // Create budget document
-  await FirebaseFirestore.instance
-      .collection('budgets')
-      .add({
-        'eventId': eventId,
-        'totalBudget': _eventData['estimatedBudget'] ?? 0,
-        'createdAt': FieldValue.serverTimestamp(),
+  // Create budget record
+  await _supabase
+      .from('budgets')
+      .insert({
+        'event_id': eventId,
+        'total_budget': _eventData['estimatedBudget'] ?? 0,
+        'created_at': DateTime.now().toIso8601String(),
       });
-  
-  // Create guest list document
-  await FirebaseFirestore.instance
-      .collection('guestLists')
-      .add({
-        'eventId': eventId,
-        'estimatedCount': _eventData['estimatedGuestCount'] ?? 0,
-        'createdAt': FieldValue.serverTimestamp(),
+
+  // Create guest list record
+  await _supabase
+      .from('guest_lists')
+      .insert({
+        'event_id': eventId,
+        'estimated_count': _eventData['estimatedGuestCount'] ?? 0,
+        'created_at': DateTime.now().toIso8601String(),
       });
-  
+
   // Create timeline with default milestones
-  await FirebaseFirestore.instance
-      .collection('timelines')
-      .add({
-        'eventId': eventId,
-        'createdAt': FieldValue.serverTimestamp(),
+  await _supabase
+      .from('timelines')
+      .insert({
+        'event_id': eventId,
+        'created_at': DateTime.now().toIso8601String(),
       });
-  
+
   // Add default milestones based on event type
   await _addDefaultMilestones(eventId);
 }

@@ -20,7 +20,7 @@ This document provides a detailed breakdown of the authentication components in 
 │  └────────┬────────┘  │ │ └──────┬──────┘   │ │  └────────┬────────┘  │
 │           │           │ │        │          │ │           │           │
 │  ┌────────▼────────┐  │ │        │          │ │  ┌────────▼────────┐  │
-│  │ LoginScreen     │──┼─┼────────┼──────────┼─┼──┤ TempDB/Firebase │  │
+│  │ LoginScreen     │──┼─┼────────┼──────────┼─┼──┤ TempDB/Supabase │  │
 │  └────────┬────────┘  │ │        │          │ │  └────────┬────────┘  │
 │           │           │ │        │          │ │           │           │
 │  ┌────────▼────────┐  │ │        │          │ │           │           │
@@ -310,13 +310,13 @@ This document provides a detailed breakdown of the authentication components in 
                                                             └─────────────┘
 ```
 
-## Future Firebase Implementation
+## Supabase Authentication Implementation
 
-When Firebase is implemented, the authentication system will use Firebase Authentication:
+The authentication system uses Supabase Authentication:
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
-│                       FIREBASE AUTHENTICATION                           │
+│                       SUPABASE AUTHENTICATION                           │
 └───────────────────────────────────┬─────────────────────────────────────┘
                                     │
                 ┌───────────────────┼───────────────────┐
@@ -326,9 +326,9 @@ When Firebase is implemented, the authentication system will use Firebase Authen
 │  EMAIL/PASSWORD AUTH  │ │  SOCIAL AUTH      │ │  PHONE AUTH           │
 │                       │ │                   │ │                        │
 │  - Sign up            │ │  - Google         │ │  - SMS verification    │
-│  - Sign in            │ │  - Facebook       │ │  - Phone number login  │
-│  - Email verification │ │  - Twitter        │ │                        │
-│  - Password reset     │ │  - Apple          │ │                        │
+│  - Sign in            │ │  - Apple          │ │  - Phone number login  │
+│  - Email verification │ │                   │ │                        │
+│  - Password reset     │ │                   │ │                        │
 └───────────────────────┘ └───────────────────┘ └───────────────────────┘
 ```
 

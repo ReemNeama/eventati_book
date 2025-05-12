@@ -136,8 +136,8 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
                     context,
                     category.id,
                     category.name,
-                    category.icon,
-                    category.color,
+                    category.getIconData(),
+                    category.getColorObject(),
                   );
                 }),
               ],
@@ -334,8 +334,11 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
           () => TaskCategory(
             id: '',
             name: 'Unknown',
-            icon: Icons.help_outline,
-            color: Colors.grey,
+            description: '',
+            icon: 'help_outline',
+            color: '#9E9E9E',
+            createdAt: DateTime.now(),
+            updatedAt: DateTime.now(),
           ),
     );
 
@@ -407,7 +410,11 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
                   children: [
                     Row(
                       children: [
-                        Icon(category.icon, color: category.color, size: 16),
+                        Icon(
+                          category.getIconData(),
+                          color: category.getColorObject(),
+                          size: 16,
+                        ),
                         const SizedBox(width: 8),
                         Text(
                           category.name,

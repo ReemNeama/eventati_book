@@ -27,7 +27,7 @@ This document provides a detailed breakdown of the guest list management compone
 │  │GuestDetailsScreen─┼─┼────────┼──────────┼─┼───────────┐           │
 │  └────────┬────────┘  │ │        │          │ │           │           │
 │           │           │ │        │          │ │  ┌────────▼────────┐  │
-│  ┌────────▼────────┐  │ │        │          │ │  │ TempDB/Firebase │  │
+│  ┌────────▼────────┐  │ │        │          │ │  │ TempDB/Supabase │  │
 │  │GuestGroupsScreen│──┼─┼────────┘          │ │  └─────────────────┘  │
 │  └─────────────────┘  │ │                   │ │                       │
 │                       │ │                   │ │                       │
@@ -437,22 +437,22 @@ This document provides a detailed breakdown of the guest list management compone
 └─────────────────────────────────────────────────────────────────────────┘
 ```
 
-## Future Firebase Implementation
+## Supabase Implementation
 
-When Firebase is implemented, the guest list management system will use Firebase Firestore:
+The guest list management system uses Supabase Database:
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
-│                       FIREBASE GUEST LIST STORAGE                       │
+│                       SUPABASE GUEST LIST STORAGE                       │
 └───────────────────────────────────┬─────────────────────────────────────┘
                                     │
                 ┌───────────────────┼───────────────────┐
                 │                   │                   │
                 ▼                   ▼                   ▼
 ┌───────────────────────┐ ┌───────────────────┐ ┌───────────────────────┐
-│  GUEST COLLECTION     │ │  GROUP COLLECTION │ │  EVENT COLLECTION     │
+│  GUESTS TABLE         │ │  GROUPS TABLE     │ │  EVENTS TABLE         │
 │                       │ │                   │ │                        │
-│  - Guest documents    │ │  - Group documents│ │  - Event documents    │
+│  - Guest records      │ │  - Group records  │ │  - Event records      │
 │  - RSVP tracking      │ │  - Group metadata │ │  - Guest list refs    │
 │  - Guest metadata     │ │                   │ │  - Event metadata     │
 └───────────────────────┘ └───────────────────┘ └───────────────────────┘

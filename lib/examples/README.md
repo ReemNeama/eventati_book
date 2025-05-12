@@ -10,11 +10,11 @@ This directory contains example implementations of various features in the Event
 - The `ServiceGalleryExample` demonstrates how to display service images, but in the actual app, the upload functionality should be removed
 - Only the display functionality for vendor images should be used in production
 
-## Firebase Storage Examples
+## Supabase Storage Examples
 
 ### Image Galleries
 
-The following examples demonstrate how to implement image galleries using Firebase Storage:
+The following examples demonstrate how to implement image galleries using Supabase Storage:
 
 - **VenueGalleryExample**: Shows how to display and upload images for venues
 - **EventGalleryExample**: Shows how to display and upload images for events
@@ -47,9 +47,9 @@ These examples use the following common widgets:
 - **ImageGallery**: A widget that displays a gallery of images with pagination and full-screen viewing
 - **CachedNetworkImageWidget**: A widget that displays a network image with caching and loading states
 
-## Firebase Storage Integration
+## Supabase Storage Integration
 
-These examples demonstrate the following Firebase Storage features:
+These examples demonstrate the following Supabase Storage features:
 
 - Image upload with progress tracking
 - Image compression and optimization
@@ -60,5 +60,5 @@ These examples demonstrate the following Firebase Storage features:
 ## Notes
 
 - These examples are meant to be used as reference implementations and may need to be adapted to fit your specific use case
-- The examples assume that the necessary Firebase Storage setup has been completed
+- The examples assume that the necessary Supabase Storage setup has been completed
 - Error handling is included to demonstrate best practices
