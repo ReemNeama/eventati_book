@@ -1,4 +1,5 @@
-import 'package:eventati_book/models/notification_models/notification.dart';
+import 'package:eventati_book/models/notification_models/notification.dart'
+    as notification_model;
 import 'package:eventati_book/services/notification/notification_service.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
@@ -23,18 +24,16 @@ class NotificationListScreen extends StatefulWidget {
 class _NotificationListScreenState extends State<NotificationListScreen> {
   final NotificationService _notificationService = NotificationService();
   bool _isLoading = true;
-  List<Notification> _notifications = [];
+  List<notification_model.Notification> _notifications = [];
   String? _errorMessage;
 
   @override
   void initState() {
     super.initState();
     _loadNotifications();
-    
+
     // Track screen view
-    Posthog().screen(
-      screenName: 'Notification List Screen',
-    );
+    Posthog().screen(screenName: 'Notification List Screen');
   }
 
   /// Load notifications
@@ -52,7 +51,10 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
         _isLoading = false;
       });
     } catch (e) {
-      Logger.e('Error loading notifications: $e', tag: 'NotificationListScreen');
+      Logger.e(
+        'Error loading notifications: $e',
+        tag: 'NotificationListScreen',
+      );
       setState(() {
         _isLoading = false;
         _errorMessage = 'Failed to load notifications';
@@ -65,17 +67,23 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
     try {
       await _notificationService.markAsRead(notificationId);
 
+      if (!mounted) return;
+
       setState(() {
-        _notifications = _notifications.map((notification) {
-          if (notification.id == notificationId) {
-            return notification.markAsRead();
-          }
-          return notification;
-        }).toList();
+        _notifications =
+            _notifications.map((notification) {
+              if (notification.id == notificationId) {
+                return notification.markAsRead();
+              }
+              return notification;
+            }).toList();
       });
     } catch (e) {
-      Logger.e('Error marking notification as read: $e',
-          tag: 'NotificationListScreen');
+      Logger.e(
+        'Error marking notification as read: $e',
+        tag: 'NotificationListScreen',
+      );
+      if (!mounted) return;
       UIUtils.showErrorSnackBar(context, 'Failed to mark notification as read');
     }
   }
@@ -85,17 +93,26 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
     try {
       await _notificationService.markAllAsRead();
 
+      if (!mounted) return;
+
       setState(() {
-        _notifications = _notifications
-            .map((notification) => notification.markAsRead())
-            .toList();
+        _notifications =
+            _notifications
+                .map((notification) => notification.markAsRead())
+                .toList();
       });
-      
+
       UIUtils.showSuccessSnackBar(context, 'All notifications marked as read');
     } catch (e) {
-      Logger.e('Error marking all notifications as read: $e',
-          tag: 'NotificationListScreen');
-      UIUtils.showErrorSnackBar(context, 'Failed to mark all notifications as read');
+      Logger.e(
+        'Error marking all notifications as read: $e',
+        tag: 'NotificationListScreen',
+      );
+      if (!mounted) return;
+      UIUtils.showErrorSnackBar(
+        context,
+        'Failed to mark all notifications as read',
+      );
     }
   }
 
@@ -104,15 +121,22 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
     try {
       await _notificationService.deleteNotification(notificationId);
 
+      if (!mounted) return;
+
       setState(() {
-        _notifications = _notifications
-            .where((notification) => notification.id != notificationId)
-            .toList();
+        _notifications =
+            _notifications
+                .where((notification) => notification.id != notificationId)
+                .toList();
       });
-      
+
       UIUtils.showSuccessSnackBar(context, 'Notification deleted');
     } catch (e) {
-      Logger.e('Error deleting notification: $e', tag: 'NotificationListScreen');
+      Logger.e(
+        'Error deleting notification: $e',
+        tag: 'NotificationListScreen',
+      );
+      if (!mounted) return;
       UIUtils.showErrorSnackBar(context, 'Failed to delete notification');
     }
   }
@@ -130,9 +154,7 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
           if (!_isLoading && _notifications.isNotEmpty)
             TextButton(
               onPressed: _markAllAsRead,
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.white,
-              ),
+              style: TextButton.styleFrom(foregroundColor: Colors.white),
               child: const Text('Mark All Read'),
             ),
           IconButton(
@@ -142,19 +164,18 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
           ),
         ],
       ),
-      body: _isLoading
-          ? const LoadingIndicator(message: 'Loading notifications...')
-          : _errorMessage != null
-              ? Center(
-                  child: Text(_errorMessage!, style: TextStyles.error),
-                )
+      body:
+          _isLoading
+              ? const LoadingIndicator(message: 'Loading notifications...')
+              : _errorMessage != null
+              ? Center(child: Text(_errorMessage!, style: TextStyles.error))
               : _notifications.isEmpty
-                  ? const EmptyState(
-                      icon: Icons.notifications_none,
-                      title: 'No Notifications',
-                      message: 'You have no notifications at this time.',
-                    )
-                  : _buildNotificationList(),
+              ? const EmptyState(
+                icon: Icons.notifications_none,
+                title: 'No Notifications',
+                message: 'You have no notifications at this time.',
+              )
+              : _buildNotificationList(),
     );
   }
 
@@ -173,11 +194,12 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
   }
 
   /// Build a notification item
-  Widget _buildNotificationItem(Notification notification) {
+  Widget _buildNotificationItem(notification_model.Notification notification) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final unreadColor = isDarkMode
-        ? AppColorsDark.primary.withAlpha(30)
-        : AppColors.primary.withAlpha(30);
+    final unreadColor =
+        isDarkMode
+            ? AppColorsDark.primary.withAlpha(30)
+            : AppColors.primary.withAlpha(30);
 
     return Dismissible(
       key: Key(notification.id),
@@ -215,7 +237,9 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
                       notification.title,
                       style: TextStyle(
                         fontWeight:
-                            notification.read ? FontWeight.normal : FontWeight.bold,
+                            notification.read
+                                ? FontWeight.normal
+                                : FontWeight.bold,
                         fontSize: 16,
                       ),
                     ),
@@ -227,10 +251,7 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
                     const SizedBox(height: 8),
                     Text(
                       timeago.format(notification.createdAt),
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey[600],
-                      ),
+                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                     ),
                   ],
                 ),
@@ -240,7 +261,8 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
                   width: 10,
                   height: 10,
                   decoration: BoxDecoration(
-                    color: isDarkMode ? AppColorsDark.primary : AppColors.primary,
+                    color:
+                        isDarkMode ? AppColorsDark.primary : AppColors.primary,
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -252,39 +274,33 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
   }
 
   /// Build an icon for a notification type
-  Widget _buildNotificationIcon(NotificationType type) {
-    IconData iconData;
-    Color iconColor;
+  Widget _buildNotificationIcon(notification_model.NotificationType type) {
+    IconData iconData = Icons.notifications; // Default icon
+    Color iconColor = Colors.grey; // Default color
 
-    switch (type) {
-      case NotificationType.bookingConfirmation:
-      case NotificationType.bookingUpdate:
-      case NotificationType.bookingReminder:
-      case NotificationType.bookingCancellation:
-        iconData = Icons.calendar_today;
-        iconColor = Colors.blue;
-        break;
-      case NotificationType.paymentConfirmation:
-      case NotificationType.paymentReminder:
-        iconData = Icons.payment;
-        iconColor = Colors.green;
-        break;
-      case NotificationType.eventReminder:
-        iconData = Icons.event;
-        iconColor = Colors.purple;
-        break;
-      case NotificationType.taskReminder:
-        iconData = Icons.task_alt;
-        iconColor = Colors.orange;
-        break;
-      case NotificationType.system:
-        iconData = Icons.info;
-        iconColor = Colors.grey;
-        break;
-      case NotificationType.marketing:
-        iconData = Icons.campaign;
-        iconColor = Colors.red;
-        break;
+    if (type == notification_model.NotificationType.bookingConfirmation ||
+        type == notification_model.NotificationType.bookingUpdate ||
+        type == notification_model.NotificationType.bookingReminder ||
+        type == notification_model.NotificationType.bookingCancellation) {
+      iconData = Icons.calendar_today;
+      iconColor = Colors.blue;
+    } else if (type ==
+            notification_model.NotificationType.paymentConfirmation ||
+        type == notification_model.NotificationType.paymentReminder) {
+      iconData = Icons.payment;
+      iconColor = Colors.green;
+    } else if (type == notification_model.NotificationType.eventReminder) {
+      iconData = Icons.event;
+      iconColor = Colors.purple;
+    } else if (type == notification_model.NotificationType.taskReminder) {
+      iconData = Icons.task_alt;
+      iconColor = Colors.orange;
+    } else if (type == notification_model.NotificationType.system) {
+      iconData = Icons.info;
+      iconColor = Colors.grey;
+    } else if (type == notification_model.NotificationType.marketing) {
+      iconData = Icons.campaign;
+      iconColor = Colors.red;
     }
 
     return Container(
@@ -298,9 +314,12 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
   }
 
   /// Handle notification tap
-  void _handleNotificationTap(Notification notification) {
+  void _handleNotificationTap(notification_model.Notification notification) {
     // Navigate to the appropriate screen based on notification type and data
     // This will be implemented based on the app's navigation structure
-    Logger.i('Notification tapped: ${notification.id}', tag: 'NotificationListScreen');
+    Logger.i(
+      'Notification tapped: ${notification.id}',
+      tag: 'NotificationListScreen',
+    );
   }
 }

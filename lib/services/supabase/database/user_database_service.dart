@@ -35,6 +35,11 @@ class UserDatabaseService {
     }
   }
 
+  /// Get a user by ID (alias for getUserById for compatibility)
+  Future<User?> getUser(String userId) async {
+    return getUserById(userId);
+  }
+
   /// Create a new user
   Future<void> createUser(User user) async {
     try {

@@ -1,6 +1,6 @@
 import 'package:eventati_book/models/notification_models/notification.dart'
     as notification_model;
-import 'package:eventati_book/providers/notification_provider.dart';
+import 'package:eventati_book/services/notification/notification_service.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/styles/text_styles.dart';
@@ -8,8 +8,7 @@ import 'package:eventati_book/utils/logger.dart';
 import 'package:eventati_book/widgets/common/empty_state.dart';
 import 'package:eventati_book/widgets/common/loading_indicator.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:intl/intl.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 /// Widget for displaying notifications in a dropdown
 class NotificationCenter extends StatefulWidget {
@@ -23,7 +22,7 @@ class NotificationCenter extends StatefulWidget {
 class _NotificationCenterState extends State<NotificationCenter> {
   final NotificationService _notificationService = NotificationService();
   bool _isLoading = true;
-  List<Notification> _notifications = [];
+  List<notification_model.Notification> _notifications = [];
   String? _errorMessage;
 
   @override
@@ -222,7 +221,7 @@ class _NotificationCenterState extends State<NotificationCenter> {
   }
 
   /// Build a notification item
-  Widget _buildNotificationItem(Notification notification) {
+  Widget _buildNotificationItem(notification_model.Notification notification) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final unreadColor =
         isDarkMode
@@ -304,39 +303,33 @@ class _NotificationCenterState extends State<NotificationCenter> {
   }
 
   /// Build an icon for a notification type
-  Widget _buildNotificationIcon(NotificationType type) {
-    IconData iconData;
-    Color iconColor;
+  Widget _buildNotificationIcon(notification_model.NotificationType type) {
+    IconData iconData = Icons.notifications; // Default icon
+    Color iconColor = Colors.grey; // Default color
 
-    switch (type) {
-      case NotificationType.bookingConfirmation:
-      case NotificationType.bookingUpdate:
-      case NotificationType.bookingReminder:
-      case NotificationType.bookingCancellation:
-        iconData = Icons.calendar_today;
-        iconColor = Colors.blue;
-        break;
-      case NotificationType.paymentConfirmation:
-      case NotificationType.paymentReminder:
-        iconData = Icons.payment;
-        iconColor = Colors.green;
-        break;
-      case NotificationType.eventReminder:
-        iconData = Icons.event;
-        iconColor = Colors.purple;
-        break;
-      case NotificationType.taskReminder:
-        iconData = Icons.task_alt;
-        iconColor = Colors.orange;
-        break;
-      case NotificationType.system:
-        iconData = Icons.info;
-        iconColor = Colors.grey;
-        break;
-      case NotificationType.marketing:
-        iconData = Icons.campaign;
-        iconColor = Colors.red;
-        break;
+    if (type == notification_model.NotificationType.bookingConfirmation ||
+        type == notification_model.NotificationType.bookingUpdate ||
+        type == notification_model.NotificationType.bookingReminder ||
+        type == notification_model.NotificationType.bookingCancellation) {
+      iconData = Icons.calendar_today;
+      iconColor = Colors.blue;
+    } else if (type ==
+            notification_model.NotificationType.paymentConfirmation ||
+        type == notification_model.NotificationType.paymentReminder) {
+      iconData = Icons.payment;
+      iconColor = Colors.green;
+    } else if (type == notification_model.NotificationType.eventReminder) {
+      iconData = Icons.event;
+      iconColor = Colors.purple;
+    } else if (type == notification_model.NotificationType.taskReminder) {
+      iconData = Icons.task_alt;
+      iconColor = Colors.orange;
+    } else if (type == notification_model.NotificationType.system) {
+      iconData = Icons.info;
+      iconColor = Colors.grey;
+    } else if (type == notification_model.NotificationType.marketing) {
+      iconData = Icons.campaign;
+      iconColor = Colors.red;
     }
 
     return Container(
@@ -350,7 +343,7 @@ class _NotificationCenterState extends State<NotificationCenter> {
   }
 
   /// Handle notification tap
-  void _handleNotificationTap(Notification notification) {
+  void _handleNotificationTap(notification_model.Notification notification) {
     // Navigate to the appropriate screen based on notification type and data
     // This will be implemented based on the app's navigation structure
     Logger.i(

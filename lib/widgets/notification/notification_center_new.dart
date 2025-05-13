@@ -1,4 +1,5 @@
-import 'package:eventati_book/models/notification_models/notification.dart';
+import 'package:eventati_book/models/notification_models/notification.dart'
+    as notification_model;
 import 'package:eventati_book/providers/notification_provider.dart';
 import 'package:eventati_book/routing/route_names.dart';
 import 'package:eventati_book/styles/app_colors.dart';
@@ -24,13 +25,17 @@ class NotificationCenter extends StatelessWidget {
       },
     );
   }
-  
+
   /// Build the notification center
-  Widget _buildNotificationCenter(BuildContext context, NotificationProvider notificationProvider) {
+  Widget _buildNotificationCenter(
+    BuildContext context,
+    NotificationProvider notificationProvider,
+  ) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final primaryColor = isDarkMode ? AppColorsDark.primary : AppColors.primary;
-    final backgroundColor = isDarkMode ? AppColorsDark.background : AppColors.background;
-    
+    final backgroundColor =
+        isDarkMode ? AppColorsDark.background : AppColors.background;
+
     return Container(
       width: 350,
       constraints: const BoxConstraints(maxHeight: 500),
@@ -50,28 +55,37 @@ class NotificationCenter extends StatelessWidget {
         children: [
           _buildHeader(context, primaryColor, notificationProvider),
           Flexible(
-            child: notificationProvider.isLoading
-                ? const LoadingIndicator(message: 'Loading notifications...')
-                : notificationProvider.errorMessage != null
+            child:
+                notificationProvider.isLoading
+                    ? const LoadingIndicator(
+                      message: 'Loading notifications...',
+                    )
+                    : notificationProvider.errorMessage != null
                     ? Center(
-                        child: Text(notificationProvider.errorMessage!,
-                            style: TextStyles.error),
-                      )
+                      child: Text(
+                        notificationProvider.errorMessage!,
+                        style: TextStyles.error,
+                      ),
+                    )
                     : notificationProvider.notifications.isEmpty
-                        ? const EmptyState(
-                            icon: Icons.notifications_none,
-                            title: 'No Notifications',
-                            message: 'You have no notifications at this time.',
-                          )
-                        : _buildNotificationList(context, notificationProvider),
+                    ? const EmptyState(
+                      icon: Icons.notifications_none,
+                      title: 'No Notifications',
+                      message: 'You have no notifications at this time.',
+                    )
+                    : _buildNotificationList(context, notificationProvider),
           ),
         ],
       ),
     );
   }
-  
+
   /// Build the header
-  Widget _buildHeader(BuildContext context, Color primaryColor, NotificationProvider notificationProvider) {
+  Widget _buildHeader(
+    BuildContext context,
+    Color primaryColor,
+    NotificationProvider notificationProvider,
+  ) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
@@ -112,8 +126,14 @@ class NotificationCenter extends StatelessWidget {
                 splashRadius: 20,
               ),
               IconButton(
-                icon: const Icon(Icons.open_in_new, color: Colors.white, size: 20),
-                onPressed: () => Navigator.pushNamed(context, RouteNames.notifications),
+                icon: const Icon(
+                  Icons.open_in_new,
+                  color: Colors.white,
+                  size: 20,
+                ),
+                onPressed:
+                    () =>
+                        Navigator.pushNamed(context, RouteNames.notifications),
                 padding: EdgeInsets.zero,
                 constraints: const BoxConstraints(),
                 splashRadius: 20,
@@ -125,28 +145,41 @@ class NotificationCenter extends StatelessWidget {
       ),
     );
   }
-  
+
   /// Build the notification list
-  Widget _buildNotificationList(BuildContext context, NotificationProvider notificationProvider) {
+  Widget _buildNotificationList(
+    BuildContext context,
+    NotificationProvider notificationProvider,
+  ) {
     return ListView.builder(
       shrinkWrap: true,
       padding: EdgeInsets.zero,
-      itemCount: notificationProvider.notifications.length > 5 
-          ? 5 // Show only the 5 most recent notifications
-          : notificationProvider.notifications.length,
+      itemCount:
+          notificationProvider.notifications.length > 5
+              ? 5 // Show only the 5 most recent notifications
+              : notificationProvider.notifications.length,
       itemBuilder: (context, index) {
         final notification = notificationProvider.notifications[index];
-        return _buildNotificationItem(context, notification, notificationProvider);
+        return _buildNotificationItem(
+          context,
+          notification,
+          notificationProvider,
+        );
       },
     );
   }
-  
+
   /// Build a notification item
-  Widget _buildNotificationItem(BuildContext context, Notification notification, NotificationProvider notificationProvider) {
+  Widget _buildNotificationItem(
+    BuildContext context,
+    notification_model.Notification notification,
+    NotificationProvider notificationProvider,
+  ) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final unreadColor = isDarkMode
-        ? AppColorsDark.primary.withAlpha(30)
-        : AppColors.primary.withAlpha(30);
+    final unreadColor =
+        isDarkMode
+            ? AppColorsDark.primary.withAlpha(30)
+            : AppColors.primary.withAlpha(30);
 
     return Dismissible(
       key: Key(notification.id),
@@ -184,7 +217,9 @@ class NotificationCenter extends StatelessWidget {
                       notification.title,
                       style: TextStyle(
                         fontWeight:
-                            notification.read ? FontWeight.normal : FontWeight.bold,
+                            notification.read
+                                ? FontWeight.normal
+                                : FontWeight.bold,
                         fontSize: 14,
                       ),
                     ),
@@ -198,10 +233,7 @@ class NotificationCenter extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       _formatDate(notification.createdAt),
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey[600],
-                      ),
+                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                     ),
                   ],
                 ),
@@ -211,7 +243,8 @@ class NotificationCenter extends StatelessWidget {
                   width: 8,
                   height: 8,
                   decoration: BoxDecoration(
-                    color: isDarkMode ? AppColorsDark.primary : AppColors.primary,
+                    color:
+                        isDarkMode ? AppColorsDark.primary : AppColors.primary,
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -221,41 +254,35 @@ class NotificationCenter extends StatelessWidget {
       ),
     );
   }
-  
-  /// Build an icon for a notification type
-  Widget _buildNotificationIcon(NotificationType type) {
-    IconData iconData;
-    Color iconColor;
 
-    switch (type) {
-      case NotificationType.bookingConfirmation:
-      case NotificationType.bookingUpdate:
-      case NotificationType.bookingReminder:
-      case NotificationType.bookingCancellation:
-        iconData = Icons.calendar_today;
-        iconColor = Colors.blue;
-        break;
-      case NotificationType.paymentConfirmation:
-      case NotificationType.paymentReminder:
-        iconData = Icons.payment;
-        iconColor = Colors.green;
-        break;
-      case NotificationType.eventReminder:
-        iconData = Icons.event;
-        iconColor = Colors.purple;
-        break;
-      case NotificationType.taskReminder:
-        iconData = Icons.task_alt;
-        iconColor = Colors.orange;
-        break;
-      case NotificationType.system:
-        iconData = Icons.info;
-        iconColor = Colors.grey;
-        break;
-      case NotificationType.marketing:
-        iconData = Icons.campaign;
-        iconColor = Colors.red;
-        break;
+  /// Build an icon for a notification type
+  Widget _buildNotificationIcon(notification_model.NotificationType type) {
+    IconData iconData = Icons.notifications; // Default icon
+    Color iconColor = Colors.grey; // Default color
+
+    if (type == notification_model.NotificationType.bookingConfirmation ||
+        type == notification_model.NotificationType.bookingUpdate ||
+        type == notification_model.NotificationType.bookingReminder ||
+        type == notification_model.NotificationType.bookingCancellation) {
+      iconData = Icons.calendar_today;
+      iconColor = Colors.blue;
+    } else if (type ==
+            notification_model.NotificationType.paymentConfirmation ||
+        type == notification_model.NotificationType.paymentReminder) {
+      iconData = Icons.payment;
+      iconColor = Colors.green;
+    } else if (type == notification_model.NotificationType.eventReminder) {
+      iconData = Icons.event;
+      iconColor = Colors.purple;
+    } else if (type == notification_model.NotificationType.taskReminder) {
+      iconData = Icons.task_alt;
+      iconColor = Colors.orange;
+    } else if (type == notification_model.NotificationType.system) {
+      iconData = Icons.info;
+      iconColor = Colors.grey;
+    } else if (type == notification_model.NotificationType.marketing) {
+      iconData = Icons.campaign;
+      iconColor = Colors.red;
     }
 
     return Container(
@@ -267,12 +294,12 @@ class NotificationCenter extends StatelessWidget {
       child: Icon(iconData, size: 20, color: iconColor),
     );
   }
-  
+
   /// Format a date for display
   String _formatDate(DateTime date) {
     final now = DateTime.now();
     final difference = now.difference(date);
-    
+
     if (difference.inDays < 1) {
       // Today
       return DateFormat.jm().format(date); // e.g., 3:30 PM
@@ -287,13 +314,19 @@ class NotificationCenter extends StatelessWidget {
       return DateFormat.yMd().format(date); // e.g., 1/1/2021
     }
   }
-  
+
   /// Handle notification tap
-  void _handleNotificationTap(BuildContext context, Notification notification) {
+  void _handleNotificationTap(
+    BuildContext context,
+    notification_model.Notification notification,
+  ) {
     // Navigate to the appropriate screen based on notification type and data
     // This will be implemented based on the app's navigation structure
-    Logger.i('Notification tapped: ${notification.id}', tag: 'NotificationCenter');
-    
+    Logger.i(
+      'Notification tapped: ${notification.id}',
+      tag: 'NotificationCenter',
+    );
+
     // For now, just navigate to the notification list screen
     Navigator.pushNamed(context, RouteNames.notifications);
   }

@@ -1,6 +1,6 @@
 import 'package:eventati_book/models/notification_models/notification_settings.dart';
 import 'package:eventati_book/models/notification_models/notification_topic.dart';
-import 'package:eventati_book/services/interfaces/messaging_service_interface.dart';
+import 'package:eventati_book/services/notification/messaging_service.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/styles/text_styles.dart';
@@ -23,8 +23,7 @@ class NotificationPreferencesScreen extends StatefulWidget {
 class _NotificationPreferencesScreenState
     extends State<NotificationPreferencesScreen> {
   final SupabaseClient _supabase = Supabase.instance.client;
-  final MessagingServiceInterface _messagingService =
-      MessagingServiceInterface();
+  final MessagingService _messagingService = MessagingService();
 
   NotificationSettings? _settings;
   bool _isLoading = true;
@@ -50,11 +49,12 @@ class _NotificationPreferencesScreenState
       }
 
       // Get notification settings from database
-      final response = await _supabase
-          .from('user_notification_settings')
-          .select()
-          .eq('user_id', user.id)
-          .maybeSingle();
+      final response =
+          await _supabase
+              .from('user_notification_settings')
+              .select()
+              .eq('user_id', user.id)
+              .maybeSingle();
 
       // Create settings from response or use default settings
       final settings = NotificationSettings.fromDatabaseDoc(response);
@@ -64,8 +64,10 @@ class _NotificationPreferencesScreenState
         _isLoading = false;
       });
     } catch (e) {
-      Logger.e('Error loading notification settings: $e',
-          tag: 'NotificationPreferencesScreen');
+      Logger.e(
+        'Error loading notification settings: $e',
+        tag: 'NotificationPreferencesScreen',
+      );
       setState(() {
         _errorMessage = 'Failed to load notification settings';
         _isLoading = false;
@@ -124,8 +126,10 @@ class _NotificationPreferencesScreenState
         _isLoading = false;
       });
     } catch (e) {
-      Logger.e('Error saving notification settings: $e',
-          tag: 'NotificationPreferencesScreen');
+      Logger.e(
+        'Error saving notification settings: $e',
+        tag: 'NotificationPreferencesScreen',
+      );
       setState(() {
         _errorMessage = 'Failed to save notification settings';
         _isLoading = false;
@@ -193,17 +197,16 @@ class _NotificationPreferencesScreenState
             ),
         ],
       ),
-      body: _isLoading
-          ? const LoadingIndicator(message: 'Loading notification settings...')
-          : _errorMessage != null
-              ? Center(
-                  child: Text(_errorMessage!, style: TextStyles.error),
-                )
+      body:
+          _isLoading
+              ? const LoadingIndicator(
+                message: 'Loading notification settings...',
+              )
+              : _errorMessage != null
+              ? Center(child: Text(_errorMessage!, style: TextStyles.error))
               : _settings == null
-                  ? const Center(
-                      child: Text('No notification settings available'),
-                    )
-                  : _buildSettingsForm(),
+              ? const Center(child: Text('No notification settings available'))
+              : _buildSettingsForm(),
     );
   }
 
@@ -229,7 +232,8 @@ class _NotificationPreferencesScreenState
     return SwitchListTile(
       title: const Text('Enable All Notifications'),
       subtitle: const Text(
-          'Turn on or off all notifications. Individual settings will be preserved.'),
+        'Turn on or off all notifications. Individual settings will be preserved.',
+      ),
       value: _settings!.allNotificationsEnabled,
       onChanged: _updateAllNotificationsEnabled,
     );
@@ -251,25 +255,28 @@ class _NotificationPreferencesScreenState
           title: const Text('Push Notifications'),
           subtitle: const Text('Receive notifications on your device'),
           value: _settings!.pushNotificationsEnabled,
-          onChanged: _settings!.allNotificationsEnabled
-              ? _updatePushNotificationsEnabled
-              : null,
+          onChanged:
+              _settings!.allNotificationsEnabled
+                  ? _updatePushNotificationsEnabled
+                  : null,
         ),
         SwitchListTile(
           title: const Text('Email Notifications'),
           subtitle: const Text('Receive notifications via email'),
           value: _settings!.emailNotificationsEnabled,
-          onChanged: _settings!.allNotificationsEnabled
-              ? _updateEmailNotificationsEnabled
-              : null,
+          onChanged:
+              _settings!.allNotificationsEnabled
+                  ? _updateEmailNotificationsEnabled
+                  : null,
         ),
         SwitchListTile(
           title: const Text('In-App Notifications'),
           subtitle: const Text('Receive notifications within the app'),
           value: _settings!.inAppNotificationsEnabled,
-          onChanged: _settings!.allNotificationsEnabled
-              ? _updateInAppNotificationsEnabled
-              : null,
+          onChanged:
+              _settings!.allNotificationsEnabled
+                  ? _updateInAppNotificationsEnabled
+                  : null,
         ),
       ],
     );
@@ -278,8 +285,8 @@ class _NotificationPreferencesScreenState
   /// Build the topic toggles
   Widget _buildTopicToggles() {
     // Group topics by category
-    final Map<NotificationTopicCategory, List<NotificationTopic>> groupedTopics =
-        {};
+    final Map<NotificationTopicCategory, List<NotificationTopic>>
+    groupedTopics = {};
 
     for (final topic in NotificationTopics.all) {
       if (!groupedTopics.containsKey(topic.category)) {
@@ -306,8 +313,10 @@ class _NotificationPreferencesScreenState
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
                 child: Text(
                   _getCategoryDisplayName(category),
                   style: const TextStyle(
@@ -324,15 +333,16 @@ class _NotificationPreferencesScreenState
                   title: Text(topic.name),
                   subtitle: Text(topic.description),
                   value: isEnabled,
-                  onChanged: _settings!.allNotificationsEnabled
-                      ? (value) => _updateTopicSetting(topic.id, value)
-                      : null,
+                  onChanged:
+                      _settings!.allNotificationsEnabled
+                          ? (value) => _updateTopicSetting(topic.id, value)
+                          : null,
                 );
-              }).toList(),
+              }),
               const SizedBox(height: 8),
             ],
           );
-        }).toList(),
+        }),
       ],
     );
   }
