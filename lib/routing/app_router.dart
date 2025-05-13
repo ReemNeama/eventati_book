@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:eventati_book/routing/route_names.dart';
 import 'package:eventati_book/routing/route_arguments.dart';
 // Route guards are applied in the UI layer, not here
@@ -9,7 +10,7 @@ import 'package:eventati_book/screens/screens.dart';
 import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/services/supabase/database/service_database_service.dart';
 import 'package:eventati_book/di/service_locator.dart';
-import 'package:eventati_book/screens/planning/task_dependency_screen.dart';
+import 'package:eventati_book/providers/planning_providers/task_template_provider.dart';
 import 'package:eventati_book/screens/testing/task_database_test_screen.dart';
 import 'package:eventati_book/screens/recommendations/personalized_recommendations_screen.dart';
 
@@ -313,6 +314,28 @@ class AppRouter {
         final args = settings.arguments as TaskDatabaseTestArguments;
         return MaterialPageRoute(
           builder: (context) => TaskDatabaseTestScreen(eventId: args.eventId),
+        );
+
+      case RouteNames.taskTemplates:
+        // We're not using the arguments yet, but they're available for future use
+        // final args = settings.arguments as TaskTemplatesArguments?;
+        return MaterialPageRoute(
+          builder: (context) => const TaskTemplateScreen(),
+        );
+
+      case RouteNames.taskTemplateForm:
+        final args = settings.arguments as TaskTemplateFormArguments?;
+        return MaterialPageRoute(
+          builder:
+              (context) => TaskTemplateFormScreen(
+                template:
+                    args?.templateId != null
+                        ? Provider.of<TaskTemplateProvider>(
+                          context,
+                          listen: false,
+                        ).templates.firstWhere((t) => t.id == args!.templateId)
+                        : null,
+              ),
         );
 
       case RouteNames.personalizedRecommendations:

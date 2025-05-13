@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'package:eventati_book/models/models.dart';
-import 'package:eventati_book/providers/providers.dart';
 import 'package:eventati_book/screens/planning/widgets/task_card.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/utils/core/constants.dart';
@@ -15,7 +14,7 @@ class DependencyGraph extends StatefulWidget {
   final List<TaskCategory> categories;
 
   /// The list of task dependencies
-  final List<TaskDependency> dependencies;
+  final List<dynamic> dependencies;
 
   /// Callback when a task is selected
   final Function(Task task)? onTaskSelected;
@@ -112,12 +111,16 @@ class _DependencyGraphState extends State<DependencyGraph> {
     final lines = <Widget>[];
 
     for (final dependency in widget.dependencies) {
+      // Get the task IDs
+      final prerequisiteTaskId = dependency.prerequisiteTaskId;
+      final dependentTaskId = dependency.dependentTaskId;
+
       // Find the tasks
       final prerequisiteTask = widget.tasks.firstWhere(
-        (task) => task.id == dependency.prerequisiteTaskId,
+        (task) => task.id == prerequisiteTaskId,
         orElse:
             () => Task(
-              id: dependency.prerequisiteTaskId,
+              id: prerequisiteTaskId,
               title: 'Unknown Task',
               categoryId: '0',
               dueDate: DateTime.now(),
@@ -126,10 +129,10 @@ class _DependencyGraphState extends State<DependencyGraph> {
       );
 
       final dependentTask = widget.tasks.firstWhere(
-        (task) => task.id == dependency.dependentTaskId,
+        (task) => task.id == dependentTaskId,
         orElse:
             () => Task(
-              id: dependency.dependentTaskId,
+              id: dependentTaskId,
               title: 'Unknown Task',
               categoryId: '0',
               dueDate: DateTime.now(),

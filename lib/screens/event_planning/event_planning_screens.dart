@@ -19,6 +19,11 @@ export 'timeline/timeline_screen.dart';
 export 'timeline/task_form_screen.dart';
 export 'timeline/checklist_screen.dart';
 
+// Task dependency screens
+export '../planning/task_dependency_screen.dart';
+export '../planning/task_template_screen.dart';
+export '../planning/task_template_form_screen.dart';
+
 // Messaging screens
 export 'messaging/vendor_list_screen.dart';
 export 'messaging/conversation_screen.dart';

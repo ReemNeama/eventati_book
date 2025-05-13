@@ -1,7 +1,12 @@
 import 'package:eventati_book/models/models.dart';
+import 'package:eventati_book/services/supabase/database/budget_historical_data_service.dart';
 
 /// Enhanced budget calculator with more accurate cost estimation
 class EnhancedBudgetCalculator {
+  /// Historical data service for improved estimates
+  static final BudgetHistoricalDataService _historicalDataService =
+      BudgetHistoricalDataService();
+
   /// Calculate estimated cost based on multiple factors
   static double calculateEstimatedCost({
     required String serviceType,
@@ -223,6 +228,91 @@ class EnhancedBudgetCalculator {
     return weekday == 6 || weekday == 7;
   }
 
+  /// Calculate estimated cost using historical data analysis
+  static Future<double> calculateEstimateWithHistoricalData({
+    required String serviceType,
+    required int guestCount,
+    required String eventType,
+    required int eventDuration,
+    String location = 'Unknown',
+    DateTime? eventDate,
+    bool isPremiumVenue = false,
+    bool isWeekend = false,
+  }) async {
+    // First, get the base estimate using our algorithm
+    final baseEstimate = calculateEstimatedCost(
+      serviceType: serviceType,
+      guestCount: guestCount,
+      eventType: eventType,
+      eventDuration: eventDuration,
+      location: location,
+      eventDate: eventDate,
+      isPremiumVenue: isPremiumVenue,
+      isWeekend: isWeekend,
+    );
+
+    try {
+      // Get historical data for similar events
+      final averageCosts = await _historicalDataService.getAverageCosts(
+        serviceType: serviceType,
+        eventType: eventType,
+        minGuestCount: guestCount - 50,
+        maxGuestCount: guestCount + 50,
+        location: location,
+      );
+
+      // Get percentiles for more detailed analysis
+      final percentiles = await _historicalDataService.getCostPercentiles(
+        serviceType: serviceType,
+        eventType: eventType,
+        minGuestCount: guestCount - 50,
+        maxGuestCount: guestCount + 50,
+        location: location,
+      );
+
+      // If we have historical data for this category, use it to adjust our estimate
+      if (averageCosts.isNotEmpty) {
+        // Find the relevant category
+        String? relevantCategory;
+        switch (serviceType) {
+          case 'Venue':
+            relevantCategory = '1'; // Venue category
+            break;
+          case 'Catering':
+            relevantCategory = '2'; // Catering category
+            break;
+          case 'Photography':
+            relevantCategory = '3'; // Photography category
+            break;
+          // Add other mappings as needed
+        }
+
+        if (relevantCategory != null &&
+            averageCosts.containsKey(relevantCategory)) {
+          final historicalAverage = averageCosts[relevantCategory]!;
+
+          // Get percentile data if available
+          double p50 = historicalAverage;
+          if (percentiles.containsKey(relevantCategory)) {
+            p50 = percentiles[relevantCategory]!['p50'] ?? historicalAverage;
+          }
+
+          // Blend our algorithm estimate with historical data
+          // We give more weight to historical data if we have enough samples
+          final blendedEstimate = (baseEstimate * 0.4) + (p50 * 0.6);
+
+          return blendedEstimate;
+        }
+      }
+
+      // If no historical data is available, return the base estimate
+      return baseEstimate;
+    } catch (e) {
+      // If there's an error with historical data, fall back to the base estimate
+      return baseEstimate;
+    }
+  }
+
   /// Create a detailed budget breakdown with itemized costs
   static List<BudgetItem> createDetailedBudget({
     required String serviceType,
@@ -288,6 +378,158 @@ class EnhancedBudgetCalculator {
             notes: 'Cleanup costs',
           ),
         );
+
+        break;
+
+      // Add other service types as needed
+
+      default:
+        break;
+    }
+
+    return items;
+  }
+
+  /// Create a detailed budget breakdown with historical data analysis
+  static Future<List<BudgetItem>> createDetailedBudgetWithHistoricalData({
+    required String serviceType,
+    required int guestCount,
+    required String eventType,
+    required int eventDuration,
+    String location = 'Unknown',
+    DateTime? eventDate,
+    bool isPremiumVenue = false,
+  }) async {
+    final List<BudgetItem> items = [];
+    final isWeekend = isWeekendEvent(eventDate);
+
+    switch (serviceType) {
+      case 'Venue':
+        // Calculate main venue cost with historical data
+        final venueCost = await calculateEstimateWithHistoricalData(
+          serviceType: serviceType,
+          guestCount: guestCount,
+          eventType: eventType,
+          eventDuration: eventDuration,
+          location: location,
+          eventDate: eventDate,
+          isPremiumVenue: isPremiumVenue,
+          isWeekend: isWeekend,
+        );
+
+        // Get percentiles for cost comparison
+        final percentiles = await _historicalDataService.getCostPercentiles(
+          serviceType: serviceType,
+          eventType: eventType,
+          minGuestCount: guestCount - 50,
+          maxGuestCount: guestCount + 50,
+          location: location,
+        );
+
+        // Create notes with cost comparison if available
+        String notes =
+            'Based on $guestCount guests, $eventDuration day(s), in $location';
+        if (percentiles.isNotEmpty && percentiles.containsKey('1')) {
+          final venuePercentiles = percentiles['1']!;
+          notes +=
+              '\nTypical range: \$${venuePercentiles['p25']?.toStringAsFixed(2)} - \$${venuePercentiles['p75']?.toStringAsFixed(2)}';
+        }
+
+        items.add(
+          BudgetItem(
+            id: DateTime.now().millisecondsSinceEpoch.toString(),
+            categoryId: '1', // Venue category
+            description: 'Venue rental',
+            estimatedCost: venueCost,
+            isPaid: false,
+            notes: notes,
+          ),
+        );
+
+        // Add setup costs if applicable
+        if (eventType.toLowerCase().contains('business') ||
+            eventType.toLowerCase().contains('wedding')) {
+          items.add(
+            BudgetItem(
+              id: DateTime.now().millisecondsSinceEpoch.toString(),
+              categoryId: '1', // Venue category
+              description: 'Venue setup',
+              estimatedCost: venueCost * 0.1, // 10% of venue cost
+              isPaid: false,
+              notes: 'Setup costs',
+            ),
+          );
+        }
+
+        // Add cleanup costs
+        items.add(
+          BudgetItem(
+            id: DateTime.now().millisecondsSinceEpoch.toString(),
+            categoryId: '1', // Venue category
+            description: 'Venue cleanup',
+            estimatedCost: venueCost * 0.08, // 8% of venue cost
+            isPaid: false,
+            notes: 'Cleanup costs',
+          ),
+        );
+
+        break;
+
+      case 'Catering':
+        // Calculate catering cost with historical data
+        final cateringCost = await calculateEstimateWithHistoricalData(
+          serviceType: serviceType,
+          guestCount: guestCount,
+          eventType: eventType,
+          eventDuration: eventDuration,
+          location: location,
+          eventDate: eventDate,
+          isWeekend: isWeekend,
+        );
+
+        // Get percentiles for cost comparison
+        final percentiles = await _historicalDataService.getCostPercentiles(
+          serviceType: serviceType,
+          eventType: eventType,
+          minGuestCount: guestCount - 50,
+          maxGuestCount: guestCount + 50,
+          location: location,
+        );
+
+        // Create notes with cost comparison if available
+        String notes = 'Based on $guestCount guests';
+        if (percentiles.isNotEmpty && percentiles.containsKey('2')) {
+          final cateringPercentiles = percentiles['2']!;
+          notes +=
+              '\nTypical range: \$${cateringPercentiles['p25']?.toStringAsFixed(2)} - \$${cateringPercentiles['p75']?.toStringAsFixed(2)}';
+        }
+
+        items.add(
+          BudgetItem(
+            id: DateTime.now().millisecondsSinceEpoch.toString(),
+            categoryId: '2', // Catering category
+            description: 'Catering service',
+            estimatedCost: cateringCost,
+            isPaid: false,
+            notes: notes,
+          ),
+        );
+
+        // Add bar service if applicable
+        if (!eventType.toLowerCase().contains('children')) {
+          final barCost = cateringCost * 0.3; // 30% of catering cost
+
+          items.add(
+            BudgetItem(
+              id: DateTime.now().millisecondsSinceEpoch.toString(),
+              categoryId: '2', // Catering category
+              description: 'Bar service',
+              estimatedCost: barCost,
+              isPaid: false,
+              notes: 'Includes bartenders and basic bar setup',
+            ),
+          );
+        }
 
         break;
 

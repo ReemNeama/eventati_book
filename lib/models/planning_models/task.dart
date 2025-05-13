@@ -76,6 +76,8 @@ class Task {
   final bool isServiceRelated;
   final String? serviceId;
   final List<String> dependencies;
+  final String? eventId;
+  final String? service;
 
   Task({
     required this.id,
@@ -92,6 +94,8 @@ class Task {
     this.isServiceRelated = false,
     this.serviceId,
     this.dependencies = const [],
+    this.eventId,
+    this.service,
   });
 
   Task copyWith({
@@ -109,6 +113,8 @@ class Task {
     bool? isServiceRelated,
     String? serviceId,
     List<String>? dependencies,
+    String? eventId,
+    String? service,
   }) {
     return Task(
       id: id ?? this.id,
@@ -125,6 +131,8 @@ class Task {
       isServiceRelated: isServiceRelated ?? this.isServiceRelated,
       serviceId: serviceId ?? this.serviceId,
       dependencies: dependencies ?? this.dependencies,
+      eventId: eventId ?? this.eventId,
+      service: service ?? this.service,
     );
   }
 
@@ -145,6 +153,8 @@ class Task {
       'isServiceRelated': isServiceRelated,
       'serviceId': serviceId,
       'dependencies': dependencies,
+      'eventId': eventId,
+      'service': service,
     };
   }
 
@@ -171,6 +181,8 @@ class Task {
           json['dependencies'] != null
               ? List<String>.from(json['dependencies'])
               : [],
+      eventId: json['eventId'],
+      service: json['service'],
     );
   }
 
@@ -193,6 +205,8 @@ class Task {
       'isServiceRelated': isServiceRelated,
       'serviceId': serviceId,
       'dependencies': dependencies,
+      'eventId': eventId,
+      'service': service,
       'createdAt': DbFieldValue.serverTimestamp(),
       'updatedAt': DbFieldValue.serverTimestamp(),
     };
@@ -229,6 +243,8 @@ class Task {
           data['dependencies'] != null
               ? List<String>.from(data['dependencies'])
               : [],
+      eventId: data['eventId'],
+      service: data['service'],
     );
   }
 

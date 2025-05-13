@@ -57,6 +57,7 @@ Comprehensive documentation is available in the `docs/` directory:
 - **[Booking Integration](docs/booking_integration.md)**: Booking system integration with services
 - **[Event Planning Tools](docs/event_planning_tools.md)**: Event planning tools flow and components
 - **[Event Wizard Flow](docs/event_wizard_flow.md)**: Event wizard flow and components
+- **[Task Dependency System](docs/task_dependency_system.md)**: Detailed documentation of the task dependency implementation
 - **[Supabase Setup](SUPABASE_SETUP.md)**: Detailed setup instructions for Supabase
 - **[Supabase Migration](SUPABASE_MIGRATION.md)**: Documentation of the migration from Firebase/tempDB to Supabase
 

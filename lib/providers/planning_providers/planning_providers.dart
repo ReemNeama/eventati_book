@@ -6,3 +6,4 @@ export 'guest_list_provider.dart';
 export 'messaging_provider.dart';
 export 'task_provider.dart';
 export 'booking_provider.dart';
+export 'task_template_provider.dart';

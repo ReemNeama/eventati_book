@@ -1,5 +1,5 @@
 import 'package:eventati_book/models/models.dart';
-import 'package:eventati_book/providers/planning_providers/task_provider.dart';
+import 'package:eventati_book/models/planning_models/task_dependency.dart';
 import 'package:eventati_book/services/supabase/database/task_database_service.dart';
 import 'package:eventati_book/utils/logger.dart';
 

@@ -1,10 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:eventati_book/models/models.dart';
+import 'package:eventati_book/models/planning_models/task_dependency.dart';
 import 'package:eventati_book/services/supabase/database/task_database_service.dart';
 
-/// Represents a dependency between two tasks
-class TaskDependency {
+/// Simple version of TaskDependency for internal use
+class TaskDependencySimple {
   /// The ID of the prerequisite task that must be completed first
   final String prerequisiteTaskId;
 
@@ -12,7 +13,7 @@ class TaskDependency {
   final String dependentTaskId;
 
   /// Creates a new task dependency
-  TaskDependency({
+  TaskDependencySimple({
     required this.prerequisiteTaskId,
     required this.dependentTaskId,
   });
@@ -75,7 +76,7 @@ class TaskProvider extends ChangeNotifier {
   List<TaskCategory> _categories = [];
 
   /// List of task dependencies (which tasks depend on other tasks)
-  List<TaskDependency> _dependencies = [];
+  List<TaskDependencySimple> _dependencies = [];
 
   /// Flag indicating if the provider is currently loading data
   bool _isLoading = false;
@@ -190,12 +191,12 @@ class TaskProvider extends ChangeNotifier {
     // Initialize dependencies
     _dependencies = [
       // Venue booking must be completed before catering selection
-      TaskDependency(
+      TaskDependencySimple(
         prerequisiteTaskId: '1', // Book venue
         dependentTaskId: '2', // Select catering menu
       ),
       // Venue booking must be completed before sending invitations
-      TaskDependency(
+      TaskDependencySimple(
         prerequisiteTaskId: '1', // Book venue
         dependentTaskId: '3', // Send invitations
       ),
@@ -209,7 +210,7 @@ class TaskProvider extends ChangeNotifier {
   List<TaskCategory> get categories => _categories;
 
   /// Returns the list of all task dependencies
-  List<TaskDependency> get dependencies => _dependencies;
+  List<TaskDependencySimple> get dependencies => _dependencies;
 
   /// Indicates if the provider is currently loading data
   bool get isLoading => _isLoading;
@@ -343,7 +344,15 @@ class TaskProvider extends ChangeNotifier {
           .getTaskDependenciesStream(eventId)
           .listen(
             (dependencies) {
-              _dependencies = dependencies;
+              _dependencies =
+                  dependencies
+                      .map(
+                        (dep) => TaskDependencySimple(
+                          prerequisiteTaskId: dep.prerequisiteTaskId,
+                          dependentTaskId: dep.dependentTaskId,
+                        ),
+                      )
+                      .toList();
               notifyListeners();
             },
             onError: (e) {
@@ -355,7 +364,18 @@ class TaskProvider extends ChangeNotifier {
       // Initial load
       _tasks = await _taskDatabaseService.getTasks(eventId);
       _categories = await _taskDatabaseService.getTaskCategories(eventId);
-      _dependencies = await _taskDatabaseService.getTaskDependencies(eventId);
+      final dependencies = await _taskDatabaseService.getTaskDependencies(
+        eventId,
+      );
+      _dependencies =
+          dependencies
+              .map(
+                (dep) => TaskDependencySimple(
+                  prerequisiteTaskId: dep.prerequisiteTaskId,
+                  dependentTaskId: dep.dependentTaskId,
+                ),
+              )
+              .toList();
 
       _isLoading = false;
       notifyListeners();
@@ -566,14 +586,19 @@ class TaskProvider extends ChangeNotifier {
     }
 
     try {
-      // Create dependency object
+      // Create dependency objects
       final dependency = TaskDependency(
         prerequisiteTaskId: prerequisiteTaskId,
         dependentTaskId: dependentTaskId,
       );
 
+      final simpleDependency = TaskDependencySimple(
+        prerequisiteTaskId: prerequisiteTaskId,
+        dependentTaskId: dependentTaskId,
+      );
+
       // Add dependency to local list
-      _dependencies.add(dependency);
+      _dependencies.add(simpleDependency);
 
       // Add dependency to database
       await _taskDatabaseService.addTaskDependency(eventId, dependency);

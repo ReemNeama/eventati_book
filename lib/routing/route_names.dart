@@ -60,6 +60,8 @@ class RouteNames {
   static const String guestList = '/event-planning/guest-list';
   static const String timeline = '/event-planning/timeline';
   static const String taskDependency = '/event-planning/task-dependency';
+  static const String taskTemplates = '/event-planning/task-templates';
+  static const String taskTemplateForm = '/event-planning/task-templates/form';
   static const String vendors = '/event-planning/vendors';
   static const String vendorCommunication =
       '/event-planning/vendor-communication';

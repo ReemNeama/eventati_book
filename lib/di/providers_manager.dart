@@ -67,6 +67,7 @@ class ProvidersManager {
       lazy: true,
     ),
     ChangeNotifierProvider(create: (_) => BookingProvider(), lazy: true),
+    ChangeNotifierProvider(create: (_) => TaskTemplateProvider(), lazy: true),
 
     // Comparison providers
     ChangeNotifierProxyProvider<AuthProvider, ComparisonSavingProvider>(

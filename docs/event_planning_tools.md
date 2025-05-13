@@ -214,7 +214,7 @@ This document provides a visual representation of the event planning tools in th
 │                           VIEW TOGGLE                                   │
 │                                                                         │
 │  ┌─────────────────────────────────────────────────────────────────┐    │
-│  │  [Timeline View]  |  Checklist View                             │    │
+│  │  [Timeline View]  |  Checklist View  |  Dependencies View       │    │
 │  └─────────────────────────────────────────────────────────────────┘    │
 └───────────────────────────────────┬─────────────────────────────────────┘
                                     │
@@ -258,6 +258,64 @@ This document provides a visual representation of the event planning tools in th
 │  ┌─────────────────────────────────────────────────┐  ┌─────────────┐  │
 │  │  Switch to Checklist                            │  │  Add Task   │  │
 │  │                                                 │  │             │  │
+│  └─────────────────────────────────────────────────┘  └─────────────┘  │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+## Task Dependencies Screen
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                       TASK DEPENDENCIES SCREEN                          │
+└───────────────────────────────────┬─────────────────────────────────────┘
+                                    │
+                                    ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│                           VIEW TOGGLE                                   │
+│                                                                         │
+│  ┌─────────────────────────────────────────────────────────────────┐    │
+│  │  List View  |  [Graph View]                                     │    │
+│  └─────────────────────────────────────────────────────────────────┘    │
+└───────────────────────────────────┬─────────────────────────────────────┘
+                                    │
+                                    ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│                           DEPENDENCY GRAPH                              │
+│                                                                         │
+│  ┌─────────────────────────────────────────────────────────────────┐    │
+│  │                                                                 │    │
+│  │                      ┌───────────┐                              │    │
+│  │                      │ Book      │                              │    │
+│  │                      │ Venue     │                              │    │
+│  │                      └─────┬─────┘                              │    │
+│  │                            │                                    │    │
+│  │                            ▼                                    │    │
+│  │                      ┌───────────┐         ┌───────────┐        │    │
+│  │                      │ Select    │         │ Send      │        │    │
+│  │                      │ Catering  │────────▶│ Invites   │        │    │
+│  │                      └───────────┘         └───────────┘        │    │
+│  │                                                                 │    │
+│  │                                                                 │    │
+│  └─────────────────────────────────────────────────────────────────┘    │
+└───────────────────────────────────┬─────────────────────────────────────┘
+                                    │
+                                    ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│                           DEPENDENCY CREATION                           │
+│                                                                         │
+│  ┌─────────────────────────────────────────────────────────────────┐    │
+│  │  Prerequisite Task (Must be completed first):                   │    │
+│  │  [Task selection dropdown or list]                              │    │
+│  └─────────────────────────────────────────────────────────────────┘    │
+│                                                                         │
+│  ┌─────────────────────────────────────────────────────────────────┐    │
+│  │  Dependent Task (Can only start after prerequisite):            │    │
+│  │  [Task selection dropdown or list]                              │    │
+│  └─────────────────────────────────────────────────────────────────┘    │
+│                                                                         │
+│  ┌─────────────────────────────────────────────────┐  ┌─────────────┐  │
+│  │  Dependency Type: Finish-to-Start               │  │  Add        │  │
+│  │                                                 │  │  Dependency │  │
 │  └─────────────────────────────────────────────────┘  └─────────────┘  │
 └─────────────────────────────────────────────────────────────────────────┘
 ```
@@ -382,18 +440,21 @@ This document provides a visual representation of the event planning tools in th
 - **Budget Tool**: Initial budget created based on event type and guest count from wizard
 - **Guest List Tool**: Initial guest count set from wizard
 - **Timeline Tool**: Task templates selected based on event type from wizard
+- **Task Dependencies**: Initial task dependencies created based on event type
 - **Messaging Tool**: Initial vendor contacts added based on services selected in wizard
 
 ### Integration with Services
 
 - **Budget Tool**: Service bookings automatically added to budget
 - **Timeline Tool**: Service-related tasks added to timeline
+- **Task Dependencies**: Service-related task dependencies automatically created
 - **Messaging Tool**: Communication channel opened with booked service providers
 
 ### Integration with Booking System
 
 - **Budget Tool**: Booked services automatically added to budget
 - **Timeline Tool**: Service-related tasks added to timeline/checklist
+- **Task Dependencies**: Dependencies created between booking-related tasks
 - **Messaging Tool**: Communication channel opened with booked service providers
 
 ## Data Models
@@ -453,6 +514,27 @@ Task {
   notes: string,
   isServiceRelated: bool,  // Whether this task is related to a service
   serviceId: string,  // Reference to a service if applicable
+  dependencies: List<string>,  // IDs of tasks this task depends on
+}
+```
+
+### Task Dependency Model
+
+```
+TaskDependency {
+  prerequisiteTaskId: string,  // ID of the task that must be completed first
+  dependentTaskId: string,     // ID of the task that depends on the prerequisite
+  type: DependencyType,        // Type of dependency (finish-to-start, start-to-start, etc.)
+  offsetDays: int,             // Number of days offset for the dependency
+  createdAt: DateTime,
+  updatedAt: DateTime,
+}
+
+enum DependencyType {
+  finishToStart,  // The dependent task can start only after the prerequisite task finishes
+  startToStart,   // The dependent task can start only after the prerequisite task starts
+  finishToFinish, // The dependent task can finish only after the prerequisite task finishes
+  startToFinish,  // The dependent task can finish only after the prerequisite task starts
 }
 ```
 

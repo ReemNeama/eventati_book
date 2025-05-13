@@ -548,7 +548,7 @@ Each event type (Wedding, Celebration, Business Event) has specific variations i
 
 ## Supabase Integration
 
-When Supabase is implemented, the event creation will store data in the database:
+The event creation process stores data in the Supabase database:
 
 ```dart
 Future<void> createEvent() async {
@@ -564,10 +564,15 @@ Future<void> createEvent() async {
         .from('events')
         .insert({
           'user_id': userId,
-          'event_type': _eventType.toString(),
+          'title': _eventData['eventName'] ?? 'Untitled Event',
+          'description': _eventData['description'] ?? '',
+          'event_type': _eventType.toString().split('.').last,
+          'date': _eventData['eventDate']?.toIso8601String(),
+          'location': _eventData['location'] ?? '',
+          'guest_count': _eventData['estimatedGuestCount'] ?? 0,
+          'budget': _eventData['estimatedBudget'] ?? 0,
           'created_at': DateTime.now().toIso8601String(),
           'updated_at': DateTime.now().toIso8601String(),
-          ..._eventData, // Spread all event data
         })
         .select()
         .single();
@@ -577,6 +582,9 @@ Future<void> createEvent() async {
 
     // Create initial planning tools data
     await _createInitialPlanningData(eventId);
+
+    // Save wizard state for future reference
+    await _saveWizardState(eventId);
 
     _wizardState = EventWizardState.eventCreated;
     notifyListeners();
@@ -595,33 +603,66 @@ Future<void> createEvent() async {
 }
 
 Future<void> _createInitialPlanningData(String eventId) async {
-  // Create budget record
-  await _supabase
-      .from('budgets')
-      .insert({
-        'event_id': eventId,
-        'total_budget': _eventData['estimatedBudget'] ?? 0,
-        'created_at': DateTime.now().toIso8601String(),
-      });
+  // Create budget items
+  final budgetItems = await BudgetItemsBuilder.createBudgetItems(
+    eventType: _eventType.toString().split('.').last,
+    guestCount: _eventData['estimatedGuestCount'] ?? 0,
+    eventDuration: _eventData['eventDuration'] ?? 1,
+    selectedServices: _eventData['selectedServices'] ?? {},
+    eventDate: _eventData['eventDate'],
+  );
 
-  // Create guest list record
-  await _supabase
-      .from('guest_lists')
-      .insert({
-        'event_id': eventId,
-        'estimated_count': _eventData['estimatedGuestCount'] ?? 0,
-        'created_at': DateTime.now().toIso8601String(),
-      });
+  for (final item in budgetItems) {
+    await _supabase.from('budget_items').insert({
+      'event_id': eventId,
+      'name': item.description,
+      'category': item.categoryId,
+      'estimated_cost': item.estimatedCost,
+      'paid': item.isPaid,
+      'notes': item.notes,
+    });
+  }
 
-  // Create timeline with default milestones
-  await _supabase
-      .from('timelines')
-      .insert({
-        'event_id': eventId,
-        'created_at': DateTime.now().toIso8601String(),
-      });
+  // Create task categories
+  final defaultCategories = [
+    {'name': 'Venue', 'icon': 'location_on', 'color': '#4CAF50'},
+    {'name': 'Catering', 'icon': 'restaurant', 'color': '#FF9800'},
+    {'name': 'Entertainment', 'icon': 'music_note', 'color': '#2196F3'},
+    {'name': 'Decor', 'icon': 'celebration', 'color': '#E91E63'},
+    {'name': 'Planning', 'icon': 'event_note', 'color': '#9C27B0'},
+  ];
 
-  // Add default milestones based on event type
-  await _addDefaultMilestones(eventId);
+  for (final category in defaultCategories) {
+    await _supabase.from('task_categories').insert({
+      'name': category['name'],
+      'icon': category['icon'],
+      'color': category['color'],
+      'event_id': eventId,
+      'user_id': _supabase.auth.currentUser!.id,
+      'is_default': true,
+    });
+  }
+
+  // Create wizard connection record
+  await _supabase.from('wizard_connections').insert({
+    'wizard_state_id': _wizardStateId,
+    'event_id': eventId,
+    'connection_type': 'event_creation',
+    'is_active': true,
+  });
+}
+
+Future<void> _saveWizardState(String eventId) async {
+  // Save wizard state for future reference
+  final response = await _supabase.from('wizard_states').insert({
+    'user_id': _supabase.auth.currentUser!.id,
+    'event_type': _eventType.toString().split('.').last,
+    'current_step': _currentStep,
+    'completed_steps': _completedSteps,
+    'form_data': _eventData,
+    'is_completed': true,
+  }).select().single();
+
+  _wizardStateId = response['id'];
 }
 ```

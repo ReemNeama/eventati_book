@@ -247,6 +247,36 @@ class EventPlanningToolsScreen extends StatelessWidget {
         },
       },
       {
+        'title': 'Task Dependencies',
+        'icon': Icons.account_tree,
+        'color': Colors.teal,
+        'onTap': (BuildContext context) {
+          NavigationUtils.navigateToNamed(
+            context,
+            RouteNames.taskDependency,
+            arguments: TaskDependencyArguments(
+              eventId: eventId,
+              eventName: eventName,
+            ),
+          );
+        },
+      },
+      {
+        'title': 'Task Templates',
+        'icon': Icons.library_books,
+        'color': Colors.indigo,
+        'onTap': (BuildContext context) {
+          NavigationUtils.navigateToNamed(
+            context,
+            RouteNames.taskTemplates,
+            arguments: TaskTemplatesArguments(
+              eventId: eventId,
+              eventType: eventType,
+            ),
+          );
+        },
+      },
+      {
         'title': 'Vendor Communication',
         'icon': Icons.message,
         'color': Colors.purple,

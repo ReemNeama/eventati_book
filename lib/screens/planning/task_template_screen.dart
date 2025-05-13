@@ -1,0 +1,414 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:eventati_book/models/planning_models/task_template.dart';
+import 'package:eventati_book/providers/planning_providers/task_template_provider.dart';
+import 'package:eventati_book/styles/app_colors.dart';
+import 'package:eventati_book/styles/app_colors_dark.dart';
+import 'package:eventati_book/utils/logger.dart';
+import 'package:eventati_book/widgets/common/loading_indicator.dart';
+
+/// Screen for managing task templates
+class TaskTemplateScreen extends StatefulWidget {
+  /// Constructor
+  const TaskTemplateScreen({super.key});
+
+  @override
+  State<TaskTemplateScreen> createState() => _TaskTemplateScreenState();
+}
+
+class _TaskTemplateScreenState extends State<TaskTemplateScreen> {
+  /// Whether the screen is loading
+  bool _isLoading = false;
+
+  /// Error message
+  String? _errorMessage;
+
+  /// Selected event type filter
+  String? _selectedEventType;
+
+  /// List of event types
+  final List<String> _eventTypes = [
+    'Wedding',
+    'Business',
+    'Birthday',
+    'Anniversary',
+    'Conference',
+    'Other',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTemplates();
+  }
+
+  /// Load templates from the database
+  Future<void> _loadTemplates() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final provider = Provider.of<TaskTemplateProvider>(
+        context,
+        listen: false,
+      );
+
+      if (_selectedEventType != null) {
+        await provider.loadTemplatesByEventType(_selectedEventType!);
+      } else {
+        await provider.loadAllTemplates();
+      }
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'Error loading templates: $e';
+      });
+      Logger.e(_errorMessage!, tag: 'TaskTemplateScreen');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Task Templates'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.filter_list),
+            onPressed: _showFilterDialog,
+            tooltip: 'Filter templates',
+          ),
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () => _navigateToTemplateForm(),
+            tooltip: 'Create new template',
+          ),
+        ],
+      ),
+      body:
+          _isLoading
+              ? const LoadingIndicator()
+              : _errorMessage != null
+              ? Center(
+                child: Text(
+                  _errorMessage!,
+                  style: TextStyle(color: Colors.red[700]),
+                ),
+              )
+              : _buildTemplateList(),
+    );
+  }
+
+  /// Build the list of templates
+  Widget _buildTemplateList() {
+    return Consumer<TaskTemplateProvider>(
+      builder: (context, provider, child) {
+        final templates = provider.templates;
+
+        if (templates.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  'No templates found',
+                  style: TextStyle(fontSize: 18),
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () => _navigateToTemplateForm(),
+                  child: const Text('Create Template'),
+                ),
+              ],
+            ),
+          );
+        }
+
+        return ListView.builder(
+          itemCount: templates.length,
+          itemBuilder: (context, index) {
+            final template = templates[index];
+            return _buildTemplateCard(template);
+          },
+        );
+      },
+    );
+  }
+
+  /// Build a card for a template
+  Widget _buildTemplateCard(TaskTemplate template) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: InkWell(
+        onTap: () => _showTemplateDetails(template),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      template.name,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  _buildTemplateMenu(template),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                template.description,
+                style: TextStyle(
+                  color: isDarkMode ? Colors.grey[300] : Colors.grey[700],
+                ),
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Chip(
+                    label: Text(template.eventType),
+                    backgroundColor:
+                        isDarkMode
+                            ? AppColorsDark.info
+                            : AppColors.info.withAlpha(50),
+                  ),
+                  const SizedBox(width: 8),
+                  Chip(
+                    label: Text('${template.taskDefinitions.length} tasks'),
+                    backgroundColor:
+                        isDarkMode
+                            ? AppColorsDark.success
+                            : AppColors.success.withAlpha(50),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Build the template menu
+  Widget _buildTemplateMenu(TaskTemplate template) {
+    return PopupMenuButton<String>(
+      onSelected: (value) => _handleMenuAction(value, template),
+      itemBuilder:
+          (context) => [
+            const PopupMenuItem<String>(
+              value: 'edit',
+              child: Row(
+                children: [Icon(Icons.edit), SizedBox(width: 8), Text('Edit')],
+              ),
+            ),
+            const PopupMenuItem<String>(
+              value: 'apply',
+              child: Row(
+                children: [
+                  Icon(Icons.play_arrow),
+                  SizedBox(width: 8),
+                  Text('Apply to Event'),
+                ],
+              ),
+            ),
+            const PopupMenuItem<String>(
+              value: 'export',
+              child: Row(
+                children: [
+                  Icon(Icons.file_download),
+                  SizedBox(width: 8),
+                  Text('Export'),
+                ],
+              ),
+            ),
+            const PopupMenuItem<String>(
+              value: 'delete',
+              child: Row(
+                children: [
+                  Icon(Icons.delete, color: Colors.red),
+                  SizedBox(width: 8),
+                  Text('Delete', style: TextStyle(color: Colors.red)),
+                ],
+              ),
+            ),
+          ],
+    );
+  }
+
+  /// Handle menu actions
+  void _handleMenuAction(String action, TaskTemplate template) {
+    switch (action) {
+      case 'edit':
+        _navigateToTemplateForm(template: template);
+        break;
+      case 'apply':
+        _showApplyTemplateDialog(template);
+        break;
+      case 'export':
+        _exportTemplate(template);
+        break;
+      case 'delete':
+        _showDeleteConfirmation(template);
+        break;
+    }
+  }
+
+  /// Show template details
+  void _showTemplateDetails(TaskTemplate template) {
+    // Set the selected template in the provider
+    Provider.of<TaskTemplateProvider>(
+      context,
+      listen: false,
+    ).setSelectedTemplate(template);
+
+    // Navigate to the template details screen
+    // TODO: Implement template details screen
+  }
+
+  /// Navigate to the template form
+  void _navigateToTemplateForm({TaskTemplate? template}) {
+    // TODO: Implement template form screen
+  }
+
+  /// Show apply template dialog
+  void _showApplyTemplateDialog(TaskTemplate template) {
+    // TODO: Implement apply template dialog
+  }
+
+  /// Export template
+  void _exportTemplate(TaskTemplate template) async {
+    // TODO: Implement export template functionality
+  }
+
+  /// Show delete confirmation dialog
+  void _showDeleteConfirmation(TaskTemplate template) {
+    showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Delete Template'),
+            content: Text(
+              'Are you sure you want to delete the template "${template.name}"?',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                  await _deleteTemplate(template);
+                },
+                child: const Text(
+                  'Delete',
+                  style: TextStyle(color: Colors.red),
+                ),
+              ),
+            ],
+          ),
+    );
+  }
+
+  /// Delete a template
+  Future<void> _deleteTemplate(TaskTemplate template) async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final provider = Provider.of<TaskTemplateProvider>(
+        context,
+        listen: false,
+      );
+      final success = await provider.deleteTemplate(template.id);
+
+      if (mounted) {
+        if (success) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Template deleted successfully')),
+          );
+        } else {
+          setState(() {
+            _errorMessage = 'Failed to delete template';
+          });
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _errorMessage = 'Error deleting template: $e';
+        });
+        Logger.e(_errorMessage!, tag: 'TaskTemplateScreen');
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  /// Show filter dialog
+  void _showFilterDialog() {
+    showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Filter Templates'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text('Filter by event type:'),
+                const SizedBox(height: 16),
+                DropdownButton<String?>(
+                  isExpanded: true,
+                  value: _selectedEventType,
+                  hint: const Text('All event types'),
+                  onChanged: (value) {
+                    Navigator.of(context).pop();
+                    setState(() {
+                      _selectedEventType = value;
+                    });
+                    _loadTemplates();
+                  },
+                  items: [
+                    const DropdownMenuItem<String?>(
+                      value: null,
+                      child: Text('All event types'),
+                    ),
+                    ..._eventTypes.map(
+                      (type) => DropdownMenuItem<String?>(
+                        value: type,
+                        child: Text(type),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Cancel'),
+              ),
+            ],
+          ),
+    );
+  }
+}

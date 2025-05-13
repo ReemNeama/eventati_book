@@ -1,7 +1,7 @@
 import 'package:eventati_book/models/planning_models/task.dart'
     hide TaskCategory;
 import 'package:eventati_book/models/planning_models/task_category.dart';
-import 'package:eventati_book/providers/planning_providers/task_provider.dart';
+import 'package:eventati_book/models/planning_models/task_dependency.dart';
 import 'package:eventati_book/utils/logger.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -176,6 +176,25 @@ class TaskDatabaseService {
     }
   }
 
+  /// Add a new task with eventId from the task object
+  Future<String> addTaskWithEventId(Task task) async {
+    try {
+      if (task.eventId == null) {
+        throw Exception('Task must have an eventId');
+      }
+
+      final taskData = task.toJson();
+
+      final response =
+          await _supabase.from(_tasksTable).insert(taskData).select().single();
+
+      return response['id'];
+    } catch (e) {
+      Logger.e('Error adding task: $e', tag: 'TaskDatabaseService');
+      rethrow;
+    }
+  }
+
   /// Update an existing task
   Future<void> updateTask(String eventId, Task task) async {
     try {
@@ -217,6 +236,38 @@ class TaskDatabaseService {
         'prerequisite_task_id': dependency.prerequisiteTaskId,
         'dependent_task_id': dependency.dependentTaskId,
         'event_id': eventId,
+        'type': dependency.type.index,
+        'offset_days': dependency.offsetDays,
+        'created_at': DateTime.now().toIso8601String(),
+        'updated_at': DateTime.now().toIso8601String(),
+      };
+
+      await _supabase
+          .from(_dependenciesTable)
+          .upsert(data, onConflict: 'prerequisite_task_id, dependent_task_id');
+
+      Logger.i(
+        'Added task dependency: ${dependency.prerequisiteTaskId} -> ${dependency.dependentTaskId}',
+        tag: 'TaskDatabaseService',
+      );
+    } catch (e) {
+      Logger.e('Error adding task dependency: $e', tag: 'TaskDatabaseService');
+      rethrow;
+    }
+  }
+
+  /// Add a dependency between two tasks with explicit event ID
+  Future<void> addTaskDependencyWithEventId(
+    TaskDependency dependency,
+    String eventId,
+  ) async {
+    try {
+      final data = {
+        'prerequisite_task_id': dependency.prerequisiteTaskId,
+        'dependent_task_id': dependency.dependentTaskId,
+        'event_id': eventId,
+        'type': dependency.type.index,
+        'offset_days': dependency.offsetDays,
         'created_at': DateTime.now().toIso8601String(),
         'updated_at': DateTime.now().toIso8601String(),
       };
