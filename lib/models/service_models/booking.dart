@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/models/service_options/service_options.dart';
+import 'package:eventati_book/models/service_models/payment.dart';
 
 /// Enum representing the status of a booking
 enum BookingStatus { pending, confirmed, cancelled, completed, noShow }
@@ -110,6 +111,12 @@ class Booking {
   /// Event name associated with the booking (if any)
   final String? eventName;
 
+  /// ID of the payment for this booking
+  final String? paymentId;
+
+  /// Status of the payment for this booking
+  final PaymentStatus? paymentStatus;
+
   /// Constructor
   Booking({
     required this.id,
@@ -131,6 +138,8 @@ class Booking {
     this.eventId,
     this.eventName,
     this.serviceOptions = const {},
+    this.paymentId,
+    this.paymentStatus,
   });
 
   /// Create a copy of this booking with modified fields
@@ -154,6 +163,8 @@ class Booking {
     String? eventId,
     String? eventName,
     Map<String, dynamic>? serviceOptions,
+    String? paymentId,
+    PaymentStatus? paymentStatus,
   }) {
     return Booking(
       id: id ?? this.id,
@@ -175,6 +186,8 @@ class Booking {
       eventId: eventId ?? this.eventId,
       eventName: eventName ?? this.eventName,
       serviceOptions: serviceOptions ?? this.serviceOptions,
+      paymentId: paymentId ?? this.paymentId,
+      paymentStatus: paymentStatus ?? this.paymentStatus,
     );
   }
 
@@ -200,6 +213,8 @@ class Booking {
       'eventId': eventId,
       'eventName': eventName,
       'serviceOptions': serviceOptions,
+      'paymentId': paymentId,
+      'paymentStatus': paymentStatus?.toString().split('.').last,
     };
   }
 
@@ -225,6 +240,14 @@ class Booking {
       eventId: json['eventId'],
       eventName: json['eventName'],
       serviceOptions: json['serviceOptions'] ?? {},
+      paymentId: json['paymentId'],
+      paymentStatus:
+          json['paymentStatus'] != null
+              ? PaymentStatus.values.firstWhere(
+                (e) => e.toString() == 'PaymentStatus.${json['paymentStatus']}',
+                orElse: () => PaymentStatus.pending,
+              )
+              : null,
     );
   }
 

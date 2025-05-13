@@ -35,6 +35,8 @@ class RouteNames {
   static const String bookings = '/bookings';
   static const String bookingDetails = '/bookings/details';
   static const String bookingForm = '/bookings/form';
+  static const String payment = '/bookings/payment';
+  static const String paymentHistory = '/bookings/payment-history';
 
   // Comparison routes
   static const String savedComparisons = '/services/comparison/saved';

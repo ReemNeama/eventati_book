@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:eventati_book/models/models.dart';
+import 'package:eventati_book/models/service_models/payment.dart';
 import 'package:eventati_book/providers/providers.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/widgets/common/loading_indicator.dart';
@@ -424,6 +425,44 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
                                       ),
                                     ],
                                   ),
+                                  const SizedBox(height: 16),
+                                  // Payment status
+                                  if (booking.paymentStatus != null) ...[
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          'Payment Status:',
+                                          style: TextStyles.bodyMedium.copyWith(
+                                            color: textColor,
+                                          ),
+                                        ),
+                                        _buildPaymentStatusChip(
+                                          booking.paymentStatus!,
+                                        ),
+                                      ],
+                                    ),
+                                  ] else ...[
+                                    // Pay now button
+                                    SizedBox(
+                                      width: double.infinity,
+                                      child: ElevatedButton.icon(
+                                        onPressed:
+                                            () =>
+                                                _navigateToPayment(booking.id),
+                                        icon: const Icon(Icons.payment),
+                                        label: const Text('Pay Now'),
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.green,
+                                          foregroundColor: Colors.white,
+                                          padding: const EdgeInsets.symmetric(
+                                            vertical: 12,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ],
                               ),
                             ),
@@ -494,6 +533,41 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
     if (result == true) {
       setState(() {});
     }
+  }
+
+  /// Navigate to payment screen
+  void _navigateToPayment(String bookingId) {
+    NavigationUtils.navigateToNamed(
+      context,
+      RouteNames.payment,
+      arguments: PaymentArguments(bookingId: bookingId),
+    );
+  }
+
+  /// Build a payment status chip
+  Widget _buildPaymentStatusChip(PaymentStatus status) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: status.color.withAlpha(51), // 0.2 * 255 = 51
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: status.color),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(status.icon, size: 16, color: status.color),
+          const SizedBox(width: 4),
+          Text(
+            status.displayName,
+            style: TextStyles.bodySmall.copyWith(
+              color: status.color,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   /// Show success message

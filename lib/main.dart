@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 
 // Import app modules
 import 'package:eventati_book/styles/app_theme.dart';
@@ -18,10 +19,20 @@ import 'package:eventati_book/services/supabase/core/custom_messaging_service.da
 import 'package:eventati_book/utils/error_utils.dart';
 import 'package:eventati_book/config/supabase_options.dart';
 import 'package:eventati_book/config/posthog_options.dart';
+import 'package:eventati_book/config/stripe_options.dart';
 
 void main() async {
   // Ensure Flutter is initialized
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Stripe
+  try {
+    Stripe.publishableKey = StripeOptions.publishableKey;
+    await Stripe.instance.applySettings();
+    debugPrint('Stripe initialized successfully');
+  } catch (e) {
+    debugPrint('Stripe initialization failed: $e');
+  }
 
   // Initialize Supabase
   try {

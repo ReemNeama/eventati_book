@@ -9,6 +9,7 @@ import 'package:eventati_book/routing/route_performance.dart';
 import 'package:eventati_book/screens/screens.dart';
 import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/services/supabase/database/service_database_service.dart';
+import 'package:eventati_book/services/supabase/database/booking_database_service.dart';
 import 'package:eventati_book/di/service_locator.dart';
 import 'package:eventati_book/providers/planning_providers/task_template_provider.dart';
 import 'package:eventati_book/screens/testing/task_database_test_screen.dart';
@@ -343,6 +344,40 @@ class AppRouter {
           builder: (context) => const PersonalizedRecommendationsScreen(),
         );
 
+      case RouteNames.payment:
+        final args = settings.arguments as PaymentArguments;
+        // Return a FutureBuilder route to handle the async booking fetch
+        return MaterialPageRoute(
+          builder:
+              (context) => FutureBuilder<Booking?>(
+                future: getBookingById(args.bookingId),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Scaffold(
+                      body: Center(child: CircularProgressIndicator()),
+                    );
+                  } else if (snapshot.hasError) {
+                    return Scaffold(
+                      appBar: AppBar(title: const Text('Error')),
+                      body: Center(child: Text('Error: ${snapshot.error}')),
+                    );
+                  } else if (snapshot.hasData && snapshot.data != null) {
+                    return PaymentScreen(booking: snapshot.data!);
+                  } else {
+                    return Scaffold(
+                      appBar: AppBar(title: const Text('Booking Not Found')),
+                      body: const Center(child: Text('Booking not found')),
+                    );
+                  }
+                },
+              ),
+        );
+
+      case RouteNames.paymentHistory:
+        return MaterialPageRoute(
+          builder: (context) => const PaymentHistoryScreen(),
+        );
+
       case RouteNames.eventDetails:
         // In a real app, you would fetch the event from the database using the eventId
         // For now, we'll redirect to the UserEventsScreen
@@ -473,6 +508,17 @@ class AppRouter {
         equipment: ['Professional Camera', 'Lighting Equipment'],
         packages: ['Basic Package', 'Premium Package'],
       );
+    }
+  }
+
+  /// Get a Booking by ID
+  static Future<Booking?> getBookingById(String id) async {
+    try {
+      final bookingDatabase = serviceLocator.get<BookingDatabaseService>();
+      return await bookingDatabase.getBooking(id);
+    } catch (e) {
+      debugPrint('Error getting booking: $e');
+      return null;
     }
   }
 

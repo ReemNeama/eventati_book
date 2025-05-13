@@ -195,3 +195,15 @@ class TaskTemplateFormArguments extends RouteArguments {
     this.eventType,
   }) : super();
 }
+
+/// Arguments for payment screen
+class PaymentArguments extends RouteArguments {
+  final String bookingId;
+
+  const PaymentArguments({required this.bookingId}) : super();
+}
+
+/// Arguments for payment history screen
+class PaymentHistoryArguments extends RouteArguments {
+  const PaymentHistoryArguments() : super();
+}
