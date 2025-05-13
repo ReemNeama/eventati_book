@@ -212,6 +212,14 @@
 ### Current Blockers
 - None at the moment
 
+### Recent Progress (May 13, 2024)
+- Fixed test issues after Supabase migration:
+  - Updated offline_indicator_test.dart to use a simplified test widget that doesn't make real network calls
+  - Fixed wizard_connection_service_test.dart by adding proper fallback values for models and updating mock methods
+  - All tests now pass successfully
+- Updated SUPABASE_MIGRATION.md documentation with details about the test fixes
+- Completed the migration from Firebase to Supabase
+
 ### Current Development Focus (Based on Codebase Accomplishment Report - 85% Complete)
 
 #### High Priority (Critical Areas)
@@ -234,7 +242,9 @@
   - ✅ Supabase Storage configured for images
   - ✅ Data migration strategy implemented from tempDB to Supabase
 
-- Testing & Code Quality (40% complete)
+- Testing & Code Quality (45% complete)
+  - ✅ Fix offline_indicator_test.dart to work without network dependencies
+  - ✅ Update wizard_connection_service_test.dart to work with Supabase
   - Increase test coverage across the codebase
   - Complete placeholder tests
   - Implement integration tests for key user flows
@@ -401,12 +411,14 @@
   3. [x] Add data validation during migration
   4. [x] Implement rollback mechanisms
 
-#### Priority 2: Testing & Code Quality (40% complete)
+#### Priority 2: Testing & Code Quality (45% complete)
 - [ ] Increase Test Coverage
-  1. [ ] Complete unit tests for all models
-  2. [ ] Add tests for providers
-  3. [ ] Implement widget tests for key UI components
-  4. [ ] Create integration tests for critical user flows
+  1. [x] Fix offline_indicator_test.dart to work without network dependencies
+  2. [x] Update wizard_connection_service_test.dart to work with Supabase
+  3. [ ] Complete unit tests for all models
+  4. [ ] Add tests for providers
+  5. [ ] Implement widget tests for key UI components
+  6. [ ] Create integration tests for critical user flows
 
 - [ ] Improve Code Quality Tools
   1. [ ] Configure additional code quality metrics
