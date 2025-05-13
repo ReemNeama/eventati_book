@@ -1,10 +1,67 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:provider/provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:eventati_book/providers/providers.dart';
 import 'package:eventati_book/services/wizard_connection_service.dart';
+import 'package:eventati_book/services/supabase/database/task_database_service.dart';
+import 'package:eventati_book/services/supabase/database/budget_database_service.dart';
+import 'package:eventati_book/services/supabase/database/guest_database_service.dart';
+import 'package:eventati_book/services/supabase/database/wizard_connection_database_service.dart';
+import 'package:eventati_book/models/planning_models/task_category.dart';
+
+// Mock classes
+class MockSupabaseClient extends Mock implements SupabaseClient {}
+
+class MockGoTrueClient extends Mock implements GoTrueClient {}
+
+class MockUser extends Mock implements User {}
+
+class MockTaskDatabaseService extends Mock implements TaskDatabaseService {}
+
+class MockBudgetDatabaseService extends Mock implements BudgetDatabaseService {}
+
+class MockGuestDatabaseService extends Mock implements GuestDatabaseService {}
+
+class MockWizardConnectionDatabaseService extends Mock
+    implements WizardConnectionDatabaseService {}
+
+// Mock Supabase singleton
+class MockSupabase {
+  static final MockSupabase _instance = MockSupabase._internal();
+  factory MockSupabase() => _instance;
+  MockSupabase._internal();
+
+  late MockSupabaseClient client;
+  late MockGoTrueClient auth;
+  late MockUser currentUser;
+  bool _initialized = false;
+
+  void initialize() {
+    client = MockSupabaseClient();
+    auth = MockGoTrueClient();
+    currentUser = MockUser();
+
+    when(() => client.auth).thenReturn(auth);
+    when(() => auth.currentUser).thenReturn(currentUser);
+    when(() => currentUser.id).thenReturn('test_user_id');
+
+    _initialized = true;
+  }
+
+  bool get initialized => _initialized;
+}
+
+// Override the Supabase.instance getter
+@pragma('vm:entry-point')
+SupabaseClient get mockSupabaseClient => MockSupabase().client;
 
 void main() {
+  // Initialize mock Supabase before tests
+  setUpAll(() {
+    MockSupabase().initialize();
+  });
   group('WizardConnectionService', () {
     late Map<String, dynamic> mockWizardData;
 
@@ -135,12 +192,55 @@ void main() {
     testWidgets('connectToTimeline should create tasks', (
       WidgetTester tester,
     ) async {
+      // Create mock database services
+      final mockTaskDatabaseService = MockTaskDatabaseService();
+
+      // Set up mock responses
+      when(
+        () => mockTaskDatabaseService.getTasks(any()),
+      ).thenAnswer((_) async => []);
+      when(
+        () => mockTaskDatabaseService.addTask(any(), any()),
+      ).thenAnswer((_) async => 'task_id');
+
+      // Create mock task categories
+      final mockCategories = [
+        TaskCategory(
+          id: '1',
+          name: 'Venue',
+          description: 'Venue tasks',
+          icon: 'location_on',
+          color: '#4CAF50',
+          isDefault: true,
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        ),
+        TaskCategory(
+          id: '2',
+          name: 'Catering',
+          description: 'Catering tasks',
+          icon: 'restaurant',
+          color: '#FF9800',
+          isDefault: true,
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        ),
+      ];
+      when(
+        () => mockTaskDatabaseService.getTaskCategories(any()),
+      ).thenAnswer((_) async => mockCategories);
+
       // Create a test widget with the TaskProvider
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: ChangeNotifierProvider(
-              create: (_) => TaskProvider(eventId: 'test_event'),
+              create:
+                  (_) => TaskProvider(
+                    eventId: 'test_event',
+                    taskDatabaseService: mockTaskDatabaseService,
+                    loadFromDatabase: false,
+                  ),
               child: Builder(
                 builder: (context) {
                   return ElevatedButton(
@@ -191,6 +291,73 @@ void main() {
     testWidgets('connectToAllPlanningTools should connect to all tools', (
       WidgetTester tester,
     ) async {
+      // Create mock database services
+      final mockTaskDatabaseService = MockTaskDatabaseService();
+      final mockBudgetDatabaseService = MockBudgetDatabaseService();
+      final mockGuestDatabaseService = MockGuestDatabaseService();
+      final mockWizardConnectionDatabaseService =
+          MockWizardConnectionDatabaseService();
+
+      // Set up mock responses for task service
+      when(
+        () => mockTaskDatabaseService.getTasks(any()),
+      ).thenAnswer((_) async => []);
+      when(
+        () => mockTaskDatabaseService.addTask(any(), any()),
+      ).thenAnswer((_) async => 'task_id');
+
+      // Create mock task categories
+      final mockCategories = [
+        TaskCategory(
+          id: '1',
+          name: 'Venue',
+          description: 'Venue tasks',
+          icon: 'location_on',
+          color: '#4CAF50',
+          isDefault: true,
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        ),
+        TaskCategory(
+          id: '2',
+          name: 'Catering',
+          description: 'Catering tasks',
+          icon: 'restaurant',
+          color: '#FF9800',
+          isDefault: true,
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        ),
+      ];
+      when(
+        () => mockTaskDatabaseService.getTaskCategories(any()),
+      ).thenAnswer((_) async => mockCategories);
+
+      // Set up mock responses for budget service
+      when(
+        () => mockBudgetDatabaseService.getBudgetItems(any()),
+      ).thenAnswer((_) async => []);
+      when(
+        () => mockBudgetDatabaseService.addBudgetItem(any(), any()),
+      ).thenAnswer((_) async => 'budget_item_id');
+
+      // Set up mock responses for guest service
+      when(
+        () => mockGuestDatabaseService.getGuestGroups(any()),
+      ).thenAnswer((_) async => []);
+      when(
+        () => mockGuestDatabaseService.addGuestGroup(any(), any()),
+      ).thenAnswer((_) async => 'guest_group_id');
+
+      // Set up mock responses for wizard connection service
+      when(
+        () => mockWizardConnectionDatabaseService.saveWizardConnection(
+          any(),
+          any(),
+          any(),
+        ),
+      ).thenAnswer((_) async => {});
+
       // Create a test widget with all providers
       await tester.pumpWidget(
         MaterialApp(
@@ -207,12 +374,14 @@ void main() {
                   create:
                       (_) => TaskProvider(
                         eventId: 'test_event',
+                        taskDatabaseService: mockTaskDatabaseService,
                         loadFromDatabase: false, // Use mock data for tests
                       ),
                 ),
                 ChangeNotifierProvider(
                   create: (_) => ServiceRecommendationProvider(),
                 ),
+                ChangeNotifierProvider(create: (_) => WizardProvider()),
               ],
               child: Builder(
                 builder: (context) {
