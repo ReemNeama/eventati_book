@@ -378,6 +378,16 @@ class AppRouter {
           builder: (context) => const PaymentHistoryScreen(),
         );
 
+      case RouteNames.notifications:
+        return MaterialPageRoute(
+          builder: (context) => const NotificationListScreen(),
+        );
+
+      case RouteNames.notificationPreferences:
+        return MaterialPageRoute(
+          builder: (context) => const NotificationPreferencesScreen(),
+        );
+
       case RouteNames.eventDetails:
         // In a real app, you would fetch the event from the database using the eventId
         // For now, we'll redirect to the UserEventsScreen

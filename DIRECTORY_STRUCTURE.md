@@ -46,6 +46,10 @@ models/
 ├── feature_models/             # Feature-specific models
 │   ├── saved_comparison.dart     # Saved comparison model
 │   └── comparison_annotation.dart # Comparison annotation model
+├── notification_models/        # Notification-related models
+│   ├── notification.dart         # Notification model
+│   ├── notification_settings.dart # Notification settings model
+│   └── notification_topic.dart   # Notification topic model
 ├── planning_models/            # Planning tool models
 ├── service_models/             # Service-related models
 ├── service_options/            # Service options models
@@ -85,7 +89,11 @@ screens/
 │   └── timeline/               # Timeline and checklist screens
 ├── event_wizard/               # Event wizard screens
 ├── homepage/                   # Homepage screens
+├── notification/               # Notification screens
+│   └── notification_list_screen.dart # Notification list screen
 ├── profile/                    # Profile screens
+├── settings/                   # Settings screens
+│   └── notification_preferences_screen.dart # Notification preferences screen
 └── services/                   # Service screens
     ├── common/                 # Common service screens
     ├── venue/                  # Venue screens
@@ -120,6 +128,11 @@ services/
 ├── booking/                    # Booking services
 ├── comparison/                 # Comparison services
 ├── event/                      # Event services
+├── notification/               # Notification services
+│   ├── README.md                   # Documentation
+│   ├── email_service.dart          # Email notification service
+│   ├── notification_service.dart   # Notification service
+│   └── reminder_service.dart       # Reminder service
 ├── search/                     # Search services
 ├── suggestion/                 # Suggestion services
 ├── task_template_service.dart  # Task template service
@@ -177,6 +190,9 @@ widgets/
 ├── event_wizard/               # Event wizard widgets
 ├── messaging/                  # General messaging widgets
 ├── milestones/                 # Milestone widgets
+├── notification/               # Notification widgets
+│   ├── notification_badge.dart   # Notification badge widget
+│   └── notification_center.dart  # Notification center widget
 ├── responsive/                 # Responsive design widgets
 └── services/                   # Service widgets
     └── comparison/             # Comparison widgets

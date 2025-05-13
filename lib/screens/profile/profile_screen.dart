@@ -4,7 +4,6 @@ import 'package:eventati_book/widgets/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:eventati_book/routing/routing.dart';
 import 'package:eventati_book/screens/profile/edit_profile_screen.dart';
-import 'package:eventati_book/screens/settings/notification_settings_screen.dart';
 
 /// Profile screen that displays user information and settings
 class ProfileScreen extends StatelessWidget {
@@ -131,13 +130,7 @@ class ProfileScreen extends StatelessWidget {
                   title: 'Notifications',
                   onTap: () {
                     // Navigate to notification settings screen
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder:
-                            (context) => const NotificationSettingsScreen(),
-                      ),
-                    );
+                    Navigator.pushNamed(context, RouteNames.notifications);
                   },
                 ),
                 _buildSettingItem(

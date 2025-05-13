@@ -47,3 +47,13 @@ export 'planning_providers/planning_providers.dart';
 // - MessagingProvider: Vendor messaging
 // - TaskProvider: Tasks and checklists
 // - BookingProvider: Service bookings
+
+// -------------------------
+// NOTIFICATION PROVIDERS
+// -------------------------
+// Providers related to notifications
+// These handle state management for notification features
+export 'notification_provider.dart';
+
+// Includes:
+// - NotificationProvider: Notification management

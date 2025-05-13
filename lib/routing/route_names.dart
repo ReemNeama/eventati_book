@@ -71,6 +71,13 @@ class RouteNames {
   // Profile routes
   static const String profile = '/profile';
 
+  // Notification routes
+  static const String notifications = '/notifications';
+
+  // Settings routes
+  static const String notificationPreferences =
+      '/settings/notification-preferences';
+
   // Testing routes
   static const String taskDatabaseTest = '/testing/task-database';
 }

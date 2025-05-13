@@ -14,6 +14,7 @@ export 'database/booking_database_service.dart';
 export 'database/budget_database_service.dart';
 export 'database/event_database_service.dart';
 export 'database/guest_database_service.dart';
+export 'database/notification_database_service.dart';
 export 'database/service_database_service.dart';
 export 'database/task_database_service.dart';
 export 'database/user_database_service.dart';

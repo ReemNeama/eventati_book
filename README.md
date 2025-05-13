@@ -25,6 +25,12 @@ Eventati Book is designed to help users advertise and manage venues for differen
    - Everything is integrated in one place - browsing, purchasing, and management
    - The unified experience makes event planning significantly easier
 
+4. **Notification System**
+   - In-app notifications for booking updates, reminders, and system messages
+   - Email notifications for important events
+   - Customizable notification preferences
+   - Reminders for upcoming bookings and events
+
 ## Technical Architecture
 
 - **Frontend**: Flutter for cross-platform mobile development
@@ -58,6 +64,7 @@ Comprehensive documentation is available in the `docs/` directory:
 - **[Event Planning Tools](docs/event_planning_tools.md)**: Event planning tools flow and components
 - **[Event Wizard Flow](docs/event_wizard_flow.md)**: Event wizard flow and components
 - **[Task Dependency System](docs/task_dependency_system.md)**: Detailed documentation of the task dependency implementation
+- **[Notification System](docs/notification_system.md)**: Notification system architecture and components
 - **[Supabase Setup](SUPABASE_SETUP.md)**: Detailed setup instructions for Supabase
 - **[Supabase Migration](SUPABASE_MIGRATION.md)**: Documentation of the migration from Firebase/tempDB to Supabase
 

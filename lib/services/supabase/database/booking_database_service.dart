@@ -210,4 +210,73 @@ class BookingDatabaseService {
       return [];
     }
   }
+
+  /// Get upcoming bookings for a user
+  Future<List<Booking>> getUpcomingBookings(String userId) async {
+    try {
+      final now = DateTime.now().toIso8601String();
+
+      final response = await _supabase
+          .from(_bookingsTable)
+          .select()
+          .eq('user_id', userId)
+          .gte('booking_date_time', now)
+          .order('booking_date_time', ascending: true);
+
+      return response.map<Booking>((data) => Booking.fromJson(data)).toList();
+    } catch (e) {
+      Logger.e(
+        'Error getting upcoming bookings: $e',
+        tag: 'BookingDatabaseService',
+      );
+      return [];
+    }
+  }
+
+  /// Get bookings that need reminders
+  Future<List<Booking>> getBookingsNeedingReminders() async {
+    try {
+      final now = DateTime.now();
+      final sevenDaysFromNow =
+          now.add(const Duration(days: 7)).toIso8601String();
+      final oneDayFromNow = now.add(const Duration(days: 1)).toIso8601String();
+
+      final response = await _supabase
+          .from(_bookingsTable)
+          .select()
+          .gte('booking_date_time', oneDayFromNow)
+          .lte('booking_date_time', sevenDaysFromNow)
+          .order('booking_date_time', ascending: true);
+
+      return response.map<Booking>((data) => Booking.fromJson(data)).toList();
+    } catch (e) {
+      Logger.e(
+        'Error getting bookings needing reminders: $e',
+        tag: 'BookingDatabaseService',
+      );
+      return [];
+    }
+  }
+
+  /// Update booking status
+  Future<void> updateBookingStatus(
+    String bookingId,
+    BookingStatus status,
+  ) async {
+    try {
+      await _supabase
+          .from(_bookingsTable)
+          .update({
+            'status': status.index,
+            'updated_at': DateTime.now().toIso8601String(),
+          })
+          .eq('id', bookingId);
+    } catch (e) {
+      Logger.e(
+        'Error updating booking status: $e',
+        tag: 'BookingDatabaseService',
+      );
+      rethrow;
+    }
+  }
 }

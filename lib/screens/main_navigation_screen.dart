@@ -5,6 +5,8 @@ import 'package:eventati_book/screens/events/user_events_screen.dart';
 import 'package:eventati_book/screens/profile/profile_screen.dart';
 import 'package:eventati_book/screens/event_wizard/suggestion_screen.dart';
 import 'package:eventati_book/screens/booking/booking_history_screen.dart';
+import 'package:eventati_book/widgets/notification/notification_badge.dart';
+import 'package:eventati_book/routing/route_names.dart';
 
 /// Main navigation screen that hosts the bottom navigation bar
 /// and manages switching between the main app sections
@@ -35,12 +37,45 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     ];
   }
 
+  /// Get the app bar title based on the current index
+  String _getAppBarTitle() {
+    switch (_currentIndex) {
+      case 0:
+        return 'Home';
+      case 1:
+        return 'Services';
+      case 2:
+        return 'My Events';
+      case 3:
+        return 'Bookings';
+      case 4:
+        return 'Suggestions';
+      default:
+        return 'Eventati Book';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDarkMode = theme.brightness == Brightness.dark;
 
     return Scaffold(
+      appBar:
+          _currentIndex != 5
+              ? AppBar(
+                title: Text(_getAppBarTitle()),
+                actions: [
+                  InkWell(
+                    onTap: () {
+                      Navigator.pushNamed(context, RouteNames.notifications);
+                    },
+                    child: const NotificationBadge(),
+                  ),
+                  const SizedBox(width: 16),
+                ],
+              )
+              : null,
       body: _screens[_currentIndex],
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(

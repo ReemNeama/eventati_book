@@ -80,6 +80,9 @@ class ProvidersManager {
               previous ?? ComparisonSavingProvider(authProvider),
       lazy: true,
     ),
+
+    // Notification providers
+    ChangeNotifierProvider(create: (_) => NotificationProvider(), lazy: true),
   ];
 
   /// Initialize all providers that need initialization
@@ -113,5 +116,8 @@ class ProvidersManager {
 
     // Access EventProvider to ensure it's initialized
     Provider.of<EventProvider>(context, listen: false);
+
+    // Initialize notification provider
+    Provider.of<NotificationProvider>(context, listen: false);
   }
 }

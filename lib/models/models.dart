@@ -62,6 +62,15 @@ export 'feature_models/suggestion.dart'; // Suggestions based on user preference
 export 'service_options/service_options.dart'; // Barrel file for service options
 
 // -------------------------
+// NOTIFICATION MODELS
+// -------------------------
+// Models for notifications and notification preferences
+export 'notification_models/notification_models.dart'; // Barrel file for notification models
+export 'notification_models/notification.dart'; // Notification data model
+export 'notification_models/notification_settings.dart'; // User notification preferences
+export 'notification_models/notification_topic.dart'; // Notification topics
+
+// -------------------------
 // LEGACY EXPORTS
 // -------------------------
 // Backward compatibility re-exports (will be removed in future)

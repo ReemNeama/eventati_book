@@ -117,10 +117,10 @@
 - [x] Add date/time selection for service delivery
 
 ### Week 5: Notification System
-- [ ] Implement in-app notifications for booking updates
-- [ ] Add email notification functionality
-- [ ] Create reminder system for upcoming bookings
-- [ ] Build notification preferences settings
+- [x] Implement in-app notifications for booking updates
+- [x] Add email notification functionality
+- [x] Create reminder system for upcoming bookings
+- [x] Build notification preferences settings
 
 ## Phase 4: Comparison & Integration Features
 
@@ -212,7 +212,19 @@
 ### Current Blockers
 - None at the moment
 
-### Recent Progress (May 14, 2024)
+### Recent Progress (May 15, 2024)
+- Implemented notification system:
+  - Created Notification model with NotificationType enum and helper methods
+  - Implemented NotificationDatabaseService for Supabase operations
+  - Created NotificationService for handling notification operations
+  - Implemented EmailService for sending email notifications
+  - Created ReminderService for scheduling and sending reminders
+  - Implemented NotificationCenter widget for displaying notifications
+  - Added NotificationBadge widget to show unread notification count
+  - Created NotificationPreferencesScreen for managing notification settings
+  - Added Supabase Edge Function for sending emails
+  - Created SQL migration for notification tables
+  - Updated BookingDatabaseService to include notification-related methods
 - Implemented payment functionality:
   - Created Payment model with PaymentStatus enum and helper methods
   - Added payment-related fields to Booking model

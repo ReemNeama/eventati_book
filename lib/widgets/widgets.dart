@@ -112,6 +112,15 @@ export 'responsive/responsive.dart'; // Barrel file for responsive widgets
 // - ResponsiveLayout: Layout that adapts to screen size
 
 // -------------------------
+// NOTIFICATION WIDGETS
+// -------------------------
+// Widgets for displaying notifications
+export 'notification/notification_widgets.dart'; // Barrel file for notification widgets
+// Includes:
+// - NotificationBadge: Badge showing unread notification count
+// - NotificationCenter: Dropdown for displaying notifications
+
+// -------------------------
 // SPECIAL NOTES
 // -------------------------
 // Note: Messaging widgets are exported through event_planning_widgets.dart

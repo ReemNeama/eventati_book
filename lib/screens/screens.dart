@@ -30,6 +30,12 @@ export 'event_wizard/event_wizard_screens.dart';
 // Booking screens
 export 'booking/booking_screens.dart';
 
+// Notification screens
+export 'notification/notification_screens.dart';
+
+// Settings screens
+export 'settings/settings_screens.dart';
+
 // Guard-related screens
 export 'guards/guards.dart';
 

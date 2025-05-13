@@ -113,8 +113,8 @@ This document provides a visual representation of the Eventati Book application'
 │  │                 │  │ │ └─────────────┘   │ │  │                 │  │
 │  │ - MilestoneProvider│ │                   │ │  │ - date_utils    │  │
 │  │ - SuggestionProvider│ │ ┌─────────────┐   │ │  │ - number_utils  │  │
-│  │ - ComparisonProvider│ │ │  (Future)   │   │ │  │ - string_utils  │  │
-│  └─────────────────┘  │ │ │             │   │ │  └─────────────────┘  │
+│  │ - ComparisonProvider│ │ │  Services   │   │ │  │ - string_utils  │  │
+│  │ - NotificationProvider│ │             │   │ │  └─────────────────┘  │
 │                       │ │ │ - AuthService│   │ │                        │
 │  ┌─────────────────┐  │ │ │ - EventService│  │ │  ┌─────────────────┐  │
 │  │Planning Providers│  │ │ │ - BookingService│ │  │      Service    │  │
@@ -189,6 +189,8 @@ This document provides a visual representation of the Eventati Book application'
 │  │                 │  │ │                   │ │                        │
 │  │ - suggestion    │  │ │                   │ │                        │
 │  │ - saved_comparison│ │                   │ │                        │
+│  │ - notification  │  │ │                   │ │                        │
+│  │ - notification_settings│                │ │                        │
 │  └─────────────────┘  │ │                   │ │                        │
 └───────────────────────┘ └───────────────────┘ └───────────────────────┘
 ```
