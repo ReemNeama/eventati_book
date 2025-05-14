@@ -210,9 +210,42 @@
 ## Notes & Issues
 
 ### Current Blockers
-- None at the moment
+- Test failures in notification system:
+  - Notification badge tests failing due to null values in mock provider
+  - Notification center tests failing due to UI overflow issues and navigation errors
+  - Need to update mock notification provider to properly handle unreadCount
+  - Need to fix UI overflow issues in notification center
+  - Need to add proper navigation routes for notification tests
 
-### Recent Progress (May 15, 2024)
+### Test Issues to Fix
+- [ ] Fix notification badge tests:
+  - [ ] Update MockNotificationProvider to properly implement unreadCount
+  - [ ] Fix "type 'Null' is not a subtype of type 'int'" error in notification badge tests
+  - [ ] Fix icon finding in notification badge tests
+- [ ] Fix notification center tests:
+  - [ ] Fix RenderFlex overflow in notification center UI
+  - [ ] Add proper navigation routes for notification tests
+  - [ ] Fix verify() calls in notification center tests
+- [ ] Fix wizard connection tests:
+  - [ ] Fix "connectToBudget should create budget items" test
+  - [ ] Implement proper Supabase and MessagingService mocking
+- [ ] Update verify_models.dart script:
+  - [ ] Implement proper schema verification for empty tables
+  - [ ] Add data generation for testing model verification
+
+### Recent Progress (May 16, 2024)
+- Implemented task template system:
+  - Added addTaskCategory, updateTaskCategory, and deleteTaskCategory methods to TaskDatabaseService
+  - Updated task_test_data_generator.dart to use the new methods
+  - Fixed code quality issues in task_template_details_screen.dart
+  - Fixed use_build_context_synchronously issue in task_template_screen.dart
+  - Fixed implements_non_class issue in test_setup.dart
+  - Added supabase as a direct dependency for scripts
+  - Updated verify_models.dart script to work with Supabase
+  - Identified and documented test failures in notification system and wizard connection tests
+  - Updated development tracker with detailed test issues to fix
+
+### Previous Progress (May 15, 2024)
 - Implemented notification system:
   - Created Notification model with NotificationType enum and helper methods
   - Implemented NotificationDatabaseService for Supabase operations
@@ -263,9 +296,22 @@
   - ✅ Supabase Storage configured for images
   - ✅ Data migration strategy implemented from tempDB to Supabase
 
-- Testing & Code Quality (45% complete)
+- Testing & Code Quality (50% complete)
   - ✅ Fix offline_indicator_test.dart to work without network dependencies
   - ✅ Update wizard_connection_service_test.dart to work with Supabase
+  - ✅ Implement task template system with proper tests
+  - ✅ Fix code quality issues in task_template_details_screen.dart
+  - ✅ Fix use_build_context_synchronously issue in task_template_screen.dart
+  - ✅ Fix implements_non_class issue in test_setup.dart
+  - ✅ Add supabase as a direct dependency for scripts
+  - ✅ Update verify_models.dart script to work with Supabase
+  - Fix notification system tests:
+    - Fix notification badge tests with proper mock implementation
+    - Fix notification center tests with UI overflow fixes
+    - Add proper navigation routes for notification tests
+  - Fix wizard connection tests:
+    - Fix "connectToBudget should create budget items" test
+    - Implement proper Supabase and MessagingService mocking
   - Increase test coverage across the codebase
   - Complete placeholder tests
   - Implement integration tests for key user flows
@@ -432,14 +478,30 @@
   3. [x] Add data validation during migration
   4. [x] Implement rollback mechanisms
 
-#### Priority 2: Testing & Code Quality (45% complete)
+#### Priority 2: Testing & Code Quality (50% complete)
 - [ ] Increase Test Coverage
   1. [x] Fix offline_indicator_test.dart to work without network dependencies
   2. [x] Update wizard_connection_service_test.dart to work with Supabase
-  3. [ ] Complete unit tests for all models
-  4. [ ] Add tests for providers
-  5. [ ] Implement widget tests for key UI components
-  6. [ ] Create integration tests for critical user flows
+  3. [x] Implement task template system with proper tests
+  4. [x] Fix code quality issues in task_template_details_screen.dart
+  5. [x] Fix use_build_context_synchronously issue in task_template_screen.dart
+  6. [x] Fix implements_non_class issue in test_setup.dart
+  7. [x] Add supabase as a direct dependency for scripts
+  8. [x] Update verify_models.dart script to work with Supabase
+  9. [ ] Fix notification system tests:
+     - [ ] Update MockNotificationProvider to properly implement unreadCount
+     - [ ] Fix "type 'Null' is not a subtype of type 'int'" error in notification badge tests
+     - [ ] Fix icon finding in notification badge tests
+     - [ ] Fix RenderFlex overflow in notification center UI
+     - [ ] Add proper navigation routes for notification tests
+     - [ ] Fix verify() calls in notification center tests
+  10. [ ] Fix wizard connection tests:
+     - [ ] Fix "connectToBudget should create budget items" test
+     - [ ] Implement proper Supabase and MessagingService mocking
+  11. [ ] Complete unit tests for all models
+  12. [ ] Add tests for providers
+  13. [ ] Implement widget tests for key UI components
+  14. [ ] Create integration tests for critical user flows
 
 - [ ] Improve Code Quality Tools
   1. [ ] Configure additional code quality metrics
