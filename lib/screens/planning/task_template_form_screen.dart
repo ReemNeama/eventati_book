@@ -458,12 +458,230 @@ class _TaskTemplateFormScreenState extends State<TaskTemplateFormScreen> {
 
   /// Add a task definition
   void _addTaskDefinition() {
-    // TODO: Implement task definition form dialog
+    final taskDefinition = TaskDefinition(
+      id: 'task_${DateTime.now().millisecondsSinceEpoch}',
+      title: '',
+      description: '',
+      categoryId: '1', // Default category
+      daysBeforeEvent: 30, // Default: 30 days before event
+      isImportant: false,
+      service: 'General', // Default service
+    );
+
+    _showTaskDefinitionDialog(taskDefinition: taskDefinition, isNew: true);
+  }
+
+  /// Show task definition dialog
+  void _showTaskDefinitionDialog({
+    required TaskDefinition taskDefinition,
+    required bool isNew,
+  }) {
+    final titleController = TextEditingController(text: taskDefinition.title);
+    final descriptionController = TextEditingController(
+      text: taskDefinition.description ?? '',
+    );
+    final daysBeforeEventController = TextEditingController(
+      text: taskDefinition.daysBeforeEvent.toString(),
+    );
+
+    String selectedCategoryId = taskDefinition.categoryId;
+    String selectedService = taskDefinition.service;
+    bool isImportant = taskDefinition.isImportant;
+
+    // Available categories
+    final categories = [
+      {'id': '1', 'name': 'Planning'},
+      {'id': '2', 'name': 'Venue'},
+      {'id': '3', 'name': 'Catering'},
+      {'id': '4', 'name': 'Decoration'},
+      {'id': '5', 'name': 'Entertainment'},
+      {'id': '6', 'name': 'Photography'},
+      {'id': '7', 'name': 'Transportation'},
+    ];
+
+    // Available services
+    final services = [
+      'General',
+      'Venue',
+      'Catering',
+      'Photography',
+      'Videography',
+      'Entertainment',
+      'Decoration',
+      'Transportation',
+      'Attire',
+      'Stationery',
+    ];
+
+    showDialog(
+      context: context,
+      builder:
+          (context) => StatefulBuilder(
+            builder:
+                (context, setState) => AlertDialog(
+                  title: Text(isNew ? 'Add Task' : 'Edit Task'),
+                  content: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        TextField(
+                          controller: titleController,
+                          decoration: const InputDecoration(
+                            labelText: 'Title',
+                            hintText: 'Enter task title',
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        TextField(
+                          controller: descriptionController,
+                          decoration: const InputDecoration(
+                            labelText: 'Description',
+                            hintText: 'Enter task description',
+                          ),
+                          maxLines: 3,
+                        ),
+                        const SizedBox(height: 16),
+                        DropdownButtonFormField<String>(
+                          value: selectedCategoryId,
+                          decoration: const InputDecoration(
+                            labelText: 'Category',
+                          ),
+                          items:
+                              categories.map((category) {
+                                return DropdownMenuItem<String>(
+                                  value: category['id'],
+                                  child: Text(category['name']!),
+                                );
+                              }).toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              selectedCategoryId = value!;
+                            });
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        DropdownButtonFormField<String>(
+                          value: selectedService,
+                          decoration: const InputDecoration(
+                            labelText: 'Service',
+                          ),
+                          items:
+                              services.map((service) {
+                                return DropdownMenuItem<String>(
+                                  value: service,
+                                  child: Text(service),
+                                );
+                              }).toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              selectedService = value!;
+                            });
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        TextField(
+                          controller: daysBeforeEventController,
+                          decoration: const InputDecoration(
+                            labelText: 'Days Before Event',
+                            hintText: 'Enter number of days',
+                          ),
+                          keyboardType: TextInputType.number,
+                        ),
+                        const SizedBox(height: 16),
+                        Row(
+                          children: [
+                            Checkbox(
+                              value: isImportant,
+                              onChanged: (value) {
+                                setState(() {
+                                  isImportant = value!;
+                                });
+                              },
+                            ),
+                            const Text('Mark as Important'),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Text('Cancel'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        // Validate inputs
+                        if (titleController.text.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Title is required')),
+                          );
+                          return;
+                        }
+
+                        int daysBeforeEvent;
+                        try {
+                          daysBeforeEvent = int.parse(
+                            daysBeforeEventController.text,
+                          );
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'Days before event must be a number',
+                              ),
+                            ),
+                          );
+                          return;
+                        }
+
+                        // Create updated task definition
+                        final updatedTaskDefinition = TaskDefinition(
+                          id: taskDefinition.id,
+                          title: titleController.text,
+                          description:
+                              descriptionController.text.isEmpty
+                                  ? null
+                                  : descriptionController.text,
+                          categoryId: selectedCategoryId,
+                          daysBeforeEvent: daysBeforeEvent,
+                          isImportant: isImportant,
+                          service: selectedService,
+                        );
+
+                        // Update state
+                        setState(() {
+                          if (isNew) {
+                            _taskDefinitions.add(updatedTaskDefinition);
+                          } else {
+                            final index = _taskDefinitions.indexWhere(
+                              (t) => t.id == taskDefinition.id,
+                            );
+                            if (index >= 0) {
+                              _taskDefinitions[index] = updatedTaskDefinition;
+                            }
+                          }
+                        });
+
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('Save'),
+                    ),
+                  ],
+                ),
+          ),
+    );
   }
 
   /// Edit a task definition
   void _editTaskDefinition(int index) {
-    // TODO: Implement task definition form dialog
+    if (index < 0 || index >= _taskDefinitions.length) {
+      return;
+    }
+
+    final taskDefinition = _taskDefinitions[index];
+    _showTaskDefinitionDialog(taskDefinition: taskDefinition, isNew: false);
   }
 
   /// Remove a task definition
@@ -482,7 +700,203 @@ class _TaskTemplateFormScreenState extends State<TaskTemplateFormScreen> {
 
   /// Add a dependency
   void _addDependency() {
-    // TODO: Implement dependency form dialog
+    if (_taskDefinitions.length < 2) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('You need at least two tasks to create a dependency'),
+        ),
+      );
+      return;
+    }
+
+    _showDependencyDialog();
+  }
+
+  /// Show dependency form dialog
+  void _showDependencyDialog({TaskDependencyDefinition? dependency}) {
+    String? prerequisiteTaskId = dependency?.prerequisiteTaskId;
+    String? dependentTaskId = dependency?.dependentTaskId;
+    DependencyType dependencyType =
+        dependency?.type ?? DependencyType.finishToStart;
+    int offsetDays = dependency?.offsetDays ?? 0;
+
+    // Dependency types
+    final dependencyTypes = [
+      {'type': DependencyType.finishToStart, 'name': 'Finish to Start'},
+      {'type': DependencyType.startToStart, 'name': 'Start to Start'},
+      {'type': DependencyType.finishToFinish, 'name': 'Finish to Finish'},
+      {'type': DependencyType.startToFinish, 'name': 'Start to Finish'},
+    ];
+
+    showDialog(
+      context: context,
+      builder:
+          (context) => StatefulBuilder(
+            builder:
+                (context, setState) => AlertDialog(
+                  title: const Text('Task Dependency'),
+                  content: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Select the prerequisite task (must be completed first):',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 8),
+                        DropdownButtonFormField<String>(
+                          value: prerequisiteTaskId,
+                          decoration: const InputDecoration(
+                            labelText: 'Prerequisite Task',
+                          ),
+                          items:
+                              _taskDefinitions.map((task) {
+                                return DropdownMenuItem<String>(
+                                  value: task.id,
+                                  child: Text(task.title),
+                                );
+                              }).toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              prerequisiteTaskId = value;
+                              // Prevent selecting same task for both roles
+                              if (dependentTaskId == value) {
+                                dependentTaskId = null;
+                              }
+                            });
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        const Text(
+                          'Select the dependent task (depends on prerequisite):',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 8),
+                        DropdownButtonFormField<String>(
+                          value: dependentTaskId,
+                          decoration: const InputDecoration(
+                            labelText: 'Dependent Task',
+                          ),
+                          items:
+                              _taskDefinitions
+                                  .where(
+                                    (task) => task.id != prerequisiteTaskId,
+                                  )
+                                  .map((task) {
+                                    return DropdownMenuItem<String>(
+                                      value: task.id,
+                                      child: Text(task.title),
+                                    );
+                                  })
+                                  .toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              dependentTaskId = value;
+                            });
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        const Text(
+                          'Dependency Type:',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 8),
+                        DropdownButtonFormField<DependencyType>(
+                          value: dependencyType,
+                          decoration: const InputDecoration(labelText: 'Type'),
+                          items:
+                              dependencyTypes.map((type) {
+                                return DropdownMenuItem<DependencyType>(
+                                  value: type['type'] as DependencyType,
+                                  child: Text(type['name'] as String),
+                                );
+                              }).toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              dependencyType = value!;
+                            });
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        TextField(
+                          controller: TextEditingController(
+                            text: offsetDays.toString(),
+                          ),
+                          decoration: const InputDecoration(
+                            labelText: 'Offset Days',
+                            hintText: 'Enter number of days',
+                          ),
+                          keyboardType: TextInputType.number,
+                          onChanged: (value) {
+                            try {
+                              offsetDays = int.parse(value);
+                            } catch (e) {
+                              // Ignore invalid input
+                            }
+                          },
+                        ),
+                        const SizedBox(height: 8),
+                        const Text(
+                          'Note: Offset days is the number of days to wait after the prerequisite condition is met.',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Text('Cancel'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        // Validate inputs
+                        if (prerequisiteTaskId == null ||
+                            dependentTaskId == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Both tasks must be selected'),
+                            ),
+                          );
+                          return;
+                        }
+
+                        // Check for existing dependency
+                        final existingIndex = _dependencies.indexWhere(
+                          (d) =>
+                              d.prerequisiteTaskId == prerequisiteTaskId &&
+                              d.dependentTaskId == dependentTaskId,
+                        );
+
+                        // Create dependency
+                        final newDependency = TaskDependencyDefinition(
+                          prerequisiteTaskId: prerequisiteTaskId!,
+                          dependentTaskId: dependentTaskId!,
+                          type: dependencyType,
+                          offsetDays: offsetDays,
+                        );
+
+                        // Update state
+                        setState(() {
+                          if (existingIndex >= 0) {
+                            _dependencies[existingIndex] = newDependency;
+                          } else {
+                            _dependencies.add(newDependency);
+                          }
+                        });
+
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('Save'),
+                    ),
+                  ],
+                ),
+          ),
+    );
   }
 
   /// Remove a dependency
@@ -494,7 +908,105 @@ class _TaskTemplateFormScreenState extends State<TaskTemplateFormScreen> {
 
   /// Add a tag
   void _addTag() {
-    // TODO: Implement tag input dialog
+    _showTagInputDialog();
+  }
+
+  /// Show tag input dialog
+  void _showTagInputDialog() {
+    final textController = TextEditingController();
+
+    // Common tags suggestions
+    final commonTags = [
+      'Wedding',
+      'Business',
+      'Celebration',
+      'Birthday',
+      'Corporate',
+      'Anniversary',
+      'Holiday',
+      'Outdoor',
+      'Indoor',
+      'Small',
+      'Large',
+      'Budget',
+      'Luxury',
+    ];
+
+    showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Add Tag'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextField(
+                  controller: textController,
+                  decoration: const InputDecoration(
+                    labelText: 'Tag',
+                    hintText: 'Enter a tag for this template',
+                  ),
+                  autofocus: true,
+                  textCapitalization: TextCapitalization.words,
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  'Suggested Tags:',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children:
+                      commonTags
+                          .where((tag) => !_tags.contains(tag))
+                          .map(
+                            (tag) => ActionChip(
+                              label: Text(tag),
+                              onPressed: () {
+                                textController.text = tag;
+                              },
+                            ),
+                          )
+                          .toList(),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () {
+                  final tag = textController.text.trim();
+                  if (tag.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Tag cannot be empty')),
+                    );
+                    return;
+                  }
+
+                  if (_tags.contains(tag)) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Tag already exists')),
+                    );
+                    return;
+                  }
+
+                  setState(() {
+                    _tags.add(tag);
+                  });
+
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Add'),
+              ),
+            ],
+          ),
+    );
   }
 
   /// Remove a tag

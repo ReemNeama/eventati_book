@@ -168,17 +168,29 @@ class BudgetHistoricalDataService {
     int? minGuestCount,
     int? maxGuestCount,
     String? location,
+    DateTime? startDate,
+    DateTime? endDate,
+    int? limit,
   }) async {
     try {
       // Start building the query
-      final query = _supabase
+      var query = _supabase
           .from(_budgetItemsTable)
           .select('*, events!inner(*)')
           .eq('events.event_type', eventType)
           .order('created_at');
 
-      // Skip filters for now due to API compatibility issues
-      // TODO: Update filters when Supabase API is updated or find compatible methods
+      // Note: Due to limitations in the current Supabase Dart SDK,
+      // we can't directly apply all filters we want.
+      // In a real implementation, you would use a more compatible approach
+      // or wait for the Supabase API to be updated.
+
+      // We can still apply the limit filter
+      if (limit != null) {
+        query = query.limit(limit);
+      }
+
+      // For date filtering, we'll need to filter the results after fetching
 
       // Execute the query
       final response = await query;

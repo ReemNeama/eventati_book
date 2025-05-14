@@ -28,21 +28,20 @@ class TaskTestDataGenerator {
       final dependencies = _createTestDependencies(tasks);
 
       // Save to Supabase
-      // TODO: Implement category saving in TaskDatabaseService
-      Logger.i(
-        'Would save ${categories.length} categories',
-        tag: 'TaskTestDataGenerator',
-      );
+      // Save categories
+      for (final category in categories) {
+        await _taskDatabaseService.addTaskCategory(eventId, category);
+      }
 
+      // Save tasks
       for (final task in tasks) {
         await _taskDatabaseService.addTask(eventId, task);
       }
 
-      // TODO: Implement dependency saving in TaskDatabaseService
-      Logger.i(
-        'Would save ${dependencies.length} dependencies',
-        tag: 'TaskTestDataGenerator',
-      );
+      // Save dependencies
+      for (final dependency in dependencies) {
+        await _taskDatabaseService.addTaskDependency(eventId, dependency);
+      }
 
       Logger.i(
         'Created ${categories.length} categories, ${tasks.length} tasks, and ${dependencies.length} dependencies',

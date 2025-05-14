@@ -163,8 +163,8 @@ class TaskTemplateDatabaseService {
   /// Get templates by tags
   Future<List<TaskTemplate>> getTemplatesByTags(List<String> tags) async {
     try {
-      // TODO: Update when Supabase API is updated or find compatible methods
-      // For now, fetch all templates and filter in memory
+      // We need to fetch all templates and filter in memory
+      // because Supabase doesn't support array contains operations in the Dart SDK yet
       final response = await _supabase.from(_templatesTable).select();
 
       // Filter in memory
@@ -193,8 +193,8 @@ class TaskTemplateDatabaseService {
   /// Search templates by name or description
   Future<List<TaskTemplate>> searchTemplates(String query) async {
     try {
-      // TODO: Update when Supabase API is updated or find compatible methods
-      // For now, fetch all templates and filter in memory
+      // We need to fetch all templates and filter in memory
+      // because Supabase doesn't support text search operations in the Dart SDK yet
       final response = await _supabase.from(_templatesTable).select();
 
       // Filter in memory

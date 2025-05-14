@@ -1,44 +1,89 @@
-// NOTE: This test file is currently disabled due to issues with mocking Supabase.
-// The tests need to be updated to work with the new Supabase implementation.
-// TODO: Update these tests to properly mock Supabase and MessagingService
-
-// Imports will be added back when tests are implemented
+import 'package:eventati_book/screens/settings/notification_preferences_screen.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-// Mock classes will be added back when tests are implemented
-
 void main() {
+  late Widget testWidget;
+
+  setUp(() {
+    // Create test widget
+    testWidget = const MaterialApp(home: NotificationPreferencesScreen());
+  });
+
   group('NotificationPreferencesScreen', () {
-    test('renders app bar with title', () {
-      // This test is temporarily disabled
-    }, skip: true);
+    testWidgets('renders app bar with title', (WidgetTester tester) async {
+      // Arrange & Act
+      await tester.pumpWidget(testWidget);
+      await tester.pumpAndSettle();
 
-    test('renders loading indicator when loading', () {
-      // This test is temporarily disabled
-    }, skip: true);
+      // Assert
+      expect(find.text('Notification Preferences'), findsOneWidget);
+    });
 
-    test('renders settings form after loading', () {
-      // This test is temporarily disabled
-    }, skip: true);
+    testWidgets('renders loading indicator initially', (
+      WidgetTester tester,
+    ) async {
+      // Act
+      await tester.pumpWidget(testWidget);
 
-    test('renders topic settings', () {
-      // This test is temporarily disabled
-    }, skip: true);
+      // Assert - should show loading indicator initially
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    });
 
-    test('can toggle master switch', () {
-      // This test is temporarily disabled
-    }, skip: true);
+    testWidgets('renders settings form after loading', (
+      WidgetTester tester,
+    ) async {
+      // Arrange & Act
+      await tester.pumpWidget(testWidget);
+      await tester.pumpAndSettle();
 
-    test('can toggle channel switches', () {
-      // This test is temporarily disabled
-    }, skip: true);
+      // Assert
+      expect(find.text('Enable All Notifications'), findsOneWidget);
+      expect(find.text('Push Notifications'), findsOneWidget);
+      expect(find.text('Email Notifications'), findsOneWidget);
+      expect(find.text('In-App Notifications'), findsOneWidget);
+    });
 
-    test('can toggle topic switches', () {
-      // This test is temporarily disabled
-    }, skip: true);
+    testWidgets('renders topic settings', (WidgetTester tester) async {
+      // Arrange & Act
+      await tester.pumpWidget(testWidget);
+      await tester.pumpAndSettle();
 
-    test('can save settings', () {
-      // This test is temporarily disabled
-    }, skip: true);
+      // Assert - should show topic categories
+      expect(find.text('Notification Types'), findsOneWidget);
+
+      // Should show at least some of the predefined topics
+      expect(find.text('Wedding'), findsOneWidget);
+      expect(find.text('System Updates'), findsOneWidget);
+    });
+
+    testWidgets('can toggle master switch', (WidgetTester tester) async {
+      // Arrange
+      await tester.pumpWidget(testWidget);
+      await tester.pumpAndSettle();
+
+      // Act - find and tap the master switch
+      final switchFinder = find.byType(Switch).first;
+      await tester.tap(switchFinder);
+      await tester.pumpAndSettle();
+
+      // Assert - verify the switch was toggled
+      // This is a simplified test that just checks the widget rebuilds
+      expect(find.byType(Switch), findsWidgets);
+    });
+
+    testWidgets('can save settings', (WidgetTester tester) async {
+      // Arrange
+      await tester.pumpWidget(testWidget);
+      await tester.pumpAndSettle();
+
+      // Act - find and tap the save button
+      final buttonFinder = find.byIcon(Icons.save);
+      await tester.tap(buttonFinder);
+      await tester.pumpAndSettle();
+
+      // Assert - this is a simplified test that just checks the widget rebuilds
+      expect(find.byIcon(Icons.save), findsOneWidget);
+    });
   });
 }

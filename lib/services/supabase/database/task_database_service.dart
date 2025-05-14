@@ -312,6 +312,91 @@ class TaskDatabaseService {
       rethrow;
     }
   }
+
+  /// Add a task category
+  Future<String> addTaskCategory(String eventId, TaskCategory category) async {
+    try {
+      final categoryData = {
+        'id': category.id,
+        'name': category.name,
+        'description': category.description,
+        'icon': category.icon,
+        'color': category.color,
+        'order': category.order,
+        'is_default': category.isDefault,
+        'is_active': category.isActive,
+        'event_id': eventId,
+        'created_at': category.createdAt.toIso8601String(),
+        'updated_at': category.updatedAt.toIso8601String(),
+      };
+
+      final response =
+          await _supabase
+              .from(_categoriesTable)
+              .upsert(categoryData)
+              .select()
+              .single();
+
+      Logger.i(
+        'Added task category: ${category.name}',
+        tag: 'TaskDatabaseService',
+      );
+
+      return response['id'];
+    } catch (e) {
+      Logger.e('Error adding task category: $e', tag: 'TaskDatabaseService');
+      rethrow;
+    }
+  }
+
+  /// Update a task category
+  Future<void> updateTaskCategory(String eventId, TaskCategory category) async {
+    try {
+      final categoryData = {
+        'name': category.name,
+        'description': category.description,
+        'icon': category.icon,
+        'color': category.color,
+        'order': category.order,
+        'is_default': category.isDefault,
+        'is_active': category.isActive,
+        'updated_at': DateTime.now().toIso8601String(),
+      };
+
+      await _supabase
+          .from(_categoriesTable)
+          .update(categoryData)
+          .eq('id', category.id)
+          .eq('event_id', eventId);
+
+      Logger.i(
+        'Updated task category: ${category.name}',
+        tag: 'TaskDatabaseService',
+      );
+    } catch (e) {
+      Logger.e('Error updating task category: $e', tag: 'TaskDatabaseService');
+      rethrow;
+    }
+  }
+
+  /// Delete a task category
+  Future<void> deleteTaskCategory(String eventId, String categoryId) async {
+    try {
+      await _supabase
+          .from(_categoriesTable)
+          .delete()
+          .eq('id', categoryId)
+          .eq('event_id', eventId);
+
+      Logger.i(
+        'Deleted task category: $categoryId',
+        tag: 'TaskDatabaseService',
+      );
+    } catch (e) {
+      Logger.e('Error deleting task category: $e', tag: 'TaskDatabaseService');
+      rethrow;
+    }
+  }
 }
 
 // Implementation of DatabaseServiceInterface is in utils/database_service.dart

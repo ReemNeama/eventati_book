@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/providers/providers.dart';
+import 'package:eventati_book/services/planning/budget_items_builder.dart';
+import 'package:eventati_book/services/planning/guest_groups_builder.dart';
+import 'package:eventati_book/services/planning/specialized_task_templates.dart';
+import 'package:eventati_book/services/planning/task_template_service.dart';
 import 'package:eventati_book/services/wizard_connection_service_internal.dart';
 import 'package:eventati_book/services/supabase/database/wizard_connection_database_service.dart';
 import 'package:eventati_book/styles/app_colors.dart';
@@ -405,8 +409,12 @@ class WizardConnectionService {
       }
 
       // Generate tasks from templates based on event type
-      // TODO: Implement TaskTemplateService or use an existing service
-      final tasks = <Task>[];
+      final taskTemplateService = TaskTemplateService();
+      final tasks = taskTemplateService.getTasksForEvent(
+        eventType,
+        eventDate,
+        selectedServices: selectedServices,
+      );
 
       // Adjust task timelines based on event complexity
       final adjustedTasks = _adjustTaskTimelines(
@@ -544,14 +552,21 @@ class WizardConnectionService {
     Map<String, bool> selectedServices,
     int guestCount,
   ) {
-    final specializedTasks = <Task>[];
-
     // Use specialized task templates based on event type
-    // TODO: Implement SpecializedTaskTemplates or use an existing service
+    final specializedTasks = SpecializedTaskTemplates.getSpecializedTasks(
+      eventType,
+      eventDate,
+      selectedServices,
+      guestCount,
+    );
+
+    // Log the specialized tasks that were created
+    Logger.i(
+      'Created ${specializedTasks.length} specialized tasks for $eventType event',
+      tag: 'WizardConnectionService',
+    );
+
     if (eventType.toLowerCase().contains('wedding')) {
-      // Get comprehensive wedding task list from specialized templates
-      debugPrint('Would add specialized wedding tasks');
-    } else if (eventType.toLowerCase().contains('business')) {
       // Get comprehensive business event task list from specialized templates
       debugPrint('Would add specialized business event tasks');
     } else {
@@ -855,47 +870,25 @@ class WizardConnectionService {
     DateTime? eventDate,
     bool isPremiumVenue = false,
   }) async {
-    // TODO: Implement BudgetItemsBuilder or use an existing service
+    // Use BudgetItemsBuilder to create budget items
+    final budgetItems = BudgetItemsBuilder.createBudgetItems(
+      selectedServices,
+      guestCount,
+      eventType,
+      eventDuration,
+      location: location,
+      eventDate: eventDate,
+      isPremiumVenue: isPremiumVenue,
+    );
+
     try {
-      // Use the budget provider's built-in methods to create budget items
-      // This is a simplified version without the enhanced historical data analysis
-
-      // Create a basic budget structure based on event type and guest count
-      final baseAmount =
-          guestCount * 100.0; // $100 per guest as a starting point
-
-      // Add venue budget item
-      if (selectedServices['Venue'] == true) {
-        final venueAmount = baseAmount * 0.4; // 40% of budget for venue
-        await budgetProvider.addBudgetItem(
-          BudgetItem(
-            id: 'venue_${DateTime.now().millisecondsSinceEpoch}',
-            categoryId: '1', // Venue category
-            description: 'Venue Rental',
-            estimatedCost: venueAmount,
-            isPaid: false,
-            notes: 'Based on $guestCount guests',
-          ),
-        );
-      }
-
-      // Add catering budget item
-      if (selectedServices['Catering'] == true) {
-        final cateringAmount = baseAmount * 0.3; // 30% of budget for catering
-        await budgetProvider.addBudgetItem(
-          BudgetItem(
-            id: 'catering_${DateTime.now().millisecondsSinceEpoch}',
-            categoryId: '2', // Food & Beverage category
-            description: 'Catering Services',
-            estimatedCost: cateringAmount,
-            isPaid: false,
-            notes: 'Based on $guestCount guests',
-          ),
-        );
+      // Add all budget items to the provider
+      for (final budgetItem in budgetItems) {
+        await budgetProvider.addBudgetItem(budgetItem);
       }
 
       Logger.i(
-        'Created basic budget items for $eventType event',
+        'Added ${budgetItems.length} budget items for $eventType event',
         tag: 'WizardConnectionService',
       );
     } catch (e) {
@@ -941,10 +934,8 @@ class WizardConnectionService {
     GuestListProvider guestListProvider,
     String eventType,
   ) {
-    // TODO: Implement GuestGroupsBuilder or use an existing service
-
-    // Create basic guest groups based on event type
-    final List<GuestGroup> guestGroups = [];
+    // Create guest groups using the GuestGroupsBuilder
+    final guestGroups = GuestGroupsBuilder.createDefaultGuestGroups(eventType);
 
     // Add common groups for all event types
     guestGroups.add(

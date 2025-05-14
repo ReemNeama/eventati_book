@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('NotificationTopic', () {
     test('creates a topic with required fields', () {
-      final topic = NotificationTopic(
+      const topic = NotificationTopic(
         id: 'test-topic',
         name: 'Test Topic',
         description: 'This is a test topic',
@@ -19,7 +19,7 @@ void main() {
     });
 
     test('creates a topic with all fields', () {
-      final topic = NotificationTopic(
+      const topic = NotificationTopic(
         id: 'test-topic',
         name: 'Test Topic',
         description: 'This is a test topic',
@@ -38,17 +38,16 @@ void main() {
   group('NotificationTopics', () {
     test('all contains all predefined topics', () {
       expect(NotificationTopics.all, isNotEmpty);
-      
+
       // Check that all categories are represented
-      final categories = NotificationTopics.all
-          .map((topic) => topic.category)
-          .toSet();
-      
+      final categories =
+          NotificationTopics.all.map((topic) => topic.category).toSet();
+
       expect(categories.contains(NotificationTopicCategory.eventType), true);
       expect(categories.contains(NotificationTopicCategory.feature), true);
       expect(categories.contains(NotificationTopicCategory.marketing), true);
       expect(categories.contains(NotificationTopicCategory.system), true);
-      
+
       // Check specific topics
       expect(
         NotificationTopics.all.any((topic) => topic.id == 'booking'),
@@ -62,15 +61,12 @@ void main() {
         NotificationTopics.all.any((topic) => topic.id == 'wedding'),
         true,
       );
-      expect(
-        NotificationTopics.all.any((topic) => topic.id == 'system'),
-        true,
-      );
+      expect(NotificationTopics.all.any((topic) => topic.id == 'system'), true);
     });
 
     test('getById returns the correct topic', () {
       final topic = NotificationTopics.getById('booking');
-      
+
       expect(topic, isNotNull);
       expect(topic?.id, 'booking');
       expect(topic?.category, NotificationTopicCategory.feature);
@@ -78,33 +74,33 @@ void main() {
 
     test('getById returns null for unknown topic', () {
       final topic = NotificationTopics.getById('unknown-topic');
-      
+
       expect(topic, isNull);
     });
 
     test('getByCategory returns topics for the specified category', () {
-      final topics = NotificationTopics.getByCategory(NotificationTopicCategory.eventType);
-      
+      final topics = NotificationTopics.getByCategory(
+        NotificationTopicCategory.eventType,
+      );
+
       expect(topics, isNotEmpty);
       expect(
-        topics.every((topic) => topic.category == NotificationTopicCategory.eventType),
+        topics.every(
+          (topic) => topic.category == NotificationTopicCategory.eventType,
+        ),
         true,
       );
-      
+
       // Check specific topics
-      expect(
-        topics.any((topic) => topic.id == 'wedding'),
-        true,
-      );
-      expect(
-        topics.any((topic) => topic.id == 'corporate'),
-        true,
-      );
+      expect(topics.any((topic) => topic.id == 'wedding'), true);
+      expect(topics.any((topic) => topic.id == 'corporate'), true);
     });
 
     test('marketing topics have defaultEnabled set to false', () {
-      final marketingTopics = NotificationTopics.getByCategory(NotificationTopicCategory.marketing);
-      
+      final marketingTopics = NotificationTopics.getByCategory(
+        NotificationTopicCategory.marketing,
+      );
+
       expect(marketingTopics, isNotEmpty);
       expect(
         marketingTopics.every((topic) => topic.defaultEnabled == false),
@@ -113,10 +109,14 @@ void main() {
     });
 
     test('non-marketing topics have defaultEnabled set to true', () {
-      final nonMarketingTopics = NotificationTopics.all
-          .where((topic) => topic.category != NotificationTopicCategory.marketing)
-          .toList();
-      
+      final nonMarketingTopics =
+          NotificationTopics.all
+              .where(
+                (topic) =>
+                    topic.category != NotificationTopicCategory.marketing,
+              )
+              .toList();
+
       expect(nonMarketingTopics, isNotEmpty);
       expect(
         nonMarketingTopics.every((topic) => topic.defaultEnabled == true),

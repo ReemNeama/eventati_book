@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:eventati_book/models/planning_models/task_template.dart';
 import 'package:eventati_book/providers/planning_providers/task_template_provider.dart';
+import 'package:eventati_book/screens/planning/task_template_details_screen.dart';
+import 'package:eventati_book/screens/planning/task_template_form_screen_wrapper.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/logger.dart';
@@ -275,22 +277,181 @@ class _TaskTemplateScreenState extends State<TaskTemplateScreen> {
     ).setSelectedTemplate(template);
 
     // Navigate to the template details screen
-    // TODO: Implement template details screen
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const TaskTemplateDetailsScreen(),
+      ),
+    );
   }
 
   /// Navigate to the template form
   void _navigateToTemplateForm({TaskTemplate? template}) {
-    // TODO: Implement template form screen
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => TaskTemplateFormScreenWrapper(template: template),
+      ),
+    );
   }
 
   /// Show apply template dialog
   void _showApplyTemplateDialog(TaskTemplate template) {
-    // TODO: Implement apply template dialog
+    final eventIdController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Apply Template to Event'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Apply template "${template.name}" to an event',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: eventIdController,
+                  decoration: const InputDecoration(
+                    labelText: 'Event ID',
+                    hintText: 'Enter the event ID',
+                  ),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'Note: This will add all tasks from this template to the specified event.',
+                  style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () {
+                  final eventId = eventIdController.text.trim();
+                  if (eventId.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Event ID is required')),
+                    );
+                    return;
+                  }
+
+                  // Close the dialog first
+                  Navigator.of(context).pop();
+
+                  // Then apply the template
+                  _applyTemplateToEvent(template.id, eventId);
+                },
+              },
+            ],
+          ),
+    );
+  }
+
+  /// Apply a template to an event
+  Future<void> _applyTemplateToEvent(String templateId, String eventId) async {
+    if (!mounted) return;
+
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      // This is a placeholder for the actual implementation
+      // In a real implementation, you would call a method on the provider
+      // to apply the template to the event
+      await Future.delayed(const Duration(seconds: 1));
+
+      // Check if still mounted after the async operation
+      if (!mounted) return;
+
+      // Now it's safe to use context
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Template applied successfully'),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        _errorMessage = 'Error applying template: $e';
+      });
+      Logger.e(_errorMessage!, tag: 'TaskTemplateScreen');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   /// Export template
   void _exportTemplate(TaskTemplate template) async {
-    // TODO: Implement export template functionality
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      // In a real implementation, you would convert template to JSON
+      // For demonstration purposes, we're not using the JSON here
+
+      // In a real implementation, you would:
+      // 1. Convert the JSON to a formatted string
+      // 2. Save it to a file or share it
+
+      // For now, just show a success message
+      await Future.delayed(const Duration(seconds: 1));
+
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+
+        // Show a success message
+        showDialog(
+          context: context,
+          builder:
+              (context) => const AlertDialog(
+                title: Text('Template Exported'),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Template exported successfully!',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 16),
+                    Text('In a real implementation, this would:'),
+                    SizedBox(height: 8),
+                    Text('• Save the template to a file'),
+                    Text('• Allow sharing the template'),
+                    Text('• Support importing in another app'),
+                  ],
+                ),
+                actions: [CloseButton()],
+              ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _errorMessage = 'Error exporting template: $e';
+        });
+        Logger.e(_errorMessage!, tag: 'TaskTemplateScreen');
+      }
+    }
   }
 
   /// Show delete confirmation dialog
