@@ -6,8 +6,11 @@ import 'package:mocktail/mocktail.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class MockNotificationService extends Mock implements NotificationService {}
+
 class MockSupabaseClient extends Mock implements SupabaseClient {}
+
 class MockGoTrueClient extends Mock implements GoTrueClient {}
+
 class MockUser extends Mock implements User {}
 
 void main() {
@@ -49,16 +52,21 @@ void main() {
     ];
 
     // Set up mock service responses
-    when(() => mockNotificationService.getNotifications())
-        .thenAnswer((_) async => testNotifications);
-    when(() => mockNotificationService.getNotificationsStream(any()))
-        .thenAnswer((_) => Stream.value(testNotifications));
-    when(() => mockNotificationService.markAsRead(any()))
-        .thenAnswer((_) async {});
-    when(() => mockNotificationService.markAllAsRead())
-        .thenAnswer((_) async {});
-    when(() => mockNotificationService.deleteNotification(any()))
-        .thenAnswer((_) async {});
+    when(
+      () => mockNotificationService.getNotifications(),
+    ).thenAnswer((_) async => testNotifications);
+    when(
+      () => mockNotificationService.getNotificationsStream(any()),
+    ).thenAnswer((_) => Stream.value(testNotifications));
+    when(
+      () => mockNotificationService.markAsRead(any()),
+    ).thenAnswer((_) async {});
+    when(
+      () => mockNotificationService.markAllAsRead(),
+    ).thenAnswer((_) async {});
+    when(
+      () => mockNotificationService.deleteNotification(any()),
+    ).thenAnswer((_) async {});
 
     // Create the provider with mocks
     notificationProvider = NotificationProvider(
@@ -85,7 +93,9 @@ void main() {
 
       // Verify the service was called
       verify(() => mockNotificationService.getNotifications()).called(1);
-      verify(() => mockNotificationService.getNotificationsStream(any())).called(1);
+      verify(
+        () => mockNotificationService.getNotificationsStream(any()),
+      ).called(1);
     });
 
     test('refreshNotifications updates notifications', () async {
@@ -103,8 +113,9 @@ void main() {
           read: false,
         ),
       ];
-      when(() => mockNotificationService.getNotifications())
-          .thenAnswer((_) async => newNotifications);
+      when(
+        () => mockNotificationService.getNotifications(),
+      ).thenAnswer((_) async => newNotifications);
 
       // Refresh notifications
       await notificationProvider.refreshNotifications();
@@ -127,7 +138,9 @@ void main() {
       await notificationProvider.markAsRead('notification-1');
 
       // Verify the service was called
-      verify(() => mockNotificationService.markAsRead('notification-1')).called(1);
+      verify(
+        () => mockNotificationService.markAsRead('notification-1'),
+      ).called(1);
 
       // Verify the notification is marked as read in the provider
       expect(
@@ -150,10 +163,7 @@ void main() {
       verify(() => mockNotificationService.markAllAsRead()).called(1);
 
       // Verify all notifications are marked as read in the provider
-      expect(
-        notificationProvider.notifications.every((n) => n.read),
-        true,
-      );
+      expect(notificationProvider.notifications.every((n) => n.read), true);
       expect(notificationProvider.unreadCount, 0);
     });
 
@@ -165,7 +175,9 @@ void main() {
       await notificationProvider.deleteNotification('notification-1');
 
       // Verify the service was called
-      verify(() => mockNotificationService.deleteNotification('notification-1')).called(1);
+      verify(
+        () => mockNotificationService.deleteNotification('notification-1'),
+      ).called(1);
 
       // Verify the notification is removed from the provider
       expect(
@@ -177,8 +189,9 @@ void main() {
 
     test('handles error when loading notifications', () async {
       // Create a new provider with a service that throws an error
-      when(() => mockNotificationService.getNotifications())
-          .thenThrow(Exception('Test error'));
+      when(
+        () => mockNotificationService.getNotifications(),
+      ).thenThrow(Exception('Test error'));
 
       final errorProvider = NotificationProvider(
         notificationService: mockNotificationService,

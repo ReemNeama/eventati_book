@@ -17,20 +17,21 @@ class BudgetItemsBuilder {
       'Creating budget items for $eventType event with $guestCount guests',
       tag: 'BudgetItemsBuilder',
     );
-    
+
     final budgetItems = <BudgetItem>[];
-    
+
     // Create a basic budget structure based on event type and guest count
     final baseAmount = guestCount * 100.0; // $100 per guest as a starting point
-    
+
     // Adjust base amount based on event type
     double adjustedBaseAmount = baseAmount;
     if (eventType.toLowerCase().contains('wedding')) {
       adjustedBaseAmount = baseAmount * 1.5; // Weddings typically cost more
     } else if (eventType.toLowerCase().contains('business')) {
-      adjustedBaseAmount = baseAmount * 1.2; // Business events have higher standards
+      adjustedBaseAmount =
+          baseAmount * 1.2; // Business events have higher standards
     }
-    
+
     // Add venue budget item
     if (selectedServices['Venue'] == true) {
       final venueAmount = adjustedBaseAmount * 0.4; // 40% of budget for venue
@@ -44,7 +45,7 @@ class BudgetItemsBuilder {
           notes: 'Based on $guestCount guests',
         ),
       );
-      
+
       // Add setup/teardown costs if premium venue
       if (isPremiumVenue) {
         budgetItems.add(
@@ -59,10 +60,11 @@ class BudgetItemsBuilder {
         );
       }
     }
-    
+
     // Add catering budget item
     if (selectedServices['Catering'] == true) {
-      final cateringAmount = adjustedBaseAmount * 0.3; // 30% of budget for catering
+      final cateringAmount =
+          adjustedBaseAmount * 0.3; // 30% of budget for catering
       budgetItems.add(
         BudgetItem(
           id: 'catering_${DateTime.now().millisecondsSinceEpoch}',
@@ -73,9 +75,9 @@ class BudgetItemsBuilder {
           notes: 'Based on $guestCount guests',
         ),
       );
-      
+
       // Add beverage service if selected
-      if (selectedServices['Bar Service'] == true || 
+      if (selectedServices['Bar Service'] == true ||
           selectedServices['Beverage Service'] == true) {
         budgetItems.add(
           BudgetItem(
@@ -89,12 +91,13 @@ class BudgetItemsBuilder {
         );
       }
     }
-    
+
     // Add photography/videography budget item
-    if (selectedServices['Photography'] == true || 
+    if (selectedServices['Photography'] == true ||
         selectedServices['Videography'] == true ||
         selectedServices['Photography/Videography'] == true) {
-      final photoAmount = adjustedBaseAmount * 0.15; // 15% of budget for photo/video
+      final photoAmount =
+          adjustedBaseAmount * 0.15; // 15% of budget for photo/video
       budgetItems.add(
         BudgetItem(
           id: 'photo_video_${DateTime.now().millisecondsSinceEpoch}',
@@ -106,12 +109,13 @@ class BudgetItemsBuilder {
         ),
       );
     }
-    
+
     // Add entertainment budget item
-    if (selectedServices['Entertainment'] == true || 
+    if (selectedServices['Entertainment'] == true ||
         selectedServices['DJ'] == true ||
         selectedServices['Live Music'] == true) {
-      final entertainmentAmount = adjustedBaseAmount * 0.1; // 10% of budget for entertainment
+      final entertainmentAmount =
+          adjustedBaseAmount * 0.1; // 10% of budget for entertainment
       budgetItems.add(
         BudgetItem(
           id: 'entertainment_${DateTime.now().millisecondsSinceEpoch}',
@@ -123,9 +127,9 @@ class BudgetItemsBuilder {
         ),
       );
     }
-    
+
     // Add decor budget item
-    if (selectedServices['Decor'] == true || 
+    if (selectedServices['Decor'] == true ||
         selectedServices['Flowers'] == true ||
         selectedServices['Decorations'] == true) {
       final decorAmount = adjustedBaseAmount * 0.1; // 10% of budget for decor
@@ -140,10 +144,11 @@ class BudgetItemsBuilder {
         ),
       );
     }
-    
+
     // Add transportation budget item if needed
     if (selectedServices['Transportation'] == true) {
-      final transportAmount = adjustedBaseAmount * 0.05; // 5% of budget for transportation
+      final transportAmount =
+          adjustedBaseAmount * 0.05; // 5% of budget for transportation
       budgetItems.add(
         BudgetItem(
           id: 'transport_${DateTime.now().millisecondsSinceEpoch}',
@@ -155,7 +160,7 @@ class BudgetItemsBuilder {
         ),
       );
     }
-    
+
     // Add miscellaneous budget item for unexpected expenses
     budgetItems.add(
       BudgetItem(
@@ -167,19 +172,22 @@ class BudgetItemsBuilder {
         notes: 'Contingency for unexpected costs',
       ),
     );
-    
+
     // Add event-specific budget items
     if (eventType.toLowerCase().contains('wedding')) {
       _addWeddingSpecificItems(budgetItems, adjustedBaseAmount);
     } else if (eventType.toLowerCase().contains('business')) {
       _addBusinessSpecificItems(budgetItems, adjustedBaseAmount, guestCount);
     }
-    
+
     return budgetItems;
   }
-  
+
   /// Add wedding-specific budget items
-  static void _addWeddingSpecificItems(List<BudgetItem> budgetItems, double baseAmount) {
+  static void _addWeddingSpecificItems(
+    List<BudgetItem> budgetItems,
+    double baseAmount,
+  ) {
     // Add wedding attire
     budgetItems.add(
       BudgetItem(
@@ -191,7 +199,7 @@ class BudgetItemsBuilder {
         notes: 'Wedding dress, suits, accessories',
       ),
     );
-    
+
     // Add rings
     budgetItems.add(
       BudgetItem(
@@ -203,7 +211,7 @@ class BudgetItemsBuilder {
         notes: 'Wedding bands',
       ),
     );
-    
+
     // Add stationery
     budgetItems.add(
       BudgetItem(
@@ -216,7 +224,7 @@ class BudgetItemsBuilder {
       ),
     );
   }
-  
+
   /// Add business event-specific budget items
   static void _addBusinessSpecificItems(
     List<BudgetItem> budgetItems,
@@ -234,7 +242,7 @@ class BudgetItemsBuilder {
         notes: 'Projectors, microphones, speakers',
       ),
     );
-    
+
     // Add printed materials
     budgetItems.add(
       BudgetItem(
@@ -246,7 +254,7 @@ class BudgetItemsBuilder {
         notes: 'Handouts, brochures, name badges',
       ),
     );
-    
+
     // Add speaker/presenter fees
     budgetItems.add(
       BudgetItem(

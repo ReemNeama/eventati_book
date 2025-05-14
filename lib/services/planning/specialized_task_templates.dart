@@ -14,9 +14,9 @@ class SpecializedTaskTemplates {
       'Getting specialized tasks for $eventType event',
       tag: 'SpecializedTaskTemplates',
     );
-    
+
     final specializedTasks = <Task>[];
-    
+
     // Add event type specific tasks
     if (eventType.toLowerCase().contains('wedding')) {
       specializedTasks.addAll(_getWeddingTasks(eventDate));
@@ -26,16 +26,18 @@ class SpecializedTaskTemplates {
       // For other celebration events, add basic tasks
       specializedTasks.addAll(_getCelebrationTasks(eventDate));
     }
-    
+
     // Add tasks based on guest count
     specializedTasks.addAll(_getGuestCountBasedTasks(guestCount, eventDate));
-    
+
     // Add tasks based on selected services
-    specializedTasks.addAll(_getServiceBasedTasks(selectedServices, eventDate, guestCount));
-    
+    specializedTasks.addAll(
+      _getServiceBasedTasks(selectedServices, eventDate, guestCount),
+    );
+
     return specializedTasks;
   }
-  
+
   /// Get specialized wedding tasks
   static List<Task> _getWeddingTasks(DateTime eventDate) {
     return [
@@ -86,7 +88,7 @@ class SpecializedTaskTemplates {
       ),
     ];
   }
-  
+
   /// Get specialized business event tasks
   static List<Task> _getBusinessEventTasks(DateTime eventDate) {
     return [
@@ -128,7 +130,7 @@ class SpecializedTaskTemplates {
       ),
     ];
   }
-  
+
   /// Get specialized celebration tasks
   static List<Task> _getCelebrationTasks(DateTime eventDate) {
     return [
@@ -161,11 +163,14 @@ class SpecializedTaskTemplates {
       ),
     ];
   }
-  
+
   /// Get tasks based on guest count
-  static List<Task> _getGuestCountBasedTasks(int guestCount, DateTime eventDate) {
+  static List<Task> _getGuestCountBasedTasks(
+    int guestCount,
+    DateTime eventDate,
+  ) {
     final tasks = <Task>[];
-    
+
     if (guestCount > 150) {
       tasks.add(
         Task(
@@ -178,7 +183,7 @@ class SpecializedTaskTemplates {
           isImportant: true,
         ),
       );
-      
+
       // For very large events, add crowd management tasks
       if (guestCount > 250) {
         tasks.add(
@@ -192,7 +197,7 @@ class SpecializedTaskTemplates {
             isImportant: true,
           ),
         );
-        
+
         tasks.add(
           Task(
             id: 'guest_count_task_3_${DateTime.now().millisecondsSinceEpoch}',
@@ -206,10 +211,10 @@ class SpecializedTaskTemplates {
         );
       }
     }
-    
+
     return tasks;
   }
-  
+
   /// Get tasks based on selected services
   static List<Task> _getServiceBasedTasks(
     Map<String, bool> selectedServices,
@@ -217,26 +222,26 @@ class SpecializedTaskTemplates {
     int guestCount,
   ) {
     final tasks = <Task>[];
-    
+
     // Add catering-specific tasks
     if (selectedServices['Catering'] == true) {
       tasks.addAll(_getCateringTasks(eventDate, guestCount));
     }
-    
+
     // Add photography/videography-specific tasks
     if (selectedServices['Photography'] == true ||
         selectedServices['Videography'] == true ||
         selectedServices['Photography/Videography'] == true) {
       tasks.addAll(_getPhotographyTasks(eventDate));
     }
-    
+
     return tasks;
   }
-  
+
   /// Get catering-specific tasks
   static List<Task> _getCateringTasks(DateTime eventDate, int guestCount) {
     final tasks = <Task>[];
-    
+
     tasks.add(
       Task(
         id: 'catering_task_1_${DateTime.now().millisecondsSinceEpoch}',
@@ -248,7 +253,7 @@ class SpecializedTaskTemplates {
         isImportant: true,
       ),
     );
-    
+
     if (guestCount > 100) {
       tasks.add(
         Task(
@@ -262,7 +267,7 @@ class SpecializedTaskTemplates {
         ),
       );
     }
-    
+
     // Add dietary restrictions task
     tasks.add(
       Task(
@@ -275,10 +280,10 @@ class SpecializedTaskTemplates {
         isImportant: true,
       ),
     );
-    
+
     return tasks;
   }
-  
+
   /// Get photography-specific tasks
   static List<Task> _getPhotographyTasks(DateTime eventDate) {
     return [

@@ -21,10 +21,7 @@ void main() {
     });
 
     test('creates settings with custom values', () {
-      final customTopicSettings = {
-        'booking': false,
-        'payment': false,
-      };
+      final customTopicSettings = {'booking': false, 'payment': false};
 
       final settings = NotificationSettings(
         allNotificationsEnabled: false,
@@ -38,11 +35,11 @@ void main() {
       expect(settings.pushNotificationsEnabled, false);
       expect(settings.emailNotificationsEnabled, true);
       expect(settings.inAppNotificationsEnabled, false);
-      
+
       // Check that custom topic settings are preserved
       expect(settings.topicSettings['booking'], false);
       expect(settings.topicSettings['payment'], false);
-      
+
       // Check that other topic settings have default values
       for (final topic in NotificationTopics.all) {
         if (topic.id != 'booking' && topic.id != 'payment') {
@@ -68,17 +65,32 @@ void main() {
       expect(updatedSettings.topicSettings, settings.topicSettings);
     });
 
-    test('updateTopicSetting creates a new settings object with updated topic setting', () {
-      final settings = NotificationSettings();
+    test(
+      'updateTopicSetting creates a new settings object with updated topic setting',
+      () {
+        final settings = NotificationSettings();
 
-      final updatedSettings = settings.updateTopicSetting('booking', false);
+        final updatedSettings = settings.updateTopicSetting('booking', false);
 
-      expect(updatedSettings.topicSettings['booking'], false);
-      expect(updatedSettings.allNotificationsEnabled, settings.allNotificationsEnabled);
-      expect(updatedSettings.pushNotificationsEnabled, settings.pushNotificationsEnabled);
-      expect(updatedSettings.emailNotificationsEnabled, settings.emailNotificationsEnabled);
-      expect(updatedSettings.inAppNotificationsEnabled, settings.inAppNotificationsEnabled);
-    });
+        expect(updatedSettings.topicSettings['booking'], false);
+        expect(
+          updatedSettings.allNotificationsEnabled,
+          settings.allNotificationsEnabled,
+        );
+        expect(
+          updatedSettings.pushNotificationsEnabled,
+          settings.pushNotificationsEnabled,
+        );
+        expect(
+          updatedSettings.emailNotificationsEnabled,
+          settings.emailNotificationsEnabled,
+        );
+        expect(
+          updatedSettings.inAppNotificationsEnabled,
+          settings.inAppNotificationsEnabled,
+        );
+      },
+    );
 
     test('toDatabaseDoc converts settings to database document', () {
       final settings = NotificationSettings(
@@ -103,10 +115,7 @@ void main() {
         'push_notifications_enabled': false,
         'email_notifications_enabled': true,
         'in_app_notifications_enabled': false,
-        'topic_settings': {
-          'booking': false,
-          'payment': false,
-        },
+        'topic_settings': {'booking': false, 'payment': false},
       };
 
       final settings = NotificationSettings.fromDatabaseDoc(doc);
@@ -130,9 +139,7 @@ void main() {
     });
 
     test('fromDatabaseDoc handles missing fields', () {
-      final doc = {
-        'all_notifications_enabled': false,
-      };
+      final doc = {'all_notifications_enabled': false};
 
       final settings = NotificationSettings.fromDatabaseDoc(doc);
 

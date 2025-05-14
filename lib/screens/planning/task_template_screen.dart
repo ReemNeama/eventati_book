@@ -348,7 +348,8 @@ class _TaskTemplateScreenState extends State<TaskTemplateScreen> {
                   // Then apply the template
                   _applyTemplateToEvent(template.id, eventId);
                 },
-              },
+                child: const Text('Apply'),
+              ),
             ],
           ),
     );
@@ -374,9 +375,7 @@ class _TaskTemplateScreenState extends State<TaskTemplateScreen> {
 
       // Now it's safe to use context
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Template applied successfully'),
-        ),
+        const SnackBar(content: Text('Template applied successfully')),
       );
     } catch (e) {
       if (!mounted) return;

@@ -6,7 +6,8 @@ import 'package:path/path.dart' as path;
 
 // Configuration
 const String supabaseUrl = 'https://zyycmxzabfadkyzpsper.supabase.co';
-const String supabaseKey = 'YOUR_SUPABASE_KEY'; // Replace with your key
+const String supabaseKey =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp5eWNteHphYmZhZGt5enBzcGVyIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0NjkyMjMyOCwiZXhwIjoyMDYyNDk4MzI4fQ.7NIGlM6A0xxKlCsgoz0gSSiscxroRUzMnuoXQuH5V8g'; // Service role key
 const String modelsDir = 'lib/models';
 
 // Table to model mapping
@@ -112,26 +113,41 @@ Future<void> main() async {
     Logger.i('Checking table: $tableName against model: $modelPath');
 
     try {
-      // Get table schema
-      final response = await supabase.rpc(
-        'get_table_schema',
-        params: {'table_name': tableName},
-      );
+      // Get table data to infer schema
+      final response = await supabase.from(tableName).select('*').limit(1);
 
-      if (response.error != null) {
-        Logger.e(
-          'Error getting schema for $tableName: ${response.error!.message}',
+      if (response.isEmpty) {
+        Logger.w(
+          'No data found in table: $tableName, trying to infer schema from table structure',
         );
-        continue;
+
+        // Try to get the table structure by describing it
+        try {
+          // Just check if the table exists by selecting with limit 0
+          await supabase.from(tableName).select('*').limit(0);
+
+          // If we get here, the table exists but is empty
+          Logger.i('Table $tableName exists but is empty');
+
+          // For now, we'll skip empty tables
+          continue;
+        } catch (e) {
+          Logger.e('Table $tableName does not exist or cannot be accessed: $e');
+          continue;
+        }
       }
 
+      // Infer column types from the first row
+      final firstRow = response.first;
       final columns =
-          (response.data as List)
+          firstRow.entries
               .map(
-                (col) => ColumnInfo(
-                  name: col['column_name'],
-                  dataType: col['data_type'],
-                  isNullable: col['is_nullable'] == 'YES',
+                (entry) => ColumnInfo(
+                  name: entry.key,
+                  // Infer data type from Dart type
+                  dataType: _inferDataTypeFromValue(entry.value),
+                  // Assume nullable if null or explicitly marked as nullable in model
+                  isNullable: entry.value == null,
                 ),
               )
               .toList();
@@ -251,4 +267,19 @@ String applyUpdates(String content, List<String> updates) {
   }
 
   return content;
+}
+
+// Helper function to infer PostgreSQL data type from Dart value
+String _inferDataTypeFromValue(dynamic value) {
+  if (value == null) return 'text'; // Default to text for null values
+
+  if (value is int) return 'integer';
+  if (value is double) return 'double precision';
+  if (value is bool) return 'boolean';
+  if (value is DateTime) return 'timestamp';
+  if (value is List) return 'jsonb';
+  if (value is Map) return 'jsonb';
+
+  // Default to text for strings and other types
+  return 'text';
 }

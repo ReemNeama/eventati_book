@@ -9,7 +9,7 @@ class MessagingService implements MessagingServiceInterface {
 
   /// Constructor
   MessagingService({SupabaseClient? supabase})
-      : _supabase = supabase ?? Supabase.instance.client;
+    : _supabase = supabase ?? Supabase.instance.client;
 
   @override
   Future<void> initialize() async {
@@ -85,7 +85,9 @@ class MessagingService implements MessagingServiceInterface {
   }
 
   @override
-  Future<void> handleInitialMessage(Function(Map<String, dynamic>) onMessage) async {
+  Future<void> handleInitialMessage(
+    Function(Map<String, dynamic>) onMessage,
+  ) async {
     // Implementation will be added later
   }
 
@@ -125,7 +127,10 @@ class MessagingService implements MessagingServiceInterface {
     String? payload,
   }) async {
     // Implementation will be added later
-    Logger.i('Notification scheduled for $scheduledDate: $title', tag: 'MessagingService');
+    Logger.i(
+      'Notification scheduled for $scheduledDate: $title',
+      tag: 'MessagingService',
+    );
   }
 
   @override
@@ -173,11 +178,12 @@ class MessagingService implements MessagingServiceInterface {
         throw Exception('User not authenticated');
       }
 
-      final response = await _supabase
-          .from('user_notification_settings')
-          .select()
-          .eq('user_id', userId)
-          .maybeSingle();
+      final response =
+          await _supabase
+              .from('user_notification_settings')
+              .select()
+              .eq('user_id', userId)
+              .maybeSingle();
 
       if (response == null) {
         // Return default settings
@@ -190,13 +196,20 @@ class MessagingService implements MessagingServiceInterface {
       }
 
       return {
-        'allNotificationsEnabled': response['all_notifications_enabled'] ?? true,
-        'pushNotificationsEnabled': response['push_notifications_enabled'] ?? true,
-        'emailNotificationsEnabled': response['email_notifications_enabled'] ?? true,
-        'inAppNotificationsEnabled': response['in_app_notifications_enabled'] ?? true,
+        'allNotificationsEnabled':
+            response['all_notifications_enabled'] ?? true,
+        'pushNotificationsEnabled':
+            response['push_notifications_enabled'] ?? true,
+        'emailNotificationsEnabled':
+            response['email_notifications_enabled'] ?? true,
+        'inAppNotificationsEnabled':
+            response['in_app_notifications_enabled'] ?? true,
       };
     } catch (e) {
-      Logger.e('Error getting notification settings: $e', tag: 'MessagingService');
+      Logger.e(
+        'Error getting notification settings: $e',
+        tag: 'MessagingService',
+      );
       // Return default settings
       return {
         'allNotificationsEnabled': true,
@@ -217,15 +230,22 @@ class MessagingService implements MessagingServiceInterface {
 
       await _supabase.from('user_notification_settings').upsert({
         'user_id': userId,
-        'all_notifications_enabled': settings['allNotificationsEnabled'] ?? true,
-        'push_notifications_enabled': settings['pushNotificationsEnabled'] ?? true,
-        'email_notifications_enabled': settings['emailNotificationsEnabled'] ?? true,
-        'in_app_notifications_enabled': settings['inAppNotificationsEnabled'] ?? true,
+        'all_notifications_enabled':
+            settings['allNotificationsEnabled'] ?? true,
+        'push_notifications_enabled':
+            settings['pushNotificationsEnabled'] ?? true,
+        'email_notifications_enabled':
+            settings['emailNotificationsEnabled'] ?? true,
+        'in_app_notifications_enabled':
+            settings['inAppNotificationsEnabled'] ?? true,
       });
 
       Logger.i('Notification settings updated', tag: 'MessagingService');
     } catch (e) {
-      Logger.e('Error updating notification settings: $e', tag: 'MessagingService');
+      Logger.e(
+        'Error updating notification settings: $e',
+        tag: 'MessagingService',
+      );
       throw Exception('Failed to update notification settings: $e');
     }
   }
@@ -243,9 +263,15 @@ class MessagingService implements MessagingServiceInterface {
         'all_notifications_enabled': enabled,
       });
 
-      Logger.i('Notifications ${enabled ? 'enabled' : 'disabled'}', tag: 'MessagingService');
+      Logger.i(
+        'Notifications ${enabled ? 'enabled' : 'disabled'}',
+        tag: 'MessagingService',
+      );
     } catch (e) {
-      Logger.e('Error setting notifications enabled: $e', tag: 'MessagingService');
+      Logger.e(
+        'Error setting notifications enabled: $e',
+        tag: 'MessagingService',
+      );
       throw Exception('Failed to set notifications enabled: $e');
     }
   }
@@ -258,15 +284,19 @@ class MessagingService implements MessagingServiceInterface {
         throw Exception('User not authenticated');
       }
 
-      final response = await _supabase
-          .from('user_notification_settings')
-          .select('all_notifications_enabled')
-          .eq('user_id', userId)
-          .maybeSingle();
+      final response =
+          await _supabase
+              .from('user_notification_settings')
+              .select('all_notifications_enabled')
+              .eq('user_id', userId)
+              .maybeSingle();
 
       return response?['all_notifications_enabled'] ?? true;
     } catch (e) {
-      Logger.e('Error checking if notifications are enabled: $e', tag: 'MessagingService');
+      Logger.e(
+        'Error checking if notifications are enabled: $e',
+        tag: 'MessagingService',
+      );
       return true; // Default to enabled
     }
   }
@@ -285,7 +315,9 @@ class MessagingService implements MessagingServiceInterface {
           .eq('user_id', userId)
           .eq('subscribed', true);
 
-      return response.map<String>((item) => item['topic_id'] as String).toList();
+      return response
+          .map<String>((item) => item['topic_id'] as String)
+          .toList();
     } catch (e) {
       Logger.e('Error getting active topics: $e', tag: 'MessagingService');
       return []; // Return empty list on error
