@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/widgets/details/image_placeholder.dart';
+import 'package:eventati_book/utils/image_utils.dart';
 
 /// A widget that displays a network image with caching and loading states
 class CachedNetworkImageWidget extends StatelessWidget {
@@ -69,14 +70,25 @@ class CachedNetworkImageWidget extends StatelessWidget {
     final theme = Theme.of(context);
     final defaultLoadingColor = theme.primaryColor;
 
+    // Optimize the image URL
+    final optimizedUrl = ImageUtils.getOptimizedUrl(
+      imageUrl,
+      width: width?.toInt(),
+      height: height?.toInt(),
+      quality: 85,
+    );
+
     return ClipRRect(
       borderRadius: BorderRadius.circular(borderRadius),
       child: Image.network(
-        imageUrl,
+        optimizedUrl,
         width: width,
         height: height,
         fit: fit,
         semanticLabel: semanticLabel,
+        // Use cacheWidth and cacheHeight for memory optimization
+        cacheWidth: width?.toInt(),
+        cacheHeight: height?.toInt(),
         loadingBuilder: (context, child, loadingProgress) {
           if (loadingProgress == null) {
             return child;

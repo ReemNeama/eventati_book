@@ -198,4 +198,151 @@ class ImageUtils {
         return 'application/octet-stream';
     }
   }
+
+  /// Get an optimized image URL for a CDN or image service
+  ///
+  /// [url] The original image URL
+  /// [width] The target width
+  /// [height] The target height
+  /// [quality] The target quality (0-100)
+  /// Returns the optimized URL
+  static String getOptimizedUrl(
+    String url, {
+    int? width,
+    int? height,
+    int quality = 85,
+  }) {
+    try {
+      // If the URL is from a service that supports resizing
+      if (url.contains('cloudinary.com')) {
+        return _addCloudinaryTransformation(url, width, height, quality);
+      } else if (url.contains('imgix.net')) {
+        return _addImgixTransformation(url, width, height, quality);
+      } else if (url.contains('images.unsplash.com')) {
+        return _addUnsplashTransformation(url, width, height, quality);
+      }
+
+      // If no optimization is possible, return the original URL
+      return url;
+    } catch (e) {
+      Logger.e('Error optimizing image URL: $e', tag: 'ImageUtils');
+      return url;
+    }
+  }
+
+  /// Add Cloudinary transformation to a URL
+  ///
+  /// [url] The original Cloudinary URL
+  /// [width] The target width
+  /// [height] The target height
+  /// [quality] The target quality (0-100)
+  /// Returns the transformed URL
+  static String _addCloudinaryTransformation(
+    String url,
+    int? width,
+    int? height,
+    int quality,
+  ) {
+    // Example: https://res.cloudinary.com/demo/image/upload/w_300,h_200,q_80/sample.jpg
+    final uri = Uri.parse(url);
+    final pathSegments = uri.pathSegments;
+
+    // Find the upload segment
+    final uploadIndex = pathSegments.indexOf('upload');
+    if (uploadIndex == -1) {
+      return url;
+    }
+
+    // Build the transformation string
+    final transformations = <String>[];
+
+    if (width != null) {
+      transformations.add('w_$width');
+    }
+
+    if (height != null) {
+      transformations.add('h_$height');
+    }
+
+    transformations.add('q_$quality');
+    transformations.add('c_fill');
+
+    // Insert the transformation after the upload segment
+    final newPathSegments = List<String>.from(pathSegments);
+    newPathSegments.insert(uploadIndex + 1, transformations.join(','));
+
+    // Build the new URL
+    final newUri = uri.replace(pathSegments: newPathSegments);
+    return newUri.toString();
+  }
+
+  /// Add Imgix transformation to a URL
+  ///
+  /// [url] The original Imgix URL
+  /// [width] The target width
+  /// [height] The target height
+  /// [quality] The target quality (0-100)
+  /// Returns the transformed URL
+  static String _addImgixTransformation(
+    String url,
+    int? width,
+    int? height,
+    int quality,
+  ) {
+    // Example: https://example.imgix.net/image.jpg?w=300&h=200&q=80&fit=crop
+    final uri = Uri.parse(url);
+
+    // Add query parameters
+    final newQueryParams = Map<String, String>.from(uri.queryParameters);
+
+    if (width != null) {
+      newQueryParams['w'] = width.toString();
+    }
+
+    if (height != null) {
+      newQueryParams['h'] = height.toString();
+    }
+
+    newQueryParams['q'] = quality.toString();
+    newQueryParams['fit'] = 'crop';
+
+    // Build the new URL
+    final newUri = uri.replace(queryParameters: newQueryParams);
+    return newUri.toString();
+  }
+
+  /// Add Unsplash transformation to a URL
+  ///
+  /// [url] The original Unsplash URL
+  /// [width] The target width
+  /// [height] The target height
+  /// [quality] The target quality (0-100)
+  /// Returns the transformed URL
+  static String _addUnsplashTransformation(
+    String url,
+    int? width,
+    int? height,
+    int quality,
+  ) {
+    // Example: https://images.unsplash.com/photo-123?w=300&h=200&q=80&fit=crop
+    final uri = Uri.parse(url);
+
+    // Add query parameters
+    final newQueryParams = Map<String, String>.from(uri.queryParameters);
+
+    if (width != null) {
+      newQueryParams['w'] = width.toString();
+    }
+
+    if (height != null) {
+      newQueryParams['h'] = height.toString();
+    }
+
+    newQueryParams['q'] = quality.toString();
+    newQueryParams['fit'] = 'crop';
+
+    // Build the new URL
+    final newUri = uri.replace(queryParameters: newQueryParams);
+    return newUri.toString();
+  }
 }
