@@ -12,6 +12,8 @@ const Map<String, String> modelToTableMapping = {
   'notification_models/notification.dart': 'notifications',
   'event_models/event.dart': 'events',
   'planning_models/task.dart': 'tasks',
+  'planning_models/task_category.dart': 'task_categories',
+  'planning_models/task_dependency.dart': 'task_dependencies',
   'planning_models/guest.dart': 'guests',
   'planning_models/budget_item.dart': 'budget_items',
   'event_models/wizard_state.dart': 'wizard_states',

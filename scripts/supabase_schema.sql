@@ -1,5 +1,5 @@
 -- SQL to update Supabase schema to match models
--- Generated on 2025-05-14 02:40:37.349234
+-- Generated on 2025-05-15 11:35:30.766318
 
 -- Enable UUID extension if not already enabled
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
@@ -194,15 +194,87 @@ ALTER TABLE events ADD COLUMN IF NOT EXISTS image_urls text[] NOT NULL;
 -- SQL for table: tasks
 CREATE TABLE IF NOT EXISTS tasks (
   id uuid PRIMARY KEY,
-  name text NOT NULL,
-  icon text NOT NULL,
-  color text NOT NULL
+  title text NOT NULL,
+  description text,
+  due_date timestamp with time zone NOT NULL,
+  status text NOT NULL,
+  category_id text NOT NULL,
+  assigned_to text,
+  is_important boolean NOT NULL,
+  notes text,
+  completed_date timestamp with time zone,
+  priority text NOT NULL,
+  is_service_related boolean NOT NULL,
+  service_id text,
+  dependencies text[] NOT NULL,
+  event_id text,
+  service text
 );
 
 -- Alter table statements to add missing columns:
-ALTER TABLE tasks ADD COLUMN IF NOT EXISTS name text NOT NULL;
-ALTER TABLE tasks ADD COLUMN IF NOT EXISTS icon text NOT NULL;
-ALTER TABLE tasks ADD COLUMN IF NOT EXISTS color text NOT NULL;
+ALTER TABLE tasks ADD COLUMN IF NOT EXISTS title text NOT NULL;
+ALTER TABLE tasks ADD COLUMN IF NOT EXISTS description text;
+ALTER TABLE tasks ADD COLUMN IF NOT EXISTS due_date timestamp with time zone NOT NULL;
+ALTER TABLE tasks ADD COLUMN IF NOT EXISTS status text NOT NULL;
+ALTER TABLE tasks ADD COLUMN IF NOT EXISTS category_id text NOT NULL;
+ALTER TABLE tasks ADD COLUMN IF NOT EXISTS assigned_to text;
+ALTER TABLE tasks ADD COLUMN IF NOT EXISTS is_important boolean NOT NULL;
+ALTER TABLE tasks ADD COLUMN IF NOT EXISTS notes text;
+ALTER TABLE tasks ADD COLUMN IF NOT EXISTS completed_date timestamp with time zone;
+ALTER TABLE tasks ADD COLUMN IF NOT EXISTS priority text NOT NULL;
+ALTER TABLE tasks ADD COLUMN IF NOT EXISTS is_service_related boolean NOT NULL;
+ALTER TABLE tasks ADD COLUMN IF NOT EXISTS service_id text;
+ALTER TABLE tasks ADD COLUMN IF NOT EXISTS dependencies text[] NOT NULL;
+ALTER TABLE tasks ADD COLUMN IF NOT EXISTS event_id text;
+ALTER TABLE tasks ADD COLUMN IF NOT EXISTS service text;
+
+
+
+-- SQL for table: task_categories
+CREATE TABLE IF NOT EXISTS task_categories (
+  id uuid PRIMARY KEY,
+  name text NOT NULL,
+  description text NOT NULL,
+  icon text NOT NULL,
+  color text NOT NULL,
+  order integer NOT NULL,
+  is_default boolean NOT NULL,
+  is_active boolean NOT NULL,
+  created_at timestamp with time zone NOT NULL,
+  updated_at timestamp with time zone NOT NULL
+);
+
+-- Alter table statements to add missing columns:
+ALTER TABLE task_categories ADD COLUMN IF NOT EXISTS name text NOT NULL;
+ALTER TABLE task_categories ADD COLUMN IF NOT EXISTS description text NOT NULL;
+ALTER TABLE task_categories ADD COLUMN IF NOT EXISTS icon text NOT NULL;
+ALTER TABLE task_categories ADD COLUMN IF NOT EXISTS color text NOT NULL;
+ALTER TABLE task_categories ADD COLUMN IF NOT EXISTS order integer NOT NULL;
+ALTER TABLE task_categories ADD COLUMN IF NOT EXISTS is_default boolean NOT NULL;
+ALTER TABLE task_categories ADD COLUMN IF NOT EXISTS is_active boolean NOT NULL;
+ALTER TABLE task_categories ADD COLUMN IF NOT EXISTS created_at timestamp with time zone NOT NULL;
+ALTER TABLE task_categories ADD COLUMN IF NOT EXISTS updated_at timestamp with time zone NOT NULL;
+
+
+
+-- SQL for table: task_dependencies
+CREATE TABLE IF NOT EXISTS task_dependencies (
+  id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+  prerequisite_task_id text NOT NULL,
+  dependent_task_id text NOT NULL,
+  type text NOT NULL,
+  offset_days integer NOT NULL,
+  created_at timestamp with time zone NOT NULL,
+  updated_at timestamp with time zone NOT NULL
+);
+
+-- Alter table statements to add missing columns:
+ALTER TABLE task_dependencies ADD COLUMN IF NOT EXISTS prerequisite_task_id text NOT NULL;
+ALTER TABLE task_dependencies ADD COLUMN IF NOT EXISTS dependent_task_id text NOT NULL;
+ALTER TABLE task_dependencies ADD COLUMN IF NOT EXISTS type text NOT NULL;
+ALTER TABLE task_dependencies ADD COLUMN IF NOT EXISTS offset_days integer NOT NULL;
+ALTER TABLE task_dependencies ADD COLUMN IF NOT EXISTS created_at timestamp with time zone NOT NULL;
+ALTER TABLE task_dependencies ADD COLUMN IF NOT EXISTS updated_at timestamp with time zone NOT NULL;
 
 
 

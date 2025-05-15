@@ -1,65 +1,10 @@
-import 'package:flutter/material.dart';
 import 'package:eventati_book/utils/database_utils.dart';
 
+/// Status of a task
 enum TaskStatus { notStarted, inProgress, completed, overdue }
 
+/// Priority level of a task
 enum TaskPriority { low, medium, high }
-
-class TaskCategory {
-  final String id;
-  final String name;
-  final IconData icon;
-  final Color color;
-
-  TaskCategory({
-    required this.id,
-    required this.name,
-    required this.icon,
-    required this.color,
-  });
-
-  /// Convert to database data
-  Map<String, dynamic> toDatabaseDoc() {
-    return {
-      'name': name,
-      'iconCodePoint': icon.codePoint,
-      'iconFontFamily': icon.fontFamily,
-      'iconFontPackage': icon.fontPackage,
-      'colorARGB': [color.a, color.r, color.g, color.b],
-      'createdAt': DbFieldValue.serverTimestamp(),
-    };
-  }
-
-  /// Create from database document
-  factory TaskCategory.fromDatabaseDoc(DbDocumentSnapshot doc) {
-    final data = doc.getData();
-    if (data.isEmpty) {
-      throw Exception('Document data was null');
-    }
-
-    final colorData = data['colorARGB'] as List<dynamic>?;
-    final color =
-        colorData != null
-            ? Color.fromARGB(
-              colorData[0] as int,
-              colorData[1] as int,
-              colorData[2] as int,
-              colorData[3] as int,
-            )
-            : Colors.blue;
-
-    return TaskCategory(
-      id: doc.id,
-      name: data['name'] ?? '',
-      icon: IconData(
-        data['iconCodePoint'] ?? Icons.task_alt.codePoint,
-        fontFamily: data['iconFontFamily'],
-        fontPackage: data['iconFontPackage'],
-      ),
-      color: color,
-    );
-  }
-}
 
 class Task {
   final String id;
@@ -191,24 +136,24 @@ class Task {
     return {
       'title': title,
       'description': description,
-      'dueDate': DbTimestamp.fromDate(dueDate).toIso8601String(),
+      'due_date': DbTimestamp.fromDate(dueDate).toIso8601String(),
       'status': status.toString().split('.').last,
-      'categoryId': categoryId,
-      'assignedTo': assignedTo,
-      'isImportant': isImportant,
+      'category_id': categoryId,
+      'assigned_to': assignedTo,
+      'is_important': isImportant,
       'notes': notes,
-      'completedDate':
+      'completed_date':
           completedDate != null
               ? DbTimestamp.fromDate(completedDate!).toIso8601String()
               : null,
       'priority': priority.toString().split('.').last,
-      'isServiceRelated': isServiceRelated,
-      'serviceId': serviceId,
+      'is_service_related': isServiceRelated,
+      'service_id': serviceId,
       'dependencies': dependencies,
-      'eventId': eventId,
+      'event_id': eventId,
       'service': service,
-      'createdAt': DbFieldValue.serverTimestamp(),
-      'updatedAt': DbFieldValue.serverTimestamp(),
+      'created_at': DbFieldValue.serverTimestamp(),
+      'updated_at': DbFieldValue.serverTimestamp(),
     };
   }
 
@@ -224,26 +169,26 @@ class Task {
       title: data['title'] ?? '',
       description: data['description'],
       dueDate:
-          data['dueDate'] != null
-              ? DateTime.parse(data['dueDate'])
+          data['due_date'] != null
+              ? DateTime.parse(data['due_date'])
               : DateTime.now(),
       status: _parseTaskStatus(data['status']),
-      categoryId: data['categoryId'] ?? '',
-      assignedTo: data['assignedTo'],
-      isImportant: data['isImportant'] ?? false,
+      categoryId: data['category_id'] ?? '',
+      assignedTo: data['assigned_to'],
+      isImportant: data['is_important'] ?? false,
       notes: data['notes'],
       completedDate:
-          data['completedDate'] != null
-              ? DateTime.parse(data['completedDate'])
+          data['completed_date'] != null
+              ? DateTime.parse(data['completed_date'])
               : null,
       priority: _parseTaskPriority(data['priority']),
-      isServiceRelated: data['isServiceRelated'] ?? false,
-      serviceId: data['serviceId'],
+      isServiceRelated: data['is_service_related'] ?? false,
+      serviceId: data['service_id'],
       dependencies:
           data['dependencies'] != null
               ? List<String>.from(data['dependencies'])
               : [],
-      eventId: data['eventId'],
+      eventId: data['event_id'],
       service: data['service'],
     );
   }
