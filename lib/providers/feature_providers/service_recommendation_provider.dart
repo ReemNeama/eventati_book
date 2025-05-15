@@ -114,6 +114,9 @@ class ServiceRecommendationProvider extends ChangeNotifier {
   List<Suggestion> get personalizedRecommendations =>
       _personalizedRecommendations;
 
+  /// Get the list of recommendations (alias for personalizedRecommendations)
+  List<Suggestion> get recommendations => _personalizedRecommendations;
+
   /// Get whether the provider is loading data
   bool get isLoading => _isLoading;
 
@@ -214,6 +217,92 @@ class ServiceRecommendationProvider extends ChangeNotifier {
       Logger.e(_errorMessage!, tag: 'ServiceRecommendationProvider');
       notifyListeners();
     }
+  }
+
+  /// Filter recommendations by category
+  List<Suggestion> filterRecommendationsByCategory(
+    List<Suggestion> recommendations,
+    SuggestionCategory? category,
+  ) {
+    if (category == null) {
+      return recommendations;
+    }
+
+    return recommendations
+        .where((recommendation) => recommendation.category == category)
+        .toList();
+  }
+
+  /// Filter recommendations by price range
+  List<Suggestion> filterRecommendationsByPriceRange(
+    List<Suggestion> recommendations,
+    double minPrice,
+    double maxPrice,
+  ) {
+    // This is a placeholder implementation
+    // In a real app, you would need to have price information in the Suggestion model
+    return recommendations;
+  }
+
+  /// Filter recommendations by availability
+  List<Suggestion> filterRecommendationsByAvailability(
+    List<Suggestion> recommendations,
+    bool showOnlyAvailable,
+  ) {
+    if (!showOnlyAvailable) {
+      return recommendations;
+    }
+
+    // This is a placeholder implementation
+    // In a real app, you would need to have availability information in the Suggestion model
+    return recommendations;
+  }
+
+  /// Sort recommendations by relevance (highest first)
+  List<Suggestion> sortRecommendationsByRelevance(
+    List<Suggestion> recommendations,
+  ) {
+    final sortedList = List<Suggestion>.from(recommendations);
+    sortedList.sort(
+      (a, b) => b.baseRelevanceScore.compareTo(a.baseRelevanceScore),
+    );
+    return sortedList;
+  }
+
+  /// Sort recommendations by price (low to high)
+  List<Suggestion> sortRecommendationsByPriceLowToHigh(
+    List<Suggestion> recommendations,
+  ) {
+    // This is a placeholder implementation
+    // In a real app, you would need to have price information in the Suggestion model
+    return recommendations;
+  }
+
+  /// Sort recommendations by price (high to low)
+  List<Suggestion> sortRecommendationsByPriceHighToLow(
+    List<Suggestion> recommendations,
+  ) {
+    // This is a placeholder implementation
+    // In a real app, you would need to have price information in the Suggestion model
+    return recommendations;
+  }
+
+  /// Sort recommendations by rating
+  List<Suggestion> sortRecommendationsByRating(
+    List<Suggestion> recommendations,
+  ) {
+    // This is a placeholder implementation
+    // In a real app, you would need to have rating information in the Suggestion model
+    return recommendations;
+  }
+
+  /// Sort recommendations by popularity
+  List<Suggestion> sortRecommendationsByPopularity(
+    List<Suggestion> recommendations,
+  ) {
+    // This is a placeholder implementation
+    // In a real app, you would need to have popularity information in the Suggestion model
+    return recommendations;
   }
 
   /// Toggles between showing all services and showing only recommended services

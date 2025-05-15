@@ -161,6 +161,17 @@ class VendorCommunicationArguments extends RouteArguments {
   }) : super();
 }
 
+/// Arguments for vendor recommendations screen
+class VendorRecommendationsArguments extends RouteArguments {
+  final String eventId;
+  final String eventName;
+
+  const VendorRecommendationsArguments({
+    required this.eventId,
+    required this.eventName,
+  }) : super();
+}
+
 /// Arguments for event details screen
 class EventDetailsArguments extends RouteArguments {
   final String eventId;
@@ -206,4 +217,42 @@ class PaymentArguments extends RouteArguments {
 /// Arguments for payment history screen
 class PaymentHistoryArguments extends RouteArguments {
   const PaymentHistoryArguments() : super();
+}
+
+/// Arguments for event dashboard screen
+class EventDashboardArguments extends RouteArguments {
+  final String eventId;
+
+  const EventDashboardArguments({required this.eventId}) : super();
+}
+
+/// Arguments for budget overview screen
+class BudgetOverviewArguments extends RouteArguments {
+  final String eventId;
+
+  const BudgetOverviewArguments({required this.eventId}) : super();
+}
+
+/// Arguments for global search screen
+class GlobalSearchArguments extends RouteArguments {
+  final String? initialQuery;
+  final String? initialCategory;
+
+  const GlobalSearchArguments({this.initialQuery, this.initialCategory})
+    : super();
+}
+
+/// Arguments for search results screen
+class SearchResultsArguments extends RouteArguments {
+  final String query;
+  final String? category;
+
+  const SearchResultsArguments({required this.query, this.category}) : super();
+}
+
+/// Arguments for advanced search screen
+class AdvancedSearchArguments extends RouteArguments {
+  final String? initialQuery;
+
+  const AdvancedSearchArguments({this.initialQuery}) : super();
 }

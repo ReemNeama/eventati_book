@@ -13,7 +13,6 @@ import 'package:eventati_book/services/supabase/database/booking_database_servic
 import 'package:eventati_book/di/service_locator.dart';
 import 'package:eventati_book/providers/planning_providers/task_template_provider.dart';
 import 'package:eventati_book/screens/testing/task_database_test_screen.dart';
-import 'package:eventati_book/screens/recommendations/personalized_recommendations_screen.dart';
 
 /// Router class for handling all navigation in the app
 class AppRouter {
@@ -344,6 +343,16 @@ class AppRouter {
           builder: (context) => const PersonalizedRecommendationsScreen(),
         );
 
+      case RouteNames.vendorRecommendations:
+        final args = settings.arguments as VendorRecommendationsArguments;
+        return MaterialPageRoute(
+          builder:
+              (context) => VendorRecommendationsScreen(
+                eventId: args.eventId,
+                eventName: args.eventName,
+              ),
+        );
+
       case RouteNames.payment:
         final args = settings.arguments as PaymentArguments;
         // Return a FutureBuilder route to handle the async booking fetch
@@ -391,6 +400,28 @@ class AppRouter {
       case RouteNames.eventDetails:
         // In a real app, you would fetch the event from the database using the eventId
         // For now, we'll redirect to the UserEventsScreen
+        return MaterialPageRoute(
+          builder: (context) => const UserEventsScreen(),
+        );
+
+      case RouteNames.eventDashboard:
+        final args = settings.arguments as EventDashboardArguments;
+        return MaterialPageRoute(
+          builder: (context) => EventDashboardScreen(eventId: args.eventId),
+        );
+
+      case RouteNames.globalSearch:
+        final args = settings.arguments as GlobalSearchArguments?;
+        return MaterialPageRoute(
+          builder:
+              (context) => GlobalSearchScreen(
+                initialQuery: args?.initialQuery,
+                initialCategory: args?.initialCategory,
+              ),
+        );
+
+      case RouteNames.budgetOverview:
+        // For now, we'll redirect to the user events screen
         return MaterialPageRoute(
           builder: (context) => const UserEventsScreen(),
         );

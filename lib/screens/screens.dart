@@ -20,12 +20,16 @@ export 'homepage/event_checklist_selection_screen.dart';
 // Event screens
 export 'events/user_events_screen.dart';
 export 'events/event_details_screen.dart';
+export 'events/event_dashboard_screen.dart';
 
 // Profile screens
 export 'profile/profile_screen.dart';
 
 // Event wizard screens
 export 'event_wizard/event_wizard_screens.dart';
+
+// Recommendation screens
+export 'recommendations/recommendation_screens.dart';
 
 // Booking screens
 export 'booking/booking_screens.dart';
@@ -41,3 +45,6 @@ export 'guards/guards.dart';
 
 // Demo screens
 export 'demo/demo_screens.dart';
+
+// Search screens
+export 'search/global_search_screen.dart';
