@@ -17,11 +17,10 @@
   - [ ] Apply SQL schema to Supabase project
   - [ ] Implement Row Level Security (RLS) policies
   - [ ] Test data persistence with all models
-- Planning Tools:
-  - [x] Implement vendor recommendations UI
-- Services & Booking:
-  - [ ] Add calendar integration
-  - [ ] Set up email service for confirmations
+- Planning Tools: ✅ Completed
+  *All tasks moved to eventati_book_completed_tasks.md*
+- Services & Booking: ✅ Completed
+  *All tasks moved to eventati_book_completed_tasks.md*
 
 ## Upcoming Tasks
 
@@ -125,23 +124,11 @@
   - [ ] Verify all relationships between tables are correctly defined
   - [ ] Update indexes for performance optimization
 
-- Planning Tools Completion:
-  - [x] Implement vendor recommendations UI based on wizard data
-  - [x] Create recommendation UI components
-  - [x] Implement UI for displaying recommendations
-  - [x] Add filtering options for recommendations
-  - [x] Create preference-based sorting
+- Planning Tools Completion: ✅ Completed
+  *All tasks moved to eventati_book_completed_tasks.md*
 
-- Services & Booking Enhancements:
-  - [x] Add calendar integration for booking
-  - [x] Implement calendar event creation for bookings
-  - [x] Add calendar availability checking
-  - [x] Create reminders for upcoming events
-  - [x] Implement recurring event support
-  - [x] Set up email service for booking confirmations
-  - [x] Create email templates for different notification types
-  - [x] Implement email verification for user accounts
-  - [x] Add email preference management
+- Services & Booking Enhancements: ✅ Completed
+  *All tasks moved to eventati_book_completed_tasks.md*
 
 #### Priority 2: UI Refinements
 - Enhance user experience:
