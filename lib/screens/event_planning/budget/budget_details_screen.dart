@@ -6,6 +6,7 @@ import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/widgets/common/empty_state.dart';
+import 'package:eventati_book/widgets/common/responsive_layout.dart';
 import 'package:eventati_book/screens/event_planning/budget/budget_item_form_screen.dart';
 
 class BudgetDetailsScreen extends StatefulWidget {
@@ -67,62 +68,18 @@ class _BudgetDetailsScreenState extends State<BudgetDetailsScreen> {
               title: Text('Budget for ${widget.eventName}'),
               backgroundColor: primaryColor,
             ),
-            body: Column(
-              children: [
-                _buildFilterBar(context, budgetProvider),
-                Expanded(
-                  child:
-                      filteredItems.isEmpty
-                          ? Center(
-                            child:
-                                budgetProvider.items.isEmpty
-                                    ? EmptyStateUtils.getEmptyBudgetState(
-                                      actionText: 'Add Item',
-                                      onAction: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder:
-                                                (context) =>
-                                                    BudgetItemFormScreen(
-                                                      eventId: widget.eventId,
-                                                      budgetProvider:
-                                                          budgetProvider,
-                                                      initialCategoryId:
-                                                          _selectedCategoryId,
-                                                    ),
-                                          ),
-                                        );
-                                      },
-                                    )
-                                    : EmptyState(
-                                      title: 'No Matching Items',
-                                      message:
-                                          'No budget items match your current filters',
-                                      icon: Icons.filter_alt_off,
-                                      actionText: 'Clear Filters',
-                                      onAction: () {
-                                        setState(() {
-                                          _selectedCategoryId = null;
-                                          _searchQuery = '';
-                                          _searchController.clear();
-                                        });
-                                      },
-                                    ),
-                          )
-                          : ListView.builder(
-                            padding: const EdgeInsets.all(16),
-                            itemCount: filteredItems.length,
-                            itemBuilder: (context, index) {
-                              return _buildBudgetItemCard(
-                                context,
-                                filteredItems[index],
-                                budgetProvider,
-                              );
-                            },
-                          ),
-                ),
-              ],
+            body: ResponsiveLayout(
+              // Mobile layout (portrait phones)
+              mobileLayout: Column(
+                children: [
+                  _buildFilterBar(context, budgetProvider),
+                  Expanded(
+                    child: _buildBudgetItemsList(filteredItems, budgetProvider),
+                  ),
+                ],
+              ),
+              // Tablet layout (landscape phones and tablets)
+              tabletLayout: _buildTabletLayout(filteredItems, budgetProvider),
             ),
             floatingActionButton: FloatingActionButton(
               backgroundColor: primaryColor,
@@ -171,6 +128,257 @@ class _BudgetDetailsScreenState extends State<BudgetDetailsScreen> {
     }
 
     return items;
+  }
+
+  /// Builds the tablet layout with a side panel for budget summary
+  Widget _buildTabletLayout(
+    List<BudgetItem> filteredItems,
+    BudgetProvider budgetProvider,
+  ) {
+    return Row(
+      children: [
+        // Left panel: Filter bar and budget items list (70% width)
+        Expanded(
+          flex: 70,
+          child: Column(
+            children: [
+              _buildFilterBar(context, budgetProvider),
+              Expanded(
+                child: _buildBudgetItemsList(filteredItems, budgetProvider),
+              ),
+            ],
+          ),
+        ),
+        // Vertical divider
+        VerticalDivider(
+          width: 1,
+          thickness: 1,
+          color:
+              UIUtils.isDarkMode(context) ? Colors.grey[800] : Colors.grey[300],
+        ),
+        // Right panel: Budget summary (30% width)
+        Expanded(flex: 30, child: _buildBudgetSummary(budgetProvider)),
+      ],
+    );
+  }
+
+  /// Builds the list of budget items or empty state
+  Widget _buildBudgetItemsList(
+    List<BudgetItem> filteredItems,
+    BudgetProvider budgetProvider,
+  ) {
+    return filteredItems.isEmpty
+        ? Center(
+          child:
+              budgetProvider.items.isEmpty
+                  ? EmptyStateUtils.getEmptyBudgetState(
+                    actionText: 'Add Item',
+                    onAction: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (context) => BudgetItemFormScreen(
+                                eventId: widget.eventId,
+                                budgetProvider: budgetProvider,
+                                initialCategoryId: _selectedCategoryId,
+                              ),
+                        ),
+                      );
+                    },
+                  )
+                  : EmptyState(
+                    title: 'No Matching Items',
+                    message: 'No budget items match your current filters',
+                    icon: Icons.filter_alt_off,
+                    actionText: 'Clear Filters',
+                    onAction: () {
+                      setState(() {
+                        _selectedCategoryId = null;
+                        _searchQuery = '';
+                        _searchController.clear();
+                      });
+                    },
+                  ),
+        )
+        : ListView.builder(
+          padding: const EdgeInsets.all(16),
+          itemCount: filteredItems.length,
+          itemBuilder: (context, index) {
+            return _buildBudgetItemCard(
+              context,
+              filteredItems[index],
+              budgetProvider,
+            );
+          },
+        );
+  }
+
+  /// Builds a summary of the budget with totals and category breakdown
+  Widget _buildBudgetSummary(BudgetProvider budgetProvider) {
+    final isDarkMode = UIUtils.isDarkMode(context);
+    final textColor = isDarkMode ? Colors.white : Colors.black;
+    final primaryColor = isDarkMode ? AppColorsDark.primary : AppColors.primary;
+
+    // Calculate budget totals
+    double totalEstimated = 0;
+    double totalActual = 0;
+    double totalRemaining = 0;
+
+    for (final item in budgetProvider.items) {
+      totalEstimated += item.estimatedCost;
+      if (item.actualCost != null) {
+        totalActual += item.actualCost!;
+      }
+    }
+
+    totalRemaining = totalEstimated - totalActual;
+
+    // Group items by category
+    final Map<String, double> categoryTotals = {};
+
+    for (final item in budgetProvider.items) {
+      final categoryId = item.categoryId;
+      if (!categoryTotals.containsKey(categoryId)) {
+        categoryTotals[categoryId] = 0;
+      }
+      categoryTotals[categoryId] =
+          categoryTotals[categoryId]! + item.estimatedCost;
+    }
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Budget Summary',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: textColor,
+            ),
+          ),
+          const SizedBox(height: 24),
+
+          // Budget totals
+          Card(
+            elevation: 2,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Totals',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: textColor,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  _buildBudgetSummaryRow(
+                    'Estimated',
+                    totalEstimated,
+                    primaryColor,
+                  ),
+                  const SizedBox(height: 8),
+                  _buildBudgetSummaryRow('Actual', totalActual, Colors.blue),
+                  const SizedBox(height: 8),
+                  _buildBudgetSummaryRow(
+                    'Remaining',
+                    totalRemaining,
+                    totalRemaining >= 0 ? Colors.green : Colors.red,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 24),
+
+          // Category breakdown
+          Text(
+            'Category Breakdown',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: textColor,
+            ),
+          ),
+          const SizedBox(height: 16),
+          ...categoryTotals.entries.map((entry) {
+            final category = budgetProvider.categories.firstWhere(
+              (c) => c.id == entry.key,
+              orElse:
+                  () => BudgetCategory(
+                    id: '',
+                    name: 'Unknown',
+                    icon: Icons.help_outline,
+                  ),
+            );
+
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    backgroundColor:
+                        isDarkMode ? Colors.grey[800] : Colors.grey[200],
+                    radius: 16,
+                    child: Icon(category.icon, color: primaryColor, size: 16),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      category.name,
+                      style: TextStyle(fontSize: 14, color: textColor),
+                    ),
+                  ),
+                  Text(
+                    ServiceUtils.formatPrice(entry.value, decimalPlaces: 0),
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: textColor,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
+  /// Builds a row for the budget summary
+  Widget _buildBudgetSummaryRow(String label, double amount, Color color) {
+    final isDarkMode = UIUtils.isDarkMode(context);
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 14,
+            color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
+          ),
+        ),
+        Text(
+          ServiceUtils.formatPrice(amount, decimalPlaces: 0),
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: color,
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _buildFilterBar(BuildContext context, BudgetProvider budgetProvider) {

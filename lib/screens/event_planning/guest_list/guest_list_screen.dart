@@ -6,6 +6,7 @@ import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/widgets/common/empty_state.dart';
+import 'package:eventati_book/widgets/common/responsive_layout.dart';
 import 'package:eventati_book/screens/event_planning/guest_list/guest_form_screen.dart';
 import 'package:eventati_book/screens/event_planning/guest_list/guest_details_screen.dart';
 import 'package:eventati_book/screens/event_planning/guest_list/guest_groups_screen.dart';
@@ -109,12 +110,18 @@ class _GuestListScreenState extends State<GuestListScreen>
               );
             }
 
-            return TabBarView(
-              controller: _tabController,
-              children: [
-                _buildGuestListTab(guestListProvider),
-                _buildSummaryTab(guestListProvider),
-              ],
+            // Use responsive layout for different screen sizes
+            return ResponsiveLayout(
+              // Mobile layout (portrait phones)
+              mobileLayout: TabBarView(
+                controller: _tabController,
+                children: [
+                  _buildGuestListTab(guestListProvider),
+                  _buildSummaryTab(guestListProvider),
+                ],
+              ),
+              // Tablet layout (landscape phones and tablets)
+              tabletLayout: _buildTabletLayout(guestListProvider),
             );
           },
         ),
@@ -138,6 +145,25 @@ class _GuestListScreenState extends State<GuestListScreen>
           },
         ),
       ),
+    );
+  }
+
+  /// Builds a side-by-side layout for tablets and larger screens
+  Widget _buildTabletLayout(GuestListProvider guestListProvider) {
+    return Row(
+      children: [
+        // Guest list on the left (60% of width)
+        Expanded(flex: 60, child: _buildGuestListTab(guestListProvider)),
+        // Vertical divider
+        VerticalDivider(
+          width: 1,
+          thickness: 1,
+          color:
+              UIUtils.isDarkMode(context) ? Colors.grey[800] : Colors.grey[300],
+        ),
+        // Summary on the right (40% of width)
+        Expanded(flex: 40, child: _buildSummaryTab(guestListProvider)),
+      ],
     );
   }
 

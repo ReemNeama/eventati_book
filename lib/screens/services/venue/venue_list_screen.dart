@@ -7,6 +7,7 @@ import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/widgets/common/empty_state.dart';
+import 'package:eventati_book/widgets/common/responsive_layout.dart';
 import 'package:eventati_book/providers/providers.dart';
 import 'package:provider/provider.dart';
 import 'package:eventati_book/widgets/services/filter/venue_filter.dart';
@@ -106,148 +107,51 @@ class _VenueListScreenState extends State<VenueListScreen> {
         backgroundColor: Theme.of(context).primaryColor,
         title: const Text('Venues'),
       ),
-      body: Column(
-        children: [
-          ServiceFilterBar(
-            searchHint: 'Search venues...',
-            searchController: _searchController,
-            onSearchChanged: (query) {
-              setState(() {
-                _searchQuery = query;
-              });
-            },
-            selectedSortOption: _selectedSortOption,
-            sortOptions: const [
-              'Rating',
-              'Price (Low to High)',
-              'Price (High to Low)',
-              'Capacity',
-            ],
-            onSortChanged: (option) {
-              if (option != null) {
+      body: ResponsiveLayout(
+        // Mobile layout (portrait phones)
+        mobileLayout: Column(
+          children: [
+            ServiceFilterBar(
+              searchHint: 'Search venues...',
+              searchController: _searchController,
+              onSearchChanged: (query) {
                 setState(() {
-                  _selectedSortOption = option;
+                  _searchQuery = query;
                 });
-              }
-            },
-            onFilterTap: () {
-              _showFilterDialog(context);
-            },
-          ),
-          Expanded(
-            child:
-                filteredVenues.isEmpty
-                    ? Center(
-                      child: EmptyState(
-                        title:
-                            _searchQuery.isNotEmpty ||
-                                    _selectedVenueTypes.isNotEmpty ||
-                                    _showRecommendedOnly
-                                ? 'No Matching Venues'
-                                : 'No Venues Available',
-                        message:
-                            _searchQuery.isNotEmpty ||
-                                    _selectedVenueTypes.isNotEmpty ||
-                                    _showRecommendedOnly
-                                ? 'Try adjusting your filters or search criteria'
-                                : 'Check back later for available venues',
-                        icon: Icons.location_city,
-                        actionText:
-                            _searchQuery.isNotEmpty ||
-                                    _selectedVenueTypes.isNotEmpty ||
-                                    _showRecommendedOnly
-                                ? 'Clear Filters'
-                                : null,
-                        onAction:
-                            _searchQuery.isNotEmpty ||
-                                    _selectedVenueTypes.isNotEmpty ||
-                                    _showRecommendedOnly
-                                ? () {
-                                  setState(() {
-                                    _searchQuery = '';
-                                    _searchController.clear();
-                                    _selectedVenueTypes.clear();
-                                    _priceRange = const RangeValues(1000, 5000);
-                                    _capacityRange = const RangeValues(50, 300);
-                                    _showRecommendedOnly = false;
-                                  });
-                                }
-                                : null,
-                        displayType: EmptyStateDisplayType.standard,
-                        animationType: EmptyStateAnimationType.fadeIn,
-                      ),
-                    )
-                    : ListView.builder(
-                      padding: const EdgeInsets.all(16),
-                      itemCount: filteredVenues.length,
-                      itemBuilder: (context, index) {
-                        final venue = filteredVenues[index];
-                        final isRecommended = serviceRecommendationProvider
-                            .isVenueRecommended(venue);
-                        final recommendationReason =
-                            isRecommended
-                                ? serviceRecommendationProvider
-                                    .getVenueRecommendationReason(venue)
-                                : null;
-
-                        return ServiceCard(
-                          name: venue.name,
-                          description: venue.description,
-                          rating: venue.rating,
-                          imageUrl: venue.imageUrl,
-                          isRecommended: isRecommended,
-                          recommendationReason: recommendationReason,
-                          isCompareSelected: comparisonProvider
-                              .isServiceSelected(venue),
-                          onCompareToggle: (_) {
-                            comparisonProvider.toggleServiceSelection(venue);
-                          },
-                          onTap: () {
-                            NavigationUtils.navigateToNamed(
-                              context,
-                              RouteNames.venueDetails,
-                              arguments: VenueDetailsArguments(
-                                venueId: venue.name,
-                              ), // Using name as ID for now
-                            );
-                          },
-                          additionalInfo: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const SizedBox(height: 8),
-                              Wrap(
-                                spacing: 8,
-                                children:
-                                    venue.venueTypes
-                                        .map(
-                                          (type) => Chip(
-                                            label: Text(type),
-                                            backgroundColor:
-                                                AppColors.primaryWithAlpha(0.7),
-                                          ),
-                                        )
-                                        .toList(),
-                              ),
-                              const SizedBox(height: 8),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    'Capacity: ${NumberUtils.formatWithCommas(venue.minCapacity)}-${NumberUtils.formatWithCommas(venue.maxCapacity)} guests',
-                                  ),
-                                  Text(
-                                    '${NumberUtils.formatCurrency(venue.pricePerEvent, decimalPlaces: 0)}/event',
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-          ),
-        ],
+              },
+              selectedSortOption: _selectedSortOption,
+              sortOptions: const [
+                'Rating',
+                'Price (Low to High)',
+                'Price (High to Low)',
+                'Capacity',
+              ],
+              onSortChanged: (option) {
+                if (option != null) {
+                  setState(() {
+                    _selectedSortOption = option;
+                  });
+                }
+              },
+              onFilterTap: () {
+                _showFilterDialog(context);
+              },
+            ),
+            Expanded(
+              child: _buildVenueList(
+                filteredVenues,
+                serviceRecommendationProvider,
+                comparisonProvider,
+              ),
+            ),
+          ],
+        ),
+        // Tablet layout (landscape phones and tablets)
+        tabletLayout: _buildTabletLayout(
+          filteredVenues,
+          serviceRecommendationProvider,
+          comparisonProvider,
+        ),
       ),
       floatingActionButton: Consumer<ComparisonProvider>(
         builder: (context, provider, child) {
@@ -275,6 +179,308 @@ class _VenueListScreenState extends State<VenueListScreen> {
           return const SizedBox.shrink();
         },
       ),
+    );
+  }
+
+  /// Builds the venue list or empty state
+  Widget _buildVenueList(
+    List<Venue> venues,
+    ServiceRecommendationProvider serviceRecommendationProvider,
+    ComparisonProvider comparisonProvider,
+  ) {
+    return venues.isEmpty
+        ? Center(
+          child: EmptyState(
+            title:
+                _searchQuery.isNotEmpty ||
+                        _selectedVenueTypes.isNotEmpty ||
+                        _showRecommendedOnly
+                    ? 'No Matching Venues'
+                    : 'No Venues Available',
+            message:
+                _searchQuery.isNotEmpty ||
+                        _selectedVenueTypes.isNotEmpty ||
+                        _showRecommendedOnly
+                    ? 'Try adjusting your filters or search criteria'
+                    : 'Check back later for available venues',
+            icon: Icons.location_city,
+            actionText:
+                _searchQuery.isNotEmpty ||
+                        _selectedVenueTypes.isNotEmpty ||
+                        _showRecommendedOnly
+                    ? 'Clear Filters'
+                    : null,
+            onAction:
+                _searchQuery.isNotEmpty ||
+                        _selectedVenueTypes.isNotEmpty ||
+                        _showRecommendedOnly
+                    ? () {
+                      setState(() {
+                        _searchQuery = '';
+                        _searchController.clear();
+                        _selectedVenueTypes.clear();
+                        _priceRange = const RangeValues(1000, 5000);
+                        _capacityRange = const RangeValues(50, 300);
+                        _showRecommendedOnly = false;
+                      });
+                    }
+                    : null,
+            displayType: EmptyStateDisplayType.standard,
+            animationType: EmptyStateAnimationType.fadeIn,
+          ),
+        )
+        : ListView.builder(
+          padding: const EdgeInsets.all(16),
+          itemCount: venues.length,
+          itemBuilder: (context, index) {
+            final venue = venues[index];
+            final isRecommended = serviceRecommendationProvider
+                .isVenueRecommended(venue);
+            final recommendationReason =
+                isRecommended
+                    ? serviceRecommendationProvider
+                        .getVenueRecommendationReason(venue)
+                    : null;
+
+            return ServiceCard(
+              name: venue.name,
+              description: venue.description,
+              rating: venue.rating,
+              imageUrl: venue.imageUrl,
+              isRecommended: isRecommended,
+              recommendationReason: recommendationReason,
+              isCompareSelected: comparisonProvider.isServiceSelected(venue),
+              onCompareToggle: (_) {
+                comparisonProvider.toggleServiceSelection(venue);
+              },
+              onTap: () {
+                NavigationUtils.navigateToNamed(
+                  context,
+                  RouteNames.venueDetails,
+                  arguments: VenueDetailsArguments(
+                    venueId: venue.name,
+                  ), // Using name as ID for now
+                );
+              },
+              additionalInfo: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 8,
+                    children:
+                        venue.venueTypes
+                            .map(
+                              (type) => Chip(
+                                label: Text(type),
+                                backgroundColor: AppColors.primaryWithAlpha(
+                                  0.7,
+                                ),
+                              ),
+                            )
+                            .toList(),
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Capacity: ${NumberUtils.formatWithCommas(venue.minCapacity)}-${NumberUtils.formatWithCommas(venue.maxCapacity)} guests',
+                      ),
+                      Text(
+                        '${NumberUtils.formatCurrency(venue.pricePerEvent, decimalPlaces: 0)}/event',
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+  }
+
+  /// Builds a side-by-side layout for tablets and larger screens
+  Widget _buildTabletLayout(
+    List<Venue> venues,
+    ServiceRecommendationProvider serviceRecommendationProvider,
+    ComparisonProvider comparisonProvider,
+  ) {
+    return Column(
+      children: [
+        ServiceFilterBar(
+          searchHint: 'Search venues...',
+          searchController: _searchController,
+          onSearchChanged: (query) {
+            setState(() {
+              _searchQuery = query;
+            });
+          },
+          selectedSortOption: _selectedSortOption,
+          sortOptions: const [
+            'Rating',
+            'Price (Low to High)',
+            'Price (High to Low)',
+            'Capacity',
+          ],
+          onSortChanged: (option) {
+            if (option != null) {
+              setState(() {
+                _selectedSortOption = option;
+              });
+            }
+          },
+          onFilterTap: () {
+            _showFilterDialog(context);
+          },
+        ),
+        Expanded(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Filter panel on the left (30% width)
+              Expanded(
+                flex: 30,
+                child: Card(
+                  margin: const EdgeInsets.all(16),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Venue Types',
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        const SizedBox(height: 16),
+                        Expanded(
+                          child: ListView(
+                            children:
+                                [
+                                      'Ballroom',
+                                      'Garden',
+                                      'Beach',
+                                      'Historic',
+                                      'Modern',
+                                      'Rustic',
+                                      'Rooftop',
+                                    ]
+                                    .map(
+                                      (type) => CheckboxListTile(
+                                        title: Text(type),
+                                        value: _selectedVenueTypes.contains(
+                                          type,
+                                        ),
+                                        onChanged: (selected) {
+                                          setState(() {
+                                            if (selected ?? false) {
+                                              _selectedVenueTypes.add(type);
+                                            } else {
+                                              _selectedVenueTypes.remove(type);
+                                            }
+                                          });
+                                        },
+                                        dense: true,
+                                      ),
+                                    )
+                                    .toList(),
+                          ),
+                        ),
+                        const Divider(),
+                        Text(
+                          'Price Range',
+                          style: Theme.of(context).textTheme.titleSmall,
+                        ),
+                        RangeSlider(
+                          values: _priceRange,
+                          min: 1000,
+                          max: 10000,
+                          divisions: 18,
+                          labels: RangeLabels(
+                            NumberUtils.formatCurrency(
+                              _priceRange.start,
+                              decimalPlaces: 0,
+                            ),
+                            NumberUtils.formatCurrency(
+                              _priceRange.end,
+                              decimalPlaces: 0,
+                            ),
+                          ),
+                          onChanged: (values) {
+                            setState(() {
+                              _priceRange = values;
+                            });
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Capacity Range',
+                          style: Theme.of(context).textTheme.titleSmall,
+                        ),
+                        RangeSlider(
+                          values: _capacityRange,
+                          min: 50,
+                          max: 1000,
+                          divisions: 19,
+                          labels: RangeLabels(
+                            '${_capacityRange.start.round()}',
+                            '${_capacityRange.end.round()}',
+                          ),
+                          onChanged: (values) {
+                            setState(() {
+                              _capacityRange = values;
+                            });
+                          },
+                        ),
+                        Consumer<ServiceRecommendationProvider>(
+                          builder: (context, provider, _) {
+                            // Only show the recommended filter if there's wizard data
+                            if (provider.wizardData == null) {
+                              return const SizedBox.shrink();
+                            }
+
+                            return CheckboxListTile(
+                              title: const Text('Show Recommended Only'),
+                              value: _showRecommendedOnly,
+                              onChanged: (value) {
+                                setState(() {
+                                  _showRecommendedOnly = value ?? false;
+                                });
+                              },
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              _searchQuery = '';
+                              _searchController.clear();
+                              _selectedVenueTypes.clear();
+                              _priceRange = const RangeValues(1000, 5000);
+                              _capacityRange = const RangeValues(50, 300);
+                              _showRecommendedOnly = false;
+                            });
+                          },
+                          child: const Text('Reset Filters'),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              // Venue list on the right (70% width)
+              Expanded(
+                flex: 70,
+                child: _buildVenueList(
+                  venues,
+                  serviceRecommendationProvider,
+                  comparisonProvider,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 

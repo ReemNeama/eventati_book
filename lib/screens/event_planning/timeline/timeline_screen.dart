@@ -6,6 +6,7 @@ import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/widgets/common/empty_state.dart';
+import 'package:eventati_book/widgets/common/responsive_layout.dart';
 import 'package:eventati_book/screens/event_planning/timeline/task_form_screen.dart';
 import 'package:eventati_book/screens/event_planning/timeline/checklist_screen.dart';
 import 'package:eventati_book/routing/route_names.dart';
@@ -86,12 +87,17 @@ class _TimelineScreenState extends State<TimelineScreen>
             tabs: const [Tab(text: 'Timeline'), Tab(text: 'Checklist')],
           ),
         ),
-        body: TabBarView(
-          controller: _tabController,
-          children: [
-            _buildTimelineTab(),
-            ChecklistScreen(eventId: widget.eventId),
-          ],
+        body: ResponsiveLayout(
+          // Mobile layout (portrait phones)
+          mobileLayout: TabBarView(
+            controller: _tabController,
+            children: [
+              _buildTimelineTab(),
+              ChecklistScreen(eventId: widget.eventId),
+            ],
+          ),
+          // Tablet layout (landscape phones and tablets)
+          tabletLayout: _buildTabletLayout(),
         ),
         floatingActionButton: FloatingActionButton(
           backgroundColor: primaryColor,
@@ -432,6 +438,55 @@ class _TimelineScreenState extends State<TimelineScreen>
     }
 
     return grouped;
+  }
+
+  /// Builds a side-by-side layout for tablets and larger screens
+  Widget _buildTabletLayout() {
+    return Consumer<TaskProvider>(
+      builder: (context, taskProvider, _) {
+        if (taskProvider.isLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (taskProvider.error != null) {
+          return ErrorHandlingUtils.getErrorScreen(
+            taskProvider.error!,
+            onRetry: () {
+              // Create a new provider instance to reload the data
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder:
+                      (context) => TimelineScreen(
+                        eventId: widget.eventId,
+                        eventName: widget.eventName,
+                      ),
+                ),
+              );
+            },
+            onGoHome: () => Navigator.of(context).pop(),
+          );
+        }
+
+        return Row(
+          children: [
+            // Timeline on the left (60% of width)
+            Expanded(flex: 60, child: _buildTimelineTab()),
+            // Vertical divider
+            VerticalDivider(
+              width: 1,
+              thickness: 1,
+              color:
+                  UIUtils.isDarkMode(context)
+                      ? Colors.grey[800]
+                      : Colors.grey[300],
+            ),
+            // Checklist on the right (40% of width)
+            Expanded(flex: 40, child: ChecklistScreen(eventId: widget.eventId)),
+          ],
+        );
+      },
+    );
   }
 
   /// Builds dependency indicator icons for a task
