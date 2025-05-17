@@ -153,6 +153,166 @@ class ServiceRecommendationProvider with ChangeNotifier {
     return getRecommendationsForCategory(SuggestionCategory.decoration);
   }
 
+  /// Get similar recommendations to the given recommendation
+  List<Suggestion> getSimilarRecommendations(
+    Suggestion recommendation, {
+    int maxCount = 5,
+  }) {
+    // First, try to find recommendations in the same category
+    final similarRecommendations = <Suggestion>[];
+
+    // Add recommendations in the same category
+    similarRecommendations.addAll(
+      _recommendations
+          .where(
+            (r) =>
+                r.id != recommendation.id &&
+                r.category == recommendation.category,
+          )
+          .toList(),
+    );
+
+    // If we don't have enough, add recommendations with similar tags
+    if (similarRecommendations.length < maxCount &&
+        recommendation.tags.isNotEmpty) {
+      final recommendationsWithSimilarTags =
+          _recommendations.where((r) {
+            return r.id != recommendation.id &&
+                r.category != recommendation.category &&
+                r.tags.any((tag) => recommendation.tags.contains(tag));
+          }).toList();
+
+      // Add recommendations with similar tags that aren't already in the list
+      for (final r in recommendationsWithSimilarTags) {
+        if (similarRecommendations.length >= maxCount) break;
+        if (!similarRecommendations.any((similar) => similar.id == r.id)) {
+          similarRecommendations.add(r);
+        }
+      }
+    }
+
+    // If we still don't have enough, add recommendations for the same event type
+    if (similarRecommendations.length < maxCount &&
+        recommendation.applicableEventTypes.isNotEmpty) {
+      final recommendationsForSameEventType =
+          _recommendations.where((r) {
+            return r.id != recommendation.id &&
+                !similarRecommendations.any((similar) => similar.id == r.id) &&
+                r.applicableEventTypes.any(
+                  (type) => recommendation.applicableEventTypes.contains(type),
+                );
+          }).toList();
+
+      // Add recommendations for the same event type that aren't already in the list
+      for (final r in recommendationsForSameEventType) {
+        if (similarRecommendations.length >= maxCount) break;
+        similarRecommendations.add(r);
+      }
+    }
+
+    // Sort by relevance score
+    similarRecommendations.sort((a, b) {
+      if (_wizardState != null) {
+        final scoreA = a.calculateRelevanceScore(_wizardState!);
+        final scoreB = b.calculateRelevanceScore(_wizardState!);
+        return scoreB.compareTo(scoreA); // Higher score first
+      } else {
+        return b.baseRelevanceScore.compareTo(a.baseRelevanceScore);
+      }
+    });
+
+    // Limit to maxCount
+    return similarRecommendations.take(maxCount).toList();
+  }
+
+  /// Filter recommendations by category
+  List<Suggestion> filterRecommendationsByCategory(
+    List<Suggestion> recommendations,
+    SuggestionCategory? category,
+  ) {
+    if (category == null) {
+      return recommendations;
+    }
+    return recommendations
+        .where((recommendation) => recommendation.category == category)
+        .toList();
+  }
+
+  /// Filter recommendations by price range
+  List<Suggestion> filterRecommendationsByPriceRange(
+    List<Suggestion> recommendations,
+    double minPrice,
+    double maxPrice,
+  ) {
+    // This is a placeholder implementation since we don't have actual price data
+    // In a real app, you would filter based on actual price data
+    return recommendations;
+  }
+
+  /// Filter recommendations by availability
+  List<Suggestion> filterRecommendationsByAvailability(
+    List<Suggestion> recommendations,
+    bool showOnlyAvailable,
+  ) {
+    // This is a placeholder implementation since we don't have actual availability data
+    // In a real app, you would filter based on actual availability data
+    return recommendations;
+  }
+
+  /// Sort recommendations by relevance
+  List<Suggestion> sortRecommendationsByRelevance(
+    List<Suggestion> recommendations,
+  ) {
+    if (_wizardState == null) {
+      return recommendations
+        ..sort((a, b) => b.baseRelevanceScore.compareTo(a.baseRelevanceScore));
+    }
+
+    final sortedRecommendations = List<Suggestion>.from(recommendations);
+    sortedRecommendations.sort((a, b) {
+      final scoreA = a.calculateRelevanceScore(_wizardState!);
+      final scoreB = b.calculateRelevanceScore(_wizardState!);
+      return scoreB.compareTo(scoreA); // Higher score first
+    });
+    return sortedRecommendations;
+  }
+
+  /// Sort recommendations by price (low to high)
+  List<Suggestion> sortRecommendationsByPriceLowToHigh(
+    List<Suggestion> recommendations,
+  ) {
+    // This is a placeholder implementation since we don't have actual price data
+    // In a real app, you would sort based on actual price data
+    return recommendations;
+  }
+
+  /// Sort recommendations by price (high to low)
+  List<Suggestion> sortRecommendationsByPriceHighToLow(
+    List<Suggestion> recommendations,
+  ) {
+    // This is a placeholder implementation since we don't have actual price data
+    // In a real app, you would sort based on actual price data
+    return recommendations;
+  }
+
+  /// Sort recommendations by rating
+  List<Suggestion> sortRecommendationsByRating(
+    List<Suggestion> recommendations,
+  ) {
+    // This is a placeholder implementation since we don't have actual rating data
+    // In a real app, you would sort based on actual rating data
+    return recommendations;
+  }
+
+  /// Sort recommendations by popularity
+  List<Suggestion> sortRecommendationsByPopularity(
+    List<Suggestion> recommendations,
+  ) {
+    // This is a placeholder implementation since we don't have actual popularity data
+    // In a real app, you would sort based on actual popularity data
+    return recommendations;
+  }
+
   /// Seed the database with predefined recommendations
   Future<void> seedPredefinedRecommendations() async {
     _isLoading = true;

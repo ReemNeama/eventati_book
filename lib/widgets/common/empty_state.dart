@@ -13,6 +13,33 @@ enum EmptyStateDisplayType {
 
   /// Minimal empty state with just text
   minimal,
+
+  /// Card-style empty state with a border
+  card,
+
+  /// Animated empty state with subtle animations
+  animated,
+
+  /// Placeholder style for content that's loading or not yet available
+  placeholder,
+}
+
+/// Animation type for animated empty states
+enum EmptyStateAnimationType {
+  /// Fade in animation
+  fadeIn,
+
+  /// Slide in from bottom animation
+  slideUp,
+
+  /// Pulse animation that draws attention
+  pulse,
+
+  /// Bounce animation
+  bounce,
+
+  /// No animation
+  none,
 }
 
 /// A reusable empty state widget
@@ -32,11 +59,53 @@ class EmptyState extends StatelessWidget {
   /// Optional action callback
   final VoidCallback? onAction;
 
+  /// Optional secondary action button text
+  final String? secondaryActionText;
+
+  /// Optional secondary action callback
+  final VoidCallback? onSecondaryAction;
+
   /// Display type for the empty state
   final EmptyStateDisplayType displayType;
 
   /// Optional custom illustration widget
   final Widget? illustration;
+
+  /// Optional animation type for animated display type
+  final EmptyStateAnimationType animationType;
+
+  /// Optional animation duration
+  final Duration animationDuration;
+
+  /// Optional custom background color
+  final Color? backgroundColor;
+
+  /// Optional custom icon color
+  final Color? iconColor;
+
+  /// Optional custom text color
+  final Color? textColor;
+
+  /// Optional custom button color
+  final Color? buttonColor;
+
+  /// Optional spacing between elements
+  final double spacing;
+
+  /// Optional padding around the widget
+  final EdgeInsetsGeometry padding;
+
+  /// Optional border radius for card display type
+  final double borderRadius;
+
+  /// Optional elevation for card display type
+  final double elevation;
+
+  /// Optional custom styles for title
+  final TextStyle? titleStyle;
+
+  /// Optional custom styles for message
+  final TextStyle? messageStyle;
 
   const EmptyState({
     super.key,
@@ -45,35 +114,162 @@ class EmptyState extends StatelessWidget {
     this.icon = Icons.inbox,
     this.actionText,
     this.onAction,
+    this.secondaryActionText,
+    this.onSecondaryAction,
     this.displayType = EmptyStateDisplayType.standard,
     this.illustration,
+    this.animationType = EmptyStateAnimationType.none,
+    this.animationDuration = const Duration(milliseconds: 500),
+    this.backgroundColor,
+    this.iconColor,
+    this.textColor,
+    this.buttonColor,
+    this.spacing = 8.0,
+    this.padding = const EdgeInsets.all(24.0),
+    this.borderRadius = 8.0,
+    this.elevation = 2.0,
+    this.titleStyle,
+    this.messageStyle,
   });
 
   @override
   Widget build(BuildContext context) {
     final isDarkMode = UIUtils.isDarkMode(context);
-    final primaryColor = isDarkMode ? AppColorsDark.primary : AppColors.primary;
-    final textColor = isDarkMode ? Colors.white70 : Colors.black87;
+    final primaryColor =
+        buttonColor ?? (isDarkMode ? AppColorsDark.primary : AppColors.primary);
+    final defaultTextColor =
+        textColor ?? (isDarkMode ? Colors.white70 : Colors.black87);
     final secondaryTextColor = isDarkMode ? Colors.white54 : Colors.black54;
+    final defaultIconColor =
+        iconColor ?? (isDarkMode ? Colors.grey[600] : Colors.grey[400]);
+
+    // Create the base widget based on display type
+    Widget emptyStateWidget;
 
     switch (displayType) {
       case EmptyStateDisplayType.standard:
-        return _buildStandardEmptyState(
+        emptyStateWidget = _buildStandardEmptyState(
           context,
           primaryColor,
-          textColor,
+          defaultTextColor,
           secondaryTextColor,
         );
       case EmptyStateDisplayType.compact:
-        return _buildCompactEmptyState(
+        emptyStateWidget = _buildCompactEmptyState(
           context,
           primaryColor,
-          textColor,
+          defaultTextColor,
           secondaryTextColor,
         );
       case EmptyStateDisplayType.minimal:
-        return _buildMinimalEmptyState(context, textColor, secondaryTextColor);
+        emptyStateWidget = _buildMinimalEmptyState(
+          context,
+          defaultTextColor,
+          secondaryTextColor,
+        );
+      case EmptyStateDisplayType.card:
+        emptyStateWidget = _buildCardEmptyState(
+          context,
+          primaryColor,
+          defaultTextColor,
+          secondaryTextColor,
+          defaultIconColor,
+        );
+      case EmptyStateDisplayType.animated:
+        // For animated type, use standard layout but apply animation later
+        emptyStateWidget = _buildStandardEmptyState(
+          context,
+          primaryColor,
+          defaultTextColor,
+          secondaryTextColor,
+        );
+      case EmptyStateDisplayType.placeholder:
+        emptyStateWidget = _buildPlaceholderEmptyState(
+          context,
+          primaryColor,
+          defaultTextColor,
+          secondaryTextColor,
+          defaultIconColor,
+        );
     }
+
+    // Apply animation if needed
+    if (displayType == EmptyStateDisplayType.animated ||
+        animationType != EmptyStateAnimationType.none) {
+      return _applyAnimation(emptyStateWidget);
+    }
+
+    return emptyStateWidget;
+  }
+
+  /// Apply animation to the widget based on animation type
+  Widget _applyAnimation(Widget child) {
+    switch (animationType) {
+      case EmptyStateAnimationType.fadeIn:
+        return _buildFadeInAnimation(child);
+      case EmptyStateAnimationType.slideUp:
+        return _buildSlideUpAnimation(child);
+      case EmptyStateAnimationType.pulse:
+        return _buildPulseAnimation(child);
+      case EmptyStateAnimationType.bounce:
+        return _buildBounceAnimation(child);
+      case EmptyStateAnimationType.none:
+        return child;
+    }
+  }
+
+  /// Build fade-in animation
+  Widget _buildFadeInAnimation(Widget child) {
+    return TweenAnimationBuilder<double>(
+      tween: Tween<double>(begin: 0.0, end: 1.0),
+      duration: animationDuration,
+      builder: (context, value, child) {
+        return Opacity(opacity: value, child: child);
+      },
+      child: child,
+    );
+  }
+
+  /// Build slide-up animation
+  Widget _buildSlideUpAnimation(Widget child) {
+    return TweenAnimationBuilder<Offset>(
+      tween: Tween<Offset>(begin: const Offset(0, 0.5), end: Offset.zero),
+      duration: animationDuration,
+      curve: Curves.easeOutCubic,
+      builder: (context, value, child) {
+        return FractionalTranslation(translation: value, child: child);
+      },
+      child: child,
+    );
+  }
+
+  /// Build pulse animation
+  Widget _buildPulseAnimation(Widget child) {
+    return TweenAnimationBuilder<double>(
+      tween: Tween<double>(begin: 0.95, end: 1.0),
+      duration: const Duration(milliseconds: 1500),
+      curve: Curves.easeInOut,
+      builder: (context, value, child) {
+        return Transform.scale(scale: value, child: child);
+      },
+      child: child,
+    );
+  }
+
+  /// Build bounce animation
+  Widget _buildBounceAnimation(Widget child) {
+    return TweenAnimationBuilder<double>(
+      tween: Tween<double>(begin: 0.0, end: 1.0),
+      duration: animationDuration,
+      curve: Curves.bounceOut,
+      builder: (context, value, child) {
+        return Transform.translate(
+          offset: Offset(0, 20 * (1 - value)),
+          child: child,
+        );
+      },
+      child: child,
+    );
   }
 
   Widget _buildStandardEmptyState(
@@ -82,46 +278,53 @@ class EmptyState extends StatelessWidget {
     Color textColor,
     Color secondaryTextColor,
   ) {
+    final isDarkMode = UIUtils.isDarkMode(context);
+    final defaultIconColor =
+        iconColor ?? (isDarkMode ? Colors.grey[600] : Colors.grey[400]);
+
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(24.0),
+        padding: padding,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // Use the illustration if provided, otherwise use the icon
             if (illustration != null)
-              // Use non-null assertion here since we've already checked it's not null
               illustration!
             else
               Icon(
                 icon,
                 size: 80,
-                color:
-                    UIUtils.isDarkMode(context)
-                        ? Colors.grey[600]
-                        : Colors.grey[400],
+                color: defaultIconColor,
                 semanticLabel: '$title icon',
               ),
-            const SizedBox(height: 24),
+            SizedBox(height: spacing * 3),
             Text(
               title,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: textColor,
-              ),
+              style:
+                  titleStyle ??
+                  TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: textColor,
+                  ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: spacing),
             Text(
               message,
-              style: TextStyle(fontSize: 16, color: secondaryTextColor),
+              style:
+                  messageStyle ??
+                  TextStyle(fontSize: 16, color: secondaryTextColor),
               textAlign: TextAlign.center,
             ),
             if (actionText != null && onAction != null) ...[
-              const SizedBox(height: 24),
+              SizedBox(height: spacing * 3),
               ElevatedButton(
-                onPressed: onAction,
+                onPressed: () {
+                  AccessibilityUtils.buttonPressHapticFeedback();
+                  onAction?.call();
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: primaryColor,
                   foregroundColor: Colors.white,
@@ -130,8 +333,18 @@ class EmptyState extends StatelessWidget {
                     vertical: 12,
                   ),
                 ),
-                // We've already checked that actionText is not null in the if condition
                 child: Text(actionText!),
+              ),
+            ],
+            if (secondaryActionText != null && onSecondaryAction != null) ...[
+              SizedBox(height: spacing),
+              TextButton(
+                onPressed: () {
+                  AccessibilityUtils.buttonPressHapticFeedback();
+                  onSecondaryAction?.call();
+                },
+                style: TextButton.styleFrom(foregroundColor: primaryColor),
+                child: Text(secondaryActionText!),
               ),
             ],
           ],
@@ -146,22 +359,26 @@ class EmptyState extends StatelessWidget {
     Color textColor,
     Color secondaryTextColor,
   ) {
+    final isDarkMode = UIUtils.isDarkMode(context);
+    final defaultIconColor =
+        iconColor ?? (isDarkMode ? Colors.grey[600] : Colors.grey[400]);
+
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: padding,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              icon,
-              size: 40,
-              color:
-                  UIUtils.isDarkMode(context)
-                      ? Colors.grey[600]
-                      : Colors.grey[400],
-              semanticLabel: '$title icon',
-            ),
-            const SizedBox(width: 16),
+            if (illustration != null)
+              SizedBox(width: 40, height: 40, child: illustration!)
+            else
+              Icon(
+                icon,
+                size: 40,
+                color: defaultIconColor,
+                semanticLabel: '$title icon',
+              ),
+            SizedBox(width: spacing * 2),
             Flexible(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -169,29 +386,52 @@ class EmptyState extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: textColor,
-                    ),
+                    style:
+                        titleStyle ??
+                        TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: textColor,
+                        ),
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: spacing / 2),
                   Text(
                     message,
-                    style: TextStyle(fontSize: 14, color: secondaryTextColor),
+                    style:
+                        messageStyle ??
+                        TextStyle(fontSize: 14, color: secondaryTextColor),
                   ),
                   if (actionText != null && onAction != null) ...[
-                    const SizedBox(height: 8),
+                    SizedBox(height: spacing),
                     TextButton(
-                      onPressed: onAction,
+                      onPressed: () {
+                        AccessibilityUtils.buttonPressHapticFeedback();
+                        onAction?.call();
+                      },
                       style: TextButton.styleFrom(
                         foregroundColor: primaryColor,
                         padding: EdgeInsets.zero,
                         minimumSize: const Size(0, 36),
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
-                      // We've already checked that actionText is not null in the if condition
                       child: Text(actionText!),
+                    ),
+                  ],
+                  if (secondaryActionText != null &&
+                      onSecondaryAction != null) ...[
+                    SizedBox(height: spacing / 2),
+                    TextButton(
+                      onPressed: () {
+                        AccessibilityUtils.buttonPressHapticFeedback();
+                        onSecondaryAction?.call();
+                      },
+                      style: TextButton.styleFrom(
+                        foregroundColor: secondaryTextColor,
+                        padding: EdgeInsets.zero,
+                        minimumSize: const Size(0, 36),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      child: Text(secondaryActionText!),
                     ),
                   ],
                 ],
@@ -210,11 +450,171 @@ class EmptyState extends StatelessWidget {
   ) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: padding,
         child: Text(
           message,
-          style: TextStyle(fontSize: 14, color: secondaryTextColor),
+          style:
+              messageStyle ??
+              TextStyle(fontSize: 14, color: secondaryTextColor),
           textAlign: TextAlign.center,
+        ),
+      ),
+    );
+  }
+
+  /// Build a card-style empty state
+  Widget _buildCardEmptyState(
+    BuildContext context,
+    Color primaryColor,
+    Color textColor,
+    Color secondaryTextColor,
+    Color? iconColor,
+  ) {
+    final isDarkMode = UIUtils.isDarkMode(context);
+    final cardColor =
+        backgroundColor ?? (isDarkMode ? Colors.grey[850] : Colors.white);
+
+    return Center(
+      child: Padding(
+        padding: padding,
+        child: Card(
+          elevation: elevation,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(borderRadius),
+          ),
+          color: cardColor,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (illustration != null)
+                  illustration!
+                else
+                  Icon(
+                    icon,
+                    size: 64,
+                    color: iconColor,
+                    semanticLabel: '$title icon',
+                  ),
+                SizedBox(height: spacing * 2),
+                Text(
+                  title,
+                  style:
+                      titleStyle ??
+                      TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: textColor,
+                      ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: spacing),
+                Text(
+                  message,
+                  style:
+                      messageStyle ??
+                      TextStyle(fontSize: 14, color: secondaryTextColor),
+                  textAlign: TextAlign.center,
+                ),
+                if (actionText != null && onAction != null) ...[
+                  SizedBox(height: spacing * 2),
+                  ElevatedButton(
+                    onPressed: onAction,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: primaryColor,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                    ),
+                    child: Text(actionText!),
+                  ),
+                ],
+                if (secondaryActionText != null &&
+                    onSecondaryAction != null) ...[
+                  SizedBox(height: spacing),
+                  TextButton(
+                    onPressed: onSecondaryAction,
+                    style: TextButton.styleFrom(foregroundColor: primaryColor),
+                    child: Text(secondaryActionText!),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Build a placeholder empty state
+  Widget _buildPlaceholderEmptyState(
+    BuildContext context,
+    Color primaryColor,
+    Color textColor,
+    Color secondaryTextColor,
+    Color? iconColor,
+  ) {
+    final isDarkMode = UIUtils.isDarkMode(context);
+    final placeholderColor = isDarkMode ? Colors.grey[700] : Colors.grey[300];
+
+    return Center(
+      child: Padding(
+        padding: padding,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Placeholder for icon or illustration
+            Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                color: placeholderColor,
+                shape: BoxShape.circle,
+              ),
+            ),
+            SizedBox(height: spacing * 2),
+            // Placeholder for title
+            Container(
+              width: 150,
+              height: 24,
+              decoration: BoxDecoration(
+                color: placeholderColor,
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+            SizedBox(height: spacing),
+            // Placeholder for message
+            Container(
+              width: 200,
+              height: 16,
+              decoration: BoxDecoration(
+                color: placeholderColor,
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+            SizedBox(height: spacing),
+            Container(
+              width: 180,
+              height: 16,
+              decoration: BoxDecoration(
+                color: placeholderColor,
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+            SizedBox(height: spacing * 2),
+            // Placeholder for button
+            Container(
+              width: 120,
+              height: 36,
+              decoration: BoxDecoration(
+                color: placeholderColor,
+                borderRadius: BorderRadius.circular(18),
+              ),
+            ),
+          ],
         ),
       ),
     );

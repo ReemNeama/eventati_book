@@ -3,3 +3,4 @@
 
 export 'personalized_recommendations_screen.dart';
 export 'vendor_recommendations_screen.dart';
+export 'recommendation_details_screen.dart';

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/widgets/responsive/responsive.dart';
 import 'package:eventati_book/routing/routing.dart';
+import 'package:eventati_book/providers/providers.dart';
+import 'package:eventati_book/widgets/recommendations/recommendation_widgets.dart';
 
 class HomepageScreen extends StatefulWidget {
   const HomepageScreen({super.key});
@@ -142,6 +145,25 @@ class _HomepageScreenState extends State<HomepageScreen> {
                     'Create a new event to get started',
                   )
                   : _buildUpcomingEventsList(),
+              const SizedBox(height: 32),
+
+              // Personalized recommendations section
+              Consumer<ServiceRecommendationProvider>(
+                builder: (context, recommendationProvider, _) {
+                  // Only show recommendations if the user has events
+                  if (_upcomingEvents.isEmpty) {
+                    return const SizedBox.shrink();
+                  }
+
+                  // Use the first event for recommendations
+                  final firstEvent = _upcomingEvents.first;
+
+                  return PersonalizedRecommendationsSection(
+                    eventId: 'mock-event-id', // Replace with actual event ID
+                    eventName: firstEvent['name'],
+                  );
+                },
+              ),
               const SizedBox(height: 32),
 
               // Recommended venues section

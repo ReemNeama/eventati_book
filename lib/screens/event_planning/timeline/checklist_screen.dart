@@ -488,9 +488,17 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
                             value: false,
                             activeColor: Colors.green,
                             onChanged: (_) {
-                              taskProvider.updateTaskStatus(
-                                task.id,
-                                TaskStatus.completed,
+                              // Store the current context and task ID before the async gap
+                              final currentContext = context;
+                              final currentTaskId = task.id;
+                              final currentEventId = widget.eventId;
+
+                              // Use a separate function to handle the async operation
+                              _completeTask(
+                                taskProvider,
+                                currentTaskId,
+                                currentContext,
+                                currentEventId,
                               );
                             },
                           )
@@ -499,6 +507,7 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
                             value: true,
                             activeColor: Colors.green,
                             onChanged: (_) {
+                              // For resetting a task to not started, we don't need to check dependencies
                               taskProvider.updateTaskStatus(
                                 task.id,
                                 TaskStatus.notStarted,
@@ -594,6 +603,53 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
         ],
       ),
     );
+  }
+
+  /// Handles completing a task asynchronously
+  Future<void> _completeTask(
+    TaskProvider taskProvider,
+    String taskId,
+    BuildContext currentContext,
+    String eventId,
+  ) async {
+    // We don't need to capture anything from the currentContext
+    // since we'll use the State's context after the async gap
+
+    final success = await taskProvider.updateTaskStatus(
+      taskId,
+      TaskStatus.completed,
+    );
+
+    // Check if the widget is still mounted and there was an error
+    if (mounted && !success && taskProvider.error != null) {
+      // Get a fresh context after the async gap
+      final errorMessage = taskProvider.error!;
+
+      // Use the State's context which is guaranteed to be valid if mounted is true
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(errorMessage),
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 5),
+          action: SnackBarAction(
+            label: 'View Dependencies',
+            textColor: Colors.white,
+            onPressed: () {
+              // Use the State's context which is guaranteed to be valid if mounted is true
+              NavigationUtils.navigateToNamed(
+                context,
+                RouteNames.taskDependency,
+                arguments: TaskDependencyArguments(
+                  eventId: eventId,
+                  eventName: 'Event',
+                  focusedTaskId: taskId,
+                ),
+              );
+            },
+          ),
+        ),
+      );
+    }
   }
 
   /// Builds dependency indicator icons for a task

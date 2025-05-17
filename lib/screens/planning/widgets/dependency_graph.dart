@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'package:eventati_book/models/models.dart';
+import 'package:eventati_book/models/planning_models/task_dependency.dart';
 import 'package:eventati_book/screens/planning/widgets/task_card.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/utils/core/constants.dart';
@@ -83,6 +84,13 @@ class _DependencyGraphState extends State<DependencyGraph> {
               ),
             ),
 
+            // Legend overlay
+            Positioned(
+              left: AppConstants.mediumPadding,
+              bottom: AppConstants.mediumPadding,
+              child: _buildLegend(),
+            ),
+
             // Controls overlay
             Positioned(
               right: AppConstants.mediumPadding,
@@ -144,6 +152,15 @@ class _DependencyGraphState extends State<DependencyGraph> {
       final prerequisitePosition = _calculateTaskPosition(prerequisiteTask);
       final dependentPosition = _calculateTaskPosition(dependentTask);
 
+      // Extract dependency type and offset days if available
+      DependencyType? dependencyType;
+      int offsetDays = 0;
+
+      if (dependency is TaskDependency) {
+        dependencyType = dependency.type;
+        offsetDays = dependency.offsetDays;
+      }
+
       // Add the line
       lines.add(
         CustomPaint(
@@ -160,6 +177,8 @@ class _DependencyGraphState extends State<DependencyGraph> {
                         _selectedTask?.id == dependentTask.id
                     ? 2.0
                     : 1.0,
+            dependencyType: dependencyType,
+            offsetDays: offsetDays,
           ),
           size: Size.infinite,
         ),
@@ -222,6 +241,90 @@ class _DependencyGraphState extends State<DependencyGraph> {
     }
 
     return nodes;
+  }
+
+  /// Builds a legend explaining the different dependency types
+  Widget _buildLegend() {
+    return Container(
+      padding: const EdgeInsets.all(AppConstants.smallPadding),
+      decoration: BoxDecoration(
+        color: Colors.white.withAlpha(230),
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(40),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Dependency Types:',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+          ),
+          const SizedBox(height: 8),
+          _buildLegendItem(
+            'Finish-to-Start',
+            DependencyType.finishToStart,
+            'Task B starts after Task A finishes',
+          ),
+          const SizedBox(height: 4),
+          _buildLegendItem(
+            'Start-to-Start',
+            DependencyType.startToStart,
+            'Task B starts after Task A starts',
+          ),
+          const SizedBox(height: 4),
+          _buildLegendItem(
+            'Finish-to-Finish',
+            DependencyType.finishToFinish,
+            'Task B finishes after Task A finishes',
+          ),
+          const SizedBox(height: 4),
+          _buildLegendItem(
+            'Start-to-Finish',
+            DependencyType.startToFinish,
+            'Task B finishes after Task A starts',
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Builds a single legend item
+  Widget _buildLegendItem(
+    String label,
+    DependencyType type,
+    String description,
+  ) {
+    return Row(
+      children: [
+        SizedBox(
+          width: 30,
+          child: CustomPaint(
+            painter: _LegendLinePainter(type),
+            size: const Size(30, 2),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              label,
+              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500),
+            ),
+            Text(
+              description,
+              style: const TextStyle(fontSize: 9, color: Colors.grey),
+            ),
+          ],
+        ),
+      ],
+    );
   }
 
   /// Builds the zoom and reset controls
@@ -343,12 +446,20 @@ class DependencyLinePainter extends CustomPainter {
   /// The stroke width of the line
   final double strokeWidth;
 
+  /// The type of dependency
+  final DependencyType? dependencyType;
+
+  /// The offset days for the dependency
+  final int offsetDays;
+
   /// Creates a new dependency line painter
   DependencyLinePainter({
     required this.start,
     required this.end,
     this.color = Colors.grey,
     this.strokeWidth = 1.0,
+    this.dependencyType,
+    this.offsetDays = 0,
   });
 
   @override
@@ -358,6 +469,36 @@ class DependencyLinePainter extends CustomPainter {
           ..color = color
           ..strokeWidth = strokeWidth
           ..style = PaintingStyle.stroke;
+
+    // Set dash pattern based on dependency type
+    if (dependencyType != null) {
+      switch (dependencyType!) {
+        case DependencyType.finishToStart:
+          // Solid line (default)
+          break;
+        case DependencyType.startToStart:
+          // Dashed line
+          paint.strokeCap = StrokeCap.round;
+          paint.strokeJoin = StrokeJoin.round;
+          paint.strokeWidth = strokeWidth * 1.2;
+          paint.shader = _getDashedLineShader();
+          break;
+        case DependencyType.finishToFinish:
+          // Dotted line
+          paint.strokeCap = StrokeCap.round;
+          paint.strokeJoin = StrokeJoin.round;
+          paint.strokeWidth = strokeWidth * 1.5;
+          paint.shader = _getDottedLineShader();
+          break;
+        case DependencyType.startToFinish:
+          // Dash-dot line
+          paint.strokeCap = StrokeCap.round;
+          paint.strokeJoin = StrokeJoin.round;
+          paint.strokeWidth = strokeWidth * 1.2;
+          paint.shader = _getDashDotLineShader();
+          break;
+      }
+    }
 
     // Draw a curved line with an arrow
     final path = Path();
@@ -380,6 +521,72 @@ class DependencyLinePainter extends CustomPainter {
 
     // Draw arrow at the end
     _drawArrow(canvas, end, Offset(end.dx - 10, end.dy), paint);
+
+    // Draw offset days label if needed
+    if (offsetDays > 0) {
+      _drawOffsetDaysLabel(canvas, path);
+    }
+  }
+
+  /// Creates a shader for dashed lines
+  Shader _getDashedLineShader() {
+    return LinearGradient(
+      colors: [color, Colors.transparent],
+      stops: const [0.7, 0.3],
+      tileMode: TileMode.repeated,
+    ).createShader(Rect.fromPoints(start, Offset(start.dx + 15, start.dy)));
+  }
+
+  /// Creates a shader for dotted lines
+  Shader _getDottedLineShader() {
+    return LinearGradient(
+      colors: [color, Colors.transparent],
+      stops: const [0.5, 0.5],
+      tileMode: TileMode.repeated,
+    ).createShader(Rect.fromPoints(start, Offset(start.dx + 8, start.dy)));
+  }
+
+  /// Creates a shader for dash-dot lines
+  Shader _getDashDotLineShader() {
+    return LinearGradient(
+      colors: [color, Colors.transparent, color, Colors.transparent],
+      stops: const [0.5, 0.2, 0.1, 0.2],
+      tileMode: TileMode.repeated,
+    ).createShader(Rect.fromPoints(start, Offset(start.dx + 20, start.dy)));
+  }
+
+  /// Draws a label showing the offset days
+  void _drawOffsetDaysLabel(Canvas canvas, Path path) {
+    // Find a point in the middle of the path
+    final pathMetrics = path.computeMetrics().first;
+    final midPoint =
+        pathMetrics.getTangentForOffset(pathMetrics.length / 2)?.position;
+
+    if (midPoint != null) {
+      final textSpan = TextSpan(
+        text: '+$offsetDays days',
+        style: TextStyle(
+          color: color,
+          fontSize: 12,
+          fontWeight: FontWeight.bold,
+          backgroundColor: Colors.white.withAlpha(200),
+        ),
+      );
+
+      final textPainter = TextPainter(
+        text: textSpan,
+        textDirection: TextDirection.ltr,
+      );
+
+      textPainter.layout();
+      textPainter.paint(
+        canvas,
+        Offset(
+          midPoint.dx - textPainter.width / 2,
+          midPoint.dy - textPainter.height - 5,
+        ),
+      );
+    }
   }
 
   /// Draws an arrow at the end of the line
@@ -414,7 +621,99 @@ class DependencyLinePainter extends CustomPainter {
     return oldDelegate.start != start ||
         oldDelegate.end != end ||
         oldDelegate.color != color ||
-        oldDelegate.strokeWidth != strokeWidth;
+        oldDelegate.strokeWidth != strokeWidth ||
+        oldDelegate.dependencyType != dependencyType ||
+        oldDelegate.offsetDays != offsetDays;
+  }
+}
+
+/// Custom painter for drawing a legend line
+class _LegendLinePainter extends CustomPainter {
+  /// The type of dependency to draw
+  final DependencyType type;
+
+  /// Creates a new legend line painter
+  _LegendLinePainter(this.type);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint =
+        Paint()
+          ..color = Colors.grey
+          ..strokeWidth = 2.0
+          ..style = PaintingStyle.stroke;
+
+    // Set dash pattern based on dependency type
+    switch (type) {
+      case DependencyType.finishToStart:
+        // Solid line (default)
+        break;
+      case DependencyType.startToStart:
+        // Dashed line
+        paint.strokeCap = StrokeCap.round;
+        paint.strokeJoin = StrokeJoin.round;
+        paint.strokeWidth = 2.5;
+        paint.shader = const LinearGradient(
+          colors: [Colors.grey, Colors.transparent],
+          stops: [0.7, 0.3],
+          tileMode: TileMode.repeated,
+        ).createShader(const Rect.fromLTWH(0, 0, 10, 2));
+        break;
+      case DependencyType.finishToFinish:
+        // Dotted line
+        paint.strokeCap = StrokeCap.round;
+        paint.strokeJoin = StrokeJoin.round;
+        paint.strokeWidth = 3.0;
+        paint.shader = const LinearGradient(
+          colors: [Colors.grey, Colors.transparent],
+          stops: [0.5, 0.5],
+          tileMode: TileMode.repeated,
+        ).createShader(const Rect.fromLTWH(0, 0, 6, 2));
+        break;
+      case DependencyType.startToFinish:
+        // Dash-dot line
+        paint.strokeCap = StrokeCap.round;
+        paint.strokeJoin = StrokeJoin.round;
+        paint.strokeWidth = 2.5;
+        paint.shader = const LinearGradient(
+          colors: [
+            Colors.grey,
+            Colors.transparent,
+            Colors.grey,
+            Colors.transparent,
+          ],
+          stops: [0.5, 0.2, 0.1, 0.2],
+          tileMode: TileMode.repeated,
+        ).createShader(const Rect.fromLTWH(0, 0, 15, 2));
+        break;
+    }
+
+    // Draw the line
+    canvas.drawLine(
+      Offset(0, size.height / 2),
+      Offset(size.width, size.height / 2),
+      paint,
+    );
+
+    // Draw arrow at the end
+    final arrowPaint =
+        Paint()
+          ..color = Colors.grey
+          ..style = PaintingStyle.fill;
+
+    final arrowPath =
+        Path()
+          ..moveTo(size.width, size.height / 2)
+          ..lineTo(size.width - 5, size.height / 2 - 3)
+          ..lineTo(size.width - 5, size.height / 2 + 3)
+          ..close();
+
+    canvas.drawPath(arrowPath, arrowPaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _LegendLinePainter oldDelegate) {
+    return oldDelegate.type != type;
   }
 }
 

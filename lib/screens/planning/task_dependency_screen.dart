@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:eventati_book/models/models.dart';
+import 'package:eventati_book/models/planning_models/task_dependency.dart';
 import 'package:eventati_book/providers/providers.dart';
 import 'package:eventati_book/screens/planning/widgets/dependency_graph.dart';
 import 'package:eventati_book/screens/planning/widgets/dependency_indicator.dart';
 import 'package:eventati_book/screens/planning/widgets/task_card.dart';
+import 'package:eventati_book/utils/core/constants.dart';
 
 /// Enum for the different view modes
 enum ViewMode {
@@ -58,6 +60,12 @@ class _TaskDependencyScreenState extends State<TaskDependencyScreen>
 
   /// ID of the dependency being removed (format: "prerequisiteId_dependentId")
   String? _isRemovingDependencyId;
+
+  /// Selected dependency type
+  DependencyType _dependencyType = DependencyType.finishToStart;
+
+  /// Offset days for the dependency
+  int _offsetDays = 0;
 
   @override
   void initState() {
@@ -145,10 +153,17 @@ class _TaskDependencyScreenState extends State<TaskDependencyScreen>
 
     try {
       final taskProvider = Provider.of<TaskProvider>(context, listen: false);
-      final success = await taskProvider.addDependency(
-        _prerequisiteTask!.id,
-        _dependentTask!.id,
+
+      // Create a TaskDependency object with the selected type and offset days
+      final dependency = TaskDependency(
+        prerequisiteTaskId: _prerequisiteTask!.id,
+        dependentTaskId: _dependentTask!.id,
+        type: _dependencyType,
+        offsetDays: _offsetDays,
       );
+
+      // Add the dependency using the provider
+      final success = await taskProvider.addDependencyWithDetails(dependency);
 
       setState(() {
         _isLoading = false;
@@ -168,6 +183,9 @@ class _TaskDependencyScreenState extends State<TaskDependencyScreen>
             _prerequisiteTask = null;
             _dependentTask = null;
             _errorMessage = null;
+            // Reset dependency type and offset days to defaults
+            _dependencyType = DependencyType.finishToStart;
+            _offsetDays = 0;
           });
         }
         return true;
@@ -433,7 +451,130 @@ class _TaskDependencyScreenState extends State<TaskDependencyScreen>
                         ),
                       ),
 
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 16),
+
+                      // Dependency type selection
+                      const Text(
+                        'Dependency Type:',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 8),
+
+                      DropdownButtonFormField<DependencyType>(
+                        value: _dependencyType,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
+                        ),
+                        items:
+                            DependencyType.values.map((type) {
+                              String label;
+                              switch (type) {
+                                case DependencyType.finishToStart:
+                                  label = 'Finish-to-Start (most common)';
+                                  break;
+                                case DependencyType.startToStart:
+                                  label = 'Start-to-Start';
+                                  break;
+                                case DependencyType.finishToFinish:
+                                  label = 'Finish-to-Finish';
+                                  break;
+                                case DependencyType.startToFinish:
+                                  label = 'Start-to-Finish';
+                                  break;
+                              }
+                              return DropdownMenuItem<DependencyType>(
+                                value: type,
+                                child: Text(label),
+                              );
+                            }).toList(),
+                        onChanged: (value) {
+                          if (value != null) {
+                            setState(() {
+                              _dependencyType = value;
+                            });
+                          }
+                        },
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      // Offset days selection
+                      const Text(
+                        'Offset Days:',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 8),
+
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Slider(
+                              value: _offsetDays.toDouble(),
+                              min: 0,
+                              max: 30,
+                              divisions: 30,
+                              label: _offsetDays.toString(),
+                              onChanged: (value) {
+                                setState(() {
+                                  _offsetDays = value.round();
+                                });
+                              },
+                            ),
+                          ),
+                          SizedBox(
+                            width: 60,
+                            child: TextField(
+                              keyboardType: TextInputType.number,
+                              textAlign: TextAlign.center,
+                              controller: TextEditingController(
+                                text: _offsetDays.toString(),
+                              ),
+                              decoration: const InputDecoration(
+                                border: OutlineInputBorder(),
+                                contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 8,
+                                ),
+                                suffixText: 'days',
+                              ),
+                              onChanged: (value) {
+                                final days = int.tryParse(value);
+                                if (days != null && days >= 0 && days <= 30) {
+                                  setState(() {
+                                    _offsetDays = days;
+                                  });
+                                }
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      // Dependency explanation
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        margin: const EdgeInsets.symmetric(vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.blue.withAlpha(25), // 0.1 * 255 = 25
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: Colors.blue.withAlpha(76), // 0.3 * 255 = 76
+                          ),
+                        ),
+                        child: Text(
+                          _getDependencyExplanation(),
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 16),
 
                       // Add button
                       SizedBox(
@@ -591,13 +732,27 @@ class _TaskDependencyScreenState extends State<TaskDependencyScreen>
                                       ],
                                     ),
 
-                                    // Dependency indicator
+                                    // Dependency indicator and type
                                     const Center(
-                                      child: Padding(
-                                        padding: EdgeInsets.symmetric(
-                                          vertical: 8.0,
-                                        ),
-                                        child: DependencyIndicator(),
+                                      child: Column(
+                                        children: [
+                                          Padding(
+                                            padding: EdgeInsets.symmetric(
+                                              vertical: 8.0,
+                                            ),
+                                            child: DependencyIndicator(),
+                                          ),
+                                          // We can't directly access dependency type from TaskDependencySimple
+                                          // So we'll just show a generic message
+                                          Text(
+                                            'Dependency',
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              fontStyle: FontStyle.italic,
+                                              color: Colors.grey,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
 
@@ -725,6 +880,52 @@ class _TaskDependencyScreenState extends State<TaskDependencyScreen>
         );
       },
     );
+  }
+
+  /// Gets an explanation of the current dependency type and offset
+  String _getDependencyExplanation() {
+    String explanation;
+
+    switch (_dependencyType) {
+      case DependencyType.finishToStart:
+        if (_offsetDays == 0) {
+          explanation =
+              'The dependent task can start only after the prerequisite task finishes.';
+        } else {
+          explanation =
+              'The dependent task can start only $_offsetDays days after the prerequisite task finishes.';
+        }
+        break;
+      case DependencyType.startToStart:
+        if (_offsetDays == 0) {
+          explanation =
+              'The dependent task can start only after the prerequisite task starts.';
+        } else {
+          explanation =
+              'The dependent task can start only $_offsetDays days after the prerequisite task starts.';
+        }
+        break;
+      case DependencyType.finishToFinish:
+        if (_offsetDays == 0) {
+          explanation =
+              'The dependent task can finish only after the prerequisite task finishes.';
+        } else {
+          explanation =
+              'The dependent task can finish only $_offsetDays days after the prerequisite task finishes.';
+        }
+        break;
+      case DependencyType.startToFinish:
+        if (_offsetDays == 0) {
+          explanation =
+              'The dependent task can finish only after the prerequisite task starts.';
+        } else {
+          explanation =
+              'The dependent task can finish only $_offsetDays days after the prerequisite task starts.';
+        }
+        break;
+    }
+
+    return explanation;
   }
 
   /// Builds a status chip for a task

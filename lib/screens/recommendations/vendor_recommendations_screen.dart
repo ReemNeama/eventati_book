@@ -9,6 +9,7 @@ import 'package:eventati_book/widgets/common/loading_indicator.dart';
 import 'package:eventati_book/widgets/recommendations/category_filter_bar.dart';
 import 'package:eventati_book/widgets/recommendations/sorting_options_dropdown.dart';
 import 'package:eventati_book/widgets/recommendations/vendor_recommendation_card.dart';
+import 'package:eventati_book/screens/recommendations/recommendation_details_screen.dart';
 
 /// Screen for displaying vendor recommendations based on wizard data
 class VendorRecommendationsScreen extends StatefulWidget {
@@ -58,6 +59,9 @@ class _VendorRecommendationsScreenState
 
   /// The maximum price value
   static const double _maxPrice = 5000;
+
+  /// Set of saved recommendation IDs
+  final Set<String> _savedRecommendations = {};
 
   @override
   Widget build(BuildContext context) {
@@ -214,6 +218,11 @@ class _VendorRecommendationsScreenState
                         recommendation: recommendation,
                         eventId: widget.eventId,
                         onTap: () => _showRecommendationDetails(recommendation),
+                        onCompare: () => _addToComparison(recommendation),
+                        onSave: () => _toggleSaveRecommendation(recommendation),
+                        isSaved: _isSaved(recommendation),
+                        showAnimation:
+                            index < 3, // Animate only the first few items
                       );
                     },
                   ),
@@ -280,7 +289,56 @@ class _VendorRecommendationsScreenState
 
   /// Show recommendation details
   void _showRecommendationDetails(Suggestion recommendation) {
-    // Navigate to recommendation details screen
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder:
+            (context) => RecommendationDetailsScreen(
+              recommendation: recommendation,
+              eventId: widget.eventId,
+            ),
+      ),
+    );
+  }
+
+  /// Check if a recommendation is saved
+  bool _isSaved(Suggestion recommendation) {
+    return _savedRecommendations.contains(recommendation.id);
+  }
+
+  /// Toggle saving a recommendation
+  void _toggleSaveRecommendation(Suggestion recommendation) {
+    setState(() {
+      if (_isSaved(recommendation)) {
+        _savedRecommendations.remove(recommendation.id);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${recommendation.title} removed from saved'),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      } else {
+        _savedRecommendations.add(recommendation.id);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${recommendation.title} added to saved'),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+    });
+    // TODO: Implement saving to database
+  }
+
+  /// Add a recommendation to comparison
+  void _addToComparison(Suggestion recommendation) {
+    // TODO: Implement adding to comparison
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('${recommendation.title} added to comparison'),
+        duration: const Duration(seconds: 2),
+      ),
+    );
   }
 
   /// Show filter dialog

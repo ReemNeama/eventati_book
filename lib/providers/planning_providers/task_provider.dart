@@ -518,27 +518,68 @@ class TaskProvider extends ChangeNotifier {
   /// without having to update the entire task object.
   /// Updates the task in the database.
   /// Notifies listeners when the operation completes.
-  Future<void> updateTaskStatus(String taskId, TaskStatus status) async {
+  ///
+  /// Returns a Future&lt;bool&gt; indicating whether the status update was successful.
+  /// If false, check the error property for details on why it failed.
+  Future<bool> updateTaskStatus(String taskId, TaskStatus status) async {
     _isLoading = true;
     _error = null;
     notifyListeners();
 
     try {
       final index = _tasks.indexWhere((t) => t.id == taskId);
-      if (index >= 0) {
-        final task = _tasks[index].copyWith(
-          status: status,
-          completedDate: status == TaskStatus.completed ? DateTime.now() : null,
-        );
-        await _taskDatabaseService.updateTask(eventId, task);
+      if (index < 0) {
+        _error = 'Task not found';
+        _isLoading = false;
+        notifyListeners();
+        return false;
       }
+
+      final task = _tasks[index];
+
+      // Check if we're trying to start or complete a task
+      if ((status == TaskStatus.inProgress || status == TaskStatus.completed) &&
+          task.status == TaskStatus.notStarted) {
+        // Check if all prerequisite tasks are completed
+        final prerequisiteTaskIds = getPrerequisiteTasks(taskId);
+        final prerequisiteTasks =
+            _tasks.where((t) => prerequisiteTaskIds.contains(t.id)).toList();
+
+        final uncompletedPrerequisites =
+            prerequisiteTasks
+                .where((t) => t.status != TaskStatus.completed)
+                .toList();
+
+        if (uncompletedPrerequisites.isNotEmpty) {
+          // There are uncompleted prerequisites
+          final prerequisiteNames = uncompletedPrerequisites
+              .map((t) => '"${t.title}"')
+              .join(', ');
+
+          _error =
+              'Cannot ${status == TaskStatus.inProgress ? 'start' : 'complete'} this task until the following prerequisite tasks are completed: $prerequisiteNames';
+          _isLoading = false;
+          notifyListeners();
+          return false;
+        }
+      }
+
+      // Update the task status
+      final updatedTask = task.copyWith(
+        status: status,
+        completedDate: status == TaskStatus.completed ? DateTime.now() : null,
+      );
+
+      await _taskDatabaseService.updateTask(eventId, updatedTask);
 
       _isLoading = false;
       notifyListeners();
+      return true;
     } catch (e) {
       _isLoading = false;
       _error = e.toString();
       notifyListeners();
+      return false;
     }
   }
 
@@ -592,6 +633,71 @@ class TaskProvider extends ChangeNotifier {
         dependentTaskId: dependentTaskId,
       );
 
+      final simpleDependency = TaskDependencySimple(
+        prerequisiteTaskId: prerequisiteTaskId,
+        dependentTaskId: dependentTaskId,
+      );
+
+      // Add dependency to local list
+      _dependencies.add(simpleDependency);
+
+      // Add dependency to database
+      await _taskDatabaseService.addTaskDependency(eventId, dependency);
+
+      // The dependency will be added to _dependencies via the stream subscription
+
+      return true;
+    } catch (e) {
+      _error = e.toString();
+      notifyListeners();
+      return false;
+    }
+  }
+
+  /// Adds a dependency between two tasks with detailed information
+  ///
+  /// [dependency] The TaskDependency object containing all dependency details
+  ///
+  /// Returns true if the dependency was added successfully, false otherwise.
+  /// A dependency will not be added if:
+  /// - Either task ID doesn't exist
+  /// - The dependency would create a circular reference
+  /// - The dependency already exists
+  Future<bool> addDependencyWithDetails(TaskDependency dependency) async {
+    final prerequisiteTaskId = dependency.prerequisiteTaskId;
+    final dependentTaskId = dependency.dependentTaskId;
+
+    // Don't allow dependencies to self
+    if (prerequisiteTaskId == dependentTaskId) {
+      return false;
+    }
+
+    // Check if both tasks exist
+    final prerequisiteExists = _tasks.any((t) => t.id == prerequisiteTaskId);
+    final dependentExists = _tasks.any((t) => t.id == dependentTaskId);
+
+    if (!prerequisiteExists || !dependentExists) {
+      return false;
+    }
+
+    // Check if dependency already exists
+    final dependencyExists = _dependencies.any(
+      (d) =>
+          d.prerequisiteTaskId == prerequisiteTaskId &&
+          d.dependentTaskId == dependentTaskId,
+    );
+
+    if (dependencyExists) {
+      return false;
+    }
+
+    // Check for circular dependencies
+    if (_wouldCreateCircularDependency(prerequisiteTaskId, dependentTaskId)) {
+      return false;
+    }
+
+    try {
+      // Create simple dependency for local list
       final simpleDependency = TaskDependencySimple(
         prerequisiteTaskId: prerequisiteTaskId,
         dependentTaskId: dependentTaskId,
