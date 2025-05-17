@@ -1,10 +1,11 @@
-import 'dart:convert';
+// import 'dart:convert';
 import 'package:supabase/supabase.dart';
 import 'package:uuid/uuid.dart';
 
 // Supabase configuration
 const String supabaseUrl = 'https://zyycmxzabfadkyzpsper.supabase.co';
-const String supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp5eWNteHphYmZhZGt5enBzcGVyIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0NjkyMjMyOCwiZXhwIjoyMDYyNDk4MzI4fQ.7NIGlM6A0xxKlCsgoz0gSSiscxroRUzMnuoXQuH5V8g';
+const String supabaseKey =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp5eWNteHphYmZhZGt5enBzcGVyIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0NjkyMjMyOCwiZXhwIjoyMDYyNDk4MzI4fQ.7NIGlM6A0xxKlCsgoz0gSSiscxroRUzMnuoXQuH5V8g';
 
 void main() async {
   print('Testing data persistence with all models...');
@@ -46,7 +47,7 @@ void main() async {
 
 Future<void> testUserModel(SupabaseClient supabase, Uuid uuid) async {
   print('\n--- Testing User Model ---');
-  
+
   // Create a test user
   final userId = uuid.v4();
   final userData = {
@@ -71,16 +72,21 @@ Future<void> testUserModel(SupabaseClient supabase, Uuid uuid) async {
 
   // Read user
   print('Reading user...');
-  final response = await supabase.from('users').select().eq('id', userId).single();
+  final response =
+      await supabase.from('users').select().eq('id', userId).single();
   print('User read successfully: ${response['name']}');
 
   // Update user
   print('Updating user...');
-  await supabase.from('users').update({'name': 'Updated User'}).eq('id', userId);
+  await supabase
+      .from('users')
+      .update({'name': 'Updated User'})
+      .eq('id', userId);
   print('User updated successfully');
 
   // Read updated user
-  final updatedResponse = await supabase.from('users').select().eq('id', userId).single();
+  final updatedResponse =
+      await supabase.from('users').select().eq('id', userId).single();
   print('Updated user read successfully: ${updatedResponse['name']}');
 
   // Delete user
@@ -91,7 +97,7 @@ Future<void> testUserModel(SupabaseClient supabase, Uuid uuid) async {
 
 Future<void> testEventModel(SupabaseClient supabase, Uuid uuid) async {
   print('\n--- Testing Event Model ---');
-  
+
   // Create a test user first
   final userId = uuid.v4();
   final userData = {
@@ -109,7 +115,7 @@ Future<void> testEventModel(SupabaseClient supabase, Uuid uuid) async {
     'auth_provider': 'google',
   };
   await supabase.from('users').insert(userData);
-  
+
   // Create a test event
   final eventId = uuid.v4();
   final eventData = {
@@ -135,30 +141,35 @@ Future<void> testEventModel(SupabaseClient supabase, Uuid uuid) async {
 
   // Read event
   print('Reading event...');
-  final response = await supabase.from('events').select().eq('id', eventId).single();
+  final response =
+      await supabase.from('events').select().eq('id', eventId).single();
   print('Event read successfully: ${response['name']}');
 
   // Update event
   print('Updating event...');
-  await supabase.from('events').update({'name': 'Updated Event'}).eq('id', eventId);
+  await supabase
+      .from('events')
+      .update({'name': 'Updated Event'})
+      .eq('id', eventId);
   print('Event updated successfully');
 
   // Read updated event
-  final updatedResponse = await supabase.from('events').select().eq('id', eventId).single();
+  final updatedResponse =
+      await supabase.from('events').select().eq('id', eventId).single();
   print('Updated event read successfully: ${updatedResponse['name']}');
 
   // Delete event
   print('Deleting event...');
   await supabase.from('events').delete().eq('id', eventId);
   print('Event deleted successfully');
-  
+
   // Clean up user
   await supabase.from('users').delete().eq('id', userId);
 }
 
 Future<void> testTaskModel(SupabaseClient supabase, Uuid uuid) async {
   print('\n--- Testing Task Model ---');
-  
+
   // Create a test user first
   final userId = uuid.v4();
   final userData = {
@@ -176,7 +187,7 @@ Future<void> testTaskModel(SupabaseClient supabase, Uuid uuid) async {
     'auth_provider': 'google',
   };
   await supabase.from('users').insert(userData);
-  
+
   // Create a test event
   final eventId = uuid.v4();
   final eventData = {
@@ -195,7 +206,7 @@ Future<void> testTaskModel(SupabaseClient supabase, Uuid uuid) async {
     'image_urls': [],
   };
   await supabase.from('events').insert(eventData);
-  
+
   // Create a test task category
   final categoryId = uuid.v4();
   final categoryData = {
@@ -211,7 +222,7 @@ Future<void> testTaskModel(SupabaseClient supabase, Uuid uuid) async {
     'updated_at': DateTime.now().toIso8601String(),
   };
   await supabase.from('task_categories').insert(categoryData);
-  
+
   // Create a test task
   final taskId = uuid.v4();
   final taskData = {
@@ -235,23 +246,28 @@ Future<void> testTaskModel(SupabaseClient supabase, Uuid uuid) async {
 
   // Read task
   print('Reading task...');
-  final response = await supabase.from('tasks').select().eq('id', taskId).single();
+  final response =
+      await supabase.from('tasks').select().eq('id', taskId).single();
   print('Task read successfully: ${response['title']}');
 
   // Update task
   print('Updating task...');
-  await supabase.from('tasks').update({'title': 'Updated Task'}).eq('id', taskId);
+  await supabase
+      .from('tasks')
+      .update({'title': 'Updated Task'})
+      .eq('id', taskId);
   print('Task updated successfully');
 
   // Read updated task
-  final updatedResponse = await supabase.from('tasks').select().eq('id', taskId).single();
+  final updatedResponse =
+      await supabase.from('tasks').select().eq('id', taskId).single();
   print('Updated task read successfully: ${updatedResponse['title']}');
 
   // Delete task
   print('Deleting task...');
   await supabase.from('tasks').delete().eq('id', taskId);
   print('Task deleted successfully');
-  
+
   // Clean up
   await supabase.from('task_categories').delete().eq('id', categoryId);
   await supabase.from('events').delete().eq('id', eventId);
@@ -261,7 +277,7 @@ Future<void> testTaskModel(SupabaseClient supabase, Uuid uuid) async {
 // Add more test functions for other models
 Future<void> testBudgetItemModel(SupabaseClient supabase, Uuid uuid) async {
   print('\n--- Testing Budget Item Model ---');
-  
+
   // Create a test budget item
   final budgetItemId = uuid.v4();
   final budgetItemData = {
@@ -277,16 +293,29 @@ Future<void> testBudgetItemModel(SupabaseClient supabase, Uuid uuid) async {
 
   // Read budget item
   print('Reading budget item...');
-  final response = await supabase.from('budget_items').select().eq('id', budgetItemId).single();
+  final response =
+      await supabase
+          .from('budget_items')
+          .select()
+          .eq('id', budgetItemId)
+          .single();
   print('Budget item read successfully: ${response['name']}');
 
   // Update budget item
   print('Updating budget item...');
-  await supabase.from('budget_items').update({'name': 'Updated Budget Item'}).eq('id', budgetItemId);
+  await supabase
+      .from('budget_items')
+      .update({'name': 'Updated Budget Item'})
+      .eq('id', budgetItemId);
   print('Budget item updated successfully');
 
   // Read updated budget item
-  final updatedResponse = await supabase.from('budget_items').select().eq('id', budgetItemId).single();
+  final updatedResponse =
+      await supabase
+          .from('budget_items')
+          .select()
+          .eq('id', budgetItemId)
+          .single();
   print('Updated budget item read successfully: ${updatedResponse['name']}');
 
   // Delete budget item

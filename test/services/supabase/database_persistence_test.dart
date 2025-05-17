@@ -11,11 +11,10 @@ class MockDatabaseService extends Mock implements DatabaseService {}
 
 void main() {
   late MockDatabaseService mockDatabaseService;
-  late MockSupabaseClient mockSupabaseClient;
+  // late MockSupabaseClient mockSupabaseClient;
 
   setUp(() {
     mockDatabaseService = MockDatabaseService();
-    mockSupabaseClient = MockSupabaseClient();
   });
 
   group('Database Service Tests', () {

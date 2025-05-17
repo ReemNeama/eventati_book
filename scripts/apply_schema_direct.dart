@@ -4,7 +4,8 @@ import 'dart:convert';
 
 // Supabase configuration
 const String supabaseUrl = 'https://zyycmxzabfadkyzpsper.supabase.co';
-const String supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp5eWNteHphYmZhZGt5enBzcGVyIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0NjkyMjMyOCwiZXhwIjoyMDYyNDk4MzI4fQ.7NIGlM6A0xxKlCsgoz0gSSiscxroRUzMnuoXQuH5V8g';
+const String supabaseKey =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp5eWNteHphYmZhZGt5enBzcGVyIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0NjkyMjMyOCwiZXhwIjoyMDYyNDk4MzI4fQ.7NIGlM6A0xxKlCsgoz0gSSiscxroRUzMnuoXQuH5V8g';
 
 void main() async {
   print('Applying Supabase schema directly...');
@@ -53,13 +54,14 @@ List<String> splitSql(String sql) {
 
   for (final line in sql.split('\n')) {
     currentStatement += line + '\n';
-    
-    if (line.trim().startsWith('CREATE OR REPLACE FUNCTION') || 
+
+    if (line.trim().startsWith('CREATE OR REPLACE FUNCTION') ||
         line.trim().startsWith('CREATE FUNCTION')) {
       inFunction = true;
     }
-    
-    if (inFunction && line.trim().endsWith('LANGUAGE plpgsql SECURITY DEFINER;')) {
+
+    if (inFunction &&
+        line.trim().endsWith('LANGUAGE plpgsql SECURITY DEFINER;')) {
       inFunction = false;
       statements.add(currentStatement);
       currentStatement = '';
@@ -79,7 +81,7 @@ List<String> splitSql(String sql) {
       currentChunk += statement;
     }
   }
-  
+
   if (currentChunk.isNotEmpty) {
     chunks.add(currentChunk);
   }
@@ -104,7 +106,7 @@ Future<bool> applySql(String sql) async {
       return true;
     } else {
       print('Error: ${response.statusCode} - ${response.body}');
-      
+
       // Try direct SQL API if exec_sql fails
       try {
         final directResponse = await http.post(
@@ -117,11 +119,14 @@ Future<bool> applySql(String sql) async {
           },
           body: jsonEncode({'query': sql}),
         );
-        
-        if (directResponse.statusCode == 200 || directResponse.statusCode == 201) {
+
+        if (directResponse.statusCode == 200 ||
+            directResponse.statusCode == 201) {
           return true;
         } else {
-          print('Direct SQL API error: ${directResponse.statusCode} - ${directResponse.body}');
+          print(
+            'Direct SQL API error: ${directResponse.statusCode} - ${directResponse.body}',
+          );
           return false;
         }
       } catch (e) {
