@@ -1,8 +1,5 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:eventati_book/config/deep_link_config.dart';
 import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/utils/logger.dart';

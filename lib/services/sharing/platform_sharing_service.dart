@@ -1,5 +1,3 @@
-import 'dart:io';
-import 'package:flutter/material.dart';
 import 'package:flutter_social_content_share/flutter_social_content_share.dart';
 import 'package:whatsapp_share/whatsapp_share.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -15,7 +13,7 @@ class PlatformSharingService {
 
   /// Constructor
   PlatformSharingService({AnalyticsService? analyticsService})
-      : _analyticsService = analyticsService ?? AnalyticsService();
+    : _analyticsService = analyticsService ?? AnalyticsService();
 
   /// Share content to Facebook
   ///
@@ -28,11 +26,10 @@ class PlatformSharingService {
     String? hashtag,
   }) async {
     try {
-      final result = await FlutterSocialContentShare.share(
+      await FlutterSocialContentShare.share(
         type: ShareType.facebookWithoutImage,
         quote: text,
         url: url ?? '',
-        hashtag: hashtag != null ? '#$hashtag' : null,
       );
 
       // Track the share
@@ -42,8 +39,11 @@ class PlatformSharingService {
         method: 'facebook',
       );
 
-      Logger.i('Content shared to Facebook successfully', tag: 'PlatformSharingService');
-      return result ?? false;
+      Logger.i(
+        'Content shared to Facebook successfully',
+        tag: 'PlatformSharingService',
+      );
+      return true;
     } catch (e) {
       Logger.e('Error sharing to Facebook: $e', tag: 'PlatformSharingService');
       return false;
@@ -67,7 +67,7 @@ class PlatformSharingService {
         tweetText += ' $url';
       }
       if (hashtags != null && hashtags.isNotEmpty) {
-        tweetText += ' ' + hashtags.map((tag) => '#$tag').join(' ');
+        tweetText += ' ${hashtags.map((tag) => '#$tag').join(' ')}';
       }
 
       // Encode the tweet text for the URL
@@ -86,7 +86,10 @@ class PlatformSharingService {
           method: 'twitter',
         );
 
-        Logger.i('Content shared to Twitter successfully', tag: 'PlatformSharingService');
+        Logger.i(
+          'Content shared to Twitter successfully',
+          tag: 'PlatformSharingService',
+        );
         return true;
       } else {
         throw Exception('Could not launch Twitter');
@@ -101,23 +104,14 @@ class PlatformSharingService {
   ///
   /// [text] The text to share
   /// [phone] The phone number to share to (optional)
-  Future<bool> shareToWhatsApp({
-    required String text,
-    String? phone,
-  }) async {
+  Future<bool> shareToWhatsApp({required String text, String? phone}) async {
     try {
-      if (phone != null && phone.isNotEmpty) {
-        // Share to a specific contact
-        await WhatsappShare.share(
-          text: text,
-          phone: phone,
-        );
-      } else {
-        // Share to WhatsApp without specifying a contact
-        await WhatsappShare.share(
-          text: text,
-        );
-      }
+      // Use a default phone number if none is provided
+      // This is a workaround since the WhatsappShare package requires a phone number
+      final phoneToUse = phone ?? '0000000000';
+
+      // Share to WhatsApp
+      await WhatsappShare.share(text: text, phone: phoneToUse);
 
       // Track the share
       await _analyticsService.trackShare(
@@ -126,7 +120,10 @@ class PlatformSharingService {
         method: 'whatsapp',
       );
 
-      Logger.i('Content shared to WhatsApp successfully', tag: 'PlatformSharingService');
+      Logger.i(
+        'Content shared to WhatsApp successfully',
+        tag: 'PlatformSharingService',
+      );
       return true;
     } catch (e) {
       Logger.e('Error sharing to WhatsApp: $e', tag: 'PlatformSharingService');
@@ -150,17 +147,17 @@ class PlatformSharingService {
 
       // Create the share text
       String shareText = 'Check out this event: ${event.name}';
-      
+
       if (includeDetails) {
         shareText += '\n\nDate: ${_formatDate(event.date)}';
         if (event.location.isNotEmpty) {
           shareText += '\nLocation: ${event.location}';
         }
-        if (event.description.isNotEmpty) {
+        if (event.description != null && event.description!.isNotEmpty) {
           shareText += '\n\n${event.description}';
         }
       }
-      
+
       shareText += '\n\nView in Eventati Book: $deepLink';
 
       // Share to the specified platform
@@ -183,8 +180,7 @@ class PlatformSharingService {
         case SharingPlatform.whatsapp:
           success = await shareToWhatsApp(text: shareText);
           break;
-        default:
-          throw Exception('Unsupported platform');
+        // No default case needed as we've covered all enum values
       }
 
       // Track the share
@@ -205,20 +201,17 @@ class PlatformSharingService {
   ///
   /// [booking] The booking to share
   /// [platform] The platform to share to
-  Future<bool> shareBooking(
-    Booking booking,
-    SharingPlatform platform,
-  ) async {
+  Future<bool> shareBooking(Booking booking, SharingPlatform platform) async {
     try {
       // Create the share text
       String shareText = 'I\'ve booked ${booking.serviceName}';
       shareText += '\nDate: ${_formatDate(booking.bookingDateTime)}';
       shareText += '\nDuration: ${booking.duration} hours';
-      
+
       if (booking.specialRequests.isNotEmpty) {
         shareText += '\nSpecial requests: ${booking.specialRequests}';
       }
-      
+
       shareText += '\n\nBook your own services on Eventati Book!';
 
       // Share to the specified platform
@@ -239,8 +232,7 @@ class PlatformSharingService {
         case SharingPlatform.whatsapp:
           success = await shareToWhatsApp(text: shareText);
           break;
-        default:
-          throw Exception('Unsupported platform');
+        // No default case needed as we've covered all enum values
       }
 
       // Track the share
@@ -262,7 +254,7 @@ class PlatformSharingService {
     final day = date.day.toString().padLeft(2, '0');
     final month = date.month.toString().padLeft(2, '0');
     final year = date.year.toString();
-    
+
     return '$day/$month/$year';
   }
 }

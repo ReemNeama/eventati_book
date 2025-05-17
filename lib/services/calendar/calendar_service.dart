@@ -3,7 +3,6 @@ import 'package:eventati_book/utils/logger.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:add_2_calendar/add_2_calendar.dart';
-import 'package:timezone/timezone.dart' as tz;
 
 /// Service for handling calendar operations
 class CalendarService {

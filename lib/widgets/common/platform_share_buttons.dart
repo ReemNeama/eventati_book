@@ -5,6 +5,18 @@ import 'package:eventati_book/providers/feature_providers/social_sharing_provide
 import 'package:eventati_book/services/sharing/platform_sharing_service.dart';
 import 'package:eventati_book/utils/logger.dart';
 
+/// Enum for content types that can be shared
+enum ShareContentType {
+  /// Event content type
+  event,
+
+  /// Booking content type
+  booking,
+
+  /// Comparison content type
+  comparison,
+}
+
 /// A widget that displays buttons for sharing to specific platforms
 class PlatformShareButtons extends StatelessWidget {
   /// The type of content to share
@@ -33,7 +45,7 @@ class PlatformShareButtons extends StatelessWidget {
 
   /// Constructor
   const PlatformShareButtons({
-    Key? key,
+    super.key,
     required this.contentType,
     required this.content,
     this.platforms = const [
@@ -46,23 +58,24 @@ class PlatformShareButtons extends StatelessWidget {
     this.direction = Axis.horizontal,
     this.onSuccess,
     this.onError,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
-    final children = platforms.map((platform) {
-      return _buildPlatformButton(context, platform);
-    }).toList();
+    final children =
+        platforms.map((platform) {
+          return _buildPlatformButton(context, platform);
+        }).toList();
 
     return direction == Axis.horizontal
         ? Row(
-            mainAxisSize: MainAxisSize.min,
-            children: _addSpacing(children, spacing),
-          )
+          mainAxisSize: MainAxisSize.min,
+          children: _addSpacing(children, spacing),
+        )
         : Column(
-            mainAxisSize: MainAxisSize.min,
-            children: _addSpacing(children, spacing),
-          );
+          mainAxisSize: MainAxisSize.min,
+          children: _addSpacing(children, spacing),
+        );
   }
 
   /// Build a button for a specific platform
@@ -83,7 +96,7 @@ class PlatformShareButtons extends StatelessWidget {
         tooltip = 'Share on Twitter';
         break;
       case SharingPlatform.whatsapp:
-        icon = Icons.whatsapp;
+        icon = Icons.chat; // Using chat icon as a replacement for WhatsApp
         color = const Color(0xFF25D366);
         tooltip = 'Share on WhatsApp';
         break;
@@ -98,15 +111,13 @@ class PlatformShareButtons extends StatelessWidget {
           width: buttonSize,
           height: buttonSize,
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withAlpha(
+              25,
+            ), // Using withAlpha instead of withOpacity
             shape: BoxShape.circle,
             border: Border.all(color: color, width: 1),
           ),
-          child: Icon(
-            icon,
-            color: color,
-            size: buttonSize * 0.6,
-          ),
+          child: Icon(icon, color: color, size: buttonSize * 0.6),
         ),
       ),
     );
@@ -174,8 +185,7 @@ class PlatformShareButtons extends StatelessWidget {
             throw Exception('Content must be a SavedComparison');
           }
           break;
-        default:
-          throw Exception('Unsupported content type');
+        // All enum cases are covered, no default needed
       }
 
       if (success) {

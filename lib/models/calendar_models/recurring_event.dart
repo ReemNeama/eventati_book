@@ -1,4 +1,4 @@
-import 'package:eventati_book/models/models.dart';
+// No imports needed
 
 /// Enum for recurring event frequency
 enum RecurrenceFrequency {
@@ -131,8 +131,8 @@ class RecurringEvent {
     this.reminderMinutesBefore = 60,
     DateTime? createdAt,
     DateTime? updatedAt,
-  })  : createdAt = createdAt ?? DateTime.now(),
-        updatedAt = updatedAt ?? DateTime.now();
+  }) : createdAt = createdAt ?? DateTime.now(),
+       updatedAt = updatedAt ?? DateTime.now();
 
   /// Create a RecurringEvent from a map
   factory RecurringEvent.fromMap(Map<String, dynamic> map) {
@@ -151,29 +151,33 @@ class RecurringEvent {
         orElse: () => RecurrenceFrequency.weekly,
       ),
       interval: map['interval'] ?? 1,
-      daysOfWeek: map['days_of_week'] != null
-          ? (map['days_of_week'] as List)
-              .map((day) => DayOfWeek.values.firstWhere(
-                    (e) => e.toString().split('.').last == day,
-                    orElse: () => DayOfWeek.monday,
-                  ))
-              .toList()
-          : null,
+      daysOfWeek:
+          map['days_of_week'] != null
+              ? (map['days_of_week'] as List)
+                  .map(
+                    (day) => DayOfWeek.values.firstWhere(
+                      (e) => e.toString().split('.').last == day,
+                      orElse: () => DayOfWeek.monday,
+                    ),
+                  )
+                  .toList()
+              : null,
       dayOfMonth: map['day_of_month'],
       monthOfYear: map['month_of_year'],
-      endDate:
-          map['end_date'] != null ? DateTime.parse(map['end_date']) : null,
+      endDate: map['end_date'] != null ? DateTime.parse(map['end_date']) : null,
       count: map['count'],
-      excludeDates: map['exclude_dates'] != null
-          ? (map['exclude_dates'] as List)
-              .map((date) => DateTime.parse(date))
-              .toList()
-          : null,
-      includeDates: map['include_dates'] != null
-          ? (map['include_dates'] as List)
-              .map((date) => DateTime.parse(date))
-              .toList()
-          : null,
+      excludeDates:
+          map['exclude_dates'] != null
+              ? (map['exclude_dates'] as List)
+                  .map((date) => DateTime.parse(date))
+                  .toList()
+              : null,
+      includeDates:
+          map['include_dates'] != null
+              ? (map['include_dates'] as List)
+                  .map((date) => DateTime.parse(date))
+                  .toList()
+              : null,
       enableReminders: map['enable_reminders'] ?? true,
       reminderMinutesBefore: map['reminder_minutes_before'] ?? 60,
       createdAt: DateTime.parse(map['created_at']),
@@ -195,9 +199,8 @@ class RecurringEvent {
       'end_date_time': endDateTime.toIso8601String(),
       'frequency': frequency.toString().split('.').last,
       'interval': interval,
-      'days_of_week': daysOfWeek
-          ?.map((day) => day.toString().split('.').last)
-          .toList(),
+      'days_of_week':
+          daysOfWeek?.map((day) => day.toString().split('.').last).toList(),
       'day_of_month': dayOfMonth,
       'month_of_year': monthOfYear,
       'end_date': endDate?.toIso8601String(),
@@ -258,7 +261,8 @@ class RecurringEvent {
       excludeDates: excludeDates ?? this.excludeDates,
       includeDates: includeDates ?? this.includeDates,
       enableReminders: enableReminders ?? this.enableReminders,
-      reminderMinutesBefore: reminderMinutesBefore ?? this.reminderMinutesBefore,
+      reminderMinutesBefore:
+          reminderMinutesBefore ?? this.reminderMinutesBefore,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? DateTime.now(),
     );

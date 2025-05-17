@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:eventati_book/models/event_models/event.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/utils/logger.dart';
@@ -10,7 +9,6 @@ import 'package:eventati_book/widgets/details/feature_item.dart';
 import 'package:eventati_book/widgets/details/image_placeholder.dart';
 import 'package:eventati_book/widgets/common/image_gallery.dart';
 import 'package:eventati_book/routing/routing.dart';
-import 'package:eventati_book/providers/feature_providers/social_sharing_provider.dart';
 import 'package:eventati_book/widgets/common/share_button.dart';
 
 /// Screen to display event details

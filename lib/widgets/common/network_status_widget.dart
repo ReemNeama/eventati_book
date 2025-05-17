@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:eventati_book/providers/feature_providers/social_sharing_provider.dart';
 import 'package:eventati_book/styles/app_colors.dart';
+import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/widgets/common/pending_shares_widget.dart';
 
 /// Widget to display the network status and pending shares
@@ -17,19 +18,20 @@ class NetworkStatusWidget extends StatelessWidget {
 
   /// Constructor
   const NetworkStatusWidget({
-    Key? key,
+    super.key,
     this.showPendingShares = true,
     this.showNetworkStatus = true,
     this.maxPendingShares,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     final socialSharingProvider = Provider.of<SocialSharingProvider>(context);
     final isOnline = socialSharingProvider.isOnline;
-    final colors = Theme.of(context).brightness == Brightness.dark
-        ? AppColorsDark()
-        : AppColors();
+    final colors =
+        Theme.of(context).brightness == Brightness.dark
+            ? AppColorsDark()
+            : AppColors();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -45,9 +47,7 @@ class NetworkStatusWidget extends StatelessWidget {
               // Refresh the widget when a share is processed
               if (context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Share processed successfully'),
-                  ),
+                  const SnackBar(content: Text('Share processed successfully')),
                 );
               }
             },
@@ -61,33 +61,37 @@ class NetworkStatusWidget extends StatelessWidget {
   Widget _buildNetworkStatusIndicator(
     BuildContext context,
     bool isOnline,
-    AppColors colors,
+    dynamic colors,
   ) {
+    // Get the appropriate colors based on the theme
+    final successColor =
+        isOnline
+            ? (colors is AppColorsDark
+                ? AppColorsDark.success
+                : AppColors.success)
+            : (colors is AppColorsDark ? AppColorsDark.error : AppColors.error);
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       decoration: BoxDecoration(
-        color: isOnline ? colors.success.withOpacity(0.1) : colors.error.withOpacity(0.1),
+        color: successColor.withAlpha(
+          25,
+        ), // Using withAlpha instead of withOpacity
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: isOnline ? colors.success : colors.error,
-          width: 1,
-        ),
+        border: Border.all(color: successColor, width: 1),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
             isOnline ? Icons.wifi : Icons.wifi_off,
-            color: isOnline ? colors.success : colors.error,
+            color: successColor,
             size: 16,
           ),
           const SizedBox(width: 8),
           Text(
             isOnline ? 'Online' : 'Offline',
-            style: TextStyle(
-              color: isOnline ? colors.success : colors.error,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(color: successColor, fontWeight: FontWeight.bold),
           ),
         ],
       ),

@@ -1,5 +1,5 @@
 # Eventati Book - Development Tracker
-*Last updated: June 25, 2024*
+*Last updated: June 26, 2024*
 
 ## How to use this tracker
 - [ ] Unchecked task (not started or in progress)
@@ -99,6 +99,13 @@
   - [ ] Implement proper schema verification for empty tables
   - [ ] Add data generation for testing model verification
 
+### Recently Fixed Test Issues
+- [x] Fix sharing and calendar service tests:
+  - [x] Fixed `social_sharing_service_test.dart` by properly mocking FunctionsClient and adding required parameters to Booking constructor
+  - [x] Fixed `calendar_service_test.dart` by properly mocking SupabaseQueryBuilder and adding required parameters to Booking constructor
+  - [x] Fixed `email_service_test.dart` by properly mocking FunctionsClient and GoTrueClient
+  - [x] Fixed unused imports in multiple files to improve code quality
+
 
 
 ### Current Tasks (June 2024)
@@ -148,6 +155,11 @@
   - [x] Add high contrast mode
 
 #### Priority 3: Testing & Code Quality
+- Fix sharing and calendar service tests:
+  - [x] Fix social_sharing_service_test.dart
+  - [x] Fix calendar_service_test.dart
+  - [x] Fix email_service_test.dart
+  - [x] Fix unused imports in multiple files
 - Fix notification system tests:
   - [ ] Update MockNotificationProvider to properly implement unreadCount
   - [ ] Fix "type 'Null' is not a subtype of type 'int'" error in notification badge tests

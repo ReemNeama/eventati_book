@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:eventati_book/providers/feature_providers/social_sharing_provider.dart';
 import 'package:eventati_book/services/sharing/offline_sharing_service.dart';
 import 'package:eventati_book/styles/app_colors.dart';
+import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/widgets/common/network_status_widget.dart';
 import 'package:eventati_book/widgets/common/pending_shares_widget.dart';
 import 'package:eventati_book/widgets/common/loading_indicator.dart';
@@ -11,7 +12,7 @@ import 'package:eventati_book/widgets/common/error_message.dart';
 /// Screen to manage pending shares
 class PendingSharesScreen extends StatefulWidget {
   /// Constructor
-  const PendingSharesScreen({Key? key}) : super(key: key);
+  const PendingSharesScreen({super.key});
 
   @override
   State<PendingSharesScreen> createState() => _PendingSharesScreenState();
@@ -26,10 +27,11 @@ class _PendingSharesScreenState extends State<PendingSharesScreen> {
   @override
   void initState() {
     super.initState();
-    _offlineSharingService = Provider.of<SocialSharingProvider>(
-      context,
-      listen: false,
-    ).offlineSharingService;
+    _offlineSharingService =
+        Provider.of<SocialSharingProvider>(
+          context,
+          listen: false,
+        ).offlineSharingService;
     _loadPendingShares();
   }
 
@@ -41,7 +43,7 @@ class _PendingSharesScreenState extends State<PendingSharesScreen> {
       });
 
       final shares = await _offlineSharingService.getPendingShares();
-      
+
       setState(() {
         _pendingShares = shares;
         _isLoading = false;
@@ -62,24 +64,26 @@ class _PendingSharesScreenState extends State<PendingSharesScreen> {
       });
 
       final success = await _offlineSharingService.clearPendingShares();
-      
+
+      // Check if the widget is still mounted before updating state
+      if (!mounted) return;
+
       if (success) {
         setState(() {
           _pendingShares = [];
           _isLoading = false;
         });
-        
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('All pending shares cleared'),
-            ),
-          );
-        }
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('All pending shares cleared')),
+        );
       } else {
         throw Exception('Failed to clear pending shares');
       }
     } catch (e) {
+      // Check if the widget is still mounted before updating state
+      if (!mounted) return;
+
       setState(() {
         _errorMessage = 'Failed to clear pending shares: $e';
         _isLoading = false;
@@ -89,9 +93,10 @@ class _PendingSharesScreenState extends State<PendingSharesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).brightness == Brightness.dark
-        ? AppColorsDark()
-        : AppColors();
+    final colors =
+        Theme.of(context).brightness == Brightness.dark
+            ? AppColorsDark()
+            : AppColors();
 
     return Scaffold(
       appBar: AppBar(
@@ -117,7 +122,7 @@ class _PendingSharesScreenState extends State<PendingSharesScreen> {
     );
   }
 
-  Widget _buildContent(AppColors colors) {
+  Widget _buildContent(dynamic colors) {
     if (_isLoading) {
       return const Center(child: LoadingIndicator());
     }
@@ -137,16 +142,11 @@ class _PendingSharesScreenState extends State<PendingSharesScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const NetworkStatusWidget(
-            showPendingShares: false,
-          ),
+          const NetworkStatusWidget(showPendingShares: false),
           const SizedBox(height: 24),
           if (_pendingShares.isEmpty) ...[
             const Center(
-              child: Text(
-                'No pending shares',
-                style: TextStyle(fontSize: 16),
-              ),
+              child: Text('No pending shares', style: TextStyle(fontSize: 16)),
             ),
           ] else ...[
             Text(
@@ -154,10 +154,7 @@ class _PendingSharesScreenState extends State<PendingSharesScreen> {
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: 16),
-            const PendingSharesWidget(
-              showHeader: false,
-              showClearAll: false,
-            ),
+            const PendingSharesWidget(showHeader: false, showClearAll: false),
           ],
         ],
       ),

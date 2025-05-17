@@ -32,7 +32,7 @@ class ShareButton extends StatelessWidget {
 
   /// Constructor
   const ShareButton({
-    Key? key,
+    super.key,
     required this.contentType,
     required this.content,
     this.icon = Icons.share,
@@ -41,7 +41,7 @@ class ShareButton extends StatelessWidget {
     this.tooltip = 'Share',
     this.onSuccess,
     this.onError,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -106,7 +106,8 @@ class ShareButton extends StatelessWidget {
             );
           } else {
             throw Exception(
-                'Content must be a Map with at least a filePath key');
+              'Content must be a Map with at least a filePath key',
+            );
           }
           break;
       }
@@ -122,7 +123,7 @@ class ShareButton extends StatelessWidget {
       }
     } catch (e) {
       Logger.e('Error sharing content: $e', tag: 'ShareButton');
-      
+
       // Call error callback if provided
       if (onError != null) {
         onError!(e.toString());

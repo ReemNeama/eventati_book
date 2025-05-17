@@ -2,15 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/providers/planning_providers/booking_provider.dart';
-import 'package:eventati_book/providers/feature_providers/social_sharing_provider.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/widgets/common/loading_indicator.dart';
 import 'package:eventati_book/widgets/common/error_message.dart';
-import 'package:eventati_book/widgets/common/share_button.dart';
-import 'package:eventati_book/widgets/common/platform_share_buttons.dart';
-import 'package:eventati_book/services/sharing/platform_sharing_service.dart';
+import 'package:eventati_book/widgets/common/share_button.dart' as share_button;
+import 'package:eventati_book/widgets/common/platform_share_buttons.dart'
+    as platform_buttons;
 
 /// Screen for displaying booking details
 class BookingDetailsScreen extends StatefulWidget {
@@ -18,8 +17,7 @@ class BookingDetailsScreen extends StatefulWidget {
   final String bookingId;
 
   /// Constructor
-  const BookingDetailsScreen({Key? key, required this.bookingId})
-    : super(key: key);
+  const BookingDetailsScreen({super.key, required this.bookingId});
 
   @override
   State<BookingDetailsScreen> createState() => _BookingDetailsScreenState();
@@ -35,11 +33,13 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
   }
 
   void _loadBooking() {
+    // Get the provider before the async gap
+    final bookingProvider = Provider.of<BookingProvider>(
+      context,
+      listen: false,
+    );
+
     _bookingFuture = Future.delayed(Duration.zero, () {
-      final bookingProvider = Provider.of<BookingProvider>(
-        context,
-        listen: false,
-      );
       return bookingProvider.getBookingById(widget.bookingId);
     });
   }
@@ -58,8 +58,8 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
               final booking = bookingProvider.getBookingById(widget.bookingId);
               if (booking == null) return const SizedBox.shrink();
 
-              return ShareButton(
-                contentType: ShareContentType.booking,
+              return share_button.ShareButton(
+                contentType: share_button.ShareContentType.booking,
                 content: booking,
                 tooltip: 'Share Booking',
               );
@@ -98,13 +98,13 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _addToCalendar,
-        child: const Icon(Icons.calendar_today),
         tooltip: 'Add to Calendar',
+        child: const Icon(Icons.calendar_today),
       ),
     );
   }
 
-  Widget _buildBookingDetails(Booking booking, AppColors colors) {
+  Widget _buildBookingDetails(Booking booking, dynamic colors) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -159,8 +159,8 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
                         'Share with:',
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
-                      PlatformShareButtons(
-                        contentType: ShareContentType.booking,
+                      platform_buttons.PlatformShareButtons(
+                        contentType: platform_buttons.ShareContentType.booking,
                         content: booking,
                         buttonSize: 36,
                         spacing: 12,
