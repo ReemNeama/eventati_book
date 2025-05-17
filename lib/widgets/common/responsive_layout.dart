@@ -191,27 +191,27 @@ class ResponsivePadding extends StatelessWidget {
 
         // Desktop padding
         if (width >= ResponsiveConstants.desktopBreakpoint) {
-          padding = desktopPadding ??
+          padding =
+              desktopPadding ??
               tabletPadding ??
               mobilePadding ??
               const EdgeInsets.all(ResponsiveConstants.desktopPadding);
         }
         // Tablet padding
         else if (width >= ResponsiveConstants.mobileBreakpoint) {
-          padding = tabletPadding ??
+          padding =
+              tabletPadding ??
               mobilePadding ??
               const EdgeInsets.all(ResponsiveConstants.tabletPadding);
         }
         // Mobile padding
         else {
-          padding = mobilePadding ??
+          padding =
+              mobilePadding ??
               const EdgeInsets.all(ResponsiveConstants.mobilePadding);
         }
 
-        return Padding(
-          padding: padding,
-          child: child,
-        );
+        return Padding(padding: padding, child: child);
       },
     );
   }
@@ -255,14 +255,16 @@ class ResponsiveContainer extends StatelessWidget {
 
         // Desktop max width
         if (width >= ResponsiveConstants.desktopBreakpoint) {
-          maxWidth = desktopMaxWidth ??
+          maxWidth =
+              desktopMaxWidth ??
               tabletMaxWidth ??
               mobileMaxWidth ??
               ResponsiveConstants.maxContentWidth;
         }
         // Tablet max width
         else if (width >= ResponsiveConstants.mobileBreakpoint) {
-          maxWidth = tabletMaxWidth ??
+          maxWidth =
+              tabletMaxWidth ??
               mobileMaxWidth ??
               ResponsiveConstants.tabletBreakpoint;
         }
@@ -271,10 +273,8 @@ class ResponsiveContainer extends StatelessWidget {
           maxWidth = mobileMaxWidth ?? width;
         }
 
-        Widget container = Container(
-          constraints: BoxConstraints(
-            maxWidth: maxWidth,
-          ),
+        final Widget container = Container(
+          constraints: BoxConstraints(maxWidth: maxWidth),
           child: child,
         );
 

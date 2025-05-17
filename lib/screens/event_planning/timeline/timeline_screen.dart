@@ -5,7 +5,6 @@ import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
-import 'package:eventati_book/widgets/common/empty_state.dart';
 import 'package:eventati_book/widgets/common/responsive_layout.dart';
 import 'package:eventati_book/screens/event_planning/timeline/task_form_screen.dart';
 import 'package:eventati_book/screens/event_planning/timeline/checklist_screen.dart';
