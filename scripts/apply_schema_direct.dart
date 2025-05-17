@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'utils/logger.dart';
 
 // Supabase configuration
 const String supabaseUrl = 'https://zyycmxzabfadkyzpsper.supabase.co';
@@ -8,38 +9,38 @@ const String supabaseKey =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp5eWNteHphYmZhZGt5enBzcGVyIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0NjkyMjMyOCwiZXhwIjoyMDYyNDk4MzI4fQ.7NIGlM6A0xxKlCsgoz0gSSiscxroRUzMnuoXQuH5V8g';
 
 void main() async {
-  print('Applying Supabase schema directly...');
+  Logger.i('Applying Supabase schema directly...');
 
   try {
     // Read the combined SQL file
     final sqlFile = File('scripts/combined_schema.sql');
     if (!await sqlFile.exists()) {
-      print('SQL file not found: ${sqlFile.path}');
+      Logger.e('SQL file not found: ${sqlFile.path}');
       exit(1);
     }
 
     final sql = await sqlFile.readAsString();
-    print('Read SQL file (${sql.length} characters)');
+    Logger.i('Read SQL file (${sql.length} characters)');
 
     // Split the SQL into smaller chunks to avoid request size limits
     final chunks = splitSql(sql);
-    print('Split SQL into ${chunks.length} chunks');
+    Logger.i('Split SQL into ${chunks.length} chunks');
 
     // Apply each chunk
     for (var i = 0; i < chunks.length; i++) {
-      print('Applying chunk ${i + 1} of ${chunks.length}...');
+      Logger.i('Applying chunk ${i + 1} of ${chunks.length}...');
       final success = await applySql(chunks[i]);
       if (success) {
-        print('Chunk ${i + 1} applied successfully');
+        Logger.i('Chunk ${i + 1} applied successfully');
       } else {
-        print('Failed to apply chunk ${i + 1}');
+        Logger.w('Failed to apply chunk ${i + 1}');
         // Continue anyway, as some statements might fail due to dependencies
       }
     }
 
-    print('Supabase schema applied successfully');
+    Logger.i('Supabase schema applied successfully');
   } catch (e) {
-    print('Error applying Supabase schema: $e');
+    Logger.e('Error applying Supabase schema: $e');
     exit(1);
   }
 }
@@ -53,7 +54,7 @@ List<String> splitSql(String sql) {
   String currentStatement = '';
 
   for (final line in sql.split('\n')) {
-    currentStatement += line + '\n';
+    currentStatement += '$line\n';
 
     if (line.trim().startsWith('CREATE OR REPLACE FUNCTION') ||
         line.trim().startsWith('CREATE FUNCTION')) {
@@ -105,7 +106,7 @@ Future<bool> applySql(String sql) async {
     if (response.statusCode == 200) {
       return true;
     } else {
-      print('Error: ${response.statusCode} - ${response.body}');
+      Logger.w('Error: ${response.statusCode} - ${response.body}');
 
       // Try direct SQL API if exec_sql fails
       try {
@@ -124,18 +125,18 @@ Future<bool> applySql(String sql) async {
             directResponse.statusCode == 201) {
           return true;
         } else {
-          print(
+          Logger.e(
             'Direct SQL API error: ${directResponse.statusCode} - ${directResponse.body}',
           );
           return false;
         }
       } catch (e) {
-        print('Direct SQL API exception: $e');
+        Logger.e('Direct SQL API exception: $e');
         return false;
       }
     }
   } catch (e) {
-    print('Exception: $e');
+    Logger.e('Exception: $e');
     return false;
   }
 }
