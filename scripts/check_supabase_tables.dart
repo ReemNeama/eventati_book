@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:supabase/supabase.dart';
+import 'utils/logger.dart';
 
 // Supabase configuration
 const String supabaseUrl = 'https://zyycmxzabfadkyzpsper.supabase.co';
@@ -25,7 +26,7 @@ const List<String> tables = [
 ];
 
 void main() async {
-  print('Checking Supabase tables...');
+  Logger.i('Checking Supabase tables...');
 
   // Initialize Supabase client
   final supabase = SupabaseClient(supabaseUrl, supabaseKey);
@@ -34,17 +35,17 @@ void main() async {
     // Check each table
     for (final table in tables) {
       try {
-        print('Checking table: $table');
+        Logger.i('Checking table: $table');
         final response = await supabase.from(table).select('*').limit(1);
-        print('  Table $table exists with ${response.length} rows');
+        Logger.i('  Table $table exists with ${response.length} rows');
       } catch (e) {
-        print('  Error checking table $table: $e');
+        Logger.e('  Error checking table $table: $e');
       }
     }
 
-    print('Supabase table check completed');
+    Logger.i('Supabase table check completed');
   } catch (e) {
-    print('Error checking Supabase tables: $e');
+    Logger.e('Error checking Supabase tables: $e');
     exit(1);
   }
 }
