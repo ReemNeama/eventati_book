@@ -5,6 +5,7 @@ import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
+import 'package:eventati_book/widgets/common/empty_state.dart';
 import 'package:eventati_book/screens/event_planning/budget/budget_item_form_screen.dart';
 
 class BudgetDetailsScreen extends StatefulWidget {
@@ -73,15 +74,41 @@ class _BudgetDetailsScreenState extends State<BudgetDetailsScreen> {
                   child:
                       filteredItems.isEmpty
                           ? Center(
-                            child: Text(
-                              'No budget items found',
-                              style: TextStyle(
-                                color:
-                                    isDarkMode
-                                        ? Colors.white70
-                                        : Colors.black54,
-                              ),
-                            ),
+                            child:
+                                budgetProvider.items.isEmpty
+                                    ? EmptyStateUtils.getEmptyBudgetState(
+                                      actionText: 'Add Item',
+                                      onAction: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder:
+                                                (context) =>
+                                                    BudgetItemFormScreen(
+                                                      eventId: widget.eventId,
+                                                      budgetProvider:
+                                                          budgetProvider,
+                                                      initialCategoryId:
+                                                          _selectedCategoryId,
+                                                    ),
+                                          ),
+                                        );
+                                      },
+                                    )
+                                    : EmptyState(
+                                      title: 'No Matching Items',
+                                      message:
+                                          'No budget items match your current filters',
+                                      icon: Icons.filter_alt_off,
+                                      actionText: 'Clear Filters',
+                                      onAction: () {
+                                        setState(() {
+                                          _selectedCategoryId = null;
+                                          _searchQuery = '';
+                                          _searchController.clear();
+                                        });
+                                      },
+                                    ),
                           )
                           : ListView.builder(
                             padding: const EdgeInsets.all(16),

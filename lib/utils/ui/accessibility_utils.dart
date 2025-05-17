@@ -254,6 +254,141 @@ class AccessibilityUtils {
     HapticFeedback.heavyImpact();
   }
 
+  /// Get high contrast text color based on background color
+  static Color getHighContrastTextColor(Color backgroundColor) {
+    // Calculate the relative luminance of the background color
+    // Using the formula: 0.299 * R + 0.587 * G + 0.114 * B
+    final luminance =
+        (0.299 * backgroundColor.r +
+            0.587 * backgroundColor.g +
+            0.114 * backgroundColor.b) /
+        255;
+
+    // If the background is dark, use white text; otherwise, use black text
+    return luminance > 0.5 ? Colors.black : Colors.white;
+  }
+
+  /// Get a high contrast color pair (background and text)
+  static Map<String, Color> getHighContrastColorPair(bool isDarkMode) {
+    if (isDarkMode) {
+      // High contrast dark mode: very dark background, very light text
+      return {'background': Colors.black, 'text': Colors.white};
+    } else {
+      // High contrast light mode: very light background, very dark text
+      return {'background': Colors.white, 'text': Colors.black};
+    }
+  }
+
+  /// Get a high contrast border color
+  static Color getHighContrastBorderColor(bool isDarkMode) {
+    return isDarkMode ? Colors.white : Colors.black;
+  }
+
+  /// Get a high contrast primary color
+  static Color getHighContrastPrimaryColor(bool isDarkMode) {
+    return isDarkMode ? Colors.yellow : Colors.blue.shade900;
+  }
+
+  /// Get a high contrast secondary color
+  static Color getHighContrastSecondaryColor(bool isDarkMode) {
+    return isDarkMode ? Colors.cyan : Colors.purple.shade900;
+  }
+
+  /// Get a high contrast error color
+  static Color getHighContrastErrorColor(bool isDarkMode) {
+    return isDarkMode ? Colors.red.shade300 : Colors.red.shade900;
+  }
+
+  /// Get a high contrast success color
+  static Color getHighContrastSuccessColor(bool isDarkMode) {
+    return isDarkMode ? Colors.green.shade300 : Colors.green.shade900;
+  }
+
+  /// Get a high contrast warning color
+  static Color getHighContrastWarningColor(bool isDarkMode) {
+    return isDarkMode ? Colors.orange.shade300 : Colors.orange.shade900;
+  }
+
+  /// Get a high contrast info color
+  static Color getHighContrastInfoColor(bool isDarkMode) {
+    return isDarkMode ? Colors.blue.shade300 : Colors.blue.shade900;
+  }
+
+  /// Get a high contrast theme data
+  static ThemeData getHighContrastTheme(bool isDarkMode) {
+    final colorPair = getHighContrastColorPair(isDarkMode);
+    final backgroundColor = colorPair['background']!;
+    final textColor = colorPair['text']!;
+    final primaryColor = getHighContrastPrimaryColor(isDarkMode);
+    final errorColor = getHighContrastErrorColor(isDarkMode);
+
+    return ThemeData(
+      brightness: isDarkMode ? Brightness.dark : Brightness.light,
+      primaryColor: primaryColor,
+      scaffoldBackgroundColor: backgroundColor,
+      cardColor: backgroundColor,
+      colorScheme: ColorScheme(
+        primary: primaryColor,
+        secondary: getHighContrastSecondaryColor(isDarkMode),
+        surface: backgroundColor,
+        error: errorColor,
+        onPrimary: getHighContrastTextColor(primaryColor),
+        onSecondary: textColor,
+        onSurface: textColor,
+        onError: getHighContrastTextColor(errorColor),
+        brightness: isDarkMode ? Brightness.dark : Brightness.light,
+      ),
+      textTheme: TextTheme(
+        bodyLarge: TextStyle(color: textColor),
+        bodyMedium: TextStyle(color: textColor),
+        bodySmall: TextStyle(color: textColor),
+        titleLarge: TextStyle(color: textColor),
+        titleMedium: TextStyle(color: textColor),
+        titleSmall: TextStyle(color: textColor),
+        labelLarge: TextStyle(color: textColor),
+        labelMedium: TextStyle(color: textColor),
+        labelSmall: TextStyle(color: textColor),
+      ),
+      dividerColor: isDarkMode ? Colors.white54 : Colors.black38,
+      iconTheme: IconThemeData(color: textColor),
+      appBarTheme: AppBarTheme(
+        backgroundColor: primaryColor,
+        foregroundColor: getHighContrastTextColor(primaryColor),
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: primaryColor,
+          foregroundColor: getHighContrastTextColor(primaryColor),
+        ),
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(foregroundColor: primaryColor),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: primaryColor,
+          side: BorderSide(color: primaryColor),
+        ),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        border: OutlineInputBorder(borderSide: BorderSide(color: textColor)),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: textColor),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: primaryColor, width: 2),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: errorColor),
+        ),
+        labelStyle: TextStyle(color: textColor),
+        hintStyle: TextStyle(
+          color: isDarkMode ? Colors.white70 : Colors.black54,
+        ),
+      ),
+    );
+  }
+
   /// Add haptic feedback for selection change
   static void selectionChangeHapticFeedback() {
     HapticFeedback.selectionClick();

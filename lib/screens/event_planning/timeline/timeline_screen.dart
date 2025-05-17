@@ -5,6 +5,7 @@ import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
+import 'package:eventati_book/widgets/common/empty_state.dart';
 import 'package:eventati_book/screens/event_planning/timeline/task_form_screen.dart';
 import 'package:eventati_book/screens/event_planning/timeline/checklist_screen.dart';
 import 'package:eventati_book/routing/route_names.dart';
@@ -123,12 +124,45 @@ class _TimelineScreenState extends State<TimelineScreen>
         }
 
         if (taskProvider.error != null) {
-          return Center(child: Text('Error: ${taskProvider.error}'));
+          return ErrorHandlingUtils.getErrorScreen(
+            taskProvider.error!,
+            onRetry: () {
+              // Create a new provider instance to reload the data
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder:
+                      (context) => TimelineScreen(
+                        eventId: widget.eventId,
+                        eventName: widget.eventName,
+                      ),
+                ),
+              );
+            },
+            onGoHome: () => Navigator.of(context).pop(),
+          );
         }
 
         if (taskProvider.tasks.isEmpty) {
-          return const Center(
-            child: Text('No tasks yet. Add your first task!'),
+          return Center(
+            child: EmptyStateUtils.getEmptyTimelineState(
+              actionText: 'Add Task',
+              onAction: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) => TaskFormScreen(
+                          eventId: widget.eventId,
+                          taskProvider: Provider.of<TaskProvider>(
+                            context,
+                            listen: false,
+                          ),
+                        ),
+                  ),
+                );
+              },
+            ),
           );
         }
 

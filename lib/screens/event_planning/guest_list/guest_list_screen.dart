@@ -5,6 +5,7 @@ import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
+import 'package:eventati_book/widgets/common/empty_state.dart';
 import 'package:eventati_book/screens/event_planning/guest_list/guest_form_screen.dart';
 import 'package:eventati_book/screens/event_planning/guest_list/guest_details_screen.dart';
 import 'package:eventati_book/screens/event_planning/guest_list/guest_groups_screen.dart';
@@ -89,7 +90,23 @@ class _GuestListScreenState extends State<GuestListScreen>
             }
 
             if (guestListProvider.error != null) {
-              return Center(child: Text('Error: ${guestListProvider.error}'));
+              return ErrorHandlingUtils.getErrorScreen(
+                guestListProvider.error!,
+                onRetry: () {
+                  // Create a new provider instance to reload the data
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) => GuestListScreen(
+                            eventId: widget.eventId,
+                            eventName: widget.eventName,
+                          ),
+                    ),
+                  );
+                },
+                onGoHome: () => Navigator.of(context).pop(),
+              );
             }
 
             return TabBarView(
@@ -134,17 +151,41 @@ class _GuestListScreenState extends State<GuestListScreen>
           child:
               filteredGuests.isEmpty
                   ? Center(
-                    child: Text(
-                      guestListProvider.guests.isEmpty
-                          ? 'No guests yet. Add your first guest!'
-                          : 'No guests match your filters',
-                      style: TextStyle(
-                        color:
-                            UIUtils.isDarkMode(context)
-                                ? Colors.white70
-                                : Colors.black54,
-                      ),
-                    ),
+                    child:
+                        guestListProvider.guests.isEmpty
+                            ? EmptyStateUtils.getEmptyGuestListState(
+                              actionText: 'Add Guest',
+                              onAction: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder:
+                                        (context) => GuestFormScreen(
+                                          eventId: widget.eventId,
+                                          guestListProvider:
+                                              Provider.of<GuestListProvider>(
+                                                context,
+                                                listen: false,
+                                              ),
+                                        ),
+                                  ),
+                                );
+                              },
+                            )
+                            : EmptyState(
+                              title: 'No Matching Guests',
+                              message: 'No guests match your current filters',
+                              icon: Icons.filter_alt_off,
+                              actionText: 'Clear Filters',
+                              onAction: () {
+                                setState(() {
+                                  _selectedGroupId = null;
+                                  _selectedRsvpStatus = null;
+                                  _searchQuery = '';
+                                  _searchController.clear();
+                                });
+                              },
+                            ),
                   )
                   : ListView.builder(
                     padding: const EdgeInsets.all(16),

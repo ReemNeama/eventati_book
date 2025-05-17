@@ -2,20 +2,85 @@ import 'package:flutter/material.dart';
 
 /// Constants for responsive design
 class ResponsiveConstants {
+  // =========================================================
+  // SCREEN SIZE BREAKPOINTS
+  // =========================================================
+
+  /// Breakpoint for small mobile devices (0-359)
+  static const double smallMobileBreakpoint = 360;
+
+  /// Breakpoint for medium mobile devices (360-399)
+  static const double mediumMobileBreakpoint = 400;
+
+  /// Breakpoint for large mobile devices (400-599)
+  static const double largeMobileBreakpoint = 600;
+
   /// Breakpoint for mobile devices (0-599)
   static const double mobileBreakpoint = 600;
 
-  /// Breakpoint for tablet devices (600-959)
-  static const double tabletBreakpoint = 960;
+  /// Breakpoint for small tablet devices (600-767)
+  static const double smallTabletBreakpoint = 768;
 
-  /// Breakpoint for desktop devices (960+)
-  static const double desktopBreakpoint = 1280;
+  /// Breakpoint for medium tablet devices (768-959)
+  static const double mediumTabletBreakpoint = 960;
+
+  /// Breakpoint for large tablet devices (960-1023)
+  static const double largeTabletBreakpoint = 1024;
+
+  /// Breakpoint for tablet devices (600-1023)
+  static const double tabletBreakpoint = 1024;
+
+  /// Breakpoint for small desktop devices (1024-1279)
+  static const double smallDesktopBreakpoint = 1280;
+
+  /// Breakpoint for medium desktop devices (1280-1439)
+  static const double mediumDesktopBreakpoint = 1440;
+
+  /// Breakpoint for large desktop devices (1440+)
+  static const double largeDesktopBreakpoint = 1920;
+
+  /// Breakpoint for desktop devices (1024+)
+  static const double desktopBreakpoint = 1024;
 
   /// Minimum width for small mobile devices
   static const double smallMobileWidth = 320;
 
   /// Maximum content width for desktop
   static const double maxContentWidth = 1200;
+
+  // =========================================================
+  // ORIENTATION-SPECIFIC CONSTANTS
+  // =========================================================
+
+  /// Maximum height for considering a device in landscape mode as "short"
+  static const double shortLandscapeHeight = 480;
+
+  /// Padding for landscape orientation on mobile
+  static const EdgeInsets mobileLandscapePadding = EdgeInsets.symmetric(
+    horizontal: 24.0,
+    vertical: 12.0,
+  );
+
+  /// Padding for landscape orientation on tablet
+  static const EdgeInsets tabletLandscapePadding = EdgeInsets.symmetric(
+    horizontal: 32.0,
+    vertical: 16.0,
+  );
+
+  /// Padding for landscape orientation on desktop
+  static const EdgeInsets desktopLandscapePadding = EdgeInsets.symmetric(
+    horizontal: 48.0,
+    vertical: 24.0,
+  );
+
+  /// Grid columns for landscape orientation on mobile
+  static const int mobileLandscapeGridColumns = 2;
+
+  /// Grid columns for landscape orientation on tablet
+  static const int tabletLandscapeGridColumns = 3;
+
+  /// Grid columns for landscape orientation on desktop
+  static const int desktopLandscapeGridColumns = 4;
 
   /// Standard padding for mobile
   static const double mobilePadding = 16.0;
@@ -131,17 +196,92 @@ class ResponsiveConstants {
     }
   }
 
-  /// Get the number of grid columns based on device type
+  /// Get the number of grid columns based on device type and orientation
   static int getGridColumns(BuildContext context) {
     final deviceType = getDeviceType(context);
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
 
-    switch (deviceType) {
-      case DeviceType.mobile:
-        return 1;
-      case DeviceType.tablet:
-        return 2;
-      case DeviceType.desktop:
-        return 3;
+    if (isLandscape) {
+      switch (deviceType) {
+        case DeviceType.mobile:
+          return mobileLandscapeGridColumns;
+        case DeviceType.tablet:
+          return tabletLandscapeGridColumns;
+        case DeviceType.desktop:
+          return desktopLandscapeGridColumns;
+      }
+    } else {
+      switch (deviceType) {
+        case DeviceType.mobile:
+          return 1;
+        case DeviceType.tablet:
+          return 2;
+        case DeviceType.desktop:
+          return 3;
+      }
+    }
+  }
+
+  /// Get the appropriate padding based on device type and orientation
+  static EdgeInsets getOrientationAwarePadding(BuildContext context) {
+    final deviceType = getDeviceType(context);
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+
+    if (isLandscape) {
+      switch (deviceType) {
+        case DeviceType.mobile:
+          return mobileLandscapePadding;
+        case DeviceType.tablet:
+          return tabletLandscapePadding;
+        case DeviceType.desktop:
+          return desktopLandscapePadding;
+      }
+    } else {
+      return getPadding(context);
+    }
+  }
+
+  /// Check if the device is in a "short" landscape mode
+  static bool isShortLandscape(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    return mediaQuery.orientation == Orientation.landscape &&
+        mediaQuery.size.height < shortLandscapeHeight;
+  }
+
+  /// Get a responsive value based on device type and orientation
+  static T getOrientationAwareValue<T>({
+    required BuildContext context,
+    required T portraitMobile,
+    required T portraitTablet,
+    T? portraitDesktop,
+    required T landscapeMobile,
+    required T landscapeTablet,
+    T? landscapeDesktop,
+  }) {
+    final deviceType = getDeviceType(context);
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+
+    if (isLandscape) {
+      switch (deviceType) {
+        case DeviceType.mobile:
+          return landscapeMobile;
+        case DeviceType.tablet:
+          return landscapeTablet;
+        case DeviceType.desktop:
+          return landscapeDesktop ?? landscapeTablet;
+      }
+    } else {
+      switch (deviceType) {
+        case DeviceType.mobile:
+          return portraitMobile;
+        case DeviceType.tablet:
+          return portraitTablet;
+        case DeviceType.desktop:
+          return portraitDesktop ?? portraitTablet;
+      }
     }
   }
 
