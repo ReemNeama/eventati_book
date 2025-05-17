@@ -70,6 +70,12 @@ dependencies:
   permission_handler: ^11.3.0
   add_2_calendar: ^2.2.4
 
+  # Social sharing
+  flutter_social_content_share: ^1.0.2
+  whatsapp_share: ^2.0.2
+  flutter_facebook_auth: ^6.1.1
+  twitter_login: ^4.4.2
+
 
 dev_dependencies:
   flutter_test:

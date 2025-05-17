@@ -752,6 +752,46 @@ class AnalyticsService implements AnalyticsServiceInterface {
     await _logEvent('event_planning_action', parameters: params);
   }
 
+  /// Track a deep link event
+  Future<void> trackDeepLink(String deepLink) async {
+    await _logEvent('deep_link', parameters: {'url': deepLink});
+  }
+
+  /// Track a navigation event
+  Future<void> trackNavigation(
+    String routeName, {
+    Map<String, dynamic>? arguments,
+  }) async {
+    final params = <String, Object>{'route': routeName};
+
+    if (arguments != null) {
+      params['arguments'] = arguments.toString();
+    }
+
+    await _logEvent('navigation', parameters: params);
+  }
+
+  /// Track a dynamic link event
+  Future<void> trackDynamicLink(String dynamicLink) async {
+    await _logEvent('dynamic_link', parameters: {'url': dynamicLink});
+  }
+
+  /// Track a web URL share event
+  Future<void> trackWebUrlShare(
+    String url, {
+    String? contentType,
+    String? itemId,
+    String? method,
+  }) async {
+    final params = <String, Object>{'url': url};
+
+    if (contentType != null) params['content_type'] = contentType;
+    if (itemId != null) params['item_id'] = itemId;
+    if (method != null) params['method'] = method;
+
+    await _logEvent('web_url_share', parameters: params);
+  }
+
   /// Log an event to PostHog
   Future<void> _logEvent(
     String name, {

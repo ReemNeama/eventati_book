@@ -83,6 +83,9 @@ class ProvidersManager {
 
     // Notification providers
     ChangeNotifierProvider(create: (_) => NotificationProvider(), lazy: true),
+
+    // Sharing providers
+    ChangeNotifierProvider(create: (_) => SocialSharingProvider(), lazy: true),
   ];
 
   /// Initialize all providers that need initialization
@@ -119,5 +122,8 @@ class ProvidersManager {
 
     // Initialize notification provider
     Provider.of<NotificationProvider>(context, listen: false);
+
+    // Initialize social sharing provider
+    Provider.of<SocialSharingProvider>(context, listen: false);
   }
 }

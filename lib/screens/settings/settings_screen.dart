@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/screens/settings/notification_settings_screen.dart';
+import 'package:eventati_book/screens/settings/pending_shares_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// Screen for app settings
@@ -57,6 +58,16 @@ class SettingsScreen extends StatelessWidget {
                 );
               },
             ),
+          ]),
+          _buildSection(context, 'Sharing', [
+            _buildListTile(context, 'Pending Shares', Icons.share, () {
+              // Navigate to pending shares screen
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const PendingSharesScreen(),
+                ),
+              );
+            }),
           ]),
           _buildSection(context, 'Appearance', [
             _buildListTile(context, 'Theme', Icons.color_lens, () {

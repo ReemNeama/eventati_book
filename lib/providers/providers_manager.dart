@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:eventati_book/providers/feature_providers/calendar_provider.dart';
 import 'package:eventati_book/providers/feature_providers/email_preferences_provider.dart';
 import 'package:eventati_book/providers/feature_providers/service_recommendation_provider.dart';
+import 'package:eventati_book/providers/feature_providers/social_sharing_provider.dart';
 import 'package:eventati_book/providers/planning_providers/booking_provider.dart';
 
 /// Manager for all providers in the application
@@ -31,6 +32,9 @@ class ProvidersManager {
         ),
         ChangeNotifierProvider<BookingProvider>(
           create: (_) => BookingProvider(),
+        ),
+        ChangeNotifierProvider<SocialSharingProvider>(
+          create: (_) => SocialSharingProvider(),
         ),
       ],
       child: child,

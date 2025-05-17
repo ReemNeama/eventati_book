@@ -7,6 +7,7 @@ import 'package:eventati_book/utils/logger.dart';
 import 'package:eventati_book/services/calendar/calendar_service.dart';
 import 'package:eventati_book/services/notification/email_service.dart';
 import 'package:eventati_book/services/notification/email_preferences_service.dart';
+import 'package:eventati_book/services/sharing/social_sharing_service.dart';
 
 /// Provider for managing service bookings and appointments.
 ///
@@ -73,6 +74,9 @@ class BookingProvider extends ChangeNotifier {
   /// Email preferences service for checking user preferences
   final EmailPreferencesService _emailPreferencesService;
 
+  /// Social sharing service for sharing bookings
+  final SocialSharingService _socialSharingService;
+
   /// Map of booking IDs to calendar event IDs
   final Map<String, String> _calendarEventIds = {};
 
@@ -81,10 +85,12 @@ class BookingProvider extends ChangeNotifier {
     CalendarService? calendarService,
     EmailService? emailService,
     EmailPreferencesService? emailPreferencesService,
+    SocialSharingService? socialSharingService,
   }) : _calendarService = calendarService ?? CalendarService(),
        _emailService = emailService ?? EmailService(),
        _emailPreferencesService =
-           emailPreferencesService ?? EmailPreferencesService();
+           emailPreferencesService ?? EmailPreferencesService(),
+       _socialSharingService = socialSharingService ?? SocialSharingService();
 
   /// Returns the complete list of all bookings
   ///
@@ -465,6 +471,41 @@ class BookingProvider extends ChangeNotifier {
     }
   }
 
+  /// Share a booking with others
+  ///
+  /// [bookingId] The ID of the booking to share
+  ///
+  /// Returns true if the booking was successfully shared, false otherwise.
+  /// This method does not modify the booking list or notify listeners about booking changes.
+  /// It will notify listeners about loading state and errors.
+  Future<bool> shareBooking(String bookingId) async {
+    final booking = getBookingById(bookingId);
+    if (booking == null) {
+      _error = 'Booking not found';
+      notifyListeners();
+      return false;
+    }
+
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      // Share the booking using the social sharing service
+      await _socialSharingService.shareBooking(booking);
+
+      _isLoading = false;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _isLoading = false;
+      _error = 'Failed to share booking: $e';
+      Logger.e(_error!, tag: 'BookingProvider');
+      notifyListeners();
+      return false;
+    }
+  }
+
   /// Finds and returns a booking with the specified ID
   ///
   /// [bookingId] The ID of the booking to find
@@ -520,14 +561,51 @@ class BookingProvider extends ChangeNotifier {
   /// [duration] The duration of the booking in hours
   ///
   /// Returns true if the service is available at the specified time, false otherwise.
-  /// A service is considered available if there are no other non-cancelled bookings
-  /// for the same service that overlap with the requested time period.
+  /// This method uses the CalendarService to check availability, which considers
+  /// both booking status and service capacity.
   /// This method does not modify the booking list or notify listeners.
   Future<bool> isServiceAvailable(
     String serviceId,
     DateTime dateTime,
     double duration,
   ) async {
+    try {
+      _isLoading = true;
+      notifyListeners();
+
+      // Calculate end time based on duration
+      final endTime = dateTime.add(Duration(minutes: (duration * 60).round()));
+
+      // Use the calendar service to check availability
+      final isAvailable = await _calendarService.checkAvailability(
+        dateTime,
+        endTime,
+        serviceId: serviceId,
+      );
+
+      _isLoading = false;
+      notifyListeners();
+
+      return isAvailable;
+    } catch (e) {
+      _isLoading = false;
+      _error = 'Failed to check service availability: $e';
+      Logger.e(_error!, tag: 'BookingProvider');
+      notifyListeners();
+
+      // Fall back to local check if the service call fails
+      return _checkLocalAvailability(serviceId, dateTime, duration);
+    }
+  }
+
+  /// Checks service availability using local data (fallback method)
+  ///
+  /// This method is used as a fallback when the CalendarService fails
+  bool _checkLocalAvailability(
+    String serviceId,
+    DateTime dateTime,
+    double duration,
+  ) {
     // Get bookings for the service
     final serviceBookings = getBookingsForService(serviceId);
 

@@ -71,6 +71,12 @@ export 'notification_models/notification_settings.dart'; // User notification pr
 export 'notification_models/notification_topic.dart'; // Notification topics
 
 // -------------------------
+// CALENDAR MODELS
+// -------------------------
+// Models for calendar integration and recurring events
+export 'calendar_models/recurring_event.dart'; // Recurring event model
+
+// -------------------------
 // LEGACY EXPORTS
 // -------------------------
 // Backward compatibility re-exports (will be removed in future)

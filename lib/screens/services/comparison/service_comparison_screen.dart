@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/providers/providers.dart';
+import 'package:eventati_book/providers/feature_providers/social_sharing_provider.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/utils.dart';
@@ -9,6 +10,7 @@ import 'package:eventati_book/widgets/services/comparison/comparison_item_card.d
 import 'package:eventati_book/widgets/services/comparison/feature_comparison_table.dart';
 import 'package:eventati_book/widgets/services/comparison/pricing_comparison_table.dart';
 import 'package:eventati_book/routing/routing.dart';
+import 'package:eventati_book/widgets/common/share_button.dart';
 
 /// Screen for comparing services side by side
 class ServiceComparisonScreen extends StatefulWidget {
@@ -72,6 +74,48 @@ class _ServiceComparisonScreenState extends State<ServiceComparisonScreen>
       appBar: AppBar(
         title: Text('Compare $serviceTypeName'),
         actions: [
+          // Share button
+          Builder(
+            builder: (context) {
+              // Create a temporary SavedComparison object for sharing
+              final List<String> serviceNames = [];
+
+              for (var service in selectedServices) {
+                String name = '';
+
+                if (service is Venue) {
+                  name = service.name;
+                } else if (service is CateringService) {
+                  name = service.name;
+                } else if (service is Photographer) {
+                  name = service.name;
+                } else if (service is Planner) {
+                  name = service.name;
+                }
+
+                if (name.isNotEmpty) {
+                  serviceNames.add(name);
+                }
+              }
+
+              final comparison = SavedComparison(
+                id: 'temp_${DateTime.now().millisecondsSinceEpoch}',
+                title: '${widget.serviceType} Comparison',
+                serviceType: widget.serviceType,
+                serviceIds: serviceNames,
+                serviceNames: serviceNames,
+                createdAt: DateTime.now(),
+                userId: 'current_user',
+                eventId: null,
+              );
+
+              return ShareButton(
+                contentType: ShareContentType.comparison,
+                content: comparison,
+                tooltip: 'Share comparison',
+              );
+            },
+          ),
           // Save button
           IconButton(
             icon: const Icon(Icons.save),
