@@ -47,7 +47,7 @@ void main() async {
 }
 
 Future<void> testUserModel(SupabaseClient supabase, Uuid uuid) async {
-  print('\n--- Testing User Model ---');
+  Logger.i('\n--- Testing User Model ---');
 
   // Create a test user
   final userId = uuid.v4();
@@ -67,37 +67,37 @@ Future<void> testUserModel(SupabaseClient supabase, Uuid uuid) async {
   };
 
   // Insert user
-  print('Creating user...');
+  Logger.i('Creating user...');
   await supabase.from('users').insert(userData);
-  print('User created successfully');
+  Logger.i('User created successfully');
 
   // Read user
-  print('Reading user...');
+  Logger.i('Reading user...');
   final response =
       await supabase.from('users').select().eq('id', userId).single();
-  print('User read successfully: ${response['name']}');
+  Logger.i('User read successfully: ${response['name']}');
 
   // Update user
-  print('Updating user...');
+  Logger.i('Updating user...');
   await supabase
       .from('users')
       .update({'name': 'Updated User'})
       .eq('id', userId);
-  print('User updated successfully');
+  Logger.i('User updated successfully');
 
   // Read updated user
   final updatedResponse =
       await supabase.from('users').select().eq('id', userId).single();
-  print('Updated user read successfully: ${updatedResponse['name']}');
+  Logger.i('Updated user read successfully: ${updatedResponse['name']}');
 
   // Delete user
-  print('Deleting user...');
+  Logger.i('Deleting user...');
   await supabase.from('users').delete().eq('id', userId);
-  print('User deleted successfully');
+  Logger.i('User deleted successfully');
 }
 
 Future<void> testEventModel(SupabaseClient supabase, Uuid uuid) async {
-  print('\n--- Testing Event Model ---');
+  Logger.i('\n--- Testing Event Model ---');
 
   // Create a test user first
   final userId = uuid.v4();
@@ -136,40 +136,40 @@ Future<void> testEventModel(SupabaseClient supabase, Uuid uuid) async {
   };
 
   // Insert event
-  print('Creating event...');
+  Logger.i('Creating event...');
   await supabase.from('events').insert(eventData);
-  print('Event created successfully');
+  Logger.i('Event created successfully');
 
   // Read event
-  print('Reading event...');
+  Logger.i('Reading event...');
   final response =
       await supabase.from('events').select().eq('id', eventId).single();
-  print('Event read successfully: ${response['name']}');
+  Logger.i('Event read successfully: ${response['name']}');
 
   // Update event
-  print('Updating event...');
+  Logger.i('Updating event...');
   await supabase
       .from('events')
       .update({'name': 'Updated Event'})
       .eq('id', eventId);
-  print('Event updated successfully');
+  Logger.i('Event updated successfully');
 
   // Read updated event
   final updatedResponse =
       await supabase.from('events').select().eq('id', eventId).single();
-  print('Updated event read successfully: ${updatedResponse['name']}');
+  Logger.i('Updated event read successfully: ${updatedResponse['name']}');
 
   // Delete event
-  print('Deleting event...');
+  Logger.i('Deleting event...');
   await supabase.from('events').delete().eq('id', eventId);
-  print('Event deleted successfully');
+  Logger.i('Event deleted successfully');
 
   // Clean up user
   await supabase.from('users').delete().eq('id', userId);
 }
 
 Future<void> testTaskModel(SupabaseClient supabase, Uuid uuid) async {
-  print('\n--- Testing Task Model ---');
+  Logger.i('\n--- Testing Task Model ---');
 
   // Create a test user first
   final userId = uuid.v4();
@@ -241,33 +241,33 @@ Future<void> testTaskModel(SupabaseClient supabase, Uuid uuid) async {
   };
 
   // Insert task
-  print('Creating task...');
+  Logger.i('Creating task...');
   await supabase.from('tasks').insert(taskData);
-  print('Task created successfully');
+  Logger.i('Task created successfully');
 
   // Read task
-  print('Reading task...');
+  Logger.i('Reading task...');
   final response =
       await supabase.from('tasks').select().eq('id', taskId).single();
-  print('Task read successfully: ${response['title']}');
+  Logger.i('Task read successfully: ${response['title']}');
 
   // Update task
-  print('Updating task...');
+  Logger.i('Updating task...');
   await supabase
       .from('tasks')
       .update({'title': 'Updated Task'})
       .eq('id', taskId);
-  print('Task updated successfully');
+  Logger.i('Task updated successfully');
 
   // Read updated task
   final updatedResponse =
       await supabase.from('tasks').select().eq('id', taskId).single();
-  print('Updated task read successfully: ${updatedResponse['title']}');
+  Logger.i('Updated task read successfully: ${updatedResponse['title']}');
 
   // Delete task
-  print('Deleting task...');
+  Logger.i('Deleting task...');
   await supabase.from('tasks').delete().eq('id', taskId);
-  print('Task deleted successfully');
+  Logger.i('Task deleted successfully');
 
   // Clean up
   await supabase.from('task_categories').delete().eq('id', categoryId);
@@ -277,7 +277,7 @@ Future<void> testTaskModel(SupabaseClient supabase, Uuid uuid) async {
 
 // Add more test functions for other models
 Future<void> testBudgetItemModel(SupabaseClient supabase, Uuid uuid) async {
-  print('\n--- Testing Budget Item Model ---');
+  Logger.i('\n--- Testing Budget Item Model ---');
 
   // Create a test budget item
   final budgetItemId = uuid.v4();
@@ -288,27 +288,27 @@ Future<void> testBudgetItemModel(SupabaseClient supabase, Uuid uuid) async {
   };
 
   // Insert budget item
-  print('Creating budget item...');
+  Logger.i('Creating budget item...');
   await supabase.from('budget_items').insert(budgetItemData);
-  print('Budget item created successfully');
+  Logger.i('Budget item created successfully');
 
   // Read budget item
-  print('Reading budget item...');
+  Logger.i('Reading budget item...');
   final response =
       await supabase
           .from('budget_items')
           .select()
           .eq('id', budgetItemId)
           .single();
-  print('Budget item read successfully: ${response['name']}');
+  Logger.i('Budget item read successfully: ${response['name']}');
 
   // Update budget item
-  print('Updating budget item...');
+  Logger.i('Updating budget item...');
   await supabase
       .from('budget_items')
       .update({'name': 'Updated Budget Item'})
       .eq('id', budgetItemId);
-  print('Budget item updated successfully');
+  Logger.i('Budget item updated successfully');
 
   // Read updated budget item
   final updatedResponse =
@@ -317,12 +317,12 @@ Future<void> testBudgetItemModel(SupabaseClient supabase, Uuid uuid) async {
           .select()
           .eq('id', budgetItemId)
           .single();
-  print('Updated budget item read successfully: ${updatedResponse['name']}');
+  Logger.i('Updated budget item read successfully: ${updatedResponse['name']}');
 
   // Delete budget item
-  print('Deleting budget item...');
+  Logger.i('Deleting budget item...');
   await supabase.from('budget_items').delete().eq('id', budgetItemId);
-  print('Budget item deleted successfully');
+  Logger.i('Budget item deleted successfully');
 }
 
 // Add more test functions for other models as needed
