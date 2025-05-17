@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/providers/providers.dart';
 import 'package:eventati_book/utils/utils.dart';
@@ -47,9 +50,12 @@ class _RecommendationDetailsScreenState
 
   /// Check if the recommendation is saved
   Future<void> _checkIfSaved() async {
-    // TODO: Implement checking if recommendation is saved
+    final prefs = await SharedPreferences.getInstance();
+    final savedRecommendations =
+        prefs.getStringList('saved_recommendations') ?? [];
+
     setState(() {
-      _isSaved = false;
+      _isSaved = savedRecommendations.contains(widget.recommendation.id);
     });
   }
 
@@ -446,16 +452,64 @@ class _RecommendationDetailsScreenState
   }
 
   /// Toggle saving the recommendation
-  void _toggleSave() {
+  Future<void> _toggleSave() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedRecommendations =
+        prefs.getStringList('saved_recommendations') ?? [];
+
     setState(() {
       _isSaved = !_isSaved;
     });
-    // TODO: Implement saving recommendation
+
+    if (_isSaved) {
+      // Add to saved recommendations
+      if (!savedRecommendations.contains(widget.recommendation.id)) {
+        savedRecommendations.add(widget.recommendation.id);
+        await prefs.setStringList(
+          'saved_recommendations',
+          savedRecommendations,
+        );
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Added to saved recommendations'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
+      }
+    } else {
+      // Remove from saved recommendations
+      if (savedRecommendations.contains(widget.recommendation.id)) {
+        savedRecommendations.remove(widget.recommendation.id);
+        await prefs.setStringList(
+          'saved_recommendations',
+          savedRecommendations,
+        );
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Removed from saved recommendations'),
+              backgroundColor: Colors.grey,
+            ),
+          );
+        }
+      }
+    }
   }
 
   /// Share the recommendation
   void _shareRecommendation() {
-    // TODO: Implement sharing recommendation
+    final title = widget.recommendation.title;
+    final category = widget.recommendation.category.label;
+    final description = widget.recommendation.description;
+
+    final shareText =
+        'Check out this $category recommendation: $title\n\n$description';
+
+    Share.share(shareText);
   }
 
   /// Contact the vendor
@@ -464,22 +518,51 @@ class _RecommendationDetailsScreenState
       _isContacting = true;
     });
 
-    // TODO: Implement contacting vendor
+    try {
+      // Create email content
+      final subject = 'Inquiry about ${widget.recommendation.title}';
+      const body =
+          'Hello,\n\nI am interested in your services for my event. Could you please provide more information?\n\nThank you.';
 
-    // Simulate network delay
-    await Future.delayed(const Duration(seconds: 1));
-
-    setState(() {
-      _isContacting = false;
-    });
-
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Contact request sent!'),
-          backgroundColor: Colors.green,
-        ),
+      // Create email URI
+      final emailUri = Uri(
+        scheme: 'mailto',
+        path: 'contact@example.com', // Replace with actual vendor email
+        query:
+            'subject=${Uri.encodeComponent(subject)}&body=${Uri.encodeComponent(body)}',
       );
+
+      // Launch email app
+      if (await canLaunchUrl(emailUri)) {
+        await launchUrl(emailUri);
+      } else {
+        throw 'Could not launch email app';
+      }
+
+      // Simulate network delay
+      await Future.delayed(const Duration(seconds: 1));
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Email app opened!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to open email app: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      setState(() {
+        _isContacting = false;
+      });
     }
   }
 
@@ -489,29 +572,44 @@ class _RecommendationDetailsScreenState
       _isBooking = true;
     });
 
-    // TODO: Implement booking vendor
+    try {
+      // Use default price since Suggestion doesn't have a price property
+      const basePrice = 100.0;
 
-    // Simulate network delay
-    await Future.delayed(const Duration(seconds: 1));
+      // Simulate checking availability
+      await Future.delayed(const Duration(seconds: 1));
 
-    setState(() {
-      _isBooking = false;
-    });
+      setState(() {
+        _isBooking = false;
+      });
 
-    if (mounted) {
-      // Navigate to booking form
-      NavigationUtils.navigateToNamed(
-        context,
-        RouteNames.bookingForm,
-        arguments: BookingFormArguments(
-          eventId: widget.eventId,
-          serviceId: widget.recommendation.id,
-          serviceType: widget.recommendation.category.name,
-          serviceName: widget.recommendation.title,
-          basePrice:
-              100.0, // Default price, should be replaced with actual price from recommendation
-        ),
-      );
+      if (mounted) {
+        // Navigate to booking form
+        NavigationUtils.navigateToNamed(
+          context,
+          RouteNames.bookingForm,
+          arguments: BookingFormArguments(
+            eventId: widget.eventId,
+            serviceId: widget.recommendation.id,
+            serviceType: widget.recommendation.category.name,
+            serviceName: widget.recommendation.title,
+            basePrice: basePrice,
+          ),
+        );
+      }
+    } catch (e) {
+      setState(() {
+        _isBooking = false;
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to proceed to booking: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 

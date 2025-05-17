@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/providers/providers.dart';
 import 'package:eventati_book/utils/utils.dart';
@@ -327,18 +328,57 @@ class _VendorRecommendationsScreenState
         );
       }
     });
-    // TODO: Implement saving to database
+    // Save to SharedPreferences
+    _saveToSharedPreferences(recommendation);
   }
 
   /// Add a recommendation to comparison
   void _addToComparison(Suggestion recommendation) {
-    // TODO: Implement adding to comparison
+    // Get the comparison provider
+    final comparisonProvider = Provider.of<ComparisonProvider>(
+      context,
+      listen: false,
+    );
+
+    // Add the recommendation to comparison
+    comparisonProvider.toggleServiceSelection(recommendation);
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('${recommendation.title} added to comparison'),
         duration: const Duration(seconds: 2),
       ),
     );
+  }
+
+  /// Save a recommendation to SharedPreferences
+  Future<void> _saveToSharedPreferences(Suggestion recommendation) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+
+      // Get existing saved recommendations
+      final savedRecommendations =
+          prefs.getStringList('saved_recommendations') ?? [];
+
+      // Add the recommendation ID if it's not already saved
+      if (!savedRecommendations.contains(recommendation.id)) {
+        savedRecommendations.add(recommendation.id);
+        await prefs.setStringList(
+          'saved_recommendations',
+          savedRecommendations,
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error saving recommendation: $e'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+    }
   }
 
   /// Show filter dialog

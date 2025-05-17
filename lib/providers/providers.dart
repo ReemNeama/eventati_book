@@ -30,9 +30,16 @@ export 'feature_providers/feature_providers.dart';
 // Includes:
 // - MilestoneProvider: Milestone and achievement tracking
 // - SuggestionProvider: Suggestions based on wizard state
-// - ServiceRecommendationProvider: Service recommendations
 // - ComparisonProvider: Service comparison
 // - ComparisonSavingProvider: Saved comparisons
+
+// -------------------------
+// SERVICE PROVIDERS
+// -------------------------
+// Providers that handle service-related functionality
+export 'service_providers/service_recommendation_provider.dart';
+// Includes:
+// - ServiceRecommendationProvider: Service recommendations
 
 // -------------------------
 // PLANNING PROVIDERS
