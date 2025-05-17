@@ -6,7 +6,6 @@ import 'package:eventati_book/providers/providers.dart';
 import 'package:eventati_book/screens/planning/widgets/dependency_graph.dart';
 import 'package:eventati_book/screens/planning/widgets/dependency_indicator.dart';
 import 'package:eventati_book/screens/planning/widgets/task_card.dart';
-import 'package:eventati_book/utils/core/constants.dart';
 
 /// Enum for the different view modes
 enum ViewMode {

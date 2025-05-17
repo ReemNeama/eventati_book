@@ -5,7 +5,6 @@ import 'package:eventati_book/providers/providers.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
-import 'package:eventati_book/routing/routing.dart';
 import 'package:eventati_book/screens/recommendations/recommendation_screens.dart';
 
 /// A section for the home screen that displays personalized recommendations
@@ -50,22 +49,30 @@ class PersonalizedRecommendationsSection extends StatelessWidget {
         }
 
         // Get high priority recommendations first
-        final highPriorityRecommendations = provider.highPriorityRecommendations;
-        
+        final highPriorityRecommendations =
+            provider.recommendations
+                .where((r) => r.priority == SuggestionPriority.high)
+                .toList();
+
         // If we don't have enough high priority recommendations, add medium priority ones
         final displayRecommendations = <Suggestion>[];
         displayRecommendations.addAll(highPriorityRecommendations);
-        
+
         if (displayRecommendations.length < maxRecommendations) {
-          final mediumPriorityRecommendations = provider.mediumPriorityRecommendations;
-          final remainingSlots = maxRecommendations - displayRecommendations.length;
+          final mediumPriorityRecommendations =
+              provider.recommendations
+                  .where((r) => r.priority == SuggestionPriority.medium)
+                  .toList();
+          final remainingSlots =
+              maxRecommendations - displayRecommendations.length;
           displayRecommendations.addAll(
             mediumPriorityRecommendations.take(remainingSlots),
           );
         }
 
         // Limit to maxRecommendations
-        final limitedRecommendations = displayRecommendations.take(maxRecommendations).toList();
+        final limitedRecommendations =
+            displayRecommendations.take(maxRecommendations).toList();
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -79,9 +86,9 @@ class PersonalizedRecommendationsSection extends StatelessWidget {
                   Text(
                     'Recommended for You',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: textColor,
-                        ),
+                      fontWeight: FontWeight.bold,
+                      color: textColor,
+                    ),
                   ),
                   TextButton(
                     onPressed: () => _navigateToAllRecommendations(context),
@@ -122,10 +129,7 @@ class PersonalizedRecommendationsSection extends StatelessWidget {
   void _navigateToAllRecommendations(BuildContext context) {
     NavigationUtils.navigateTo(
       context,
-      VendorRecommendationsScreen(
-        eventId: eventId,
-        eventName: eventName,
-      ),
+      VendorRecommendationsScreen(eventId: eventId, eventName: eventName),
     );
   }
 }
@@ -158,11 +162,7 @@ class _RecommendationCard extends StatelessWidget {
 
     return Container(
       width: 180,
-      margin: EdgeInsets.only(
-        left: isFirst ? 0 : 12,
-        right: 12,
-        bottom: 8,
-      ),
+      margin: EdgeInsets.only(left: isFirst ? 0 : 12, right: 12, bottom: 8),
       decoration: BoxDecoration(
         color: cardColor,
         borderRadius: BorderRadius.circular(12),
@@ -188,17 +188,18 @@ class _RecommendationCard extends StatelessWidget {
                     topLeft: Radius.circular(12),
                     topRight: Radius.circular(12),
                   ),
-                  child: recommendation.imageUrl != null
-                      ? Image.network(
-                          recommendation.imageUrl!,
-                          height: 120,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return _buildPlaceholderImage(context);
-                          },
-                        )
-                      : _buildPlaceholderImage(context),
+                  child:
+                      recommendation.imageUrl != null
+                          ? Image.network(
+                            recommendation.imageUrl!,
+                            height: 120,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return _buildPlaceholderImage(context);
+                            },
+                          )
+                          : _buildPlaceholderImage(context),
                 ),
                 // Category badge
                 Positioned(
@@ -259,11 +260,7 @@ class _RecommendationCard extends StatelessWidget {
                   // Relevance score
                   Row(
                     children: [
-                      Icon(
-                        Icons.thumb_up,
-                        color: primaryColor,
-                        size: 12,
-                      ),
+                      Icon(Icons.thumb_up, color: primaryColor, size: 12),
                       const SizedBox(width: 4),
                       Text(
                         '${recommendation.baseRelevanceScore}% Match',
@@ -308,10 +305,11 @@ class _RecommendationCard extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => RecommendationDetailsScreen(
-          recommendation: recommendation,
-          eventId: eventId,
-        ),
+        builder:
+            (context) => RecommendationDetailsScreen(
+              recommendation: recommendation,
+              eventId: eventId,
+            ),
       ),
     );
   }
@@ -335,9 +333,9 @@ class _LoadingRecommendationsSection extends StatelessWidget {
             children: [
               Text(
                 'Recommended for You',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
               ),
               const SizedBox(width: 80), // Placeholder for "See All" button
             ],
@@ -365,11 +363,7 @@ class _LoadingRecommendationsSection extends StatelessWidget {
   Widget _buildLoadingCard(BuildContext context, bool isFirst) {
     return Container(
       width: 180,
-      margin: EdgeInsets.only(
-        left: isFirst ? 0 : 12,
-        right: 12,
-        bottom: 8,
-      ),
+      margin: EdgeInsets.only(left: isFirst ? 0 : 12, right: 12, bottom: 8),
       decoration: BoxDecoration(
         color: Colors.grey.withAlpha(50),
         borderRadius: BorderRadius.circular(12),

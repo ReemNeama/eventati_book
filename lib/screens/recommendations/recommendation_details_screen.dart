@@ -5,8 +5,6 @@ import 'package:eventati_book/providers/providers.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
-import 'package:eventati_book/widgets/common/loading_indicator.dart';
-import 'package:eventati_book/widgets/common/error_message.dart';
 import 'package:eventati_book/widgets/recommendations/recommendation_badge.dart';
 import 'package:eventati_book/routing/routing.dart';
 
@@ -71,9 +69,7 @@ class _RecommendationDetailsScreenState
           SliverAppBar(
             expandedHeight: 250.0,
             pinned: true,
-            flexibleSpace: FlexibleSpaceBar(
-              background: _buildHeaderImage(),
-            ),
+            flexibleSpace: FlexibleSpaceBar(background: _buildHeaderImage()),
             actions: [
               // Save button
               IconButton(
@@ -122,19 +118,16 @@ class _RecommendationDetailsScreenState
                           children: [
                             Text(
                               widget.recommendation.title,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleLarge
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: textColor,
-                                  ),
+                              style: Theme.of(
+                                context,
+                              ).textTheme.titleLarge?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: textColor,
+                              ),
                             ),
                             Text(
                               widget.recommendation.category.label,
-                              style: TextStyle(
-                                color: textColor.withAlpha(179),
-                              ),
+                              style: TextStyle(color: textColor.withAlpha(179)),
                             ),
                           ],
                         ),
@@ -153,9 +146,9 @@ class _RecommendationDetailsScreenState
                   Text(
                     'About',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: textColor,
-                        ),
+                      fontWeight: FontWeight.bold,
+                      color: textColor,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Text(
@@ -173,21 +166,22 @@ class _RecommendationDetailsScreenState
                     Text(
                       'Tags',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: textColor,
-                          ),
+                        fontWeight: FontWeight.bold,
+                        color: textColor,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     Wrap(
                       spacing: 8,
                       runSpacing: 8,
-                      children: widget.recommendation.tags.map((tag) {
-                        return Chip(
-                          label: Text(tag),
-                          backgroundColor: primaryColor.withAlpha(26),
-                          labelStyle: TextStyle(color: primaryColor),
-                        );
-                      }).toList(),
+                      children:
+                          widget.recommendation.tags.map((tag) {
+                            return Chip(
+                              label: Text(tag),
+                              backgroundColor: primaryColor.withAlpha(26),
+                              labelStyle: TextStyle(color: primaryColor),
+                            );
+                          }).toList(),
                     ),
                     const SizedBox(height: 24),
                   ],
@@ -198,18 +192,19 @@ class _RecommendationDetailsScreenState
                       Expanded(
                         child: ElevatedButton.icon(
                           onPressed: _isContacting ? null : _contactVendor,
-                          icon: _isContacting
-                              ? const SizedBox(
-                                  width: 16,
-                                  height: 16,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                      Colors.white,
+                          icon:
+                              _isContacting
+                                  ? const SizedBox(
+                                    width: 16,
+                                    height: 16,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        Colors.white,
+                                      ),
                                     ),
-                                  ),
-                                )
-                              : const Icon(Icons.email),
+                                  )
+                                  : const Icon(Icons.email),
                           label: Text(
                             _isContacting ? 'Contacting...' : 'Contact',
                           ),
@@ -224,18 +219,19 @@ class _RecommendationDetailsScreenState
                       Expanded(
                         child: ElevatedButton.icon(
                           onPressed: _isBooking ? null : _bookVendor,
-                          icon: _isBooking
-                              ? const SizedBox(
-                                  width: 16,
-                                  height: 16,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                      Colors.white,
+                          icon:
+                              _isBooking
+                                  ? const SizedBox(
+                                    width: 16,
+                                    height: 16,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        Colors.white,
+                                      ),
                                     ),
-                                  ),
-                                )
-                              : const Icon(Icons.calendar_today),
+                                  )
+                                  : const Icon(Icons.calendar_today),
                           label: Text(_isBooking ? 'Booking...' : 'Book Now'),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.green,
@@ -264,30 +260,30 @@ class _RecommendationDetailsScreenState
   Widget _buildHeaderImage() {
     return widget.recommendation.imageUrl != null
         ? Stack(
-            fit: StackFit.expand,
-            children: [
-              Image.network(
-                widget.recommendation.imageUrl!,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return _buildPlaceholderImage();
-                },
-              ),
-              // Gradient overlay for better text visibility
-              Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.black.withAlpha(0),
-                      Colors.black.withAlpha(150),
-                    ],
-                  ),
+          fit: StackFit.expand,
+          children: [
+            Image.network(
+              widget.recommendation.imageUrl!,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return _buildPlaceholderImage();
+              },
+            ),
+            // Gradient overlay for better text visibility
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.black.withAlpha(0),
+                    Colors.black.withAlpha(150),
+                  ],
                 ),
               ),
-            ],
-          )
+            ),
+          ],
+        )
         : _buildPlaceholderImage();
   }
 
@@ -327,9 +323,9 @@ class _RecommendationDetailsScreenState
           children: [
             Text(
               'Similar Recommendations',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             SizedBox(
@@ -361,9 +357,7 @@ class _RecommendationDetailsScreenState
         margin: const EdgeInsets.only(right: 16),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: primaryColor.withAlpha(51),
-          ),
+          border: Border.all(color: primaryColor.withAlpha(51)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -374,35 +368,36 @@ class _RecommendationDetailsScreenState
                 topLeft: Radius.circular(8),
                 topRight: Radius.circular(8),
               ),
-              child: recommendation.imageUrl != null
-                  ? Image.network(
-                      recommendation.imageUrl!,
-                      height: 100,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          height: 100,
-                          color: primaryColor.withAlpha(26),
-                          child: Center(
-                            child: Icon(
-                              recommendation.category.icon,
-                              color: primaryColor.withAlpha(128),
+              child:
+                  recommendation.imageUrl != null
+                      ? Image.network(
+                        recommendation.imageUrl!,
+                        height: 100,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            height: 100,
+                            color: primaryColor.withAlpha(26),
+                            child: Center(
+                              child: Icon(
+                                recommendation.category.icon,
+                                color: primaryColor.withAlpha(128),
+                              ),
                             ),
+                          );
+                        },
+                      )
+                      : Container(
+                        height: 100,
+                        color: primaryColor.withAlpha(26),
+                        child: Center(
+                          child: Icon(
+                            recommendation.category.icon,
+                            color: primaryColor.withAlpha(128),
                           ),
-                        );
-                      },
-                    )
-                  : Container(
-                      height: 100,
-                      color: primaryColor.withAlpha(26),
-                      child: Center(
-                        child: Icon(
-                          recommendation.category.icon,
-                          color: primaryColor.withAlpha(128),
                         ),
                       ),
-                    ),
             ),
             // Title and category
             Padding(
@@ -430,11 +425,7 @@ class _RecommendationDetailsScreenState
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      Icon(
-                        Icons.star,
-                        size: 14,
-                        color: Colors.amber,
-                      ),
+                      const Icon(Icons.star, size: 14, color: Colors.amber),
                       const SizedBox(width: 4),
                       Text(
                         '${recommendation.baseRelevanceScore}% match',
@@ -516,6 +507,9 @@ class _RecommendationDetailsScreenState
           eventId: widget.eventId,
           serviceId: widget.recommendation.id,
           serviceType: widget.recommendation.category.name,
+          serviceName: widget.recommendation.title,
+          basePrice:
+              100.0, // Default price, should be replaced with actual price from recommendation
         ),
       );
     }
@@ -526,10 +520,11 @@ class _RecommendationDetailsScreenState
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (context) => RecommendationDetailsScreen(
-          recommendation: recommendation,
-          eventId: widget.eventId,
-        ),
+        builder:
+            (context) => RecommendationDetailsScreen(
+              recommendation: recommendation,
+              eventId: widget.eventId,
+            ),
       ),
     );
   }

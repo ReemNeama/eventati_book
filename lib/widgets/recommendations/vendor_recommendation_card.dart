@@ -4,7 +4,6 @@ import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/widgets/recommendations/recommendation_badge.dart';
-import 'package:eventati_book/utils/core/constants.dart';
 
 /// Card widget to display a vendor recommendation
 class VendorRecommendationCard extends StatelessWidget {
