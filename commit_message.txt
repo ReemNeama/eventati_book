@@ -1,0 +1,11 @@
+Update models for Supabase compatibility
+
+- Updated task.dart to use snake_case field names in database methods
+- Separated TaskCategory into its own file
+- Fixed imports in files that were using TaskCategory from task.dart
+- Updated model-to-table mapping in update_supabase_schema.dart
+- Generated updated SQL schema with proper tables and field names
+- Created RLS policies for all tables
+- Added script to apply schema and RLS policies to Supabase
+- Added documentation for Supabase model updates
+- Updated development tracker with current progress

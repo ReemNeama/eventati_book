@@ -4,5 +4,7 @@
 library;
 
 export 'email_service.dart';
+export 'messaging_service.dart';
 export 'notification_service.dart';
+export 'realtime_notification_service.dart';
 export 'reminder_service.dart';

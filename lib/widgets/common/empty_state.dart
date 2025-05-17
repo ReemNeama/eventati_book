@@ -303,4 +303,67 @@ class EmptyState extends StatelessWidget {
       illustration: illustration,
     );
   }
+
+  /// Factory method for creating an error state
+  factory EmptyState.error({
+    String title = 'Something went wrong',
+    required String message,
+    IconData icon = Icons.error_outline,
+    String? actionText,
+    VoidCallback? onAction,
+    EmptyStateDisplayType displayType = EmptyStateDisplayType.standard,
+    Widget? illustration,
+  }) {
+    return EmptyState(
+      title: title,
+      message: message,
+      icon: icon,
+      actionText: actionText,
+      onAction: onAction,
+      displayType: displayType,
+      illustration: illustration,
+    );
+  }
+
+  /// Factory method for creating a not found state
+  factory EmptyState.notFound({
+    String title = 'Not Found',
+    required String message,
+    IconData icon = Icons.search_off,
+    String? actionText,
+    VoidCallback? onAction,
+    EmptyStateDisplayType displayType = EmptyStateDisplayType.standard,
+    Widget? illustration,
+  }) {
+    return EmptyState(
+      title: title,
+      message: message,
+      icon: icon,
+      actionText: actionText,
+      onAction: onAction,
+      displayType: displayType,
+      illustration: illustration,
+    );
+  }
+
+  /// Factory method for creating an empty state
+  factory EmptyState.empty({
+    String title = 'No Data',
+    required String message,
+    IconData icon = Icons.inbox,
+    String? actionText,
+    VoidCallback? onAction,
+    EmptyStateDisplayType displayType = EmptyStateDisplayType.standard,
+    Widget? illustration,
+  }) {
+    return EmptyState(
+      title: title,
+      message: message,
+      icon: icon,
+      actionText: actionText,
+      onAction: onAction,
+      displayType: displayType,
+      illustration: illustration,
+    );
+  }
 }

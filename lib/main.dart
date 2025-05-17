@@ -105,6 +105,14 @@ void main() async {
     crashlyticsService,
   );
 
+  // Initialize deep link handler
+  try {
+    await DeepLinkHandler.instance.initialize();
+    debugPrint('Deep link handler initialized successfully');
+  } catch (e) {
+    debugPrint('Deep link handler initialization failed: $e');
+  }
+
   // Example error to verify PostHog is working
   try {
     throw Exception('This is a test error for PostHog');

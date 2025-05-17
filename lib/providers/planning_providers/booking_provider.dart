@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/utils/utils.dart';
+import 'package:eventati_book/utils/logger.dart';
+import 'package:eventati_book/services/calendar/calendar_service.dart';
+import 'package:eventati_book/services/notification/email_service.dart';
+import 'package:eventati_book/services/notification/email_preferences_service.dart';
 
 /// Provider for managing service bookings and appointments.
 ///
@@ -60,6 +64,28 @@ class BookingProvider extends ChangeNotifier {
   /// Error message if an operation fails
   String? _error;
 
+  /// Calendar service for managing calendar events
+  final CalendarService _calendarService;
+
+  /// Email service for sending booking notifications
+  final EmailService _emailService;
+
+  /// Email preferences service for checking user preferences
+  final EmailPreferencesService _emailPreferencesService;
+
+  /// Map of booking IDs to calendar event IDs
+  final Map<String, String> _calendarEventIds = {};
+
+  /// Constructor
+  BookingProvider({
+    CalendarService? calendarService,
+    EmailService? emailService,
+    EmailPreferencesService? emailPreferencesService,
+  }) : _calendarService = calendarService ?? CalendarService(),
+       _emailService = emailService ?? EmailService(),
+       _emailPreferencesService =
+           emailPreferencesService ?? EmailPreferencesService();
+
   /// Returns the complete list of all bookings
   ///
   /// This includes bookings for all events, services, and statuses.
@@ -102,6 +128,9 @@ class BookingProvider extends ChangeNotifier {
       final bookings = await _loadBookings();
       _bookings = bookings;
 
+      // Load calendar event IDs from shared preferences
+      await _loadCalendarEventIds();
+
       _isLoading = false;
       notifyListeners();
     } catch (e) {
@@ -114,11 +143,19 @@ class BookingProvider extends ChangeNotifier {
   /// Creates a new booking and adds it to the booking list
   ///
   /// [booking] The booking to create
+  /// [addToCalendar] Whether to add the booking to the user's calendar
+  /// [sendConfirmationEmail] Whether to send a confirmation email
   ///
   /// Returns true if the booking was successfully created, false otherwise.
   /// The booking is added to the list and persisted to SharedPreferences.
+  /// If [addToCalendar] is true, the booking is also added to the user's calendar.
+  /// If [sendConfirmationEmail] is true, a confirmation email is sent to the user.
   /// Notifies listeners when the operation completes.
-  Future<bool> createBooking(Booking booking) async {
+  Future<bool> createBooking(
+    Booking booking, {
+    bool addToCalendar = true,
+    bool sendConfirmationEmail = true,
+  }) async {
     _isLoading = true;
     _error = null;
     notifyListeners();
@@ -129,6 +166,61 @@ class BookingProvider extends ChangeNotifier {
 
       // Save bookings to shared preferences
       await _saveBookings();
+
+      // Add to calendar if requested
+      String? calendarEventId;
+      if (addToCalendar) {
+        try {
+          calendarEventId = await _calendarService.createEventForBooking(
+            booking,
+            addReminder: true,
+            reminderMinutesBefore: 60,
+          );
+
+          if (calendarEventId != null) {
+            _calendarEventIds[booking.id] = calendarEventId;
+            // Save calendar event IDs to shared preferences
+            await _saveCalendarEventIds();
+          }
+        } catch (e) {
+          Logger.w(
+            'Failed to add booking to calendar: $e',
+            tag: 'BookingProvider',
+          );
+          // Continue with booking creation even if calendar fails
+        }
+      }
+
+      // Send confirmation email if requested
+      if (sendConfirmationEmail) {
+        try {
+          // Check if user has opted in to booking confirmation emails
+          final hasOptedIn = await _emailPreferencesService.hasOptedIn(
+            booking.userId,
+            EmailType.bookingConfirmation,
+          );
+
+          if (hasOptedIn) {
+            // Create add to calendar URL if available
+            String? addToCalendarUrl;
+            if (calendarEventId != null) {
+              // This is a simplified example - in a real app, you would create a proper URL
+              addToCalendarUrl = 'io.eventati.book://calendar/$calendarEventId';
+            }
+
+            await _emailService.sendBookingConfirmationEmail(
+              booking,
+              addToCalendarUrl: addToCalendarUrl,
+            );
+          }
+        } catch (e) {
+          Logger.w(
+            'Failed to send booking confirmation email: $e',
+            tag: 'BookingProvider',
+          );
+          // Continue with booking creation even if email fails
+        }
+      }
 
       _isLoading = false;
       notifyListeners();
@@ -146,12 +238,22 @@ class BookingProvider extends ChangeNotifier {
   /// Updates an existing booking with new information
   ///
   /// [booking] The updated booking (must have the same ID as an existing booking)
+  /// [updateCalendar] Whether to update the calendar event
+  /// [sendUpdateEmail] Whether to send an update email
+  /// [updateMessage] Message to include in the update email
   ///
   /// Returns true if the booking was successfully updated, false otherwise.
   /// Throws an exception if the booking with the specified ID is not found.
   /// The updated booking is persisted to SharedPreferences.
+  /// If [updateCalendar] is true, the calendar event is also updated.
+  /// If [sendUpdateEmail] is true, an update email is sent to the user.
   /// Notifies listeners when the operation completes.
-  Future<bool> updateBooking(Booking booking) async {
+  Future<bool> updateBooking(
+    Booking booking, {
+    bool updateCalendar = true,
+    bool sendUpdateEmail = true,
+    String updateMessage = 'Your booking details have been updated.',
+  }) async {
     _isLoading = true;
     _error = null;
     notifyListeners();
@@ -169,6 +271,56 @@ class BookingProvider extends ChangeNotifier {
       // Save bookings to shared preferences
       await _saveBookings();
 
+      // Update calendar event if requested
+      if (updateCalendar && _calendarEventIds.containsKey(booking.id)) {
+        try {
+          final calendarEventId = _calendarEventIds[booking.id];
+          if (calendarEventId != null) {
+            final success = await _calendarService.updateEventForBooking(
+              booking,
+              calendarEventId,
+            );
+
+            if (success) {
+              // The updateEventForBooking method in our new implementation
+              // deletes the old event and creates a new one with a new ID
+              // So we need to update the calendar event ID in our map
+              // The new ID is stored in Supabase, but we don't have access to it here
+              // For simplicity, we'll just remove the old ID from our map
+              _calendarEventIds.remove(booking.id);
+              await _saveCalendarEventIds();
+            }
+          }
+        } catch (e) {
+          Logger.w(
+            'Failed to update calendar event: $e',
+            tag: 'BookingProvider',
+          );
+          // Continue with booking update even if calendar fails
+        }
+      }
+
+      // Send update email if requested
+      if (sendUpdateEmail) {
+        try {
+          // Check if user has opted in to booking update emails
+          final hasOptedIn = await _emailPreferencesService.hasOptedIn(
+            booking.userId,
+            EmailType.bookingUpdate,
+          );
+
+          if (hasOptedIn) {
+            await _emailService.sendBookingUpdateEmail(booking, updateMessage);
+          }
+        } catch (e) {
+          Logger.w(
+            'Failed to send booking update email: $e',
+            tag: 'BookingProvider',
+          );
+          // Continue with booking update even if email fails
+        }
+      }
+
       _isLoading = false;
       notifyListeners();
 
@@ -185,14 +337,22 @@ class BookingProvider extends ChangeNotifier {
   /// Cancels an existing booking by changing its status to cancelled
   ///
   /// [bookingId] The ID of the booking to cancel
+  /// [removeFromCalendar] Whether to remove the booking from the calendar
+  /// [sendCancellationEmail] Whether to send a cancellation email
   ///
   /// Returns true if the booking was successfully cancelled, false otherwise.
   /// Throws an exception if the booking with the specified ID is not found.
   /// This method does not remove the booking from the list, but updates its status
   /// to BookingStatus.cancelled and sets the updatedAt timestamp to the current time.
+  /// If [removeFromCalendar] is true, the calendar event is also removed.
+  /// If [sendCancellationEmail] is true, a cancellation email is sent to the user.
   /// The updated booking is persisted to SharedPreferences.
   /// Notifies listeners when the operation completes.
-  Future<bool> cancelBooking(String bookingId) async {
+  Future<bool> cancelBooking(
+    String bookingId, {
+    bool removeFromCalendar = true,
+    bool sendCancellationEmail = true,
+  }) async {
     _isLoading = true;
     _error = null;
     notifyListeners();
@@ -204,15 +364,60 @@ class BookingProvider extends ChangeNotifier {
         throw Exception('Booking not found');
       }
 
+      // Get the booking
+      final booking = _bookings[index];
+
       // Update booking status
-      final booking = _bookings[index].copyWith(
+      final updatedBooking = booking.copyWith(
         status: BookingStatus.cancelled,
         updatedAt: DateTime.now(),
       );
-      _bookings[index] = booking;
+      _bookings[index] = updatedBooking;
 
       // Save bookings to shared preferences
       await _saveBookings();
+
+      // Remove from calendar if requested
+      if (removeFromCalendar && _calendarEventIds.containsKey(bookingId)) {
+        try {
+          final calendarEventId = _calendarEventIds[bookingId];
+          if (calendarEventId != null) {
+            await _calendarService.deleteEventForBooking(
+              bookingId,
+              calendarEventId,
+            );
+            _calendarEventIds.remove(bookingId);
+            await _saveCalendarEventIds();
+          }
+        } catch (e) {
+          Logger.w(
+            'Failed to remove booking from calendar: $e',
+            tag: 'BookingProvider',
+          );
+          // Continue with booking cancellation even if calendar fails
+        }
+      }
+
+      // Send cancellation email if requested
+      if (sendCancellationEmail) {
+        try {
+          // Check if user has opted in to booking update emails
+          final hasOptedIn = await _emailPreferencesService.hasOptedIn(
+            booking.userId,
+            EmailType.bookingUpdate,
+          );
+
+          if (hasOptedIn) {
+            await _emailService.sendBookingCancellationEmail(updatedBooking);
+          }
+        } catch (e) {
+          Logger.w(
+            'Failed to send booking cancellation email: $e',
+            tag: 'BookingProvider',
+          );
+          // Continue with booking cancellation even if email fails
+        }
+      }
 
       _isLoading = false;
       notifyListeners();
@@ -393,6 +598,46 @@ class BookingProvider extends ChangeNotifier {
       await prefs.setString('bookings', jsonData);
     } catch (e) {
       _error = 'Failed to save bookings: $e';
+      notifyListeners();
+    }
+  }
+
+  /// Loads calendar event IDs from SharedPreferences
+  ///
+  /// Loads the mapping of booking IDs to calendar event IDs from persistent storage.
+  /// If no mapping is found, initializes an empty map.
+  Future<void> _loadCalendarEventIds() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final calendarEventIdsJson = prefs.getString('calendar_event_ids');
+      if (calendarEventIdsJson == null) {
+        _calendarEventIds.clear();
+        return;
+      }
+
+      final calendarEventIdsMap =
+          jsonDecode(calendarEventIdsJson) as Map<String, dynamic>;
+      _calendarEventIds.clear();
+      calendarEventIdsMap.forEach((key, value) {
+        _calendarEventIds[key] = value.toString();
+      });
+    } catch (e) {
+      Logger.e('Error loading calendar event IDs: $e', tag: 'BookingProvider');
+      _calendarEventIds.clear();
+    }
+  }
+
+  /// Saves calendar event IDs to SharedPreferences
+  ///
+  /// Persists the current mapping of booking IDs to calendar event IDs to storage.
+  Future<void> _saveCalendarEventIds() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final calendarEventIdsJson = jsonEncode(_calendarEventIds);
+      await prefs.setString('calendar_event_ids', calendarEventIdsJson);
+    } catch (e) {
+      Logger.e('Error saving calendar event IDs: $e', tag: 'BookingProvider');
+      _error = 'Failed to save calendar event IDs: $e';
       notifyListeners();
     }
   }

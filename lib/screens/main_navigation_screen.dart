@@ -66,6 +66,13 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
               ? AppBar(
                 title: Text(_getAppBarTitle()),
                 actions: [
+                  IconButton(
+                    icon: const Icon(Icons.search),
+                    onPressed: () {
+                      Navigator.pushNamed(context, RouteNames.globalSearch);
+                    },
+                    tooltip: 'Global Search',
+                  ),
                   InkWell(
                     onTap: () {
                       Navigator.pushNamed(context, RouteNames.notifications);

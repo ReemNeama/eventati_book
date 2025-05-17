@@ -66,6 +66,10 @@ dependencies:
   # Payment processing
   flutter_stripe: ^10.0.0
 
+  # Calendar integration
+  permission_handler: ^11.3.0
+  add_2_calendar: ^2.2.4
+
 
 dev_dependencies:
   flutter_test:

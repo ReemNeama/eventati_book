@@ -1,5 +1,6 @@
 import 'package:eventati_book/models/service_models/booking.dart';
 import 'package:eventati_book/services/supabase/database/user_database_service.dart';
+import 'package:eventati_book/services/notification/email_templates.dart';
 import 'package:eventati_book/utils/logger.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -19,7 +20,10 @@ class EmailService {
        _userDatabaseService = userDatabaseService ?? UserDatabaseService();
 
   /// Send a booking confirmation email
-  Future<void> sendBookingConfirmationEmail(Booking booking) async {
+  Future<void> sendBookingConfirmationEmail(
+    Booking booking, {
+    String? addToCalendarUrl,
+  }) async {
     try {
       final user = await _userDatabaseService.getUser(booking.userId);
       if (user == null) {
@@ -34,19 +38,14 @@ class EmailService {
       // Format the booking date and time
       final formattedDate = _formatDate(booking.bookingDateTime);
 
-      // Create email content
+      // Create email content using template
       final subject = 'Booking Confirmation - ${booking.serviceName}';
-      final content = '''
-        <h1>Booking Confirmation</h1>
-        <p>Dear ${user.displayName.isEmpty ? 'Valued Customer' : user.displayName},</p>
-        <p>Your booking for <strong>${booking.serviceName}</strong> has been confirmed.</p>
-        <p><strong>Date and Time:</strong> $formattedDate</p>
-        <p><strong>Duration:</strong> ${booking.duration} hours</p>
-        <p><strong>Total Price:</strong> \$${booking.totalPrice.toStringAsFixed(2)}</p>
-        <p>Thank you for choosing Eventati Book!</p>
-        <p>If you have any questions or need to make changes to your booking, please contact us.</p>
-        <p>Best regards,<br>The Eventati Book Team</p>
-      ''';
+      final content = EmailTemplates.bookingConfirmation(
+        userName: user.displayName,
+        booking: booking,
+        formattedDate: formattedDate,
+        addToCalendarUrl: addToCalendarUrl,
+      );
 
       // Send email using Supabase Edge Function
       await _sendEmail(email, subject, content);
@@ -82,19 +81,14 @@ class EmailService {
       // Format the booking date and time
       final formattedDate = _formatDate(booking.bookingDateTime);
 
-      // Create email content
+      // Create email content using template
       final subject = 'Booking Update - ${booking.serviceName}';
-      final content = '''
-        <h1>Booking Update</h1>
-        <p>Dear ${user.displayName.isEmpty ? 'Valued Customer' : user.displayName},</p>
-        <p>Your booking for <strong>${booking.serviceName}</strong> has been updated.</p>
-        <p><strong>Update:</strong> $updateMessage</p>
-        <p><strong>Date and Time:</strong> $formattedDate</p>
-        <p><strong>Duration:</strong> ${booking.duration} hours</p>
-        <p><strong>Total Price:</strong> \$${booking.totalPrice.toStringAsFixed(2)}</p>
-        <p>If you have any questions or concerns about this update, please contact us.</p>
-        <p>Best regards,<br>The Eventati Book Team</p>
-      ''';
+      final content = EmailTemplates.bookingUpdate(
+        userName: user.displayName,
+        booking: booking,
+        updateMessage: updateMessage,
+        formattedDate: formattedDate,
+      );
 
       // Send email using Supabase Edge Function
       await _sendEmail(email, subject, content);
@@ -124,19 +118,14 @@ class EmailService {
       // Format the booking date and time
       final formattedDate = _formatDate(booking.bookingDateTime);
 
-      // Create email content
+      // Create email content using template
       final subject = 'Reminder: Upcoming Booking - ${booking.serviceName}';
-      final content = '''
-        <h1>Booking Reminder</h1>
-        <p>Dear ${user.displayName.isEmpty ? 'Valued Customer' : user.displayName},</p>
-        <p>This is a reminder that your booking for <strong>${booking.serviceName}</strong> is in $daysBeforeEvent ${daysBeforeEvent == 1 ? 'day' : 'days'}.</p>
-        <p><strong>Date and Time:</strong> $formattedDate</p>
-        <p><strong>Duration:</strong> ${booking.duration} hours</p>
-        <p><strong>Location:</strong> ${booking.serviceOptions['location'] ?? 'Not specified'}</p>
-        <p>We look forward to seeing you!</p>
-        <p>If you need to make any changes to your booking, please contact us as soon as possible.</p>
-        <p>Best regards,<br>The Eventati Book Team</p>
-      ''';
+      final content = EmailTemplates.bookingReminder(
+        userName: user.displayName,
+        booking: booking,
+        daysBeforeEvent: daysBeforeEvent,
+        formattedDate: formattedDate,
+      );
 
       // Send email using Supabase Edge Function
       await _sendEmail(email, subject, content);
@@ -163,15 +152,13 @@ class EmailService {
       // Format the booking date and time
       final formattedDate = _formatDate(booking.bookingDateTime);
 
-      // Create email content
+      // Create email content using template
       final subject = 'Booking Cancellation - ${booking.serviceName}';
-      final content = '''
-        <h1>Booking Cancellation</h1>
-        <p>Dear ${user.displayName.isEmpty ? 'Valued Customer' : user.displayName},</p>
-        <p>Your booking for <strong>${booking.serviceName}</strong> on $formattedDate has been cancelled.</p>
-        <p>If you did not request this cancellation or have any questions, please contact us.</p>
-        <p>Best regards,<br>The Eventati Book Team</p>
-      ''';
+      final content = EmailTemplates.bookingCancellation(
+        userName: user.displayName,
+        booking: booking,
+        formattedDate: formattedDate,
+      );
 
       // Send email using Supabase Edge Function
       await _sendEmail(email, subject, content);
@@ -223,6 +210,64 @@ class EmailService {
       );
     } catch (e) {
       Logger.e('Error sending email notification: $e', tag: 'EmailService');
+    }
+  }
+
+  /// Send an email verification email
+  Future<void> sendEmailVerification(String email, String userName) async {
+    try {
+      // Generate verification link using Supabase
+      await _supabase.auth.signInWithOtp(
+        email: email,
+        emailRedirectTo: 'io.eventati.book://verify-email',
+      );
+
+      // Create email content using template
+      const subject = 'Verify Your Email Address';
+      const verificationLink =
+          'https://zyycmxzabfadkyzpsper.supabase.co/auth/v1/verify';
+
+      final content = EmailTemplates.emailVerification(
+        userName: userName,
+        verificationLink: verificationLink,
+      );
+
+      // Send email using Supabase Edge Function
+      await _sendEmail(email, subject, content);
+
+      Logger.i('Email verification sent to $email', tag: 'EmailService');
+    } catch (e) {
+      Logger.e('Error sending email verification: $e', tag: 'EmailService');
+      throw Exception('Failed to send email verification: $e');
+    }
+  }
+
+  /// Send a password reset email
+  Future<void> sendPasswordReset(String email, String userName) async {
+    try {
+      // Generate password reset link using Supabase
+      await _supabase.auth.resetPasswordForEmail(
+        email,
+        redirectTo: 'io.eventati.book://reset-password',
+      );
+
+      // Create email content using template
+      const subject = 'Reset Your Password';
+      const resetLink =
+          'https://zyycmxzabfadkyzpsper.supabase.co/auth/v1/verify?type=recovery';
+
+      final content = EmailTemplates.passwordReset(
+        userName: userName,
+        resetLink: resetLink,
+      );
+
+      // Send email using Supabase Edge Function
+      await _sendEmail(email, subject, content);
+
+      Logger.i('Password reset email sent to $email', tag: 'EmailService');
+    } catch (e) {
+      Logger.e('Error sending password reset email: $e', tag: 'EmailService');
+      throw Exception('Failed to send password reset email: $e');
     }
   }
 

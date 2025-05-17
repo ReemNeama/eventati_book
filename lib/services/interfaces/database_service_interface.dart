@@ -14,7 +14,15 @@ abstract class DatabaseServiceInterface {
   );
 
   /// Get a collection
-  Future<List<Map<String, dynamic>>> getCollection(String collection);
+  ///
+  /// [collection] The collection to get
+  /// [page] The page number (0-based)
+  /// [pageSize] The number of items per page
+  Future<List<Map<String, dynamic>>> getCollection(
+    String collection, {
+    int? page,
+    int? pageSize,
+  });
 
   /// Get a collection and convert it to a specific type
   Future<List<T>> getCollectionAs<T>(

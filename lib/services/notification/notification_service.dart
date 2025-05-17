@@ -1,6 +1,7 @@
 import 'package:eventati_book/models/notification_models/notification.dart';
 import 'package:eventati_book/models/service_models/booking.dart';
 import 'package:eventati_book/services/interfaces/messaging_service_interface.dart';
+import 'package:eventati_book/services/supabase/database/booking_database_service.dart';
 import 'package:eventati_book/services/supabase/database/notification_database_service.dart';
 import 'package:eventati_book/utils/logger.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -16,17 +17,23 @@ class NotificationService {
   /// Messaging service
   final MessagingServiceInterface _messagingService;
 
+  /// Booking database service
+  final BookingDatabaseService _bookingDatabaseService;
+
   /// Constructor
   NotificationService({
     SupabaseClient? supabase,
     NotificationDatabaseService? notificationDatabaseService,
     MessagingServiceInterface? messagingService,
+    BookingDatabaseService? bookingDatabaseService,
   }) : _supabase = supabase ?? Supabase.instance.client,
        _notificationDatabaseService =
            notificationDatabaseService ?? NotificationDatabaseService(),
        _messagingService =
            messagingService ??
-           (throw ArgumentError('Messaging service is required'));
+           (throw ArgumentError('Messaging service is required')),
+       _bookingDatabaseService =
+           bookingDatabaseService ?? BookingDatabaseService();
 
   /// Get the current user ID
   String? get _currentUserId => _supabase.auth.currentUser?.id;
@@ -366,5 +373,127 @@ class NotificationService {
       'Would send email to user $userId: $subject',
       tag: 'NotificationService',
     );
+  }
+
+  /// Create a booking confirmation notification by ID
+  Future<void> createBookingConfirmationNotificationById(
+    String bookingId,
+    String userId,
+  ) async {
+    try {
+      // Get booking details
+      final booking = await _bookingDatabaseService.getBooking(bookingId);
+      if (booking == null) {
+        throw Exception('Booking not found');
+      }
+
+      // Create notification
+      await createBookingConfirmationNotification(booking);
+    } catch (e) {
+      Logger.e(
+        'Error creating booking confirmation notification by ID: $e',
+        tag: 'NotificationService',
+      );
+    }
+  }
+
+  /// Create a booking update notification by ID
+  Future<void> createBookingUpdateNotificationById(
+    String bookingId,
+    String userId,
+  ) async {
+    try {
+      // Get booking details
+      final booking = await _bookingDatabaseService.getBooking(bookingId);
+      if (booking == null) {
+        throw Exception('Booking not found');
+      }
+
+      // Create notification
+      await createBookingUpdateNotification(
+        booking,
+        'Your booking for ${booking.serviceName} has been updated.',
+      );
+    } catch (e) {
+      Logger.e(
+        'Error creating booking update notification by ID: $e',
+        tag: 'NotificationService',
+      );
+    }
+  }
+
+  /// Create a task completed notification
+  Future<void> createTaskCompletedNotification(
+    String taskId,
+    String userId,
+    String taskTitle,
+  ) async {
+    try {
+      final notification = Notification(
+        userId: userId,
+        title: 'Task Completed',
+        body: 'Task "$taskTitle" has been marked as completed.',
+        type: NotificationType.taskReminder,
+        data: {'taskId': taskId, 'taskTitle': taskTitle},
+        relatedEntityId: taskId,
+      );
+
+      // Create notification in database
+      await _notificationDatabaseService.createNotification(notification);
+
+      // Send push notification
+      await _messagingService.sendMessageToUser(
+        userId: userId,
+        title: notification.title,
+        body: notification.body,
+        data: notification.data,
+      );
+
+      Logger.i(
+        'Task completed notification created',
+        tag: 'NotificationService',
+      );
+    } catch (e) {
+      Logger.e(
+        'Error creating task completed notification: $e',
+        tag: 'NotificationService',
+      );
+    }
+  }
+
+  /// Create a task updated notification
+  Future<void> createTaskUpdatedNotification(
+    String taskId,
+    String userId,
+    String taskTitle,
+  ) async {
+    try {
+      final notification = Notification(
+        userId: userId,
+        title: 'Task Updated',
+        body: 'Due date for task "$taskTitle" has been updated.',
+        type: NotificationType.taskReminder,
+        data: {'taskId': taskId, 'taskTitle': taskTitle},
+        relatedEntityId: taskId,
+      );
+
+      // Create notification in database
+      await _notificationDatabaseService.createNotification(notification);
+
+      // Send push notification
+      await _messagingService.sendMessageToUser(
+        userId: userId,
+        title: notification.title,
+        body: notification.body,
+        data: notification.data,
+      );
+
+      Logger.i('Task updated notification created', tag: 'NotificationService');
+    } catch (e) {
+      Logger.e(
+        'Error creating task updated notification: $e',
+        tag: 'NotificationService',
+      );
+    }
   }
 }

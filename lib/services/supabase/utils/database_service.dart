@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:eventati_book/services/interfaces/database_service_interface.dart';
 import 'package:eventati_book/utils/logger.dart';
+import 'package:eventati_book/utils/cache_utils.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// Implementation of DatabaseServiceInterface using Supabase
@@ -50,13 +51,153 @@ class DatabaseService implements DatabaseServiceInterface {
   }
 
   @override
-  Future<List<Map<String, dynamic>>> getCollection(String collection) async {
+  Future<List<Map<String, dynamic>>> getCollection(
+    String collection, {
+    int? page,
+    int? pageSize,
+    bool useCache = true,
+  }) async {
     try {
-      final response = await _supabase.from(collection).select();
-      return List<Map<String, dynamic>>.from(response);
+      // Check cache first if useCache is true
+      if (useCache) {
+        final cachedData = CacheUtils.getCollection(
+          collection,
+          page: page,
+          pageSize: pageSize,
+        );
+
+        if (cachedData != null) {
+          Logger.d(
+            'Using cached data for $collection (page: $page, size: $pageSize)',
+            tag: 'DatabaseService',
+          );
+          return cachedData;
+        }
+      }
+
+      List<Map<String, dynamic>> result;
+
+      // Apply pagination if specified
+      if (page != null && pageSize != null) {
+        final from = page * pageSize;
+        final to = from + pageSize - 1;
+
+        final response = await _supabase
+            .from(collection)
+            .select()
+            .range(from, to);
+
+        result = List<Map<String, dynamic>>.from(response);
+      } else {
+        // Get all items if no pagination is specified
+        final response = await _supabase.from(collection).select();
+        result = List<Map<String, dynamic>>.from(response);
+      }
+
+      // Cache the result if useCache is true
+      if (useCache) {
+        CacheUtils.cacheCollection(
+          collection,
+          result,
+          page: page,
+          pageSize: pageSize,
+        );
+      }
+
+      return result;
     } catch (e) {
       Logger.e('Error getting collection: $e', tag: 'DatabaseService');
       return [];
+    }
+  }
+
+  /// Get a collection with count information for pagination
+  ///
+  /// [collection] The collection to get
+  /// [page] The page number (0-based)
+  /// [pageSize] The number of items per page
+  /// [useCache] Whether to use the cache
+  /// Returns a map with data, count, page, pageSize, and hasMorePages
+  Future<Map<String, dynamic>> getCollectionWithCount(
+    String collection, {
+    int? page,
+    int? pageSize,
+    bool useCache = true,
+  }) async {
+    try {
+      // Check cache first if useCache is true
+      if (useCache) {
+        final cacheKey = '${collection}_count_${page ?? 0}_${pageSize ?? 0}';
+        final cachedResult = CacheUtils.getQuery(collection, cacheKey);
+
+        if (cachedResult != null) {
+          // We store the result as a single-item list containing the result map
+          final resultMap = cachedResult.first;
+          Logger.d(
+            'Using cached data with count for $collection (page: $page, size: $pageSize)',
+            tag: 'DatabaseService',
+          );
+          return Map<String, dynamic>.from(resultMap);
+        }
+      }
+
+      // Get the total count by counting all records
+      final totalCount = await _supabase.from(collection).count();
+
+      // Get the data with pagination
+      List<Map<String, dynamic>> items;
+
+      if (page != null && pageSize != null) {
+        final from = page * pageSize;
+        final to = from + pageSize - 1;
+
+        // Use from and to for pagination
+        final response = await _supabase
+            .from(collection)
+            .select()
+            .range(from, to);
+
+        items = List<Map<String, dynamic>>.from(response);
+      } else {
+        // Get all items if no pagination is specified
+        final response = await _supabase.from(collection).select();
+        items = List<Map<String, dynamic>>.from(response);
+      }
+
+      // Items are already populated above
+
+      // Create the result map
+      final resultMap = {
+        'data': items,
+        'count': totalCount,
+        'page': page ?? 0,
+        'pageSize': pageSize ?? items.length,
+        'hasMorePages':
+            page != null && pageSize != null
+                ? (page + 1) * pageSize < totalCount
+                : false,
+      };
+
+      // Cache the result if useCache is true
+      if (useCache) {
+        final cacheKey = '${collection}_count_${page ?? 0}_${pageSize ?? 0}';
+        // Store as a single-item list containing the result map
+        CacheUtils.cacheQuery(collection, cacheKey, [resultMap]);
+      }
+
+      return resultMap;
+    } catch (e) {
+      Logger.e(
+        'Error getting collection with count: $e',
+        tag: 'DatabaseService',
+      );
+      return {
+        'data': <Map<String, dynamic>>[],
+        'count': 0,
+        'page': page ?? 0,
+        'pageSize': pageSize ?? 0,
+        'hasMorePages': false,
+      };
     }
   }
 

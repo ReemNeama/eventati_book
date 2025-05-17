@@ -4,6 +4,12 @@
 // Main navigation
 export 'main_navigation_screen.dart';
 
+// Core screens
+export 'splash_screen.dart';
+
+// Onboarding screens
+export 'onboarding/onboarding_screen.dart';
+
 // Feature-specific screens
 export 'authentications/auth_screens.dart';
 export 'services/service_listing_screens.dart';

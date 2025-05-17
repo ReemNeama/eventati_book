@@ -1,5 +1,10 @@
+import 'dart:async';
+import 'dart:convert';
+
+import 'package:eventati_book/models/notification_models/notification.dart';
 import 'package:eventati_book/services/interfaces/messaging_service_interface.dart';
 import 'package:eventati_book/utils/logger.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// Implementation of the MessagingServiceInterface
@@ -7,19 +12,288 @@ class MessagingService implements MessagingServiceInterface {
   /// Supabase client
   final SupabaseClient _supabase;
 
+  /// Local notifications plugin
+  final FlutterLocalNotificationsPlugin _localNotifications;
+
+  /// List of active realtime channels
+  final List<RealtimeChannel> _channels = [];
+
   /// Constructor
-  MessagingService({SupabaseClient? supabase})
-    : _supabase = supabase ?? Supabase.instance.client;
+  MessagingService({
+    SupabaseClient? supabase,
+    FlutterLocalNotificationsPlugin? localNotifications,
+  }) : _supabase = supabase ?? Supabase.instance.client,
+       _localNotifications =
+           localNotifications ?? FlutterLocalNotificationsPlugin();
 
   @override
   Future<void> initialize() async {
-    // Implementation will be added later
-    Logger.i('Messaging service initialized', tag: 'MessagingService');
+    try {
+      // Initialize local notifications
+      const androidSettings = AndroidInitializationSettings(
+        '@mipmap/ic_launcher',
+      );
+      const iosSettings = DarwinInitializationSettings(
+        requestAlertPermission: true,
+        requestBadgePermission: true,
+        requestSoundPermission: true,
+      );
+
+      const initSettings = InitializationSettings(
+        android: androidSettings,
+        iOS: iosSettings,
+      );
+
+      await _localNotifications.initialize(
+        initSettings,
+        onDidReceiveNotificationResponse: (NotificationResponse response) {
+          // Handle notification tap
+          Logger.i(
+            'Notification tapped: ${response.payload}',
+            tag: 'MessagingService',
+          );
+        },
+      );
+
+      // Subscribe to realtime channels if user is authenticated
+      final userId = _supabase.auth.currentUser?.id;
+      if (userId != null) {
+        _subscribeToRealtimeChannels(userId);
+      }
+
+      Logger.i('Messaging service initialized', tag: 'MessagingService');
+    } catch (e) {
+      Logger.e(
+        'Error initializing messaging service: $e',
+        tag: 'MessagingService',
+      );
+    }
+  }
+
+  /// Subscribe to realtime channels for the user
+  void _subscribeToRealtimeChannels(String userId) {
+    try {
+      // Subscribe to notifications channel
+      final notificationsChannel =
+          _supabase
+              .channel('public:notifications')
+              .onPostgresChanges(
+                event: PostgresChangeEvent.insert,
+                schema: 'public',
+                table: 'notifications',
+                filter: PostgresChangeFilter(
+                  type: PostgresChangeFilterType.eq,
+                  column: 'user_id',
+                  value: userId,
+                ),
+                callback: _handleNotificationInsert,
+              )
+              .subscribe();
+
+      _channels.add(notificationsChannel);
+
+      // Subscribe to bookings channel
+      final bookingsChannel =
+          _supabase
+              .channel('public:bookings')
+              .onPostgresChanges(
+                event: PostgresChangeEvent.all,
+                schema: 'public',
+                table: 'bookings',
+                filter: PostgresChangeFilter(
+                  type: PostgresChangeFilterType.eq,
+                  column: 'user_id',
+                  value: userId,
+                ),
+                callback: _handleBookingChanges,
+              )
+              .subscribe();
+
+      _channels.add(bookingsChannel);
+
+      // Subscribe to tasks channel
+      final tasksChannel =
+          _supabase
+              .channel('public:tasks')
+              .onPostgresChanges(
+                event: PostgresChangeEvent.all,
+                schema: 'public',
+                table: 'tasks',
+                filter: PostgresChangeFilter(
+                  type: PostgresChangeFilterType.eq,
+                  column: 'user_id',
+                  value: userId,
+                ),
+                callback: _handleTaskChanges,
+              )
+              .subscribe();
+
+      _channels.add(tasksChannel);
+
+      Logger.i('Subscribed to realtime channels', tag: 'MessagingService');
+    } catch (e) {
+      Logger.e(
+        'Error subscribing to realtime channels: $e',
+        tag: 'MessagingService',
+      );
+    }
+  }
+
+  /// Handle notification insert event
+  void _handleNotificationInsert(PostgresChangePayload payload) {
+    try {
+      final data = payload.newRecord;
+      final notification = Notification.fromDatabaseDoc(data);
+
+      // Show local notification
+      _showLocalNotification(
+        id: notification.hashCode,
+        title: notification.title,
+        body: notification.body,
+        payload: jsonEncode(data),
+      );
+
+      Logger.i(
+        'New notification received: ${notification.title}',
+        tag: 'MessagingService',
+      );
+    } catch (e) {
+      Logger.e(
+        'Error handling notification insert: $e',
+        tag: 'MessagingService',
+      );
+    }
+  }
+
+  /// Handle booking changes
+  void _handleBookingChanges(PostgresChangePayload payload) {
+    try {
+      final eventType = payload.eventType;
+      final data =
+          eventType == PostgresChangeEvent.delete
+              ? payload.oldRecord
+              : payload.newRecord;
+
+      Logger.i('Booking change detected: $eventType', tag: 'MessagingService');
+
+      // Handle different event types
+      switch (eventType) {
+        case PostgresChangeEvent.insert:
+          // New booking created
+          _showLocalNotification(
+            id: data['id'].hashCode,
+            title: 'New Booking',
+            body: 'A new booking has been created',
+            payload: jsonEncode(data),
+          );
+          break;
+        case PostgresChangeEvent.update:
+          // Booking updated
+          _showLocalNotification(
+            id: data['id'].hashCode,
+            title: 'Booking Updated',
+            body: 'Your booking has been updated',
+            payload: jsonEncode(data),
+          );
+          break;
+        case PostgresChangeEvent.delete:
+          // Booking deleted
+          _showLocalNotification(
+            id: data['id'].hashCode,
+            title: 'Booking Cancelled',
+            body: 'A booking has been cancelled',
+            payload: jsonEncode(data),
+          );
+          break;
+        default:
+          break;
+      }
+    } catch (e) {
+      Logger.e('Error handling booking changes: $e', tag: 'MessagingService');
+    }
+  }
+
+  /// Handle task changes
+  void _handleTaskChanges(PostgresChangePayload payload) {
+    try {
+      final eventType = payload.eventType;
+      final data =
+          eventType == PostgresChangeEvent.delete
+              ? payload.oldRecord
+              : payload.newRecord;
+
+      Logger.i('Task change detected: $eventType', tag: 'MessagingService');
+
+      // Only notify for specific changes
+      if (eventType == PostgresChangeEvent.update) {
+        // Check if task was completed
+        final oldData = payload.oldRecord;
+        final newData = payload.newRecord;
+
+        if (oldData['completed'] == false && newData['completed'] == true) {
+          _showLocalNotification(
+            id: data['id'].hashCode,
+            title: 'Task Completed',
+            body: 'Task "${data['title']}" has been completed',
+            payload: jsonEncode(data),
+          );
+        } else if (oldData['due_date'] != newData['due_date']) {
+          _showLocalNotification(
+            id: data['id'].hashCode,
+            title: 'Task Updated',
+            body: 'Due date for task "${data['title']}" has changed',
+            payload: jsonEncode(data),
+          );
+        }
+      }
+    } catch (e) {
+      Logger.e('Error handling task changes: $e', tag: 'MessagingService');
+    }
+  }
+
+  /// Show a local notification
+  Future<void> _showLocalNotification({
+    required int id,
+    required String title,
+    required String body,
+    String? payload,
+  }) async {
+    try {
+      const androidDetails = AndroidNotificationDetails(
+        'high_importance_channel',
+        'High Importance Notifications',
+        importance: Importance.high,
+        priority: Priority.high,
+      );
+
+      const iosDetails = DarwinNotificationDetails(
+        presentAlert: true,
+        presentBadge: true,
+        presentSound: true,
+      );
+
+      const notificationDetails = NotificationDetails(
+        android: androidDetails,
+        iOS: iosDetails,
+      );
+
+      await _localNotifications.show(
+        id,
+        title,
+        body,
+        notificationDetails,
+        payload: payload,
+      );
+
+      Logger.i('Local notification shown: $title', tag: 'MessagingService');
+    } catch (e) {
+      Logger.e('Error showing local notification: $e', tag: 'MessagingService');
+    }
   }
 
   @override
   Future<String?> getToken() async {
-    // Implementation will be added later
+    // Not needed for Supabase implementation
     return null;
   }
 
@@ -104,8 +378,12 @@ class MessagingService implements MessagingServiceInterface {
     String? payload,
     String? imageUrl,
   }) async {
-    // Implementation will be added later
-    Logger.i('Local notification shown: $title', tag: 'MessagingService');
+    await _showLocalNotification(
+      id: id,
+      title: title,
+      body: body,
+      payload: payload,
+    );
   }
 
   @override
@@ -145,7 +423,24 @@ class MessagingService implements MessagingServiceInterface {
 
   @override
   Future<void> deleteToken() async {
-    // Implementation will be added later
+    // Unsubscribe from all channels
+    await _unsubscribeFromAllChannels();
+  }
+
+  /// Unsubscribe from all Realtime channels
+  Future<void> _unsubscribeFromAllChannels() async {
+    try {
+      for (final channel in _channels) {
+        await channel.unsubscribe();
+      }
+      _channels.clear();
+      Logger.i('Unsubscribed from all channels', tag: 'MessagingService');
+    } catch (e) {
+      Logger.e(
+        'Error unsubscribing from channels: $e',
+        tag: 'MessagingService',
+      );
+    }
   }
 
   @override
@@ -155,8 +450,26 @@ class MessagingService implements MessagingServiceInterface {
     required String body,
     Map<String, dynamic>? data,
   }) async {
-    // Implementation will be added later
-    Logger.i('Message sent to user $userId: $title', tag: 'MessagingService');
+    try {
+      // Create notification in database
+      await _supabase.from('notifications').insert({
+        'user_id': userId,
+        'title': title,
+        'body': body,
+        'data': data,
+        'read': false,
+        'created_at': DateTime.now().toIso8601String(),
+        'type': data?['type'] ?? 0,
+        'related_entity_id': data?['related_entity_id'],
+        'related_entity_type': data?['related_entity_type'],
+        'action_url': data?['action_url'],
+      });
+
+      Logger.i('Message sent to user $userId: $title', tag: 'MessagingService');
+    } catch (e) {
+      Logger.e('Error sending message to user: $e', tag: 'MessagingService');
+      throw Exception('Failed to send message to user: $e');
+    }
   }
 
   @override
@@ -166,8 +479,32 @@ class MessagingService implements MessagingServiceInterface {
     required String body,
     Map<String, dynamic>? data,
   }) async {
-    // Implementation will be added later
-    Logger.i('Message sent to topic $topic: $title', tag: 'MessagingService');
+    try {
+      // Get all users subscribed to this topic
+      final response = await _supabase
+          .from('notification_topics')
+          .select('user_id')
+          .eq('topic', topic)
+          .eq('subscribed', true);
+
+      final userIds =
+          response.map<String>((item) => item['user_id'] as String).toList();
+
+      // Send notification to each user
+      for (final userId in userIds) {
+        await sendMessageToUser(
+          userId: userId,
+          title: title,
+          body: body,
+          data: {...?data, 'topic': topic},
+        );
+      }
+
+      Logger.i('Message sent to topic $topic: $title', tag: 'MessagingService');
+    } catch (e) {
+      Logger.e('Error sending message to topic: $e', tag: 'MessagingService');
+      throw Exception('Failed to send message to topic: $e');
+    }
   }
 
   @override

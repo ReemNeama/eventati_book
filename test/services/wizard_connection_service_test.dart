@@ -10,8 +10,7 @@ import 'package:eventati_book/services/supabase/database/budget_database_service
 import 'package:eventati_book/services/supabase/database/guest_database_service.dart';
 import 'package:eventati_book/services/supabase/database/wizard_connection_database_service.dart';
 import 'package:eventati_book/models/planning_models/task_category.dart';
-import 'package:eventati_book/models/planning_models/task.dart'
-    hide TaskCategory;
+import 'package:eventati_book/models/planning_models/task.dart';
 import 'package:eventati_book/models/planning_models/task_dependency.dart';
 import 'package:eventati_book/models/planning_models/budget_item.dart';
 import 'package:eventati_book/models/planning_models/guest.dart';

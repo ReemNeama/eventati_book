@@ -18,10 +18,11 @@ import 'package:eventati_book/screens/testing/task_database_test_screen.dart';
 class AppRouter {
   /// Define static routes that don't require parameters
   static Map<String, WidgetBuilder> get routes => {
-    RouteNames.splash: (context) => const AuthScreen(),
+    RouteNames.splash: (context) => const SplashScreen(),
     RouteNames.login: (context) => const LoginScreen(),
     RouteNames.register: (context) => const RegisterScreen(),
     RouteNames.forgotPassword: (context) => const ForgetpasswordScreen(),
+    RouteNames.onboarding: (context) => const OnboardingScreen(),
 
     // Guard-related routes
     RouteNames.unauthorized: (context) => const UnauthorizedScreen(),

@@ -6,3 +6,4 @@ export 'navigation_service.dart';
 export 'route_guards.dart';
 export 'route_analytics.dart';
 export 'route_performance.dart';
+export 'deep_link_handler.dart';
