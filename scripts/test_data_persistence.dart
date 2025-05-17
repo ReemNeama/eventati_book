@@ -1,6 +1,7 @@
 // import 'dart:convert';
 import 'package:supabase/supabase.dart';
 import 'package:uuid/uuid.dart';
+import 'utils/logger.dart';
 
 // Supabase configuration
 const String supabaseUrl = 'https://zyycmxzabfadkyzpsper.supabase.co';
@@ -8,11 +9,11 @@ const String supabaseKey =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp5eWNteHphYmZhZGt5enBzcGVyIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0NjkyMjMyOCwiZXhwIjoyMDYyNDk4MzI4fQ.7NIGlM6A0xxKlCsgoz0gSSiscxroRUzMnuoXQuH5V8g';
 
 void main() async {
-  print('Testing data persistence with all models...');
+  Logger.i('Testing data persistence with all models...');
 
   // Initialize Supabase client
   final supabase = SupabaseClient(supabaseUrl, supabaseKey);
-  final uuid = Uuid();
+  const uuid = Uuid();
 
   try {
     // Test User model
@@ -39,9 +40,9 @@ void main() async {
     // Test Notification model
     await testNotificationModel(supabase, uuid);
 
-    print('All tests completed successfully!');
+    Logger.i('All tests completed successfully!');
   } catch (e) {
-    print('Error testing data persistence: $e');
+    Logger.e('Error testing data persistence: $e');
   }
 }
 
@@ -122,7 +123,7 @@ Future<void> testEventModel(SupabaseClient supabase, Uuid uuid) async {
     'id': eventId,
     'name': 'Test Event',
     'type': 'Wedding',
-    'date': DateTime.now().add(Duration(days: 30)).toIso8601String(),
+    'date': DateTime.now().add(const Duration(days: 30)).toIso8601String(),
     'location': 'Test Location',
     'budget': 5000,
     'guest_count': 100,
@@ -194,7 +195,7 @@ Future<void> testTaskModel(SupabaseClient supabase, Uuid uuid) async {
     'id': eventId,
     'name': 'Test Event',
     'type': 'Wedding',
-    'date': DateTime.now().add(Duration(days: 30)).toIso8601String(),
+    'date': DateTime.now().add(const Duration(days: 30)).toIso8601String(),
     'location': 'Test Location',
     'budget': 5000,
     'guest_count': 100,
@@ -229,7 +230,7 @@ Future<void> testTaskModel(SupabaseClient supabase, Uuid uuid) async {
     'id': taskId,
     'title': 'Test Task',
     'description': 'Test task description',
-    'due_date': DateTime.now().add(Duration(days: 7)).toIso8601String(),
+    'due_date': DateTime.now().add(const Duration(days: 7)).toIso8601String(),
     'status': 'Not Started',
     'category_id': categoryId,
     'is_important': true,
@@ -327,24 +328,24 @@ Future<void> testBudgetItemModel(SupabaseClient supabase, Uuid uuid) async {
 // Add more test functions for other models as needed
 Future<void> testGuestModel(SupabaseClient supabase, Uuid uuid) async {
   // Implementation similar to other test functions
-  print('\n--- Testing Guest Model ---');
-  print('Guest model test skipped for brevity');
+  Logger.i('\n--- Testing Guest Model ---');
+  Logger.i('Guest model test skipped for brevity');
 }
 
 Future<void> testServiceModel(SupabaseClient supabase, Uuid uuid) async {
   // Implementation similar to other test functions
-  print('\n--- Testing Service Model ---');
-  print('Service model test skipped for brevity');
+  Logger.i('\n--- Testing Service Model ---');
+  Logger.i('Service model test skipped for brevity');
 }
 
 Future<void> testBookingModel(SupabaseClient supabase, Uuid uuid) async {
   // Implementation similar to other test functions
-  print('\n--- Testing Booking Model ---');
-  print('Booking model test skipped for brevity');
+  Logger.i('\n--- Testing Booking Model ---');
+  Logger.i('Booking model test skipped for brevity');
 }
 
 Future<void> testNotificationModel(SupabaseClient supabase, Uuid uuid) async {
   // Implementation similar to other test functions
-  print('\n--- Testing Notification Model ---');
-  print('Notification model test skipped for brevity');
+  Logger.i('\n--- Testing Notification Model ---');
+  Logger.i('Notification model test skipped for brevity');
 }
