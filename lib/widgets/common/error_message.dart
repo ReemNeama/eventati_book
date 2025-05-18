@@ -45,6 +45,9 @@ class ErrorMessage extends StatelessWidget {
   /// Optional error details
   final String? details;
 
+  /// Optional recovery suggestion to help users resolve the error
+  final String? recoverySuggestion;
+
   /// Optional retry callback
   final VoidCallback? onRetry;
 
@@ -83,6 +86,7 @@ class ErrorMessage extends StatelessWidget {
     super.key,
     required this.message,
     this.details,
+    this.recoverySuggestion,
     this.onRetry,
     this.onDismiss,
     this.displayType = ErrorDisplayType.standard,
@@ -112,6 +116,7 @@ class ErrorMessage extends StatelessWidget {
   /// Factory constructor for toast errors
   factory ErrorMessage.toast({
     required String message,
+    String? recoverySuggestion,
     ErrorSeverity severity = ErrorSeverity.medium,
     VoidCallback? onDismiss,
     bool autoDismiss = true,
@@ -119,6 +124,7 @@ class ErrorMessage extends StatelessWidget {
   }) {
     return ErrorMessage(
       message: message,
+      recoverySuggestion: recoverySuggestion,
       displayType: ErrorDisplayType.toast,
       severity: severity,
       onDismiss: onDismiss,
@@ -132,6 +138,7 @@ class ErrorMessage extends StatelessWidget {
   factory ErrorMessage.banner({
     required String message,
     String? details,
+    String? recoverySuggestion,
     ErrorSeverity severity = ErrorSeverity.medium,
     VoidCallback? onDismiss,
     String? actionText,
@@ -140,6 +147,7 @@ class ErrorMessage extends StatelessWidget {
     return ErrorMessage(
       message: message,
       details: details,
+      recoverySuggestion: recoverySuggestion,
       displayType: ErrorDisplayType.banner,
       severity: severity,
       onDismiss: onDismiss,
@@ -231,8 +239,10 @@ class ErrorMessage extends StatelessWidget {
     Color primaryColor,
   ) {
     final isDarkMode = UIUtils.isDarkMode(context);
-    final textColor = isDarkMode ? AppColorsDark.textPrimary : AppColors.textPrimary;
-    final secondaryTextColor = isDarkMode ? AppColorsDark.textSecondary : AppColors.textSecondary;
+    final textColor =
+        isDarkMode ? AppColorsDark.textPrimary : AppColors.textPrimary;
+    final secondaryTextColor =
+        isDarkMode ? AppColorsDark.textSecondary : AppColors.textSecondary;
 
     // Get responsive values
     final isTablet =
@@ -256,20 +266,63 @@ class ErrorMessage extends StatelessWidget {
             ],
             Text(
               _getSeverityTitle(),
-              style: isTablet 
-                ? TextStyles.title.copyWith(color: errorColor)
-                : TextStyles.subtitle.copyWith(color: errorColor),
+              style:
+                  isTablet
+                      ? TextStyles.title.copyWith(color: errorColor)
+                      : TextStyles.subtitle.copyWith(color: errorColor),
             ),
             const SizedBox(height: 8),
             Text(
               message,
-              style: isTablet 
-                ? TextStyles.bodyLarge.copyWith(color: textColor)
-                : TextStyles.bodyMedium.copyWith(color: textColor),
+              style:
+                  isTablet
+                      ? TextStyles.bodyLarge.copyWith(color: textColor)
+                      : TextStyles.bodyMedium.copyWith(color: textColor),
               textAlign: TextAlign.center,
             ),
+            if (recoverySuggestion != null) ...[
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Color.fromRGBO(
+                    primaryColor.r.toInt(),
+                    primaryColor.g.toInt(),
+                    primaryColor.b.toInt(),
+                    isDarkMode ? 0.15 : 0.08,
+                  ),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: Color.fromRGBO(
+                      primaryColor.r.toInt(),
+                      primaryColor.g.toInt(),
+                      primaryColor.b.toInt(),
+                      isDarkMode ? 0.3 : 0.2,
+                    ),
+                    width: 1,
+                  ),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(
+                      Icons.lightbulb_outline,
+                      size: 18,
+                      color: primaryColor,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        recoverySuggestion!,
+                        style: TextStyles.bodyMedium.copyWith(color: textColor),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
             if (details != null) ...[
-              const SizedBox(height: 8),
+              const SizedBox(height: 12),
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
@@ -385,7 +438,9 @@ class ErrorMessage extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     details ?? '',
-                    style: TextStyles.bodySmall.copyWith(color: secondaryTextColor),
+                    style: TextStyles.bodySmall.copyWith(
+                      color: secondaryTextColor,
+                    ),
                   ),
                 ],
               ],
@@ -485,8 +540,10 @@ class ErrorMessage extends StatelessWidget {
       errorColor.b.toInt(),
       0.5,
     );
-    final textColor = isDarkMode ? AppColorsDark.textPrimary : AppColors.textPrimary;
-    final iconColor = isDarkMode ? AppColorsDark.textSecondary : AppColors.textSecondary;
+    final textColor =
+        isDarkMode ? AppColorsDark.textPrimary : AppColors.textPrimary;
+    final iconColor =
+        isDarkMode ? AppColorsDark.textSecondary : AppColors.textSecondary;
 
     return Material(
       elevation: 4,
@@ -550,8 +607,10 @@ class ErrorMessage extends StatelessWidget {
       errorColor.b.toInt(),
       isDarkMode ? 0.2 : 0.1,
     );
-    final textColor = isDarkMode ? AppColorsDark.textPrimary : AppColors.textPrimary;
-    final secondaryTextColor = isDarkMode ? AppColorsDark.textSecondary : AppColors.textSecondary;
+    final textColor =
+        isDarkMode ? AppColorsDark.textPrimary : AppColors.textPrimary;
+    final secondaryTextColor =
+        isDarkMode ? AppColorsDark.textSecondary : AppColors.textSecondary;
 
     return Container(
       width: double.infinity,
@@ -631,7 +690,15 @@ class ErrorMessage extends StatelessWidget {
               iconSize: 18,
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
-              color: isDarkMode ? Color.fromRGBO(Colors.white.r.toInt(), Colors.white.g.toInt(), Colors.white.b.toInt(), 0.7) : AppColors.textSecondary,
+              color:
+                  isDarkMode
+                      ? Color.fromRGBO(
+                        Colors.white.r.toInt(),
+                        Colors.white.g.toInt(),
+                        Colors.white.b.toInt(),
+                        0.7,
+                      )
+                      : AppColors.textSecondary,
               tooltip: 'Dismiss',
             ),
         ],

@@ -112,10 +112,7 @@ class ServiceCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Expanded(
-                        child: Text(
-                          name,
-                          style: TextStyles.sectionTitle,
-                        ),
+                        child: Text(name, style: TextStyles.sectionTitle),
                       ),
                       Row(
                         children: [

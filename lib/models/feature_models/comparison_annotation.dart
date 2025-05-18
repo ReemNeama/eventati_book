@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 
-
 /// Model representing an annotation or highlight in a comparison
 class ComparisonAnnotation {
   /// Unique identifier for the annotation

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/services/interfaces/auth_service_interface.dart';
 import 'package:eventati_book/services/supabase/database/user_database_service.dart';
+import 'package:eventati_book/services/auth/biometric/biometric_auth_service.dart';
 import 'package:eventati_book/di/service_locator.dart';
 
 /// Authentication states
@@ -62,6 +63,10 @@ enum AuthStatus {
 class AuthProvider with ChangeNotifier {
   /// Authentication service
   final AuthServiceInterface _authService = serviceLocator.authService;
+
+  /// Biometric authentication service
+  final BiometricAuthService _biometricAuthService =
+      serviceLocator.biometricAuthService;
 
   /// User database service
   final UserDatabaseService _userDatabaseService =
@@ -264,6 +269,112 @@ class AuthProvider with ChangeNotifier {
       _errorMessage = 'Logout failed: ${e.toString()}';
       notifyListeners();
     }
+  }
+
+  /// Check if biometric authentication is available
+  Future<bool> isBiometricAvailable() async {
+    return await _biometricAuthService.isBiometricAvailable();
+  }
+
+  /// Get available biometric types
+  Future<List<dynamic>> getAvailableBiometrics() async {
+    return await _biometricAuthService.getAvailableBiometrics();
+  }
+
+  /// Authenticate with biometrics
+  Future<bool> authenticateWithBiometrics() async {
+    try {
+      // Check if biometric authentication is enabled
+      final isBiometricEnabled =
+          await _biometricAuthService.isBiometricEnabled();
+      if (!isBiometricEnabled) {
+        return false;
+      }
+
+      // Check if credentials are saved
+      final hasCredentials = await _biometricAuthService.hasCredentials();
+      if (!hasCredentials) {
+        return false;
+      }
+
+      // Authenticate with biometrics
+      final isAuthenticated = await _biometricAuthService.authenticate(
+        localizedReason: 'Authenticate to sign in to Eventati Book',
+      );
+
+      if (isAuthenticated) {
+        // Get saved credentials
+        final credentials = await _biometricAuthService.getCredentials();
+        final email = credentials['email'];
+        final password = credentials['password'];
+
+        if (email != null && password != null) {
+          // Login with saved credentials
+          final result = await login(email, password);
+          return result.isSuccess;
+        }
+      }
+
+      return false;
+    } catch (e) {
+      _errorMessage = 'Biometric authentication failed: ${e.toString()}';
+      return false;
+    }
+  }
+
+  /// Enable biometric authentication
+  Future<bool> enableBiometricAuthentication(
+    String email,
+    String password,
+  ) async {
+    try {
+      // Check if biometric authentication is available
+      final isBiometricAvailable =
+          await _biometricAuthService.isBiometricAvailable();
+      if (!isBiometricAvailable) {
+        _errorMessage =
+            'Biometric authentication is not available on this device';
+        return false;
+      }
+
+      // Save credentials
+      final credentialsSaved = await _biometricAuthService.saveCredentials(
+        email,
+        password,
+      );
+      if (!credentialsSaved) {
+        _errorMessage =
+            'Failed to save credentials for biometric authentication';
+        return false;
+      }
+
+      // Enable biometric authentication
+      return await _biometricAuthService.setBiometricEnabled(true);
+    } catch (e) {
+      _errorMessage =
+          'Failed to enable biometric authentication: ${e.toString()}';
+      return false;
+    }
+  }
+
+  /// Disable biometric authentication
+  Future<bool> disableBiometricAuthentication() async {
+    try {
+      // Delete saved credentials
+      await _biometricAuthService.deleteCredentials();
+
+      // Disable biometric authentication
+      return await _biometricAuthService.setBiometricEnabled(false);
+    } catch (e) {
+      _errorMessage =
+          'Failed to disable biometric authentication: ${e.toString()}';
+      return false;
+    }
+  }
+
+  /// Check if biometric authentication is enabled
+  Future<bool> isBiometricEnabled() async {
+    return await _biometricAuthService.isBiometricEnabled();
   }
 
   /// Reset password

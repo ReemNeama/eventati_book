@@ -55,6 +55,29 @@ class BookingFormArguments extends RouteArguments {
   }) : super();
 }
 
+/// Arguments for pre-checkout comparison screen
+class PreCheckoutComparisonArguments extends RouteArguments {
+  /// The type of service being compared
+  final String serviceType;
+
+  /// The IDs of the services being compared
+  final List<String> serviceIds;
+
+  /// The event ID (optional)
+  final String? eventId;
+
+  /// The event name (optional)
+  final String? eventName;
+
+  /// Constructor
+  const PreCheckoutComparisonArguments({
+    required this.serviceType,
+    required this.serviceIds,
+    this.eventId,
+    this.eventName,
+  }) : super();
+}
+
 /// Arguments for venue details screen
 class VenueDetailsArguments extends RouteArguments {
   final String venueId;

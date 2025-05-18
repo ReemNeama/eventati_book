@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 class BreadcrumbItem {
   /// The label to display for this breadcrumb
   final String label;
-  
+
   /// The route name to navigate to when this breadcrumb is tapped
   final String routeName;
-  
+
   /// Optional arguments to pass to the route
   final Object? arguments;
-  
+
   /// Constructor
   const BreadcrumbItem({
     required this.label,
@@ -23,22 +23,22 @@ class BreadcrumbItem {
 class BreadcrumbProvider extends ChangeNotifier {
   /// The current breadcrumb path
   List<BreadcrumbItem> _breadcrumbs = [];
-  
+
   /// Get the current breadcrumb path
   List<BreadcrumbItem> get breadcrumbs => _breadcrumbs;
-  
+
   /// Set the breadcrumb path
   void setBreadcrumbs(List<BreadcrumbItem> breadcrumbs) {
     _breadcrumbs = breadcrumbs;
     notifyListeners();
   }
-  
+
   /// Add a breadcrumb to the path
   void addBreadcrumb(BreadcrumbItem breadcrumb) {
     _breadcrumbs.add(breadcrumb);
     notifyListeners();
   }
-  
+
   /// Remove the last breadcrumb from the path
   void removeLastBreadcrumb() {
     if (_breadcrumbs.isNotEmpty) {
@@ -46,13 +46,13 @@ class BreadcrumbProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
-  
+
   /// Clear the breadcrumb path
   void clearBreadcrumbs() {
     _breadcrumbs = [];
     notifyListeners();
   }
-  
+
   /// Navigate to a specific breadcrumb in the path
   /// This will remove all breadcrumbs after the selected one
   void navigateToBreadcrumb(int index) {

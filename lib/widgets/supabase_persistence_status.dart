@@ -18,8 +18,18 @@ class SupabasePersistenceStatus extends StatelessWidget {
       decoration: BoxDecoration(
         color:
             wizardProvider.useSupabase
-                ? Color.fromRGBO(AppColors.success.r.toInt(), AppColors.success.g.toInt(), AppColors.success.b.toInt(), 0.20) // 0.2 * 255 = 51
-                : Color.fromRGBO(AppColors.disabled.r.toInt(), AppColors.disabled.g.toInt(), AppColors.disabled.b.toInt(), 0.20),
+                ? Color.fromRGBO(
+                  AppColors.success.r.toInt(),
+                  AppColors.success.g.toInt(),
+                  AppColors.success.b.toInt(),
+                  0.20,
+                ) // 0.2 * 255 = 51
+                : Color.fromRGBO(
+                  AppColors.disabled.r.toInt(),
+                  AppColors.disabled.g.toInt(),
+                  AppColors.disabled.b.toInt(),
+                  0.20,
+                ),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -28,7 +38,10 @@ class SupabasePersistenceStatus extends StatelessWidget {
           Icon(
             wizardProvider.useSupabase ? Icons.cloud_done : Icons.cloud_off,
             size: 16,
-            color: wizardProvider.useSupabase ? AppColors.success : AppColors.disabled,
+            color:
+                wizardProvider.useSupabase
+                    ? AppColors.success
+                    : AppColors.disabled,
           ),
           const SizedBox(width: 4),
           Text(

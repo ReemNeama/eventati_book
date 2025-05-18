@@ -42,10 +42,7 @@ class MilestoneGrid extends StatelessWidget {
 
     if (filteredMilestones.isEmpty) {
       return Center(
-        child: Text(
-          'No milestones available',
-          style: TextStyles.bodyLarge,
-        ),
+        child: Text('No milestones available', style: TextStyles.bodyLarge),
       );
     }
 

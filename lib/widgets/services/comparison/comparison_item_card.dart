@@ -119,7 +119,9 @@ class ComparisonItemCard extends StatelessWidget {
                 // Service name
                 Text(
                   name,
-                  style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.bold),
+                  style: TextStyles.bodyLarge.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),

@@ -40,10 +40,7 @@ class AuthButton extends StatelessWidget {
           ),
         ),
       ),
-      child: Text(
-        text,
-        style: TextStyles.sectionTitle.copyWith(),
-      ),
+      child: Text(text, style: TextStyles.sectionTitle.copyWith()),
     );
   }
 }

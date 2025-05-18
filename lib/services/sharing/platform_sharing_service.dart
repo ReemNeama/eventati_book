@@ -1,5 +1,3 @@
-import 'package:flutter_social_content_share/flutter_social_content_share.dart';
-import 'package:whatsapp_share/whatsapp_share.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/utils/logger.dart';
@@ -26,24 +24,42 @@ class PlatformSharingService {
     String? hashtag,
   }) async {
     try {
-      await FlutterSocialContentShare.share(
-        type: ShareType.facebookWithoutImage,
-        quote: text,
-        url: url ?? '',
-      );
+      // Prepare the Facebook share URL
+      String fbUrl = 'https://www.facebook.com/sharer/sharer.php?';
 
-      // Track the share
-      await _analyticsService.trackShare(
-        contentType: 'text',
-        itemId: 'facebook_share',
-        method: 'facebook',
-      );
+      // Add the quote parameter (text)
+      fbUrl += 'quote=${Uri.encodeComponent(text)}';
 
-      Logger.i(
-        'Content shared to Facebook successfully',
-        tag: 'PlatformSharingService',
-      );
-      return true;
+      // Add the URL parameter if provided
+      if (url != null && url.isNotEmpty) {
+        fbUrl += '&u=${Uri.encodeComponent(url)}';
+      }
+
+      // Add the hashtag parameter if provided
+      if (hashtag != null && hashtag.isNotEmpty) {
+        fbUrl += '&hashtag=${Uri.encodeComponent('#$hashtag')}';
+      }
+
+      // Launch the Facebook share dialog
+      final uri = Uri.parse(fbUrl);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+
+        // Track the share
+        await _analyticsService.trackShare(
+          contentType: 'text',
+          itemId: 'facebook_share',
+          method: 'facebook',
+        );
+
+        Logger.i(
+          'Content shared to Facebook successfully',
+          tag: 'PlatformSharingService',
+        );
+        return true;
+      } else {
+        throw Exception('Could not launch Facebook share dialog');
+      }
     } catch (e) {
       Logger.e('Error sharing to Facebook: $e', tag: 'PlatformSharingService');
       return false;
@@ -106,25 +122,39 @@ class PlatformSharingService {
   /// [phone] The phone number to share to (optional)
   Future<bool> shareToWhatsApp({required String text, String? phone}) async {
     try {
-      // Use a default phone number if none is provided
-      // This is a workaround since the WhatsappShare package requires a phone number
-      final phoneToUse = phone ?? '0000000000';
+      // Prepare the WhatsApp URL
+      String whatsappUrl = 'https://wa.me/';
 
-      // Share to WhatsApp
-      await WhatsappShare.share(text: text, phone: phoneToUse);
+      // Add the phone number if provided
+      if (phone != null && phone.isNotEmpty) {
+        // Remove any non-numeric characters from the phone number
+        final cleanPhone = phone.replaceAll(RegExp(r'[^\d]'), '');
+        whatsappUrl += cleanPhone;
+      }
 
-      // Track the share
-      await _analyticsService.trackShare(
-        contentType: 'text',
-        itemId: 'whatsapp_share',
-        method: 'whatsapp',
-      );
+      // Add the text parameter
+      whatsappUrl += '?text=${Uri.encodeComponent(text)}';
 
-      Logger.i(
-        'Content shared to WhatsApp successfully',
-        tag: 'PlatformSharingService',
-      );
-      return true;
+      // Launch WhatsApp
+      final uri = Uri.parse(whatsappUrl);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+
+        // Track the share
+        await _analyticsService.trackShare(
+          contentType: 'text',
+          itemId: 'whatsapp_share',
+          method: 'whatsapp',
+        );
+
+        Logger.i(
+          'Content shared to WhatsApp successfully',
+          tag: 'PlatformSharingService',
+        );
+        return true;
+      } else {
+        throw Exception('Could not launch WhatsApp');
+      }
     } catch (e) {
       Logger.e('Error sharing to WhatsApp: $e', tag: 'PlatformSharingService');
       return false;

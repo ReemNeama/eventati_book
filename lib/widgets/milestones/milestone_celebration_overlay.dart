@@ -161,7 +161,9 @@ class _MilestoneCelebrationOverlayState
                         const SizedBox(width: 8),
                         Text(
                           '+${widget.milestone.points} points',
-                          style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.bold),
+                          style: TextStyles.bodyLarge.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ],
                     ),
@@ -183,7 +185,9 @@ class _MilestoneCelebrationOverlayState
                     onPressed: widget.onDismiss,
                     child: Text(
                       'Awesome!',
-                      style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.bold),
+                      style: TextStyles.bodyLarge.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ],

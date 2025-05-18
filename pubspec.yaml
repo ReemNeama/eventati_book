@@ -71,10 +71,15 @@ dependencies:
   add_2_calendar: ^2.2.4
 
   # Social sharing
-  flutter_social_content_share: ^1.0.2
-  whatsapp_share: ^2.0.2
-  flutter_facebook_auth: ^6.1.1
-  twitter_login: ^4.4.2
+  # Note: These dependencies were removed as they're not actively used in the app
+  # flutter_social_content_share: ^1.0.2
+  # whatsapp_share: ^2.0.2
+  # flutter_facebook_auth: ^6.1.1
+  # twitter_login: ^4.4.2
+
+  # Biometric authentication
+  local_auth: ^2.2.0
+  flutter_secure_storage: ^9.2.4
 
 
 dev_dependencies:
@@ -106,6 +111,7 @@ flutter:
     - assets/google.png
     - assets/twitter.png
     - assets/facebook.png
+    - assets/images/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

@@ -136,6 +136,14 @@ class ProfileScreen extends StatelessWidget {
                     // Navigate to language settings
                   },
                 ),
+                _buildSettingItem(
+                  context,
+                  icon: Icons.fingerprint,
+                  title: 'Biometric Authentication',
+                  onTap: () {
+                    Navigator.pushNamed(context, RouteNames.biometricSettings);
+                  },
+                ),
 
                 const SizedBox(height: 24),
 

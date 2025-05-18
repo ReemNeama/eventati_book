@@ -4,9 +4,20 @@ import 'package:eventati_book/widgets/common/error_screen.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/text_styles.dart';
+import 'package:eventati_book/utils/ui/error_messages.dart';
+import 'package:eventati_book/utils/ui/recovery_suggestions.dart';
 
 /// Utility functions for error handling
 class ErrorHandlingUtils {
+  /// Get a user-friendly recovery suggestion based on error type
+  static String getRecoverySuggestion(dynamic error) {
+    if (error == null) {
+      return RecoverySuggestions.getGeneralSuggestion();
+    }
+
+    return RecoverySuggestions.getSuggestionFromErrorMessage(error.toString());
+  }
+
   /// Show a snackbar with an error message
   static void showErrorSnackBar(
     BuildContext context,
@@ -209,58 +220,51 @@ class ErrorHandlingUtils {
   /// Format an exception into a user-friendly message
   static String formatExceptionMessage(dynamic exception) {
     if (exception == null) {
-      return 'An unknown error occurred';
+      return ErrorMessages.getGeneralErrorMessage();
     }
 
     if (exception is String) {
       return exception;
     }
 
-    // Handle common exceptions
+    // Handle common exceptions with user-friendly messages
     if (exception is FormatException) {
-      return 'Invalid format: ${exception.message}';
+      return ErrorMessages.getValidationErrorMessage();
     }
 
     if (exception is TimeoutException) {
-      return 'The operation timed out. Please try again.';
+      return ErrorMessages.getTimeoutErrorMessage();
     }
 
     if (exception is NetworkException) {
-      return 'Network error: ${exception.message}';
+      return ErrorMessages.getNetworkErrorMessage();
     }
 
-    final message = exception.toString();
-
-    // Remove common exception prefixes
-    String formattedMessage = message
-        .replaceAll('Exception: ', '')
-        .replaceAll('FormatException: ', '')
-        .replaceAll('HttpException: ', '')
-        .replaceAll('SocketException: ', '')
-        .replaceAll('TimeoutException: ', '');
-
-    // Capitalize first letter
-    if (formattedMessage.isNotEmpty) {
-      formattedMessage =
-          formattedMessage[0].toUpperCase() + formattedMessage.substring(1);
-    }
-
-    return formattedMessage;
+    return ErrorMessages.getFriendlyMessageFromError(exception);
   }
 
   /// Get error widget based on error type and context
   static Widget getErrorWidget(
     String message, {
     String? details,
+    String? recoverySuggestion,
     VoidCallback? onRetry,
     ErrorDisplayType displayType = ErrorDisplayType.standard,
     ErrorSeverity severity = ErrorSeverity.medium,
     String? actionText,
     VoidCallback? onAction,
+    dynamic originalError,
   }) {
+    // If no recovery suggestion is provided but we have the original error,
+    // generate a recovery suggestion
+    final suggestion =
+        recoverySuggestion ??
+        (originalError != null ? getRecoverySuggestion(originalError) : null);
+
     return ErrorMessage(
       message: message,
       details: details,
+      recoverySuggestion: suggestion,
       onRetry: onRetry,
       displayType: displayType,
       severity: severity,
@@ -273,6 +277,7 @@ class ErrorHandlingUtils {
   static Widget getErrorScreen(
     String message, {
     String? details,
+    String? recoverySuggestion,
     VoidCallback? onRetry,
     VoidCallback? onGoHome,
     String? title,
@@ -281,10 +286,18 @@ class ErrorHandlingUtils {
     ErrorScreenType errorType = ErrorScreenType.standard,
     String? errorCode,
     String? supportContact,
+    dynamic originalError,
   }) {
+    // If no recovery suggestion is provided but we have the original error,
+    // generate a recovery suggestion
+    final suggestion =
+        recoverySuggestion ??
+        (originalError != null ? getRecoverySuggestion(originalError) : null);
+
     return ErrorScreen(
       message: message,
       details: details,
+      recoverySuggestion: suggestion,
       onRetry: onRetry,
       onGoHome: onGoHome,
       title: title,
@@ -298,48 +311,61 @@ class ErrorHandlingUtils {
 
   /// Get a network error screen
   static Widget getNetworkErrorScreen({
-    String message =
-        'Unable to connect to the server. Please check your internet connection and try again.',
+    String message = 'We\'re having trouble connecting to the server.',
+    String? recoverySuggestion =
+        'Check your internet connection and try again. If you\'re connected to WiFi, try switching to mobile data or vice versa.',
     VoidCallback? onRetry,
     VoidCallback? onGoHome,
     String? details,
+    Widget? illustration,
   }) {
     return ErrorScreen.network(
       message: message,
+      recoverySuggestion: recoverySuggestion,
       onRetry: onRetry,
       onGoHome: onGoHome,
       details: details,
+      illustration: illustration,
     );
   }
 
   /// Get a permission error screen
   static Widget getPermissionErrorScreen({
     String message = 'You don\'t have permission to access this feature.',
+    String? recoverySuggestion =
+        'If you believe you should have access, please contact your administrator or support team for assistance.',
     VoidCallback? onGoHome,
     String? details,
+    Widget? illustration,
   }) {
     return ErrorScreen.permission(
       message: message,
+      recoverySuggestion: recoverySuggestion,
       onGoHome: onGoHome,
       details: details,
+      illustration: illustration,
     );
   }
 
   /// Get a server error screen
   static Widget getServerErrorScreen({
-    String message =
-        'The server encountered an error. Our team has been notified.',
+    String message = 'Our servers are experiencing issues.',
+    String? recoverySuggestion =
+        'This is a temporary problem on our end. Please try again later. Our team has been notified and is working to fix it as quickly as possible.',
     VoidCallback? onRetry,
     VoidCallback? onGoHome,
     String? details,
     String? errorCode,
+    Widget? illustration,
   }) {
     return ErrorScreen.server(
       message: message,
+      recoverySuggestion: recoverySuggestion,
       onRetry: onRetry,
       onGoHome: onGoHome,
       details: details,
       errorCode: errorCode,
+      illustration: illustration,
     );
   }
 

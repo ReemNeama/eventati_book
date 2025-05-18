@@ -149,10 +149,7 @@ class FeatureValueBuilder {
                   const Icon(Icons.check, size: 14),
                   const SizedBox(width: 4),
                   Expanded(
-                    child: Text(
-                      item.toString(),
-                      style: TextStyles.bodySmall,
-                    ),
+                    child: Text(item.toString(), style: TextStyles.bodySmall),
                   ),
                 ],
               ),

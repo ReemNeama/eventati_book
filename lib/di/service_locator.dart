@@ -18,6 +18,7 @@ import 'package:eventati_book/services/supabase/database/event_database_service.
 import 'package:eventati_book/services/supabase/database/budget_database_service.dart';
 import 'package:eventati_book/services/supabase/database/guest_database_service.dart';
 import 'package:eventati_book/services/supabase/database/booking_database_service.dart';
+import 'package:eventati_book/services/auth/biometric/biometric_auth_service.dart';
 import 'package:eventati_book/utils/file_utils.dart';
 
 /// Simple service locator for dependency injection
@@ -146,6 +147,14 @@ class ServiceLocator {
   /// Get the crashlytics service
   CrashlyticsServiceInterface get crashlyticsService =>
       get<CrashlyticsServiceInterface>();
+
+  /// Get the biometric authentication service
+  BiometricAuthService get biometricAuthService {
+    if (!_services.containsKey(BiometricAuthService)) {
+      registerSingleton<BiometricAuthService>(BiometricAuthService());
+    }
+    return get<BiometricAuthService>();
+  }
 }
 
 /// Global instance of the service locator

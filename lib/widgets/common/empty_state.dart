@@ -51,6 +51,9 @@ class EmptyState extends StatelessWidget {
   /// The message to display
   final String message;
 
+  /// Optional guidance text to help users understand what to do
+  final String? guidance;
+
   /// The icon to display
   final IconData icon;
 
@@ -112,6 +115,7 @@ class EmptyState extends StatelessWidget {
     super.key,
     required this.title,
     required this.message,
+    this.guidance,
     this.icon = Icons.inbox,
     this.actionText,
     this.onAction,
@@ -139,10 +143,39 @@ class EmptyState extends StatelessWidget {
     final primaryColor =
         buttonColor ?? (isDarkMode ? AppColorsDark.primary : AppColors.primary);
     final defaultTextColor =
-        textColor ?? (isDarkMode ? Color.fromRGBO(Colors.white.r.toInt(), Colors.white.g.toInt(), Colors.white.b.toInt(), 0.7) : AppColors.textPrimary);
-    final secondaryTextColor = isDarkMode ? Color.fromRGBO(Colors.white.r.toInt(), Colors.white.g.toInt(), Colors.white.b.toInt(), 0.54) : AppColors.textSecondary;
+        textColor ??
+        (isDarkMode
+            ? Color.fromRGBO(
+              Colors.white.r.toInt(),
+              Colors.white.g.toInt(),
+              Colors.white.b.toInt(),
+              0.7,
+            )
+            : AppColors.textPrimary);
+    final secondaryTextColor =
+        isDarkMode
+            ? Color.fromRGBO(
+              Colors.white.r.toInt(),
+              Colors.white.g.toInt(),
+              Colors.white.b.toInt(),
+              0.54,
+            )
+            : AppColors.textSecondary;
     final defaultIconColor =
-        iconColor ?? (isDarkMode ? Color.fromRGBO(AppColors.disabled.r.toInt(), AppColors.disabled.g.toInt(), AppColors.disabled.b.toInt(), 0.6) : Color.fromRGBO(AppColors.disabled.r.toInt(), AppColors.disabled.g.toInt(), AppColors.disabled.b.toInt(), 0.4));
+        iconColor ??
+        (isDarkMode
+            ? Color.fromRGBO(
+              AppColors.disabled.r.toInt(),
+              AppColors.disabled.g.toInt(),
+              AppColors.disabled.b.toInt(),
+              0.6,
+            )
+            : Color.fromRGBO(
+              AppColors.disabled.r.toInt(),
+              AppColors.disabled.g.toInt(),
+              AppColors.disabled.b.toInt(),
+              0.4,
+            ));
 
     // Create the base widget based on display type
     Widget emptyStateWidget;
@@ -281,7 +314,20 @@ class EmptyState extends StatelessWidget {
   ) {
     final isDarkMode = UIUtils.isDarkMode(context);
     final defaultIconColor =
-        iconColor ?? (isDarkMode ? Color.fromRGBO(AppColors.disabled.r.toInt(), AppColors.disabled.g.toInt(), AppColors.disabled.b.toInt(), 0.6) : Color.fromRGBO(AppColors.disabled.r.toInt(), AppColors.disabled.g.toInt(), AppColors.disabled.b.toInt(), 0.4));
+        iconColor ??
+        (isDarkMode
+            ? Color.fromRGBO(
+              AppColors.disabled.r.toInt(),
+              AppColors.disabled.g.toInt(),
+              AppColors.disabled.b.toInt(),
+              0.6,
+            )
+            : Color.fromRGBO(
+              AppColors.disabled.r.toInt(),
+              AppColors.disabled.g.toInt(),
+              AppColors.disabled.b.toInt(),
+              0.4,
+            ));
 
     return Center(
       child: Padding(
@@ -313,6 +359,48 @@ class EmptyState extends StatelessWidget {
                   TextStyles.bodyLarge.copyWith(color: secondaryTextColor),
               textAlign: TextAlign.center,
             ),
+            if (guidance != null) ...[
+              SizedBox(height: spacing * 2),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Color.fromRGBO(
+                    primaryColor.r.toInt(),
+                    primaryColor.g.toInt(),
+                    primaryColor.b.toInt(),
+                    isDarkMode ? 0.15 : 0.08,
+                  ),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: Color.fromRGBO(
+                      primaryColor.r.toInt(),
+                      primaryColor.g.toInt(),
+                      primaryColor.b.toInt(),
+                      isDarkMode ? 0.3 : 0.2,
+                    ),
+                    width: 1,
+                  ),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(
+                      Icons.lightbulb_outline,
+                      size: 18,
+                      color: primaryColor,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        guidance!,
+                        style: TextStyles.bodyMedium.copyWith(color: textColor),
+                        textAlign: TextAlign.start,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
             if (actionText != null && onAction != null) ...[
               SizedBox(height: spacing * 3),
               ElevatedButton(
@@ -356,7 +444,20 @@ class EmptyState extends StatelessWidget {
   ) {
     final isDarkMode = UIUtils.isDarkMode(context);
     final defaultIconColor =
-        iconColor ?? (isDarkMode ? Color.fromRGBO(AppColors.disabled.r.toInt(), AppColors.disabled.g.toInt(), AppColors.disabled.b.toInt(), 0.6) : Color.fromRGBO(AppColors.disabled.r.toInt(), AppColors.disabled.g.toInt(), AppColors.disabled.b.toInt(), 0.4));
+        iconColor ??
+        (isDarkMode
+            ? Color.fromRGBO(
+              AppColors.disabled.r.toInt(),
+              AppColors.disabled.g.toInt(),
+              AppColors.disabled.b.toInt(),
+              0.6,
+            )
+            : Color.fromRGBO(
+              AppColors.disabled.r.toInt(),
+              AppColors.disabled.g.toInt(),
+              AppColors.disabled.b.toInt(),
+              0.4,
+            ));
 
     return Center(
       child: Padding(
@@ -465,7 +566,15 @@ class EmptyState extends StatelessWidget {
   ) {
     final isDarkMode = UIUtils.isDarkMode(context);
     final cardColor =
-        backgroundColor ?? (isDarkMode ? Color.fromRGBO(AppColors.disabled.r.toInt(), AppColors.disabled.g.toInt(), AppColors.disabled.b.toInt(), 0.85) : Colors.white);
+        backgroundColor ??
+        (isDarkMode
+            ? Color.fromRGBO(
+              AppColors.disabled.r.toInt(),
+              AppColors.disabled.g.toInt(),
+              AppColors.disabled.b.toInt(),
+              0.85,
+            )
+            : Colors.white);
 
     return Center(
       child: Padding(
@@ -547,7 +656,20 @@ class EmptyState extends StatelessWidget {
     Color? iconColor,
   ) {
     final isDarkMode = UIUtils.isDarkMode(context);
-    final placeholderColor = isDarkMode ? Color.fromRGBO(AppColors.disabled.r.toInt(), AppColors.disabled.g.toInt(), AppColors.disabled.b.toInt(), 0.7) : Color.fromRGBO(AppColors.disabled.r.toInt(), AppColors.disabled.g.toInt(), AppColors.disabled.b.toInt(), 0.3);
+    final placeholderColor =
+        isDarkMode
+            ? Color.fromRGBO(
+              AppColors.disabled.r.toInt(),
+              AppColors.disabled.g.toInt(),
+              AppColors.disabled.b.toInt(),
+              0.7,
+            )
+            : Color.fromRGBO(
+              AppColors.disabled.r.toInt(),
+              AppColors.disabled.g.toInt(),
+              AppColors.disabled.b.toInt(),
+              0.3,
+            );
 
     return Center(
       child: Padding(
@@ -613,18 +735,24 @@ class EmptyState extends StatelessWidget {
   factory EmptyState.list({
     String title = 'No items',
     required String message,
+    String? guidance,
     IconData icon = Icons.list_alt,
     String? actionText,
     VoidCallback? onAction,
+    String? secondaryActionText,
+    VoidCallback? onSecondaryAction,
     EmptyStateDisplayType displayType = EmptyStateDisplayType.standard,
     Widget? illustration,
   }) {
     return EmptyState(
       title: title,
       message: message,
+      guidance: guidance,
       icon: icon,
       actionText: actionText,
       onAction: onAction,
+      secondaryActionText: secondaryActionText,
+      onSecondaryAction: onSecondaryAction,
       displayType: displayType,
       illustration: illustration,
     );
@@ -634,18 +762,25 @@ class EmptyState extends StatelessWidget {
   factory EmptyState.search({
     String title = 'No results found',
     String message = 'Try adjusting your search or filters',
+    String? guidance =
+        'Check for typos or try using more general keywords. You can also clear your filters to see more results.',
     IconData icon = Icons.search_off,
     String? actionText,
     VoidCallback? onAction,
+    String? secondaryActionText,
+    VoidCallback? onSecondaryAction,
     EmptyStateDisplayType displayType = EmptyStateDisplayType.standard,
     Widget? illustration,
   }) {
     return EmptyState(
       title: title,
       message: message,
+      guidance: guidance,
       icon: icon,
       actionText: actionText,
       onAction: onAction,
+      secondaryActionText: secondaryActionText,
+      onSecondaryAction: onSecondaryAction,
       displayType: displayType,
       illustration: illustration,
     );
@@ -655,18 +790,25 @@ class EmptyState extends StatelessWidget {
   factory EmptyState.favorites({
     String title = 'No favorites yet',
     String message = 'Items you mark as favorites will appear here',
+    String? guidance =
+        'Tap the heart icon on any item to add it to your favorites. This makes it easier to find your preferred items later.',
     IconData icon = Icons.favorite_border,
     String? actionText,
     VoidCallback? onAction,
+    String? secondaryActionText,
+    VoidCallback? onSecondaryAction,
     EmptyStateDisplayType displayType = EmptyStateDisplayType.standard,
     Widget? illustration,
   }) {
     return EmptyState(
       title: title,
       message: message,
+      guidance: guidance,
       icon: icon,
       actionText: actionText,
       onAction: onAction,
+      secondaryActionText: secondaryActionText,
+      onSecondaryAction: onSecondaryAction,
       displayType: displayType,
       illustration: illustration,
     );
@@ -676,18 +818,25 @@ class EmptyState extends StatelessWidget {
   factory EmptyState.notifications({
     String title = 'No notifications',
     String message = 'You\'re all caught up!',
+    String? guidance =
+        'Notifications about your events, tasks, and messages will appear here. You can adjust your notification preferences in settings.',
     IconData icon = Icons.notifications_none,
     String? actionText,
     VoidCallback? onAction,
+    String? secondaryActionText,
+    VoidCallback? onSecondaryAction,
     EmptyStateDisplayType displayType = EmptyStateDisplayType.standard,
     Widget? illustration,
   }) {
     return EmptyState(
       title: title,
       message: message,
+      guidance: guidance,
       icon: icon,
       actionText: actionText,
       onAction: onAction,
+      secondaryActionText: secondaryActionText,
+      onSecondaryAction: onSecondaryAction,
       displayType: displayType,
       illustration: illustration,
     );
@@ -697,18 +846,25 @@ class EmptyState extends StatelessWidget {
   factory EmptyState.error({
     String title = 'Something went wrong',
     required String message,
+    String? guidance =
+        'This is likely a temporary issue. Try refreshing the page or coming back later. If the problem persists, please contact support.',
     IconData icon = Icons.error_outline,
     String? actionText,
     VoidCallback? onAction,
+    String? secondaryActionText,
+    VoidCallback? onSecondaryAction,
     EmptyStateDisplayType displayType = EmptyStateDisplayType.standard,
     Widget? illustration,
   }) {
     return EmptyState(
       title: title,
       message: message,
+      guidance: guidance,
       icon: icon,
       actionText: actionText,
       onAction: onAction,
+      secondaryActionText: secondaryActionText,
+      onSecondaryAction: onSecondaryAction,
       displayType: displayType,
       illustration: illustration,
     );
@@ -718,18 +874,25 @@ class EmptyState extends StatelessWidget {
   factory EmptyState.notFound({
     String title = 'Not Found',
     required String message,
+    String? guidance =
+        'The item you\'re looking for might have been moved, deleted, or never existed. Double-check the URL or navigate back to a known page.',
     IconData icon = Icons.search_off,
     String? actionText,
     VoidCallback? onAction,
+    String? secondaryActionText,
+    VoidCallback? onSecondaryAction,
     EmptyStateDisplayType displayType = EmptyStateDisplayType.standard,
     Widget? illustration,
   }) {
     return EmptyState(
       title: title,
       message: message,
+      guidance: guidance,
       icon: icon,
       actionText: actionText,
       onAction: onAction,
+      secondaryActionText: secondaryActionText,
+      onSecondaryAction: onSecondaryAction,
       displayType: displayType,
       illustration: illustration,
     );
@@ -739,18 +902,25 @@ class EmptyState extends StatelessWidget {
   factory EmptyState.empty({
     String title = 'No Data',
     required String message,
+    String? guidance =
+        'There\'s no data to display right now. This could be because you haven\'t added any items yet, or because the data is still loading.',
     IconData icon = Icons.inbox,
     String? actionText,
     VoidCallback? onAction,
+    String? secondaryActionText,
+    VoidCallback? onSecondaryAction,
     EmptyStateDisplayType displayType = EmptyStateDisplayType.standard,
     Widget? illustration,
   }) {
     return EmptyState(
       title: title,
       message: message,
+      guidance: guidance,
       icon: icon,
       actionText: actionText,
       onAction: onAction,
+      secondaryActionText: secondaryActionText,
+      onSecondaryAction: onSecondaryAction,
       displayType: displayType,
       illustration: illustration,
     );

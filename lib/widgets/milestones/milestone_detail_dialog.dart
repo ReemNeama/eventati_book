@@ -77,7 +77,9 @@ class MilestoneDetailDialog extends StatelessWidget {
                 const SizedBox(width: 4),
                 Text(
                   '${milestone.points} points',
-                  style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.bold),
+                  style: TextStyles.bodyLarge.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
@@ -111,7 +113,9 @@ class MilestoneDetailDialog extends StatelessWidget {
               onPressed: () => Navigator.of(context).pop(),
               child: Text(
                 'Close',
-                style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.bold),
+                style: TextStyles.bodyLarge.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ],

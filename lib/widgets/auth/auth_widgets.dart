@@ -6,3 +6,5 @@ export 'auth_text_field.dart';
 export 'auth_title_widget.dart';
 export 'verification_code_input.dart';
 export 'social_auth_button.dart';
+export 'password_strength_indicator.dart';
+export 'biometric_auth_button.dart';

@@ -140,4 +140,33 @@ class ValidationUtils {
 
     return null;
   }
+
+  /// Calculate password strength score (0-100)
+  static int calculatePasswordStrength(String? password) {
+    if (password == null || password.isEmpty) return 0;
+
+    int score = 0;
+
+    // Check length (up to 40 points)
+    if (password.length >= 6) score += 10;
+    if (password.length >= 8) score += 10;
+    if (password.length >= 10) score += 10;
+    if (password.length >= 12) score += 10;
+
+    // Check character types (15 points each)
+    if (password.contains(RegExp(r'[A-Z]'))) score += 15;
+    if (password.contains(RegExp(r'[a-z]'))) score += 15;
+    if (password.contains(RegExp(r'[0-9]'))) score += 15;
+    if (password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) score += 15;
+
+    return score;
+  }
+
+  /// Get password strength level description
+  static String getPasswordStrengthDescription(int score) {
+    if (score < 25) return 'Weak password';
+    if (score < 50) return 'Fair password';
+    if (score < 75) return 'Good password';
+    return 'Strong password';
+  }
 }

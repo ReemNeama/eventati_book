@@ -36,7 +36,12 @@ class AppColorsDark {
 
   // Alpha values for semi-transparent colors
   static Color primaryWithAlpha(double opacity) {
-    return Color.fromRGBO(primary.r.toInt(), primary.g.toInt(), primary.b.toInt(), opacity);
+    return Color.fromRGBO(
+      primary.r.toInt(),
+      primary.g.toInt(),
+      primary.b.toInt(),
+      opacity,
+    );
   }
 
   // Specific UI element colors

@@ -45,7 +45,14 @@ class ConfirmationDialog extends StatelessWidget {
           onPressed: () => NavigationUtils.pop(context, false),
           child: Text(
             cancelText,
-            style: TextStyles.bodyMedium.copyWith(color: Color.fromRGBO(AppColors.disabled.r.toInt(), AppColors.disabled.g.toInt(), AppColors.disabled.b.toInt(), 0.6)),
+            style: TextStyles.bodyMedium.copyWith(
+              color: Color.fromRGBO(
+                AppColors.disabled.r.toInt(),
+                AppColors.disabled.g.toInt(),
+                AppColors.disabled.b.toInt(),
+                0.6,
+              ),
+            ),
           ),
         ),
         ElevatedButton(

@@ -5,41 +5,41 @@ import 'package:eventati_book/widgets/common/back_to_top_button.dart';
 class ScrollToTopWrapper extends StatefulWidget {
   /// The child widget
   final Widget child;
-  
+
   /// Optional scroll controller
   /// If not provided, a new one will be created
   final ScrollController? scrollController;
-  
+
   /// The threshold in pixels after which the button appears
   final double scrollThreshold;
-  
+
   /// The duration of the scroll animation
   final Duration scrollDuration;
-  
+
   /// The curve of the scroll animation
   final Curve scrollCurve;
-  
+
   /// The icon to display in the button
   final IconData icon;
-  
+
   /// The color of the button
   final Color? backgroundColor;
-  
+
   /// The color of the icon
   final Color? iconColor;
-  
+
   /// The size of the button
   final double size;
-  
+
   /// The tooltip text for accessibility
   final String tooltip;
-  
+
   /// The position of the button
   final BackToTopButtonPosition position;
-  
+
   /// The padding around the button
   final EdgeInsets padding;
-  
+
   /// Constructor
   const ScrollToTopWrapper({
     super.key,
@@ -56,32 +56,32 @@ class ScrollToTopWrapper extends StatefulWidget {
     this.position = BackToTopButtonPosition.bottomRight,
     this.padding = const EdgeInsets.all(16.0),
   });
-  
+
   @override
   State<ScrollToTopWrapper> createState() => _ScrollToTopWrapperState();
 }
 
 class _ScrollToTopWrapperState extends State<ScrollToTopWrapper> {
   late ScrollController _scrollController;
-  
+
   @override
   void initState() {
     super.initState();
-    
+
     // Use the provided scroll controller or create a new one
     _scrollController = widget.scrollController ?? ScrollController();
   }
-  
+
   @override
   void dispose() {
     // Dispose the scroll controller if we created it
     if (widget.scrollController == null) {
       _scrollController.dispose();
     }
-    
+
     super.dispose();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -90,10 +90,10 @@ class _ScrollToTopWrapperState extends State<ScrollToTopWrapper> {
         widget.child is Scrollable
             ? widget.child
             : SingleChildScrollView(
-                controller: _scrollController,
-                child: widget.child,
-              ),
-        
+              controller: _scrollController,
+              child: widget.child,
+            ),
+
         // The back to top button
         BackToTopButton(
           scrollController: _scrollController,

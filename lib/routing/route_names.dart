@@ -36,6 +36,8 @@ class RouteNames {
   static const String bookings = '/bookings';
   static const String bookingDetails = '/bookings/details';
   static const String bookingForm = '/bookings/form';
+  static const String preCheckoutComparison =
+      '/bookings/pre-checkout-comparison';
   static const String payment = '/bookings/payment';
   static const String paymentHistory = '/bookings/payment-history';
 
@@ -85,6 +87,7 @@ class RouteNames {
   // Settings routes
   static const String notificationPreferences =
       '/settings/notification-preferences';
+  static const String biometricSettings = '/settings/biometric';
 
   // Search routes
   static const String globalSearch = '/search';

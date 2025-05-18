@@ -241,6 +241,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                         hintText: 'New Password',
                         prefixIcon: Icons.lock,
                         obscureText: true,
+                        showPasswordStrength: true,
                         validator:
                             (value) => ValidationUtils.validatePassword(
                               value,

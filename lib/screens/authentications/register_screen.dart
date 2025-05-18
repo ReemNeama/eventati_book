@@ -146,6 +146,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   hintText: 'Password',
                   prefixIcon: Icons.lock,
                   obscureText: true,
+                  showPasswordStrength: true,
                   validator:
                       (value) => ValidationUtils.validatePassword(
                         value,

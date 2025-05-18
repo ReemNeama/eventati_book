@@ -29,6 +29,9 @@ class ErrorScreen extends StatelessWidget {
   /// Optional error details
   final String? details;
 
+  /// Optional recovery suggestion to help users resolve the error
+  final String? recoverySuggestion;
+
   /// Optional retry callback
   final VoidCallback? onRetry;
 
@@ -58,6 +61,7 @@ class ErrorScreen extends StatelessWidget {
     super.key,
     required this.message,
     this.details,
+    this.recoverySuggestion,
     this.onRetry,
     this.onGoHome,
     this.title,
@@ -70,19 +74,23 @@ class ErrorScreen extends StatelessWidget {
 
   /// Factory constructor for network errors
   factory ErrorScreen.network({
-    String message =
-        'Unable to connect to the server. Please check your internet connection and try again.',
+    String message = 'We\'re having trouble connecting to the server.',
+    String? recoverySuggestion =
+        'Check your internet connection and try again. If you\'re connected to WiFi, try switching to mobile data or vice versa.',
     VoidCallback? onRetry,
     VoidCallback? onGoHome,
     String? details,
+    Widget? illustration,
   }) {
     return ErrorScreen(
       title: 'Network Error',
       message: message,
+      recoverySuggestion: recoverySuggestion,
       details: details,
       onRetry: onRetry,
       onGoHome: onGoHome,
       icon: Icons.wifi_off,
+      illustration: illustration,
       errorType: ErrorScreenType.network,
     );
   }
@@ -90,35 +98,44 @@ class ErrorScreen extends StatelessWidget {
   /// Factory constructor for permission errors
   factory ErrorScreen.permission({
     String message = 'You don\'t have permission to access this feature.',
+    String? recoverySuggestion =
+        'If you believe you should have access, please contact your administrator or support team for assistance.',
     VoidCallback? onGoHome,
     String? details,
+    Widget? illustration,
   }) {
     return ErrorScreen(
       title: 'Access Denied',
       message: message,
+      recoverySuggestion: recoverySuggestion,
       details: details,
       onGoHome: onGoHome,
       icon: Icons.no_accounts,
+      illustration: illustration,
       errorType: ErrorScreenType.permission,
     );
   }
 
   /// Factory constructor for server errors
   factory ErrorScreen.server({
-    String message =
-        'The server encountered an error. Our team has been notified.',
+    String message = 'Our servers are experiencing issues.',
+    String? recoverySuggestion =
+        'This is a temporary problem on our end. Please try again later. Our team has been notified and is working to fix it as quickly as possible.',
     VoidCallback? onRetry,
     VoidCallback? onGoHome,
     String? details,
     String? errorCode,
+    Widget? illustration,
   }) {
     return ErrorScreen(
       title: 'Server Error',
       message: message,
+      recoverySuggestion: recoverySuggestion,
       details: details,
       onRetry: onRetry,
       onGoHome: onGoHome,
       icon: Icons.cloud_off,
+      illustration: illustration,
       errorType: ErrorScreenType.server,
       errorCode: errorCode,
       supportContact: 'support@eventati.com',
@@ -242,6 +259,65 @@ class ErrorScreen extends StatelessWidget {
                         fontSize: 14,
                       ),
                       textAlign: TextAlign.center,
+                    ),
+                  ],
+                  if (recoverySuggestion != null) ...[
+                    const SizedBox(height: 24),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Color.fromRGBO(
+                          primaryColor.r.toInt(),
+                          primaryColor.g.toInt(),
+                          primaryColor.b.toInt(),
+                          isDarkMode ? 0.15 : 0.08,
+                        ),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: Color.fromRGBO(
+                            primaryColor.r.toInt(),
+                            primaryColor.g.toInt(),
+                            primaryColor.b.toInt(),
+                            isDarkMode ? 0.3 : 0.2,
+                          ),
+                          width: 1,
+                        ),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(
+                            Icons.lightbulb_outline,
+                            size: 20,
+                            color: primaryColor,
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'What you can do:',
+                                  style: TextStyle(
+                                    color: primaryColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  recoverySuggestion!,
+                                  style: TextStyle(
+                                    color: textColor,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                   if (details != null) ...[

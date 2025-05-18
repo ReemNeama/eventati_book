@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:local_auth/local_auth.dart';
 
 // Import providers using barrel file
 import 'package:eventati_book/providers/providers.dart';
 
 // Import utilities using barrel file
 import 'package:eventati_book/utils/utils.dart';
+import 'package:eventati_book/utils/logger.dart';
 
 // Import authentication widgets using barrel file
 import 'package:eventati_book/widgets/auth/auth_widgets.dart';
@@ -25,6 +27,43 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+
+  // Biometric authentication
+  bool _isBiometricAvailable = false;
+  List<BiometricType> _availableBiometrics = [];
+  bool _isBiometricEnabled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkBiometricAvailability();
+  }
+
+  // Check if biometric authentication is available
+  Future<void> _checkBiometricAvailability() async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+    try {
+      // Check if biometric authentication is available
+      final isBiometricAvailable = await authProvider.isBiometricAvailable();
+
+      if (isBiometricAvailable) {
+        // Get available biometric types
+        final availableBiometrics = await authProvider.getAvailableBiometrics();
+
+        // Check if biometric authentication is enabled
+        final isBiometricEnabled = await authProvider.isBiometricEnabled();
+
+        setState(() {
+          _isBiometricAvailable = isBiometricAvailable;
+          _availableBiometrics = availableBiometrics.cast<BiometricType>();
+          _isBiometricEnabled = isBiometricEnabled;
+        });
+      }
+    } catch (e) {
+      Logger.e('Error checking biometric availability: $e', tag: 'LoginScreen');
+    }
+  }
 
   @override
   void dispose() {
@@ -107,6 +146,61 @@ class _LoginScreenState extends State<LoginScreen> {
         SnackBar(
           content: Text(
             authProvider.errorMessage ?? 'Login failed',
+            style: const TextStyle(color: Colors.white),
+          ),
+          backgroundColor: AppColors.error,
+        ),
+      );
+    }
+  }
+
+  // Method to handle biometric authentication
+  Future<void> _handleBiometricAuth(AuthProvider authProvider) async {
+    // Show loading indicator
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder:
+          (dialogContext) => const AlertDialog(
+            content: Row(
+              children: [
+                CircularProgressIndicator(),
+                SizedBox(width: 20),
+                Text('Authenticating...'),
+              ],
+            ),
+          ),
+    );
+
+    // Attempt to authenticate with biometrics
+    final result = await authProvider.authenticateWithBiometrics();
+
+    // Only proceed if the widget is still mounted
+    if (!mounted) return;
+
+    // Hide loading indicator
+    Navigator.pop(context);
+
+    if (result) {
+      // Show success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Biometric authentication successful!',
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: AppColors.success,
+        ),
+      );
+
+      // Navigate to home screen
+      NavigationUtils.navigateToNamedAndRemoveUntil(context, RouteNames.home);
+    } else {
+      // Show error message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            authProvider.errorMessage ?? 'Biometric authentication failed',
             style: const TextStyle(color: Colors.white),
           ),
           backgroundColor: AppColors.error,
@@ -250,6 +344,23 @@ class _LoginScreenState extends State<LoginScreen> {
                   );
                 },
               ),
+
+              // Show biometric authentication button if available
+              if (_isBiometricAvailable &&
+                  _isBiometricEnabled &&
+                  _availableBiometrics.isNotEmpty) ...[
+                const SizedBox(height: 20),
+                Consumer<AuthProvider>(
+                  builder: (context, authProvider, _) {
+                    return BiometricAuthButton(
+                      onPressed: () {
+                        _handleBiometricAuth(authProvider);
+                      },
+                      availableBiometrics: _availableBiometrics,
+                    );
+                  },
+                ),
+              ],
             ],
           ),
         ),

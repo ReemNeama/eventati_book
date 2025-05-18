@@ -191,10 +191,7 @@ class _TaskDependencyExampleState extends State<TaskDependencyExample> {
                           size: 16,
                         ),
                         const SizedBox(width: 4),
-                        Text(
-                          category.name,
-                          style: TextStyles.bodySmall,
-                        ),
+                        Text(category.name, style: TextStyles.bodySmall),
                       ],
                     ),
                     const SizedBox(height: 4),

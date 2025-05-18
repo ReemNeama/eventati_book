@@ -18,7 +18,14 @@ class ServicesSelection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: Color.fromRGBO(AppColors.disabled.r.toInt(), AppColors.disabled.g.toInt(), AppColors.disabled.b.toInt(), 0.3)),
+        border: Border.all(
+          color: Color.fromRGBO(
+            AppColors.disabled.r.toInt(),
+            AppColors.disabled.g.toInt(),
+            AppColors.disabled.b.toInt(),
+            0.3,
+          ),
+        ),
         borderRadius: BorderRadius.circular(AppConstants.smallBorderRadius),
       ),
       child: Column(

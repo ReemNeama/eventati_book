@@ -51,7 +51,12 @@ class TextStyles {
   static final TextStyle caption = GoogleFonts.poppins(
     fontSize: 12,
     fontWeight: FontWeight.w400,
-    color: Color.fromRGBO(AppColors.disabled.r.toInt(), AppColors.disabled.g.toInt(), AppColors.disabled.b.toInt(), 0.6),
+    color: Color.fromRGBO(
+      AppColors.disabled.r.toInt(),
+      AppColors.disabled.g.toInt(),
+      AppColors.disabled.b.toInt(),
+      0.6,
+    ),
   );
 
   /// Chip text style for tags and chips

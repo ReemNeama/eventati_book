@@ -103,7 +103,9 @@ class MilestoneCard extends StatelessWidget {
               // Title
               Text(
                 milestone.title,
-                style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.bold),
+                style: TextStyles.bodyLarge.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 8),

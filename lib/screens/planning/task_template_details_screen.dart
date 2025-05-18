@@ -170,7 +170,10 @@ class _TaskTemplateDetailsScreenState extends State<TaskTemplateDetailsScreen> {
                   trailing: Text('${task.daysBeforeEvent} days before'),
                   leading:
                       task.isImportant
-                          ? const Icon(Icons.star, color: AppColors.ratingStarColor)
+                          ? const Icon(
+                            Icons.star,
+                            color: AppColors.ratingStarColor,
+                          )
                           : const Icon(Icons.check_circle_outline),
                 ),
               );

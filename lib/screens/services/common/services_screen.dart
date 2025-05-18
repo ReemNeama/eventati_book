@@ -47,7 +47,15 @@ class _ServicesScreenState extends State<ServicesScreen>
           controller: _tabController,
           indicatorColor: primaryColor,
           labelColor: isDarkMode ? Colors.white : primaryColor,
-          unselectedLabelColor: isDarkMode ? Color.fromRGBO(Colors.white.r.toInt(), Colors.white.g.toInt(), Colors.white.b.toInt(), 0.7) : AppColors.textSecondary,
+          unselectedLabelColor:
+              isDarkMode
+                  ? Color.fromRGBO(
+                    Colors.white.r.toInt(),
+                    Colors.white.g.toInt(),
+                    Colors.white.b.toInt(),
+                    0.7,
+                  )
+                  : AppColors.textSecondary,
           tabs: const [
             Tab(text: 'Venues'),
             Tab(text: 'Catering'),

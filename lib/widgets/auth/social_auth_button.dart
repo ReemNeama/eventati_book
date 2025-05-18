@@ -63,7 +63,14 @@ class SocialAuthButton extends StatelessWidget {
               borderRadius: BorderRadius.circular(
                 AppConstants.smallBorderRadius,
               ),
-              side: BorderSide(color: Color.fromRGBO(AppColors.disabled.r.toInt(), AppColors.disabled.g.toInt(), AppColors.disabled.b.toInt(), 0.3)),
+              side: BorderSide(
+                color: Color.fromRGBO(
+                  AppColors.disabled.r.toInt(),
+                  AppColors.disabled.g.toInt(),
+                  AppColors.disabled.b.toInt(),
+                  0.3,
+                ),
+              ),
             ),
           ),
           elevation: WidgetStateProperty.all(1),
@@ -76,10 +83,7 @@ class SocialAuthButton extends StatelessWidget {
             else if (imagePath != null)
               Image.asset(imagePath!, height: 24, width: 24),
             const SizedBox(width: 12),
-            Text(
-              text,
-              style: TextStyles.bodyLarge,
-            ),
+            Text(text, style: TextStyles.bodyLarge),
           ],
         ),
       ),

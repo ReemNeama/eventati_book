@@ -37,7 +37,15 @@ class _GuestGroupsScreenState extends State<GuestGroupsScreen> {
                 child: Text(
                   'No groups yet. Add your first group!',
                   style: TextStyle(
-                    color: isDarkMode ? Color.fromRGBO(Colors.white.r.toInt(), Colors.white.g.toInt(), Colors.white.b.toInt(), 0.7) : AppColors.textSecondary,
+                    color:
+                        isDarkMode
+                            ? Color.fromRGBO(
+                              Colors.white.r.toInt(),
+                              Colors.white.g.toInt(),
+                              Colors.white.b.toInt(),
+                              0.7,
+                            )
+                            : AppColors.textSecondary,
                   ),
                 ),
               )

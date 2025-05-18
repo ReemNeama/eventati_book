@@ -17,7 +17,7 @@ import 'dart:io';
 void main(List<String> arguments) async {
   final bool dryRun = arguments.contains('--dry-run');
   final bool verbose = arguments.contains('--verbose');
-  
+
   String path = 'lib';
   for (final arg in arguments) {
     if (!arg.startsWith('--') && arg != 'lib') {
@@ -40,11 +40,11 @@ void main(List<String> arguments) async {
   // Process each file
   for (final file in files) {
     final result = await _processFile(file, dryRun, verbose);
-    
+
     if (result.fixedIssues > 0) {
       totalFixedIssues += result.fixedIssues;
       totalFixedFiles++;
-      
+
       if (verbose) {
         print('Fixed ${result.fixedIssues} issues in ${file.path}:');
         for (final fix in result.fixes) {
@@ -153,11 +153,11 @@ String _fixWithOpacityIssues(String content, List<String> fixes) {
     final primaryWithAlphaRegex = RegExp(
       r'static Color primaryWithAlpha\(double opacity\) \{\s*return primary\.withAlpha\(\(opacity \* 255\)\.round\(\)\);\s*\}',
     );
-    const replacement = 
-      'static Color primaryWithAlpha(double opacity) {\n'
-      '    return Color.fromRGBO(primary.r.toInt(), primary.g.toInt(), primary.b.toInt(), opacity);\n'
-      '  }';
-    
+    const replacement =
+        'static Color primaryWithAlpha(double opacity) {\n'
+        '    return Color.fromRGBO(primary.r.toInt(), primary.g.toInt(), primary.b.toInt(), opacity);\n'
+        '  }';
+
     newContent = newContent.replaceAll(primaryWithAlphaRegex, replacement);
     if (newContent != content) {
       fixes.add('Replaced primaryWithAlpha method with Color.fromRGBO version');

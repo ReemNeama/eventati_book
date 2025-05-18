@@ -7,11 +7,13 @@ import 'package:eventati_book/routing/route_arguments.dart';
 import 'package:eventati_book/routing/route_analytics.dart';
 import 'package:eventati_book/routing/route_performance.dart';
 import 'package:eventati_book/screens/screens.dart';
+import 'package:eventati_book/screens/settings/biometric_settings_screen.dart';
 import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/services/supabase/database/service_database_service.dart';
 import 'package:eventati_book/services/supabase/database/booking_database_service.dart';
 import 'package:eventati_book/di/service_locator.dart';
 import 'package:eventati_book/providers/planning_providers/task_template_provider.dart';
+import 'package:eventati_book/screens/booking/pre_checkout_comparison_screen.dart';
 
 /// Router class for handling all navigation in the app
 class AppRouter {
@@ -102,6 +104,18 @@ class AppRouter {
                 serviceName: args.serviceName,
                 basePrice: args.basePrice,
                 bookingId: args.bookingId,
+                eventId: args.eventId,
+                eventName: args.eventName,
+              ),
+        );
+
+      case RouteNames.preCheckoutComparison:
+        final args = settings.arguments as PreCheckoutComparisonArguments;
+        return MaterialPageRoute(
+          builder:
+              (context) => PreCheckoutComparisonScreen(
+                serviceType: args.serviceType,
+                serviceIds: args.serviceIds,
                 eventId: args.eventId,
                 eventName: args.eventName,
               ),
@@ -414,6 +428,11 @@ class AppRouter {
                 initialQuery: args?.initialQuery,
                 initialCategory: args?.initialCategory,
               ),
+        );
+
+      case RouteNames.biometricSettings:
+        return MaterialPageRoute(
+          builder: (context) => const BiometricSettingsScreen(),
         );
 
       case RouteNames.budgetOverview:
