@@ -3,7 +3,6 @@ import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/utils.dart';
 
-
 /// Error screen type for different visual presentations
 enum ErrorScreenType {
   /// Standard full-screen error
@@ -145,7 +144,15 @@ class ErrorScreen extends StatelessWidget {
               AppColors.disabled.b.toInt(),
               0.1,
             );
-    final textColor = isDarkMode ? Colors.white70 : Colors.black87;
+    final textColor =
+        isDarkMode
+            ? Color.fromRGBO(
+              Colors.white.r.toInt(),
+              Colors.white.g.toInt(),
+              Colors.white.b.toInt(),
+              0.7,
+            )
+            : AppColors.textPrimary;
 
     // Get responsive values
     final isTablet =
@@ -223,7 +230,15 @@ class ErrorScreen extends StatelessWidget {
                     Text(
                       'Error code: $errorCode',
                       style: TextStyle(
-                        color: isDarkMode ? Colors.white60 : Colors.black54,
+                        color:
+                            isDarkMode
+                                ? Color.fromRGBO(
+                                  Colors.white.r.toInt(),
+                                  Colors.white.g.toInt(),
+                                  Colors.white.b.toInt(),
+                                  0.6,
+                                )
+                                : AppColors.textSecondary,
                         fontSize: 14,
                       ),
                       textAlign: TextAlign.center,
@@ -254,7 +269,15 @@ class ErrorScreen extends StatelessWidget {
                       child: Text(
                         details ?? '',
                         style: TextStyle(
-                          color: isDarkMode ? Colors.white60 : Colors.black54,
+                          color:
+                              isDarkMode
+                                  ? Color.fromRGBO(
+                                    Colors.white.r.toInt(),
+                                    Colors.white.g.toInt(),
+                                    Colors.white.b.toInt(),
+                                    0.6,
+                                  )
+                                  : AppColors.textSecondary,
                           fontSize: 14,
                           fontFamily: 'monospace',
                         ),
@@ -302,7 +325,15 @@ class ErrorScreen extends StatelessWidget {
                     Text(
                       'Need help? Contact $supportContact',
                       style: TextStyle(
-                        color: isDarkMode ? Colors.white60 : Colors.black54,
+                        color:
+                            isDarkMode
+                                ? Color.fromRGBO(
+                                  Colors.white.r.toInt(),
+                                  Colors.white.g.toInt(),
+                                  Colors.white.b.toInt(),
+                                  0.6,
+                                )
+                                : AppColors.textSecondary,
                         fontSize: 14,
                       ),
                       textAlign: TextAlign.center,

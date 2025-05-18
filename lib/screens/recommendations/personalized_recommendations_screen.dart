@@ -5,7 +5,6 @@ import 'package:eventati_book/providers/providers.dart';
 import 'package:eventati_book/utils/core/constants.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 
-
 /// Screen for displaying personalized recommendations based on wizard data
 class PersonalizedRecommendationsScreen extends StatefulWidget {
   /// Creates a new personalized recommendations screen

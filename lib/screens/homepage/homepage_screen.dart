@@ -437,7 +437,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
       {
         'title': 'Photography',
         'icon': Icons.camera_alt,
-        'color': Colors.purple,
+        'color': AppColors.primary,
         'onTap': () {
           // Navigate to photography tab in services screen
         },

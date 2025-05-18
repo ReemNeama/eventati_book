@@ -6,7 +6,6 @@ import 'package:eventati_book/screens/planning/widgets/task_card.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/utils/core/constants.dart';
 
-
 /// A widget that visualizes task dependencies as a graph
 class DependencyGraph extends StatefulWidget {
   /// The list of tasks

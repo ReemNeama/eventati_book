@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
+import 'package:eventati_book/styles/app_colors.dart';
 
 
 /// Model representing an annotation or highlight in a comparison
@@ -35,7 +36,7 @@ class ComparisonAnnotation {
     Color? color,
     DateTime? createdAt,
   }) : id = id ?? const Uuid().v4(),
-       colorValue = color?.toARGB32() ?? Colors.yellow.toARGB32(),
+       colorValue = color?.toARGB32() ?? AppColors.warning.toARGB32(),
        createdAt = createdAt ?? DateTime.now();
 
   /// Get the color as a Color object

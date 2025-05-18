@@ -9,7 +9,6 @@ import 'package:eventati_book/widgets/common/empty_state.dart';
 import 'package:eventati_book/widgets/common/loading_indicator.dart';
 import 'package:flutter/material.dart';
 
-
 import 'package:timeago/timeago.dart' as timeago;
 
 /// Widget for displaying notifications in a dropdown
@@ -337,7 +336,7 @@ class _NotificationCenterState extends State<NotificationCenter> {
       iconColor = AppColors.success;
     } else if (type == notification_model.NotificationType.eventReminder) {
       iconData = Icons.event;
-      iconColor = Colors.purple;
+      iconColor = AppColors.primary;
     } else if (type == notification_model.NotificationType.taskReminder) {
       iconData = Icons.task_alt;
       iconColor = AppColors.warning;

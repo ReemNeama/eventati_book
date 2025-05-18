@@ -4,7 +4,6 @@ import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/utils.dart';
 
-
 /// Builder class for pricing comparison table components
 class PricingComparisonBuilder {
   /// Build calculation parameters section

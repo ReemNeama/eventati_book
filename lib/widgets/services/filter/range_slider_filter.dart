@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 
-
 class RangeSliderFilter extends StatelessWidget {
   final String title;
   final RangeValues currentRange;

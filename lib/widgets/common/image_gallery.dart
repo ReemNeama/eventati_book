@@ -3,7 +3,6 @@ import 'package:eventati_book/widgets/common/cached_network_image_widget.dart';
 import 'package:eventati_book/widgets/details/image_placeholder.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 
-
 /// A widget that displays a gallery of images
 class ImageGallery extends StatefulWidget {
   /// List of image URLs to display

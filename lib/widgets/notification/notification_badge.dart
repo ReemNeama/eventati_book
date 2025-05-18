@@ -5,7 +5,6 @@ import 'package:eventati_book/widgets/notification/notification_center.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-
 /// Widget for displaying a notification badge with unread count
 class NotificationBadge extends StatefulWidget {
   /// Icon to display

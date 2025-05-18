@@ -5,7 +5,6 @@ import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/widgets/recommendations/recommendation_badge.dart';
 
-
 /// Card widget to display a vendor recommendation
 class VendorRecommendationCard extends StatelessWidget {
   /// The recommendation to display
@@ -99,7 +98,7 @@ class VendorRecommendationCard extends StatelessWidget {
                     child: IconButton(
                       icon: Icon(
                         isSaved ? Icons.bookmark : Icons.bookmark_border,
-                        color: isSaved ? Colors.yellow : Colors.white,
+                        color: isSaved ? AppColors.warning : Colors.white,
                       ),
                       onPressed: onSave,
                       tooltip: isSaved ? 'Remove from saved' : 'Save',

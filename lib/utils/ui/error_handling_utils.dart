@@ -3,7 +3,7 @@ import 'package:eventati_book/widgets/common/error_message.dart';
 import 'package:eventati_book/widgets/common/error_screen.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/styles/app_colors.dart';
-
+import 'package:eventati_book/styles/text_styles.dart';
 
 /// Utility functions for error handling
 class ErrorHandlingUtils {
@@ -33,7 +33,7 @@ class ErrorHandlingUtils {
         },
         autoDismiss: false,
       ),
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColors.transparent,
       elevation: 0,
       duration: duration,
       behavior: SnackBarBehavior.floating,
@@ -106,10 +106,17 @@ class ErrorHandlingUtils {
                     ),
                     child: Text(
                       details,
-                      style: TextStyle(
+                      style: TextStyles.bodySmall.copyWith(
                         fontFamily: 'monospace',
-                        fontSize: 12,
-                        color: isDarkMode ? Colors.white70 : Colors.black87,
+                        color:
+                            isDarkMode
+                                ? Color.fromRGBO(
+                                  AppColors.white.r.toInt(),
+                                  AppColors.white.g.toInt(),
+                                  AppColors.white.b.toInt(),
+                                  0.7,
+                                )
+                                : AppColors.textPrimary,
                       ),
                     ),
                   ),
@@ -179,7 +186,7 @@ class ErrorHandlingUtils {
     ScaffoldMessenger.of(context).showMaterialBanner(
       MaterialBanner(
         content: bannerWidget,
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.transparent,
         elevation: 0,
         padding: EdgeInsets.zero,
         leadingPadding: EdgeInsets.zero,

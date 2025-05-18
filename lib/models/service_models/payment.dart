@@ -43,7 +43,7 @@ extension PaymentStatusExtension on PaymentStatus {
       case PaymentStatus.failed:
         return AppColors.error;
       case PaymentStatus.refunded:
-        return Colors.purple;
+        return AppColors.primary;
       case PaymentStatus.cancelled:
         return AppColors.disabled;
     }

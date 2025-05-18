@@ -1,0 +1,23 @@
+name: Style Check
+
+on:
+  push:
+    branches: [ master, firebase-implementation ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  style_check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.10.0'
+          channel: 'stable'
+      - name: Install dependencies
+        run: flutter pub get
+      - name: Run style checks
+        run: dart run tool/enhanced_styles_migration.dart
+      - name: Check for hardcoded styles
+        run: dart run tool/custom_lint_rules.dart

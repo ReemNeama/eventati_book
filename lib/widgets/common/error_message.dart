@@ -631,7 +631,7 @@ class ErrorMessage extends StatelessWidget {
               iconSize: 18,
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
-              color: isDarkMode ? Colors.white70 : Colors.black54,
+              color: isDarkMode ? Color.fromRGBO(Colors.white.r.toInt(), Colors.white.g.toInt(), Colors.white.b.toInt(), 0.7) : AppColors.textSecondary,
               tooltip: 'Dismiss',
             ),
         ],

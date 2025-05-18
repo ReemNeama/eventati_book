@@ -10,7 +10,6 @@ import 'package:provider/provider.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 
-
 /// A form for collecting user feedback
 class FeedbackForm extends StatefulWidget {
   /// The context of the feedback (e.g., screen name)

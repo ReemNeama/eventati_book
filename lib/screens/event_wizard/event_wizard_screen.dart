@@ -15,7 +15,6 @@ import 'package:eventati_book/widgets/event_wizard/wizard_progress_indicator.dar
 import 'package:eventati_book/widgets/milestones/milestone_celebration_overlay.dart';
 import 'package:eventati_book/widgets/supabase_persistence_status.dart';
 
-
 /// A unified wizard screen for creating events of different types
 class EventWizardScreen extends StatefulWidget {
   /// The template for the event type
@@ -227,7 +226,7 @@ class _EventWizardScreenState extends State<EventWizardScreen> {
                           padding: const EdgeInsets.only(top: 20),
                           child: Row(
                             children: [
-                              if (state.currentStep > 0)
+                              if (state.currentStep > 0) ...[
                                 Expanded(
                                   child: ElevatedButton(
                                     onPressed: details.onStepCancel,
@@ -240,8 +239,8 @@ class _EventWizardScreenState extends State<EventWizardScreen> {
                                     ),
                                   ),
                                 ),
-                              if (state.currentStep > 0)
                                 const SizedBox(width: 12),
+                              ],
                               Expanded(
                                 child: ElevatedButton(
                                   onPressed: details.onStepContinue,

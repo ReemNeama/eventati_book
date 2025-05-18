@@ -14,7 +14,6 @@ import 'package:eventati_book/widgets/auth/auth_widgets.dart';
 import 'package:eventati_book/routing/routing.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 
-
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 

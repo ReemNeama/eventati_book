@@ -7,7 +7,6 @@ import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/screens/recommendations/recommendation_screens.dart';
 
-
 /// A section for the home screen that displays personalized recommendations
 class PersonalizedRecommendationsSection extends StatelessWidget {
   /// The event ID to show recommendations for

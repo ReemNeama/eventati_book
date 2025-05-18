@@ -9,7 +9,6 @@ import 'package:eventati_book/widgets/notification/notification_badge.dart';
 import 'package:eventati_book/routing/route_names.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 
-
 /// Main navigation screen that hosts the bottom navigation bar
 /// and manages switching between the main app sections
 class MainNavigationScreen extends StatefulWidget {

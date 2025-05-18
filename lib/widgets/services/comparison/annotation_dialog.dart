@@ -43,18 +43,53 @@ class _AnnotationDialogState extends State<AnnotationDialog> {
   final _contentController = TextEditingController();
   String? _selectedServiceId;
   String? _selectedFeature;
-  Color _selectedColor = Colors.yellow;
+  Color _selectedColor = AppColors.warning;
 
   // Predefined colors for highlights
   final List<Color> _highlightColors = [
-    Colors.yellow,
-    Color.fromRGBO(AppColors.success.r.toInt(), AppColors.success.g.toInt(), AppColors.success.b.toInt(), 0.2),
-    Color.fromRGBO(AppColors.primary.r.toInt(), AppColors.primary.g.toInt(), AppColors.primary.b.toInt(), 0.2),
-    Color.fromRGBO(AppColors.error.r.toInt(), AppColors.error.g.toInt(), AppColors.error.b.toInt(), 0.2),
-    Colors.purple.shade200,
-    Color.fromRGBO(AppColors.warning.r.toInt(), AppColors.warning.g.toInt(), AppColors.warning.b.toInt(), 0.2),
-    Colors.pink.shade200,
-    Colors.teal.shade200,
+    AppColors.warning,
+    Color.fromRGBO(
+      AppColors.success.r.toInt(),
+      AppColors.success.g.toInt(),
+      AppColors.success.b.toInt(),
+      0.2,
+    ),
+    Color.fromRGBO(
+      AppColors.primary.r.toInt(),
+      AppColors.primary.g.toInt(),
+      AppColors.primary.b.toInt(),
+      0.2,
+    ),
+    Color.fromRGBO(
+      AppColors.error.r.toInt(),
+      AppColors.error.g.toInt(),
+      AppColors.error.b.toInt(),
+      0.2,
+    ),
+    Color.fromRGBO(
+      AppColors.primary.r.toInt(),
+      AppColors.primary.g.toInt(),
+      AppColors.primary.b.toInt(),
+      0.5,
+    ),
+    Color.fromRGBO(
+      AppColors.warning.r.toInt(),
+      AppColors.warning.g.toInt(),
+      AppColors.warning.b.toInt(),
+      0.2,
+    ),
+    Color.fromRGBO(
+      AppColors.primary.r.toInt(),
+      AppColors.primary.g.toInt(),
+      AppColors.primary.b.toInt(),
+      0.5,
+    ),
+    Color.fromRGBO(
+      AppColors.info.r.toInt(),
+      AppColors.info.g.toInt(),
+      AppColors.info.b.toInt(),
+      0.5,
+    ),
   ];
 
   @override
@@ -209,7 +244,10 @@ class _AnnotationDialogState extends State<AnnotationDialog> {
                           decoration: BoxDecoration(
                             color: color,
                             border: Border.all(
-                              color: isSelected ? primaryColor : AppColors.disabled,
+                              color:
+                                  isSelected
+                                      ? primaryColor
+                                      : AppColors.disabled,
                               width: isSelected ? 3 : 1,
                             ),
                             borderRadius: BorderRadius.circular(

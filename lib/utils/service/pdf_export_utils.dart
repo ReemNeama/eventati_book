@@ -11,7 +11,6 @@ import 'package:share_plus/share_plus.dart';
 
 import 'package:eventati_book/models/models.dart';
 
-
 /// PDF-specific colors for document styling
 class PdfAppColors {
   static const PdfColor disabled300 = PdfColor.fromInt(0xFFE0E0E0);
@@ -19,10 +18,16 @@ class PdfAppColors {
 }
 
 /// PDF-specific text styles
+// ignore_for_file: prefer_const_constructors
 class PdfTextStyles {
-  static const pw.TextStyle bodySmall = pw.TextStyle(fontSize: 10);
-  static const pw.TextStyle bodyMedium = pw.TextStyle(fontSize: 12);
-  static const pw.TextStyle caption = pw.TextStyle(fontSize: 10, color: PdfAppColors.disabled700);
+  // Note: The PDF library's TextStyle constructor doesn't support the 'const' keyword
+  // Using static final variables to ensure styles are only created once
+  static final pw.TextStyle bodySmall = pw.TextStyle(fontSize: 10);
+  static final pw.TextStyle bodyMedium = pw.TextStyle(fontSize: 12);
+  static final pw.TextStyle caption = pw.TextStyle(
+    fontSize: 8,
+    fontStyle: pw.FontStyle.italic,
+  );
 }
 
 /// Utility class for exporting data to PDF format
@@ -229,10 +234,7 @@ class PDFExportUtils {
               ),
             ],
           ),
-          pw.Text(
-            'Eventati Book',
-            style: PdfTextStyles.bodyMedium,
-          ),
+          pw.Text('Eventati Book', style: PdfTextStyles.bodyMedium),
         ],
       ),
     );

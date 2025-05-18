@@ -4,7 +4,6 @@ import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/utils/core/constants.dart';
 import 'package:intl/intl.dart';
 
-
 /// A card widget that displays task information
 class TaskCard extends StatelessWidget {
   /// The task to display

@@ -24,7 +24,7 @@ class WizardStyles {
         primary: primaryColor,
         onPrimary: Colors.white,
         surface: Colors.white,
-        onSurface: Colors.black87,
+        onSurface: AppColors.textPrimary,
       ),
     );
   }
@@ -78,7 +78,7 @@ class WizardStyles {
 
   /// Get the style for the button text
   static TextStyle getButtonTextStyle() {
-    return TextStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold);
+    return TextStyles.bodyMedium;
   }
 
   /// Get the decoration for the review container
@@ -124,20 +124,20 @@ class WizardStyles {
 
   /// Get the style for the progress text
   static TextStyle getProgressTextStyle() {
-    return TextStyles.bodySmall;
+    return TextStyles.bodyMedium;
   }
 
-  /// Get the decoration for the wizard card
-  static BoxDecoration getWizardCardDecoration() {
+  /// Get the card decoration for wizard components
+  static BoxDecoration getCardDecoration() {
     return BoxDecoration(
-      color: Colors.white,
+      color: AppColors.white,
       borderRadius: BorderRadius.circular(8),
       boxShadow: [
         BoxShadow(
           color: Color.fromRGBO(
-            Colors.black.r.toInt(),
-            Colors.black.g.toInt(),
-            Colors.black.b.toInt(),
+            AppColors.black.r.toInt(),
+            AppColors.black.g.toInt(),
+            AppColors.black.b.toInt(),
             0.10,
           ),
           blurRadius: 4,

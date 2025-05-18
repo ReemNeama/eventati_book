@@ -3,7 +3,6 @@ import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/utils.dart';
 
-
 /// A badge widget to highlight recommended services
 class RecommendedBadge extends StatelessWidget {
   /// The reason why this service is recommended

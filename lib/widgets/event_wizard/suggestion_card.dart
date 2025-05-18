@@ -3,7 +3,6 @@ import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 
-
 /// Card widget to display a suggestion
 class SuggestionCard extends StatelessWidget {
   /// The suggestion to display
@@ -143,9 +142,9 @@ class SuggestionCard extends StatelessWidget {
                       ),
                       decoration: BoxDecoration(
                         color: Color.fromRGBO(
-                          Colors.purple.r.toInt(),
-                          Colors.purple.g.toInt(),
-                          Colors.purple.b.toInt(),
+                          AppColors.primary.r.toInt(),
+                          AppColors.primary.g.toInt(),
+                          AppColors.primary.b.toInt(),
                           0.10,
                         ),
                         borderRadius: BorderRadius.circular(12),
@@ -153,12 +152,12 @@ class SuggestionCard extends StatelessWidget {
                       child: const Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.edit, color: Colors.purple, size: 12),
+                          Icon(Icons.edit, color: AppColors.primary, size: 12),
                           SizedBox(width: 4),
                           Text(
                             'Custom',
                             style: TextStyle(
-                              color: Colors.purple,
+                              color: AppColors.primary,
                               fontSize: 10,
                               fontWeight: FontWeight.bold,
                             ),

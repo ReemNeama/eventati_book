@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:intl/intl.dart';
 
-
 class DateSeparator extends StatelessWidget {
   final DateTime date;
 
@@ -23,7 +22,15 @@ class DateSeparator extends StatelessWidget {
             child: Text(
               dateString,
               style: TextStyle(
-                color: isDarkMode ? Colors.white54 : Colors.black45,
+                color:
+                    isDarkMode
+                        ? Color.fromRGBO(
+                          Colors.white.r.toInt(),
+                          Colors.white.g.toInt(),
+                          Colors.white.b.toInt(),
+                          0.54,
+                        )
+                        : Colors.black45,
                 fontSize: 12,
               ),
             ),

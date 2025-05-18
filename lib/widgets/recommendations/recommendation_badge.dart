@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 
-
 /// A badge widget to highlight recommended services with relevance score
 class RecommendationBadge extends StatelessWidget {
   /// The reason why this service is recommended
@@ -76,7 +75,7 @@ class RecommendationBadge extends StatelessWidget {
       return AppColors.success;
     } else if (score >= 70) {
       // Good match
-      return Colors.lightGreen;
+      return AppColors.success;
     } else if (score >= 50) {
       // Moderate match
       return AppColors.ratingStarColor;

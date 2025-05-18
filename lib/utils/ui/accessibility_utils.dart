@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:eventati_book/styles/app_colors.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 import 'dart:math' as math;
 
@@ -267,29 +268,29 @@ class AccessibilityUtils {
         255;
 
     // If the background is dark, use white text; otherwise, use black text
-    return luminance > 0.5 ? Colors.black : Colors.white;
+    return luminance > 0.5 ? AppColors.black : AppColors.white;
   }
 
   /// Get a high contrast color pair (background and text)
   static Map<String, Color> getHighContrastColorPair(bool isDarkMode) {
     if (isDarkMode) {
       // High contrast dark mode: very dark background, very light text
-      return {'background': Colors.black, 'text': Colors.white};
+      return {'background': AppColors.black, 'text': AppColors.white};
     } else {
       // High contrast light mode: very light background, very dark text
-      return {'background': Colors.white, 'text': Colors.black};
+      return {'background': AppColors.white, 'text': AppColors.black};
     }
   }
 
   /// Get a high contrast border color
   static Color getHighContrastBorderColor(bool isDarkMode) {
-    return isDarkMode ? Colors.white : Colors.black;
+    return isDarkMode ? AppColors.white : AppColors.black;
   }
 
   /// Get a high contrast primary color
   static Color getHighContrastPrimaryColor(bool isDarkMode) {
     return isDarkMode
-        ? Colors.yellow
+        ? AppColors.warning
         : Color.fromRGBO(
           AppColors.primary.r.toInt(),
           AppColors.primary.g.toInt(),
@@ -300,7 +301,14 @@ class AccessibilityUtils {
 
   /// Get a high contrast secondary color
   static Color getHighContrastSecondaryColor(bool isDarkMode) {
-    return isDarkMode ? Colors.cyan : Colors.purple.shade900;
+    return isDarkMode
+        ? AppColors.info
+        : Color.fromRGBO(
+          AppColors.primary.r.toInt(),
+          AppColors.primary.g.toInt(),
+          AppColors.primary.b.toInt(),
+          0.9,
+        );
   }
 
   /// Get a high contrast error color
@@ -396,17 +404,30 @@ class AccessibilityUtils {
         brightness: isDarkMode ? Brightness.dark : Brightness.light,
       ),
       textTheme: TextTheme(
-        bodyLarge: TextStyle(color: textColor),
-        bodyMedium: TextStyle(color: textColor),
-        bodySmall: TextStyle(color: textColor),
-        titleLarge: TextStyle(color: textColor),
-        titleMedium: TextStyle(color: textColor),
-        titleSmall: TextStyle(color: textColor),
-        labelLarge: TextStyle(color: textColor),
-        labelMedium: TextStyle(color: textColor),
-        labelSmall: TextStyle(color: textColor),
+        bodyLarge: TextStyles.bodyLarge.copyWith(color: textColor),
+        bodyMedium: TextStyles.bodyMedium.copyWith(color: textColor),
+        bodySmall: TextStyles.bodySmall.copyWith(color: textColor),
+        titleLarge: TextStyles.title.copyWith(color: textColor),
+        titleMedium: TextStyles.subtitle.copyWith(color: textColor),
+        titleSmall: TextStyles.sectionTitle.copyWith(color: textColor),
+        labelLarge: TextStyles.buttonText.copyWith(color: textColor),
+        labelMedium: TextStyles.bodyMedium.copyWith(color: textColor),
+        labelSmall: TextStyles.caption.copyWith(color: textColor),
       ),
-      dividerColor: isDarkMode ? Colors.white54 : Colors.black38,
+      dividerColor:
+          isDarkMode
+              ? Color.fromRGBO(
+                AppColors.white.r.toInt(),
+                AppColors.white.g.toInt(),
+                AppColors.white.b.toInt(),
+                0.54,
+              )
+              : Color.fromRGBO(
+                AppColors.black.r.toInt(),
+                AppColors.black.g.toInt(),
+                AppColors.black.b.toInt(),
+                0.38,
+              ),
       iconTheme: IconThemeData(color: textColor),
       appBarTheme: AppBarTheme(
         backgroundColor: primaryColor,
@@ -438,9 +459,17 @@ class AccessibilityUtils {
         errorBorder: OutlineInputBorder(
           borderSide: BorderSide(color: errorColor),
         ),
-        labelStyle: TextStyle(color: textColor),
-        hintStyle: TextStyle(
-          color: isDarkMode ? Colors.white70 : Colors.black54,
+        labelStyle: TextStyles.bodyMedium.copyWith(color: textColor),
+        hintStyle: TextStyles.bodyMedium.copyWith(
+          color:
+              isDarkMode
+                  ? Color.fromRGBO(
+                    AppColors.white.r.toInt(),
+                    AppColors.white.g.toInt(),
+                    AppColors.white.b.toInt(),
+                    0.7,
+                  )
+                  : AppColors.textSecondary,
         ),
       ),
     );

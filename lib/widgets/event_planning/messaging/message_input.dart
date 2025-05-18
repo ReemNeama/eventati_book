@@ -3,7 +3,6 @@ import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 
-
 class MessageInput extends StatefulWidget {
   final Function(String) onSendMessage;
 
@@ -104,8 +103,16 @@ class _MessageInputState extends State<MessageInput> {
               AppColors.disabled.b.toInt(),
               0.1,
             );
-    final textColor = isDarkMode ? Colors.white : Colors.black87;
-    final hintColor = isDarkMode ? Colors.white70 : Colors.black54;
+    final textColor = isDarkMode ? Colors.white : AppColors.textPrimary;
+    final hintColor =
+        isDarkMode
+            ? Color.fromRGBO(
+              Colors.white.r.toInt(),
+              Colors.white.g.toInt(),
+              Colors.white.b.toInt(),
+              0.7,
+            )
+            : AppColors.textSecondary;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),

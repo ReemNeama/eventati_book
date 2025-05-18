@@ -11,7 +11,6 @@ import 'package:eventati_book/widgets/common/error_message.dart';
 import 'package:eventati_book/screens/event_wizard/create_suggestion_screen.dart';
 import 'package:eventati_book/styles/text_styles.dart';
 
-
 /// Screen to display suggestions based on the wizard state
 class SuggestionScreen extends StatefulWidget {
   const SuggestionScreen({super.key});

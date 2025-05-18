@@ -3,7 +3,6 @@ import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/utils.dart';
 
-
 class PriceRangeFilter extends StatelessWidget {
   final String title;
   final RangeValues currentRange;

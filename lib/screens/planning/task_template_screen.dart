@@ -10,7 +10,6 @@ import 'package:eventati_book/utils/logger.dart';
 import 'package:eventati_book/widgets/common/loading_indicator.dart';
 import 'package:eventati_book/styles/text_styles.dart';
 
-
 /// Screen for managing task templates
 class TaskTemplateScreen extends StatefulWidget {
   /// Constructor

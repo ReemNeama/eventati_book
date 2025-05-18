@@ -10,7 +10,6 @@ import 'package:eventati_book/widgets/event_planning/messaging/message_input.dar
 import 'package:eventati_book/widgets/event_planning/messaging/date_separator.dart';
 import 'package:intl/intl.dart';
 
-
 class ConversationScreen extends StatefulWidget {
   final String eventId;
   final String eventName;
@@ -94,14 +93,29 @@ class _ConversationScreenState extends State<ConversationScreen> {
                           Icon(
                             Icons.message,
                             size: 64,
-                            color: isDarkMode ? Colors.white54 : Colors.black26,
+                            color:
+                                isDarkMode
+                                    ? Color.fromRGBO(
+                                      Colors.white.r.toInt(),
+                                      Colors.white.g.toInt(),
+                                      Colors.white.b.toInt(),
+                                      0.54,
+                                    )
+                                    : Colors.black26,
                           ),
                           const SizedBox(height: 16),
                           Text(
                             'No messages yet',
                             style: TextStyle(
                               color:
-                                  isDarkMode ? Colors.white70 : Colors.black54,
+                                  isDarkMode
+                                      ? Color.fromRGBO(
+                                        Colors.white.r.toInt(),
+                                        Colors.white.g.toInt(),
+                                        Colors.white.b.toInt(),
+                                        0.7,
+                                      )
+                                      : AppColors.textSecondary,
                               fontSize: 16,
                             ),
                           ),
@@ -110,7 +124,14 @@ class _ConversationScreenState extends State<ConversationScreen> {
                             'Start a conversation with ${widget.vendorName}',
                             style: TextStyle(
                               color:
-                                  isDarkMode ? Colors.white70 : Colors.black54,
+                                  isDarkMode
+                                      ? Color.fromRGBO(
+                                        Colors.white.r.toInt(),
+                                        Colors.white.g.toInt(),
+                                        Colors.white.b.toInt(),
+                                        0.7,
+                                      )
+                                      : AppColors.textSecondary,
                             ),
                           ),
                         ],

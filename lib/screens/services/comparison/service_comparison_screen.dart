@@ -146,7 +146,7 @@ class _ServiceComparisonScreenState extends State<ServiceComparisonScreen>
           controller: _tabController,
           indicatorColor: primaryColor,
           labelColor: isDarkMode ? Colors.white : primaryColor,
-          unselectedLabelColor: isDarkMode ? Colors.white70 : Colors.black54,
+          unselectedLabelColor: isDarkMode ? Color.fromRGBO(Colors.white.r.toInt(), Colors.white.g.toInt(), Colors.white.b.toInt(), 0.7) : AppColors.textSecondary,
           tabs: const [
             Tab(text: 'Overview'),
             Tab(text: 'Features'),

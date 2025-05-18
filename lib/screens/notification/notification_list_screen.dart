@@ -294,7 +294,7 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
       iconColor = AppColors.success;
     } else if (type == notification_model.NotificationType.eventReminder) {
       iconData = Icons.event;
-      iconColor = Colors.purple;
+      iconColor = AppColors.primary;
     } else if (type == notification_model.NotificationType.taskReminder) {
       iconData = Icons.task_alt;
       iconColor = AppColors.warning;

@@ -58,8 +58,8 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
                           style: TextStyle(
                             color:
                                 UIUtils.isDarkMode(context)
-                                    ? Colors.white70
-                                    : Colors.black54,
+                                    ? Color.fromRGBO(Colors.white.r.toInt(), Colors.white.g.toInt(), Colors.white.b.toInt(), 0.7)
+                                    : AppColors.textSecondary,
                           ),
                         ),
                       )

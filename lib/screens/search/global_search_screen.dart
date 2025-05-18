@@ -206,7 +206,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen>
           ],
           indicatorColor: Colors.white,
           labelColor: Colors.white,
-          unselectedLabelColor: Colors.white70,
+          unselectedLabelColor: Color.fromRGBO(Colors.white.r.toInt(), Colors.white.g.toInt(), Colors.white.b.toInt(), 0.7),
         ),
       ),
       body:

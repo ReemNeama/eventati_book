@@ -5,7 +5,6 @@ import 'package:eventati_book/screens/event_wizard/wizard_factory.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/styles/text_styles.dart';
 
-
 class EventSelectionScreen extends StatefulWidget {
   const EventSelectionScreen({super.key});
 

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:eventati_book/utils/ui/navigation_utils.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 
-
 /// Utility functions for UI-related operations
 class UIUtils {
   /// Show a snackbar with a message

@@ -132,13 +132,13 @@ class SuggestionTags {
     } else if (cateringTags.contains(tag)) {
       return AppColors.warning;
     } else if (photographyTags.contains(tag)) {
-      return Colors.purple;
+      return AppColors.primary;
     } else if (entertainmentTags.contains(tag)) {
       return AppColors.success;
     } else if (decorationTags.contains(tag)) {
-      return Colors.pink;
+      return AppColors.primary;
     } else if (styleTags.contains(tag)) {
-      return Colors.teal;
+      return AppColors.info;
     } else {
       return AppColors.disabled;
     }

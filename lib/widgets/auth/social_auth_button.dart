@@ -48,7 +48,7 @@ class SocialAuthButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bgColor = backgroundColor ?? Colors.white;
-    final txtColor = textColor ?? Colors.black87;
+    final txtColor = textColor ?? AppColors.textPrimary;
 
     return SizedBox(
       width: width ?? double.infinity,

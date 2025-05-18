@@ -3,7 +3,6 @@ import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/utils.dart';
 
-
 /// A dropdown for selecting sorting options
 class SortingOptionsDropdown extends StatelessWidget {
   /// The available sorting options

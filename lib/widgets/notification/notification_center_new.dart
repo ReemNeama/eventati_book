@@ -12,7 +12,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
-
 /// Widget for displaying notifications in a dropdown
 class NotificationCenter extends StatelessWidget {
   /// Constructor
@@ -289,7 +288,7 @@ class NotificationCenter extends StatelessWidget {
       iconColor = AppColors.success;
     } else if (type == notification_model.NotificationType.eventReminder) {
       iconData = Icons.event;
-      iconColor = Colors.purple;
+      iconColor = AppColors.primary;
     } else if (type == notification_model.NotificationType.taskReminder) {
       iconData = Icons.task_alt;
       iconColor = AppColors.warning;

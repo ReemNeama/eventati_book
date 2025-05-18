@@ -4,7 +4,7 @@ import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/core/constants.dart';
 
 import 'package:eventati_book/utils/utils.dart';
-
+import 'package:eventati_book/styles/text_styles.dart';
 
 /// A class that defines the application's theme using the colors from AppColors.
 /// This provides a consistent look and feel across the entire application.
@@ -103,28 +103,58 @@ class AppTheme {
           horizontal: AppConstants.smallPadding,
           vertical: AppConstants.smallPadding / 2,
         ),
-        labelStyle: const TextStyle(color: AppColors.textPrimary),
-        secondaryLabelStyle: const TextStyle(color: Colors.white),
+        labelStyle: TextStyles.bodyMedium.copyWith(
+          color: AppColors.textPrimary,
+        ),
+        secondaryLabelStyle: TextStyles.bodyMedium.copyWith(
+          color: Colors.white,
+        ),
         brightness: Brightness.light,
       ),
 
       // Text themes
-      textTheme: const TextTheme(
-        displayLarge: TextStyle(color: AppColors.textPrimary),
-        displayMedium: TextStyle(color: AppColors.textPrimary),
-        displaySmall: TextStyle(color: AppColors.textPrimary),
-        headlineLarge: TextStyle(color: AppColors.textPrimary),
-        headlineMedium: TextStyle(color: AppColors.textPrimary),
-        headlineSmall: TextStyle(color: AppColors.textPrimary),
-        titleLarge: TextStyle(color: AppColors.textPrimary),
-        titleMedium: TextStyle(color: AppColors.textPrimary),
-        titleSmall: TextStyle(color: AppColors.textPrimary),
-        bodyLarge: TextStyle(color: AppColors.textPrimary),
-        bodyMedium: TextStyle(color: AppColors.textPrimary),
-        bodySmall: TextStyle(color: AppColors.textSecondary),
-        labelLarge: TextStyle(color: AppColors.textPrimary),
-        labelMedium: TextStyle(color: AppColors.textPrimary),
-        labelSmall: TextStyle(color: AppColors.textSecondary),
+      textTheme: TextTheme(
+        displayLarge: TextStyles.title.copyWith(
+          color: AppColors.textPrimary,
+          fontSize: 32,
+        ),
+        displayMedium: TextStyles.title.copyWith(
+          color: AppColors.textPrimary,
+          fontSize: 28,
+        ),
+        displaySmall: TextStyles.title.copyWith(color: AppColors.textPrimary),
+        headlineLarge: TextStyles.title.copyWith(color: AppColors.textPrimary),
+        headlineMedium: TextStyles.subtitle.copyWith(
+          color: AppColors.textPrimary,
+        ),
+        headlineSmall: TextStyles.sectionTitle.copyWith(
+          color: AppColors.textPrimary,
+        ),
+        titleLarge: TextStyles.sectionTitle.copyWith(
+          color: AppColors.textPrimary,
+        ),
+        titleMedium: TextStyles.bodyLarge.copyWith(
+          color: AppColors.textPrimary,
+          fontWeight: FontWeight.w600,
+        ),
+        titleSmall: TextStyles.bodyMedium.copyWith(
+          color: AppColors.textPrimary,
+          fontWeight: FontWeight.w600,
+        ),
+        bodyLarge: TextStyles.bodyLarge.copyWith(color: AppColors.textPrimary),
+        bodyMedium: TextStyles.bodyMedium.copyWith(
+          color: AppColors.textPrimary,
+        ),
+        bodySmall: TextStyles.bodySmall.copyWith(
+          color: AppColors.textSecondary,
+        ),
+        labelLarge: TextStyles.buttonText.copyWith(
+          color: AppColors.textPrimary,
+        ),
+        labelMedium: TextStyles.bodyMedium.copyWith(
+          color: AppColors.textPrimary,
+        ),
+        labelSmall: TextStyles.caption.copyWith(color: AppColors.textSecondary),
       ),
 
       // Bottom navigation bar theme
@@ -214,8 +244,12 @@ class AppTheme {
           horizontal: AppConstants.mediumPadding,
           vertical: AppConstants.smallPadding + 4,
         ),
-        hintStyle: const TextStyle(color: AppColorsDark.textHint),
-        labelStyle: const TextStyle(color: AppColorsDark.textSecondary),
+        hintStyle: TextStyles.bodyMedium.copyWith(
+          color: AppColorsDark.textHint,
+        ),
+        labelStyle: TextStyles.bodyMedium.copyWith(
+          color: AppColorsDark.textSecondary,
+        ),
         prefixIconColor: AppColorsDark.textSecondary,
         suffixIconColor: AppColorsDark.textSecondary,
       ),
@@ -229,28 +263,66 @@ class AppTheme {
           horizontal: AppConstants.smallPadding,
           vertical: AppConstants.smallPadding / 2,
         ),
-        labelStyle: const TextStyle(color: AppColorsDark.textPrimary),
-        secondaryLabelStyle: const TextStyle(color: Colors.white),
+        labelStyle: TextStyles.bodyMedium.copyWith(
+          color: AppColorsDark.textPrimary,
+        ),
+        secondaryLabelStyle: TextStyles.bodyMedium.copyWith(
+          color: Colors.white,
+        ),
         brightness: Brightness.dark,
       ),
 
       // Text themes
-      textTheme: const TextTheme(
-        displayLarge: TextStyle(color: AppColorsDark.textPrimary),
-        displayMedium: TextStyle(color: AppColorsDark.textPrimary),
-        displaySmall: TextStyle(color: AppColorsDark.textPrimary),
-        headlineLarge: TextStyle(color: AppColorsDark.textPrimary),
-        headlineMedium: TextStyle(color: AppColorsDark.textPrimary),
-        headlineSmall: TextStyle(color: AppColorsDark.textPrimary),
-        titleLarge: TextStyle(color: AppColorsDark.textPrimary),
-        titleMedium: TextStyle(color: AppColorsDark.textPrimary),
-        titleSmall: TextStyle(color: AppColorsDark.textPrimary),
-        bodyLarge: TextStyle(color: AppColorsDark.textPrimary),
-        bodyMedium: TextStyle(color: AppColorsDark.textPrimary),
-        bodySmall: TextStyle(color: AppColorsDark.textSecondary),
-        labelLarge: TextStyle(color: AppColorsDark.textPrimary),
-        labelMedium: TextStyle(color: AppColorsDark.textPrimary),
-        labelSmall: TextStyle(color: AppColorsDark.textSecondary),
+      textTheme: TextTheme(
+        displayLarge: TextStyles.title.copyWith(
+          color: AppColorsDark.textPrimary,
+          fontSize: 32,
+        ),
+        displayMedium: TextStyles.title.copyWith(
+          color: AppColorsDark.textPrimary,
+          fontSize: 28,
+        ),
+        displaySmall: TextStyles.title.copyWith(
+          color: AppColorsDark.textPrimary,
+        ),
+        headlineLarge: TextStyles.title.copyWith(
+          color: AppColorsDark.textPrimary,
+        ),
+        headlineMedium: TextStyles.subtitle.copyWith(
+          color: AppColorsDark.textPrimary,
+        ),
+        headlineSmall: TextStyles.sectionTitle.copyWith(
+          color: AppColorsDark.textPrimary,
+        ),
+        titleLarge: TextStyles.sectionTitle.copyWith(
+          color: AppColorsDark.textPrimary,
+        ),
+        titleMedium: TextStyles.bodyLarge.copyWith(
+          color: AppColorsDark.textPrimary,
+          fontWeight: FontWeight.w600,
+        ),
+        titleSmall: TextStyles.bodyMedium.copyWith(
+          color: AppColorsDark.textPrimary,
+          fontWeight: FontWeight.w600,
+        ),
+        bodyLarge: TextStyles.bodyLarge.copyWith(
+          color: AppColorsDark.textPrimary,
+        ),
+        bodyMedium: TextStyles.bodyMedium.copyWith(
+          color: AppColorsDark.textPrimary,
+        ),
+        bodySmall: TextStyles.bodySmall.copyWith(
+          color: AppColorsDark.textSecondary,
+        ),
+        labelLarge: TextStyles.buttonText.copyWith(
+          color: AppColorsDark.textPrimary,
+        ),
+        labelMedium: TextStyles.bodyMedium.copyWith(
+          color: AppColorsDark.textPrimary,
+        ),
+        labelSmall: TextStyles.caption.copyWith(
+          color: AppColorsDark.textSecondary,
+        ),
       ),
 
       // Bottom navigation bar theme

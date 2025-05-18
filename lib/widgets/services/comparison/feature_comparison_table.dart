@@ -6,7 +6,6 @@ import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/widgets/services/comparison/feature_value_builder.dart';
 import 'package:eventati_book/widgets/services/comparison/feature_list_builder.dart';
 
-
 /// Table widget for comparing features of services
 class FeatureComparisonTable extends StatelessWidget {
   /// The services to compare

@@ -230,7 +230,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                       const SizedBox(height: 20),
                       const Text(
                         'Enter your new password',
-                        style: TextStyle(color: Colors.white70),
+                        style: TextStyle(
+                          color: Color.fromRGBO(255, 255, 255, 0.7),
+                        ),
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 50),
@@ -281,7 +283,12 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                           );
                         },
                         style: TextButton.styleFrom(
-                          foregroundColor: Colors.white70,
+                          foregroundColor: const Color.fromRGBO(
+                            255,
+                            255,
+                            255,
+                            0.7,
+                          ),
                         ),
                         child: const Text('Back to Login'),
                       ),

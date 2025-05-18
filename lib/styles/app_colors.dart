@@ -52,12 +52,20 @@ class AppColors {
 
   // Alpha values for semi-transparent colors
   static Color primaryWithAlpha(double opacity) {
-    return primary.withAlpha((opacity * 255).round());
+    return Color.fromRGBO(
+      primary.r.toInt(),
+      primary.g.toInt(),
+      primary.b.toInt(),
+      opacity,
+    );
   }
 
   // Specific UI element colors
-  static Color filterBarBackground = primary.withAlpha(
-    26,
+  static Color filterBarBackground = Color.fromRGBO(
+    primary.r.toInt(),
+    primary.g.toInt(),
+    primary.b.toInt(),
+    0.1,
   ); // Very light primary color
   static const Color chipBackground = Colors.white;
   static const Color ratingStarColor = Colors.amber;

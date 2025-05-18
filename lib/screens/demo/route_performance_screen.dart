@@ -4,7 +4,6 @@ import 'package:eventati_book/routing/route_names.dart';
 import 'package:eventati_book/utils/ui/navigation_utils.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 
-
 /// A screen that displays route performance metrics
 class RoutePerformanceScreen extends StatefulWidget {
   /// Creates a new RoutePerformanceScreen

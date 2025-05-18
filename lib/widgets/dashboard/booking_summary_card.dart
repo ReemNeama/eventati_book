@@ -165,7 +165,7 @@ class BookingSummaryCard extends StatelessWidget {
       case 'catering':
         return AppColors.warning;
       case 'photography':
-        return Colors.purple;
+        return AppColors.primary;
       case 'planner':
         return AppColors.success;
       default:

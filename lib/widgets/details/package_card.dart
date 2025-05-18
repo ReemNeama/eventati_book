@@ -3,7 +3,6 @@ import 'package:eventati_book/utils/utils.dart';
 
 import 'package:eventati_book/styles/text_styles.dart';
 
-
 class PackageCard extends StatelessWidget {
   final String name;
   final String description;

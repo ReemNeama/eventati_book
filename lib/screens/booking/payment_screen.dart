@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
-
 /// Screen for processing payments
 class PaymentScreen extends StatefulWidget {
   /// The booking to process payment for

@@ -279,7 +279,7 @@ class EventPlanningToolsScreen extends StatelessWidget {
       {
         'title': 'Task Dependencies',
         'icon': Icons.account_tree,
-        'color': Colors.teal,
+        'color': AppColors.info,
         'onTap': (BuildContext context) {
           NavigationUtils.navigateToNamed(
             context,
@@ -309,7 +309,7 @@ class EventPlanningToolsScreen extends StatelessWidget {
       {
         'title': 'Vendor Communication',
         'icon': Icons.message,
-        'color': Colors.purple,
+        'color': AppColors.primary,
         'onTap': (BuildContext context) {
           NavigationUtils.navigateToNamed(
             context,

@@ -139,8 +139,8 @@ class EmptyState extends StatelessWidget {
     final primaryColor =
         buttonColor ?? (isDarkMode ? AppColorsDark.primary : AppColors.primary);
     final defaultTextColor =
-        textColor ?? (isDarkMode ? Colors.white70 : Colors.black87);
-    final secondaryTextColor = isDarkMode ? Colors.white54 : Colors.black54;
+        textColor ?? (isDarkMode ? Color.fromRGBO(Colors.white.r.toInt(), Colors.white.g.toInt(), Colors.white.b.toInt(), 0.7) : AppColors.textPrimary);
+    final secondaryTextColor = isDarkMode ? Color.fromRGBO(Colors.white.r.toInt(), Colors.white.g.toInt(), Colors.white.b.toInt(), 0.54) : AppColors.textSecondary;
     final defaultIconColor =
         iconColor ?? (isDarkMode ? Color.fromRGBO(AppColors.disabled.r.toInt(), AppColors.disabled.g.toInt(), AppColors.disabled.b.toInt(), 0.6) : Color.fromRGBO(AppColors.disabled.r.toInt(), AppColors.disabled.g.toInt(), AppColors.disabled.b.toInt(), 0.4));
 

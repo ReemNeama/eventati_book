@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:eventati_book/utils/utils.dart';
-
+import 'package:eventati_book/styles/app_colors.dart';
 
 class VerificationCodeInput extends StatelessWidget {
   final List<TextEditingController> controllers;
@@ -29,7 +29,7 @@ class VerificationCodeInput extends StatelessWidget {
             focusNode: focusNodes[index],
             onChanged: (value) => onCodeChanged(value, index),
             style: const TextStyle(
-              color: Colors.black87,
+              color: AppColors.textPrimary,
               fontSize: 24,
               fontWeight: FontWeight.bold,
             ),
@@ -44,7 +44,9 @@ class VerificationCodeInput extends StatelessWidget {
               filled: true,
               fillColor: Colors.white,
               enabledBorder: OutlineInputBorder(
-                borderSide: const BorderSide(color: Colors.white70),
+                borderSide: const BorderSide(
+                  color: Color.fromRGBO(255, 255, 255, 0.7),
+                ),
                 borderRadius: BorderRadius.circular(
                   AppConstants.mediumBorderRadius,
                 ),

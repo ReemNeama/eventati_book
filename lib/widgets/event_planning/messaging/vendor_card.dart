@@ -4,7 +4,6 @@ import 'package:eventati_book/utils/utils.dart';
 import 'package:intl/intl.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 
-
 class VendorCard extends StatelessWidget {
   final Vendor vendor;
   final Conversation conversation;
@@ -30,8 +29,16 @@ class VendorCard extends StatelessWidget {
               0.8,
             )
             : Colors.white;
-    final textColor = isDarkMode ? Colors.white : Colors.black87;
-    final subtitleColor = isDarkMode ? Colors.white70 : Colors.black54;
+    final textColor = isDarkMode ? Colors.white : AppColors.textPrimary;
+    final subtitleColor =
+        isDarkMode
+            ? Color.fromRGBO(
+              Colors.white.r.toInt(),
+              Colors.white.g.toInt(),
+              Colors.white.b.toInt(),
+              0.7,
+            )
+            : AppColors.textSecondary;
 
     // Format the last message time
     final formatter = DateFormat('MMM d, h:mm a');

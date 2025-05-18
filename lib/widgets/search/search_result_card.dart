@@ -164,7 +164,7 @@ class SearchResultCard extends StatelessWidget {
         break;
       case 'photography':
         serviceIcon = Icons.camera_alt;
-        serviceColor = Colors.purple;
+        serviceColor = AppColors.primary;
         break;
       case 'planner':
         serviceIcon = Icons.event_note;
@@ -374,7 +374,7 @@ class SearchResultCard extends StatelessWidget {
               ? booking.notes
               : 'Date: ${DateFormat('MMM d, yyyy').format(booking.bookingDate)}',
       icon: Icons.calendar_today,
-      iconColor: Colors.purple,
+      iconColor: AppColors.primary,
       onTap: onTap,
       trailing: Column(
         mainAxisAlignment: MainAxisAlignment.center,

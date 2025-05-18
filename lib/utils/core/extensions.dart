@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 
-
 /// Extension methods for built-in types and Flutter widgets
 
 // String extensions

@@ -7,7 +7,6 @@ import 'package:eventati_book/providers/providers.dart';
 import 'package:provider/provider.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 
-
 class VerificationScreen extends StatefulWidget {
   final String email;
 
@@ -135,7 +134,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
                 const SizedBox(height: 30),
                 const Text(
                   'Please check your inbox and click the verification link to complete your registration.',
-                  style: TextStyle(color: Colors.white70),
+                  style: TextStyle(color: Color.fromRGBO(255, 255, 255, 0.7)),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 40),
@@ -167,7 +166,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
                   },
                   child: const Text(
                     'Back to Login',
-                    style: TextStyle(color: Colors.white70),
+                    style: TextStyle(color: Color.fromRGBO(255, 255, 255, 0.7)),
                   ),
                 ),
               ],

@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
-
 /// Screen for viewing payment history
 class PaymentHistoryScreen extends StatefulWidget {
   /// Constructor

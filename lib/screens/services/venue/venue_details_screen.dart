@@ -16,7 +16,6 @@ import 'package:provider/provider.dart';
 
 import 'package:eventati_book/routing/routing.dart';
 
-
 class VenueDetailsScreen extends StatefulWidget {
   final Venue venue;
 

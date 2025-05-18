@@ -4,7 +4,6 @@ import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/logger.dart';
 
-
 import 'package:timeago/timeago.dart' as timeago;
 
 /// Enum for sharing platforms

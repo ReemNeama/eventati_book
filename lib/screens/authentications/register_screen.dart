@@ -8,7 +8,6 @@ import 'package:provider/provider.dart';
 import 'package:eventati_book/routing/routing.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 
-
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 

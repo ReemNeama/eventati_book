@@ -3,7 +3,6 @@ import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/utils.dart';
 
-
 class AuthTextField extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
@@ -29,9 +28,9 @@ class AuthTextField extends StatelessWidget {
 
     // Always use contrasting colors for text fields in authentication screens
     // since they often have colored backgrounds
-    const textColor = Colors.black87;
-    const hintColor = Colors.black54;
-    const borderColor = Colors.white70;
+    const textColor = AppColors.textPrimary;
+    const hintColor = AppColors.textSecondary;
+
     const fillColor = Colors.white;
 
     return TextFormField(
@@ -45,7 +44,9 @@ class AuthTextField extends StatelessWidget {
         filled: true,
         fillColor: fillColor,
         enabledBorder: OutlineInputBorder(
-          borderSide: const BorderSide(color: borderColor),
+          borderSide: const BorderSide(
+            color: Color.fromRGBO(255, 255, 255, 0.7),
+          ),
           borderRadius: BorderRadius.circular(AppConstants.smallBorderRadius),
         ),
         focusedBorder: OutlineInputBorder(
