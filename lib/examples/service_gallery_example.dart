@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:eventati_book/widgets/widgets.dart';
 import 'package:eventati_book/utils/file_utils.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:eventati_book/styles/app_colors.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 /// Example screen showing how to use the ImageGallery widget with a service
 ///
@@ -149,10 +151,7 @@ class _ServiceGalleryExampleState extends State<ServiceGalleryExample> {
             const SizedBox(height: 16),
 
             // Image gallery
-            const Text(
-              'Service Gallery',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
+            Text('Service Gallery', style: TextStyles.sectionTitle),
             const SizedBox(height: 8),
             ImageGallery(
               imageUrls: _imageUrls,
@@ -174,7 +173,10 @@ class _ServiceGalleryExampleState extends State<ServiceGalleryExample> {
 
             // Error message
             if (_errorMessage != null) ...[
-              Text(_errorMessage!, style: const TextStyle(color: Colors.red)),
+              Text(
+                _errorMessage!,
+                style: const TextStyle(color: AppColors.error),
+              ),
               const SizedBox(height: 16),
             ],
 
@@ -184,7 +186,7 @@ class _ServiceGalleryExampleState extends State<ServiceGalleryExample> {
               icon: const Icon(Icons.add_photo_alternate),
               label: const Text('Add Image (Demo Only)'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.orange,
+                backgroundColor: AppColors.warning,
                 foregroundColor: Colors.white,
               ),
             ),
@@ -192,7 +194,7 @@ class _ServiceGalleryExampleState extends State<ServiceGalleryExample> {
             const Text(
               'Note: In the production app, this button should be removed as vendors will use separate admin projects for uploads.',
               style: TextStyle(
-                color: Colors.red,
+                color: AppColors.error,
                 fontStyle: FontStyle.italic,
                 fontSize: 12,
               ),

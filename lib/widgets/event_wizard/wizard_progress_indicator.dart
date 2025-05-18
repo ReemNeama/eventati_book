@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 import 'package:eventati_book/styles/wizard_styles.dart';
+import 'package:eventati_book/styles/app_colors.dart';
 
 /// A progress indicator for the event wizard
 class WizardProgressIndicator extends StatelessWidget {
@@ -64,8 +66,7 @@ class WizardProgressIndicator extends StatelessWidget {
             if (showPercentage)
               Text(
                 '$percentage% Complete',
-                style: TextStyle(
-                  fontSize: 12,
+                style: TextStyles.bodySmall.copyWith(
                   fontWeight: FontWeight.bold,
                   color: Theme.of(context).primaryColor,
                 ),
@@ -74,7 +75,14 @@ class WizardProgressIndicator extends StatelessWidget {
             // Step indicator
             Text(
               'Step ${currentStep + 1} of $totalSteps',
-              style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+              style: TextStyles.bodySmall.copyWith(
+                color: Color.fromRGBO(
+                  AppColors.disabled.r.toInt(),
+                  AppColors.disabled.g.toInt(),
+                  AppColors.disabled.b.toInt(),
+                  0.6,
+                ),
+              ),
             ),
           ],
         ),
@@ -102,14 +110,26 @@ class WizardProgressIndicator extends StatelessWidget {
                           color:
                               isActive
                                   ? Theme.of(context).primaryColor
-                                  : Colors.grey[300],
+                                  : Color.fromRGBO(
+                                    AppColors.disabled.r.toInt(),
+                                    AppColors.disabled.g.toInt(),
+                                    AppColors.disabled.b.toInt(),
+                                    0.3,
+                                  ),
                         ),
                         child: Center(
                           child: Text(
                             '${index + 1}',
-                            style: TextStyle(
-                              color: isActive ? Colors.white : Colors.grey[600],
-                              fontSize: 12,
+                            style: TextStyles.bodySmall.copyWith(
+                              color:
+                                  isActive
+                                      ? Colors.white
+                                      : Color.fromRGBO(
+                                        AppColors.disabled.r.toInt(),
+                                        AppColors.disabled.g.toInt(),
+                                        AppColors.disabled.b.toInt(),
+                                        0.6,
+                                      ),
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -121,11 +141,15 @@ class WizardProgressIndicator extends StatelessWidget {
                         // Use the local variable to avoid null checks
                         index < labels.length ? labels[index] : '',
                         style: TextStyle(
-                          fontSize: 10,
                           color:
                               isActive
                                   ? Theme.of(context).primaryColor
-                                  : Colors.grey[600],
+                                  : Color.fromRGBO(
+                                    AppColors.disabled.r.toInt(),
+                                    AppColors.disabled.g.toInt(),
+                                    AppColors.disabled.b.toInt(),
+                                    0.6,
+                                  ),
                           fontWeight:
                               isActive ? FontWeight.bold : FontWeight.normal,
                         ),

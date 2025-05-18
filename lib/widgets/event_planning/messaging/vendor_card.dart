@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:intl/intl.dart';
+import 'package:eventati_book/styles/app_colors.dart';
+
 
 class VendorCard extends StatelessWidget {
   final Vendor vendor;
@@ -19,7 +21,15 @@ class VendorCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDarkMode = UIUtils.isDarkMode(context);
     final primaryColor = Theme.of(context).primaryColor;
-    final cardColor = isDarkMode ? Colors.grey[800] : Colors.white;
+    final cardColor =
+        isDarkMode
+            ? Color.fromRGBO(
+              AppColors.disabled.r.toInt(),
+              AppColors.disabled.g.toInt(),
+              AppColors.disabled.b.toInt(),
+              0.8,
+            )
+            : Colors.white;
     final textColor = isDarkMode ? Colors.white : Colors.black87;
     final subtitleColor = isDarkMode ? Colors.white70 : Colors.black54;
 
@@ -83,7 +93,7 @@ class VendorCard extends StatelessWidget {
                   vertical: 2.0,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.red,
+                  color: AppColors.error,
                   borderRadius: BorderRadius.circular(10.0),
                 ),
                 child: const Text(

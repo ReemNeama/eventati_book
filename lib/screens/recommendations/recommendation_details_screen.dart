@@ -10,6 +10,7 @@ import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/widgets/recommendations/recommendation_badge.dart';
 import 'package:eventati_book/routing/routing.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 /// Screen for displaying detailed information about a vendor recommendation
 class RecommendationDetailsScreen extends StatefulWidget {
@@ -240,7 +241,7 @@ class _RecommendationDetailsScreenState
                                   : const Icon(Icons.calendar_today),
                           label: Text(_isBooking ? 'Booking...' : 'Book Now'),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green,
+                            backgroundColor: AppColors.success,
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(vertical: 12),
                           ),
@@ -282,8 +283,18 @@ class _RecommendationDetailsScreenState
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    Colors.black.withAlpha(0),
-                    Colors.black.withAlpha(150),
+                    Color.fromRGBO(
+                      Colors.black.r.toInt(),
+                      Colors.black.g.toInt(),
+                      Colors.black.b.toInt(),
+                      0.00,
+                    ),
+                    Color.fromRGBO(
+                      Colors.black.r.toInt(),
+                      Colors.black.g.toInt(),
+                      Colors.black.b.toInt(),
+                      0.59,
+                    ),
                   ],
                 ),
               ),
@@ -423,22 +434,20 @@ class _RecommendationDetailsScreenState
                   const SizedBox(height: 4),
                   Text(
                     recommendation.category.label,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
-                    ),
+                    style: TextStyles.bodySmall,
                   ),
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      const Icon(Icons.star, size: 14, color: Colors.amber),
+                      const Icon(
+                        Icons.star,
+                        size: 14,
+                        color: AppColors.ratingStarColor,
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         '${recommendation.baseRelevanceScore}% match',
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: TextStyles.bodySmall,
                       ),
                     ],
                   ),
@@ -474,7 +483,7 @@ class _RecommendationDetailsScreenState
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Added to saved recommendations'),
-              backgroundColor: Colors.green,
+              backgroundColor: AppColors.success,
             ),
           );
         }
@@ -492,7 +501,7 @@ class _RecommendationDetailsScreenState
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Removed from saved recommendations'),
-              backgroundColor: Colors.grey,
+              backgroundColor: AppColors.disabled,
             ),
           );
         }
@@ -546,7 +555,7 @@ class _RecommendationDetailsScreenState
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Email app opened!'),
-            backgroundColor: Colors.green,
+            backgroundColor: AppColors.success,
           ),
         );
       }
@@ -555,7 +564,7 @@ class _RecommendationDetailsScreenState
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Failed to open email app: $e'),
-            backgroundColor: Colors.red,
+            backgroundColor: AppColors.error,
           ),
         );
       }
@@ -606,7 +615,7 @@ class _RecommendationDetailsScreenState
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Failed to proceed to booking: $e'),
-            backgroundColor: Colors.red,
+            backgroundColor: AppColors.error,
           ),
         );
       }

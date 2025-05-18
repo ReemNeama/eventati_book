@@ -94,6 +94,5 @@ class RouteNames {
   // Dashboard routes
   static const String mainDashboard = '/dashboard';
 
-  // Testing routes
-  static const String taskDatabaseTest = '/testing/task-database';
+  // Testing routes - All removed
 }

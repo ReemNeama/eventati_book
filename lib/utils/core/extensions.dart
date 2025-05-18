@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:eventati_book/styles/app_colors.dart';
+
 
 /// Extension methods for built-in types and Flutter widgets
 
@@ -156,7 +158,7 @@ extension BuildContextExtensions on BuildContext {
   }) {
     showSnackBar(
       message,
-      backgroundColor: Colors.green,
+      backgroundColor: AppColors.success,
       textColor: Colors.white,
       duration: duration,
     );
@@ -169,7 +171,7 @@ extension BuildContextExtensions on BuildContext {
   }) {
     showSnackBar(
       message,
-      backgroundColor: Colors.red,
+      backgroundColor: AppColors.error,
       textColor: Colors.white,
       duration: duration,
     );

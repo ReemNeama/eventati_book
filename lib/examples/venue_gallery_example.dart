@@ -3,6 +3,8 @@ import 'package:eventati_book/widgets/widgets.dart';
 import 'package:eventati_book/models/service_models/venue.dart';
 import 'package:eventati_book/utils/file_utils.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:eventati_book/styles/app_colors.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 /// Example screen showing how to use the ImageGallery widget with a venue
 class VenueGalleryExample extends StatefulWidget {
@@ -102,10 +104,7 @@ class _VenueGalleryExampleState extends State<VenueGalleryExample> {
             const SizedBox(height: 16),
 
             // Image gallery
-            const Text(
-              'Gallery',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
+            Text('Gallery', style: TextStyles.sectionTitle),
             const SizedBox(height: 8),
             ImageGallery(
               imageUrls: _imageUrls,
@@ -127,7 +126,10 @@ class _VenueGalleryExampleState extends State<VenueGalleryExample> {
 
             // Error message
             if (_errorMessage != null) ...[
-              Text(_errorMessage!, style: const TextStyle(color: Colors.red)),
+              Text(
+                _errorMessage!,
+                style: const TextStyle(color: AppColors.error),
+              ),
               const SizedBox(height: 16),
             ],
 

@@ -3,6 +3,7 @@ import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 
+
 class MessageInput extends StatefulWidget {
   final Function(String) onSendMessage;
 
@@ -52,7 +53,19 @@ class _MessageInputState extends State<MessageInput> {
       return primaryColor;
     } else {
       // Use a disabled color based on theme
-      return isDarkMode ? Colors.grey[700]! : Colors.grey[300]!;
+      return isDarkMode
+          ? Color.fromRGBO(
+            AppColors.disabled.r.toInt(),
+            AppColors.disabled.g.toInt(),
+            AppColors.disabled.b.toInt(),
+            0.7,
+          )
+          : Color.fromRGBO(
+            AppColors.disabled.r.toInt(),
+            AppColors.disabled.g.toInt(),
+            AppColors.disabled.b.toInt(),
+            0.3,
+          );
     }
   }
 
@@ -62,7 +75,19 @@ class _MessageInputState extends State<MessageInput> {
       return Colors.white;
     } else {
       // Use a disabled color based on theme
-      return isDarkMode ? Colors.grey[400]! : Colors.grey[600]!;
+      return isDarkMode
+          ? Color.fromRGBO(
+            AppColors.disabled.r.toInt(),
+            AppColors.disabled.g.toInt(),
+            AppColors.disabled.b.toInt(),
+            0.4,
+          )
+          : Color.fromRGBO(
+            AppColors.disabled.r.toInt(),
+            AppColors.disabled.g.toInt(),
+            AppColors.disabled.b.toInt(),
+            0.6,
+          );
     }
   }
 
@@ -71,7 +96,14 @@ class _MessageInputState extends State<MessageInput> {
     final isDarkMode = UIUtils.isDarkMode(context);
     final primaryColor = isDarkMode ? AppColorsDark.primary : AppColors.primary;
     final backgroundColor =
-        isDarkMode ? AppColorsDark.inputFieldBackground : Colors.grey[100];
+        isDarkMode
+            ? AppColorsDark.inputFieldBackground
+            : Color.fromRGBO(
+              AppColors.disabled.r.toInt(),
+              AppColors.disabled.g.toInt(),
+              AppColors.disabled.b.toInt(),
+              0.1,
+            );
     final textColor = isDarkMode ? Colors.white : Colors.black87;
     final hintColor = isDarkMode ? Colors.white70 : Colors.black54;
 
@@ -84,7 +116,12 @@ class _MessageInputState extends State<MessageInput> {
         color: backgroundColor,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withAlpha(26),
+            color: Color.fromRGBO(
+              Colors.black.r.toInt(),
+              Colors.black.g.toInt(),
+              Colors.black.b.toInt(),
+              0.10,
+            ),
             blurRadius: 4,
             offset: const Offset(0, -1),
           ),
@@ -110,7 +147,15 @@ class _MessageInputState extends State<MessageInput> {
                   borderSide: BorderSide.none,
                 ),
                 filled: true,
-                fillColor: isDarkMode ? Colors.grey[800] : Colors.white,
+                fillColor:
+                    isDarkMode
+                        ? Color.fromRGBO(
+                          AppColors.disabled.r.toInt(),
+                          AppColors.disabled.g.toInt(),
+                          AppColors.disabled.b.toInt(),
+                          0.8,
+                        )
+                        : Colors.white,
               ),
               maxLines: null,
               textInputAction: TextInputAction.send,

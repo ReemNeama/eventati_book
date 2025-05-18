@@ -4,6 +4,7 @@ import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 class GuestFormScreen extends StatefulWidget {
   final String eventId;
@@ -198,7 +199,7 @@ class _GuestFormScreenState extends State<GuestFormScreen> {
                   value: RsvpStatus.pending,
                   child: Row(
                     children: [
-                      Icon(Icons.pending, size: 20, color: Colors.orange),
+                      Icon(Icons.pending, size: 20, color: AppColors.warning),
                       SizedBox(width: 8),
                       Text('Pending'),
                     ],
@@ -208,7 +209,11 @@ class _GuestFormScreenState extends State<GuestFormScreen> {
                   value: RsvpStatus.confirmed,
                   child: Row(
                     children: [
-                      Icon(Icons.check_circle, size: 20, color: Colors.green),
+                      Icon(
+                        Icons.check_circle,
+                        size: 20,
+                        color: AppColors.success,
+                      ),
                       SizedBox(width: 8),
                       Text('Confirmed'),
                     ],
@@ -218,7 +223,7 @@ class _GuestFormScreenState extends State<GuestFormScreen> {
                   value: RsvpStatus.declined,
                   child: Row(
                     children: [
-                      Icon(Icons.cancel, size: 20, color: Colors.red),
+                      Icon(Icons.cancel, size: 20, color: AppColors.error),
                       SizedBox(width: 8),
                       Text('Declined'),
                     ],
@@ -228,7 +233,7 @@ class _GuestFormScreenState extends State<GuestFormScreen> {
                   value: RsvpStatus.tentative,
                   child: Row(
                     children: [
-                      Icon(Icons.help, size: 20, color: Colors.blue),
+                      Icon(Icons.help, size: 20, color: AppColors.primary),
                       SizedBox(width: 8),
                       Text('Tentative'),
                     ],
@@ -325,7 +330,7 @@ class _GuestFormScreenState extends State<GuestFormScreen> {
               onPressed: _saveGuest,
               child: Text(
                 isEditing ? 'Update Guest' : 'Add Guest',
-                style: const TextStyle(fontSize: 16),
+                style: TextStyles.bodyLarge,
               ),
             ),
           ],
@@ -338,10 +343,7 @@ class _GuestFormScreenState extends State<GuestFormScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          title,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
+        Text(title, style: TextStyles.sectionTitle),
         const Divider(),
         const SizedBox(height: 8),
       ],
@@ -436,7 +438,7 @@ class _GuestFormScreenState extends State<GuestFormScreen> {
                 },
                 child: const Text(
                   'Delete',
-                  style: TextStyle(color: Colors.red),
+                  style: TextStyle(color: AppColors.error),
                 ),
               ),
             ],

@@ -12,6 +12,7 @@ import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/logger.dart';
 
+
 /// Service to connect the wizard with other planning tools
 class WizardConnectionService {
   /// Connect wizard to all planning tools at once
@@ -121,7 +122,7 @@ class WizardConnectionService {
             'Error connecting wizard data: $e',
             style: const TextStyle(color: Colors.white),
           ),
-          backgroundColor: isDarkMode ? AppColorsDark.error : Colors.red,
+          backgroundColor: isDarkMode ? AppColorsDark.error : AppColors.error,
           duration: const Duration(seconds: 5),
         ),
       );

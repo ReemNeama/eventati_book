@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/utils.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 /// A reusable section header widget with optional action button
 class SectionHeader extends StatelessWidget {
@@ -33,8 +34,7 @@ class SectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isDarkMode = UIUtils.isDarkMode(context);
-    final Color textColor =
-        isDarkMode ? AppColorsDark.textPrimary : AppColors.textPrimary;
+
     final Color accentColor =
         isDarkMode ? AppColorsDark.primary : AppColors.primary;
 
@@ -43,14 +43,7 @@ class SectionHeader extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: textColor,
-              ),
-            ),
+            Text(title, style: TextStyles.sectionTitle.copyWith()),
             if (actionText != null && onActionTap != null)
               InkWell(
                 onTap: onActionTap,
@@ -63,14 +56,7 @@ class SectionHeader extends StatelessWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
-                        actionText!,
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: accentColor,
-                        ),
-                      ),
+                      Text(actionText!, style: TextStyles.bodyMedium),
                       if (actionIcon != null) ...[
                         const SizedBox(width: 4),
                         Icon(actionIcon, size: 16, color: accentColor),
@@ -87,7 +73,20 @@ class SectionHeader extends StatelessWidget {
         if (showDivider) ...[
           const SizedBox(height: 8),
           Divider(
-            color: isDarkMode ? Colors.grey[800] : Colors.grey[300],
+            color:
+                isDarkMode
+                    ? Color.fromRGBO(
+                      AppColors.disabled.r.toInt(),
+                      AppColors.disabled.g.toInt(),
+                      AppColors.disabled.b.toInt(),
+                      0.8,
+                    )
+                    : Color.fromRGBO(
+                      AppColors.disabled.r.toInt(),
+                      AppColors.disabled.g.toInt(),
+                      AppColors.disabled.b.toInt(),
+                      0.3,
+                    ),
             thickness: 1,
           ),
         ],

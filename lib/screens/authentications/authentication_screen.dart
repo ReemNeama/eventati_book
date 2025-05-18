@@ -2,6 +2,8 @@ import 'package:eventati_book/screens/authentications/forgetpassword_screen.dart
 import 'package:eventati_book/screens/authentications/login_screen.dart';
 import 'package:eventati_book/screens/authentications/register_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:eventati_book/styles/app_colors.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/widgets/responsive/responsive.dart';
 
@@ -16,7 +18,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).primaryColor,
+      backgroundColor: AppColors.primary,
       body: SafeArea(
         child: OrientationResponsiveBuilder(
           portraitBuilder: (context, constraints) {
@@ -44,10 +46,9 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
         Center(
           child: Text(
             AppConstants.appName,
-            style: TextStyle(
+            style: TextStyles.title.copyWith(
               fontSize: titleFontSize,
               color: Colors.white,
-              fontWeight: FontWeight.bold,
             ),
             textAlign: TextAlign.center,
           ),
@@ -81,10 +82,9 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
           child: Center(
             child: Text(
               AppConstants.appName,
-              style: TextStyle(
+              style: TextStyles.title.copyWith(
                 fontSize: titleFontSize,
                 color: Colors.white,
-                fontWeight: FontWeight.bold,
               ),
               textAlign: TextAlign.center,
             ),
@@ -139,10 +139,9 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
       ),
       child: Text(
         'Login',
-        style: TextStyle(
+        style: TextStyles.buttonText.copyWith(
           fontSize: fontSize,
-          fontWeight: FontWeight.bold,
-          color: Theme.of(context).primaryColor,
+          color: AppColors.primary,
         ),
       ),
     );
@@ -168,9 +167,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
           ),
         ),
         minimumSize: WidgetStateProperty.all(Size(width, 40)),
-        backgroundColor: WidgetStateProperty.all(
-          Theme.of(context).primaryColor,
-        ),
+        backgroundColor: WidgetStateProperty.all(AppColors.primary),
         elevation: WidgetStateProperty.all(0),
         shape: WidgetStateProperty.all(
           RoundedRectangleBorder(
@@ -180,9 +177,8 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
       ),
       child: Text(
         'Register',
-        style: TextStyle(
+        style: TextStyles.buttonText.copyWith(
           fontSize: fontSize,
-          fontWeight: FontWeight.bold,
           color: Colors.white,
         ),
       ),
@@ -205,7 +201,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
           },
           child: Text(
             'Forgot Password?',
-            style: TextStyle(
+            style: TextStyles.bodyMedium.copyWith(
               fontSize: fontSize,
               fontWeight: FontWeight.bold,
               color: Colors.white,

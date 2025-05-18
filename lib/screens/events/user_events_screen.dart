@@ -5,6 +5,7 @@ import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/routing/routing.dart';
 import 'package:eventati_book/screens/events/event_details_screen.dart';
 import 'package:eventati_book/models/event_models/event.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 /// Screen that displays all events created or saved by the user
 class UserEventsScreen extends StatefulWidget {
@@ -66,20 +67,29 @@ class _UserEventsScreenState extends State<UserEventsScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.event_busy, size: 80, color: Colors.grey[400]),
-          const SizedBox(height: 16),
-          Text(
-            'No events yet',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.grey[600],
+          Icon(
+            Icons.event_busy,
+            size: 80,
+            color: Color.fromRGBO(
+              AppColors.disabled.r.toInt(),
+              AppColors.disabled.g.toInt(),
+              AppColors.disabled.b.toInt(),
+              0.4,
             ),
           ),
+          const SizedBox(height: 16),
+          Text('No events yet', style: TextStyles.subtitle),
           const SizedBox(height: 8),
           Text(
             'Tap the + button to create a new event',
-            style: TextStyle(color: Colors.grey[600]),
+            style: TextStyle(
+              color: Color.fromRGBO(
+                AppColors.disabled.r.toInt(),
+                AppColors.disabled.g.toInt(),
+                AppColors.disabled.b.toInt(),
+                0.6,
+              ),
+            ),
           ),
         ],
       ),
@@ -136,10 +146,7 @@ class _UserEventsScreenState extends State<UserEventsScreen> {
           ),
           child: ListTile(
             contentPadding: const EdgeInsets.all(16),
-            title: Text(
-              event['name'],
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-            ),
+            title: Text(event['name'], style: TextStyles.sectionTitle),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

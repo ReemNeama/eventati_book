@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
+
 /// Widget for displaying notifications in a dropdown
 class NotificationCenter extends StatelessWidget {
   /// Constructor
@@ -44,7 +45,12 @@ class NotificationCenter extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withAlpha(50),
+            color: Color.fromRGBO(
+              Colors.black.r.toInt(),
+              Colors.black.g.toInt(),
+              Colors.black.b.toInt(),
+              0.20,
+            ),
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
@@ -98,12 +104,11 @@ class NotificationCenter extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Text(
+          Text(
             'Notifications',
-            style: TextStyle(
+            style: TextStyles.subtitle.copyWith(
               color: Colors.white,
               fontWeight: FontWeight.bold,
-              fontSize: 16,
             ),
           ),
           Row(
@@ -179,7 +184,12 @@ class NotificationCenter extends StatelessWidget {
     final unreadColor =
         isDarkMode
             ? AppColorsDark.primary.withAlpha(30)
-            : AppColors.primary.withAlpha(30);
+            : Color.fromRGBO(
+              AppColors.primary.r.toInt(),
+              AppColors.primary.g.toInt(),
+              AppColors.primary.b.toInt(),
+              0.12,
+            );
 
     return Dismissible(
       key: Key(notification.id),
@@ -187,7 +197,7 @@ class NotificationCenter extends StatelessWidget {
       background: Container(
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 16),
-        color: Colors.red,
+        color: AppColors.error,
         child: const Icon(Icons.delete, color: Colors.white),
       ),
       onDismissed: (direction) {
@@ -215,25 +225,31 @@ class NotificationCenter extends StatelessWidget {
                   children: [
                     Text(
                       notification.title,
-                      style: TextStyle(
+                      style: TextStyles.bodyMedium.copyWith(
                         fontWeight:
                             notification.read
                                 ? FontWeight.normal
                                 : FontWeight.bold,
-                        fontSize: 14,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       notification.body,
-                      style: const TextStyle(fontSize: 13),
+                      style: TextStyles.bodySmall,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 4),
                     Text(
                       _formatDate(notification.createdAt),
-                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                      style: TextStyles.bodySmall.copyWith(
+                        color: Color.fromRGBO(
+                          AppColors.disabled.r.toInt(),
+                          AppColors.disabled.g.toInt(),
+                          AppColors.disabled.b.toInt(),
+                          0.6,
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -258,37 +274,42 @@ class NotificationCenter extends StatelessWidget {
   /// Build an icon for a notification type
   Widget _buildNotificationIcon(notification_model.NotificationType type) {
     IconData iconData = Icons.notifications; // Default icon
-    Color iconColor = Colors.grey; // Default color
+    Color iconColor = AppColors.disabled; // Default color
 
     if (type == notification_model.NotificationType.bookingConfirmation ||
         type == notification_model.NotificationType.bookingUpdate ||
         type == notification_model.NotificationType.bookingReminder ||
         type == notification_model.NotificationType.bookingCancellation) {
       iconData = Icons.calendar_today;
-      iconColor = Colors.blue;
+      iconColor = AppColors.primary;
     } else if (type ==
             notification_model.NotificationType.paymentConfirmation ||
         type == notification_model.NotificationType.paymentReminder) {
       iconData = Icons.payment;
-      iconColor = Colors.green;
+      iconColor = AppColors.success;
     } else if (type == notification_model.NotificationType.eventReminder) {
       iconData = Icons.event;
       iconColor = Colors.purple;
     } else if (type == notification_model.NotificationType.taskReminder) {
       iconData = Icons.task_alt;
-      iconColor = Colors.orange;
+      iconColor = AppColors.warning;
     } else if (type == notification_model.NotificationType.system) {
       iconData = Icons.info;
-      iconColor = Colors.grey;
+      iconColor = AppColors.disabled;
     } else if (type == notification_model.NotificationType.marketing) {
       iconData = Icons.campaign;
-      iconColor = Colors.red;
+      iconColor = AppColors.error;
     }
 
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: iconColor.withAlpha(30),
+        color: Color.fromRGBO(
+          iconColor.r.toInt(),
+          iconColor.g.toInt(),
+          iconColor.b.toInt(),
+          0.12, // 30/255 ≈ 0.12
+        ),
         shape: BoxShape.circle,
       ),
       child: Icon(iconData, size: 20, color: iconColor),

@@ -4,6 +4,7 @@ import 'package:eventati_book/utils/service/venue_options_builder.dart';
 import 'package:eventati_book/utils/service/catering_options_builder.dart';
 import 'package:eventati_book/utils/service/photography_options_builder.dart';
 import 'package:eventati_book/utils/service/planner_options_builder.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 /// Factory class for generating service-specific form fields
 class ServiceOptionsFactory {
@@ -142,9 +143,9 @@ class ServiceOptionsFactory {
       default:
         return [
           const SizedBox(height: 16),
-          const Text(
+          Text(
             'No service-specific options available for this service type.',
-            style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
+            style: TextStyles.bodyLarge,
           ),
         ];
     }

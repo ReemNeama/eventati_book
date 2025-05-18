@@ -8,6 +8,7 @@ import 'package:eventati_book/widgets/common/network_status_widget.dart';
 import 'package:eventati_book/widgets/common/pending_shares_widget.dart';
 import 'package:eventati_book/widgets/common/loading_indicator.dart';
 import 'package:eventati_book/widgets/common/error_message.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 /// Screen to manage pending shares
 class PendingSharesScreen extends StatefulWidget {
@@ -145,8 +146,8 @@ class _PendingSharesScreenState extends State<PendingSharesScreen> {
           const NetworkStatusWidget(showPendingShares: false),
           const SizedBox(height: 24),
           if (_pendingShares.isEmpty) ...[
-            const Center(
-              child: Text('No pending shares', style: TextStyle(fontSize: 16)),
+            Center(
+              child: Text('No pending shares', style: TextStyles.bodyLarge),
             ),
           ] else ...[
             Text(

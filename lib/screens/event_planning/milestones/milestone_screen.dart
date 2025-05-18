@@ -8,6 +8,7 @@ import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/widgets/milestones/milestone_grid.dart';
 import 'package:eventati_book/widgets/milestones/milestone_detail_dialog.dart';
 import 'package:eventati_book/widgets/milestones/milestone_celebration_overlay.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 /// A screen to display all milestones
 class MilestoneScreen extends StatefulWidget {
@@ -84,7 +85,20 @@ class _MilestoneScreenState extends State<MilestoneScreen>
               // Points summary
               Container(
                 padding: const EdgeInsets.all(16),
-                color: isDarkMode ? Colors.grey[900] : Colors.grey[100],
+                color:
+                    isDarkMode
+                        ? Color.fromRGBO(
+                          AppColors.disabled.r.toInt(),
+                          AppColors.disabled.g.toInt(),
+                          AppColors.disabled.b.toInt(),
+                          0.9,
+                        )
+                        : Color.fromRGBO(
+                          AppColors.disabled.r.toInt(),
+                          AppColors.disabled.g.toInt(),
+                          AppColors.disabled.b.toInt(),
+                          0.1,
+                        ),
                 child: Row(
                   children: [
                     // Total points
@@ -92,13 +106,7 @@ class _MilestoneScreenState extends State<MilestoneScreen>
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Total Points',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                          Text('Total Points', style: TextStyles.bodyMedium),
                           const SizedBox(height: 4),
                           Row(
                             children: [
@@ -106,11 +114,7 @@ class _MilestoneScreenState extends State<MilestoneScreen>
                               const SizedBox(width: 4),
                               Text(
                                 '${milestoneProvider.totalPoints}',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: primaryColor,
-                                ),
+                                style: TextStyles.subtitle,
                               ),
                             ],
                           ),
@@ -123,20 +127,14 @@ class _MilestoneScreenState extends State<MilestoneScreen>
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
+                          Text(
                             'Milestones Completed',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: TextStyles.bodyMedium,
                           ),
                           const SizedBox(height: 4),
                           Text(
                             '${milestoneProvider.completedMilestones.length} / ${milestoneProvider.milestones.length}',
-                            style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: TextStyles.subtitle,
                           ),
                         ],
                       ),

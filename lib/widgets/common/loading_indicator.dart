@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 
+
 /// A reusable loading indicator widget
 class LoadingIndicator extends StatelessWidget {
   /// Optional message to display below the indicator

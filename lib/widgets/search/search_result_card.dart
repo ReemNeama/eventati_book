@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/styles/app_colors.dart';
-import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:intl/intl.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 /// Extension on Event to add missing properties
 extension EventExtension on Event {
@@ -128,7 +128,7 @@ class SearchResultCard extends StatelessWidget {
               ? event.description!
               : 'Date: ${DateFormat('MMM d, yyyy').format(event.date)}',
       icon: Icons.event,
-      iconColor: Colors.blue,
+      iconColor: AppColors.primary,
       onTap: onTap,
       trailing: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -136,13 +136,10 @@ class SearchResultCard extends StatelessWidget {
         children: [
           Text(
             DateFormat('MMM d, yyyy').format(event.date),
-            style: const TextStyle(fontSize: 12),
+            style: TextStyles.bodySmall,
           ),
           const SizedBox(height: 4),
-          Text(
-            '${event.guestCount} guests',
-            style: const TextStyle(fontSize: 12),
-          ),
+          Text('${event.guestCount} guests', style: TextStyles.bodySmall),
         ],
       ),
     );
@@ -159,11 +156,11 @@ class SearchResultCard extends StatelessWidget {
     switch (service.type.toLowerCase()) {
       case 'venue':
         serviceIcon = Icons.location_on;
-        serviceColor = Colors.orange;
+        serviceColor = AppColors.warning;
         break;
       case 'catering':
         serviceIcon = Icons.restaurant;
-        serviceColor = Colors.green;
+        serviceColor = AppColors.success;
         break;
       case 'photography':
         serviceIcon = Icons.camera_alt;
@@ -171,11 +168,11 @@ class SearchResultCard extends StatelessWidget {
         break;
       case 'planner':
         serviceIcon = Icons.event_note;
-        serviceColor = Colors.blue;
+        serviceColor = AppColors.primary;
         break;
       default:
         serviceIcon = Icons.business;
-        serviceColor = Colors.grey;
+        serviceColor = AppColors.disabled;
         break;
     }
 
@@ -192,16 +189,20 @@ class SearchResultCard extends StatelessWidget {
         children: [
           Text(
             ServiceUtils.formatPrice(service.price),
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            style: TextStyles.bodyMedium,
           ),
           const SizedBox(height: 4),
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.star, size: 14, color: Colors.amber),
+              const Icon(
+                Icons.star,
+                size: 14,
+                color: AppColors.ratingStarColor,
+              ),
               Text(
                 service.rating.toStringAsFixed(1),
-                style: const TextStyle(fontSize: 12),
+                style: TextStyles.bodySmall,
               ),
             ],
           ),
@@ -220,19 +221,19 @@ class SearchResultCard extends StatelessWidget {
 
     switch (task.status) {
       case TaskStatus.notStarted:
-        statusColor = Colors.grey;
+        statusColor = AppColors.disabled;
         statusText = 'Not Started';
         break;
       case TaskStatus.inProgress:
-        statusColor = Colors.blue;
+        statusColor = AppColors.primary;
         statusText = 'In Progress';
         break;
       case TaskStatus.completed:
-        statusColor = Colors.green;
+        statusColor = AppColors.success;
         statusText = 'Completed';
         break;
       case TaskStatus.overdue:
-        statusColor = Colors.red;
+        statusColor = AppColors.error;
         statusText = 'Overdue';
         break;
     }
@@ -253,13 +254,9 @@ class SearchResultCard extends StatelessWidget {
         children: [
           Text(
             DateFormat('MMM d, yyyy').format(task.dueDate),
-            style: TextStyle(
-              fontSize: 12,
+            style: TextStyles.bodySmall.copyWith(
               color:
-                  task.dueDate.isBefore(DateTime.now()) &&
-                          task.status != TaskStatus.completed
-                      ? Colors.red
-                      : null,
+                  task.status != TaskStatus.completed ? AppColors.error : null,
             ),
           ),
           const SizedBox(height: 4),
@@ -269,10 +266,7 @@ class SearchResultCard extends StatelessWidget {
               color: statusColor.withAlpha(51),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Text(
-              statusText,
-              style: TextStyle(fontSize: 10, color: statusColor),
-            ),
+            child: Text(statusText, style: TextStyles.caption),
           ),
         ],
       ),
@@ -292,7 +286,7 @@ class SearchResultCard extends StatelessWidget {
               ? budgetItem.notes!
               : 'Estimated: ${ServiceUtils.formatPrice(budgetItem.estimatedAmount)}',
       icon: Icons.account_balance_wallet,
-      iconColor: Colors.green,
+      iconColor: AppColors.success,
       onTap: onTap,
       trailing: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -300,19 +294,13 @@ class SearchResultCard extends StatelessWidget {
         children: [
           Text(
             'Est: ${ServiceUtils.formatPrice(budgetItem.estimatedAmount)}',
-            style: const TextStyle(fontSize: 12),
+            style: TextStyles.bodySmall,
           ),
           const SizedBox(height: 4),
           if (budgetItem.actualAmount != null)
             Text(
               'Act: ${ServiceUtils.formatPrice(budgetItem.actualAmount!)}',
-              style: TextStyle(
-                fontSize: 12,
-                color:
-                    budgetItem.actualAmount! > budgetItem.estimatedAmount
-                        ? Colors.red
-                        : Colors.green,
-              ),
+              style: TextStyles.bodySmall,
             ),
         ],
       ),
@@ -329,15 +317,15 @@ class SearchResultCard extends StatelessWidget {
 
     switch (guest.status) {
       case GuestStatus.pending:
-        statusColor = Colors.orange;
+        statusColor = AppColors.warning;
         statusText = 'Pending';
         break;
       case GuestStatus.confirmed:
-        statusColor = Colors.green;
+        statusColor = AppColors.success;
         statusText = 'Confirmed';
         break;
       case GuestStatus.declined:
-        statusColor = Colors.red;
+        statusColor = AppColors.error;
         statusText = 'Declined';
         break;
     }
@@ -358,10 +346,7 @@ class SearchResultCard extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Text(
-            '${guest.plusOnes} plus ones',
-            style: const TextStyle(fontSize: 12),
-          ),
+          Text('${guest.plusOnes} plus ones', style: TextStyles.bodySmall),
           const SizedBox(height: 4),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
@@ -369,10 +354,7 @@ class SearchResultCard extends StatelessWidget {
               color: statusColor.withAlpha(51),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Text(
-              statusText,
-              style: TextStyle(fontSize: 10, color: statusColor),
-            ),
+            child: Text(statusText, style: TextStyles.caption),
           ),
         ],
       ),
@@ -400,12 +382,12 @@ class SearchResultCard extends StatelessWidget {
         children: [
           Text(
             ServiceUtils.formatPrice(booking.totalAmount),
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            style: TextStyles.bodyMedium,
           ),
           const SizedBox(height: 4),
           Text(
             DateFormat('MMM d, yyyy').format(booking.bookingDate),
-            style: const TextStyle(fontSize: 12),
+            style: TextStyles.bodySmall,
           ),
         ],
       ),
@@ -415,11 +397,15 @@ class SearchResultCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isDarkMode = UIUtils.isDarkMode(context);
-    final Color cardColor = isDarkMode ? Colors.grey[850]! : Colors.white;
-    final Color textPrimary =
-        isDarkMode ? AppColorsDark.textPrimary : AppColors.textPrimary;
-    final Color textSecondary =
-        isDarkMode ? AppColorsDark.textSecondary : AppColors.textSecondary;
+    final Color cardColor =
+        isDarkMode
+            ? Color.fromRGBO(
+              AppColors.disabled.r.toInt(),
+              AppColors.disabled.g.toInt(),
+              AppColors.disabled.b.toInt(),
+              0.85,
+            )
+            : Colors.white;
 
     return Card(
       elevation: 2,
@@ -450,25 +436,17 @@ class SearchResultCard extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: TextStyle(
-                        fontSize: 16,
+                      style: TextStyles.bodyLarge.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: textPrimary,
                       ),
                     ),
                     const SizedBox(height: 4),
-                    Text(
-                      subtitle,
-                      style: TextStyle(fontSize: 14, color: textSecondary),
-                    ),
+                    Text(subtitle, style: TextStyles.bodyMedium),
                     if (description != null && description!.isNotEmpty) ...[
                       const SizedBox(height: 4),
                       Text(
                         description!,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: textSecondary.withAlpha(204),
-                        ),
+                        style: TextStyles.bodySmall,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),

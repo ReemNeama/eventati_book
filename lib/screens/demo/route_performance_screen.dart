@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:eventati_book/routing/route_performance.dart';
 import 'package:eventati_book/routing/route_names.dart';
 import 'package:eventati_book/utils/ui/navigation_utils.dart';
+import 'package:eventati_book/styles/app_colors.dart';
+
 
 /// A screen that displays route performance metrics
 class RoutePerformanceScreen extends StatefulWidget {
@@ -202,11 +204,11 @@ class _RoutePerformanceScreenState extends State<RoutePerformanceScreen> {
     // Determine color based on performance
     Color performanceColor;
     if (averageTime < 100) {
-      performanceColor = Colors.green;
+      performanceColor = AppColors.success;
     } else if (averageTime < 300) {
-      performanceColor = Colors.orange;
+      performanceColor = AppColors.warning;
     } else {
-      performanceColor = Colors.red;
+      performanceColor = AppColors.error;
     }
 
     return ListTile(
@@ -245,11 +247,11 @@ class _RoutePerformanceScreenState extends State<RoutePerformanceScreen> {
     final averageTime = metrics['average_ms'] as double;
     Color performanceColor;
     if (averageTime < 100) {
-      performanceColor = Colors.green;
+      performanceColor = AppColors.success;
     } else if (averageTime < 300) {
-      performanceColor = Colors.orange;
+      performanceColor = AppColors.warning;
     } else {
-      performanceColor = Colors.red;
+      performanceColor = AppColors.error;
     }
 
     return ExpansionTile(

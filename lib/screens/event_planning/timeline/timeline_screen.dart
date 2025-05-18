@@ -11,6 +11,7 @@ import 'package:eventati_book/screens/event_planning/timeline/checklist_screen.d
 import 'package:eventati_book/routing/route_names.dart';
 import 'package:eventati_book/routing/route_arguments.dart';
 import 'package:intl/intl.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 class TimelineScreen extends StatefulWidget {
   final String eventId;
@@ -68,17 +69,7 @@ class _TimelineScreenState extends State<TimelineScreen>
                 );
               },
             ),
-            IconButton(
-              icon: const Icon(Icons.cloud_upload),
-              tooltip: 'Database Test',
-              onPressed: () {
-                NavigationUtils.navigateToNamed(
-                  context,
-                  RouteNames.taskDatabaseTest,
-                  arguments: TaskDatabaseTestArguments(eventId: widget.eventId),
-                );
-              },
-            ),
+            // Database test button removed
           ],
           bottom: TabBar(
             controller: _tabController,
@@ -196,9 +187,6 @@ class _TimelineScreenState extends State<TimelineScreen>
     List<Task> tasks,
     TaskProvider taskProvider,
   ) {
-    final isDarkMode = UIUtils.isDarkMode(context);
-    final primaryColor = isDarkMode ? AppColorsDark.primary : AppColors.primary;
-
     // Sort tasks by date
     tasks.sort((a, b) => a.dueDate.compareTo(b.dueDate));
 
@@ -209,11 +197,7 @@ class _TimelineScreenState extends State<TimelineScreen>
           padding: const EdgeInsets.symmetric(vertical: 16),
           child: Text(
             DateFormat('MMMM yyyy').format(month),
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: primaryColor,
-            ),
+            style: TextStyles.sectionTitle,
           ),
         ),
         ...tasks.map((task) => _buildTimelineItem(context, task, taskProvider)),
@@ -227,9 +211,6 @@ class _TimelineScreenState extends State<TimelineScreen>
     Task task,
     TaskProvider taskProvider,
   ) {
-    final isDarkMode = UIUtils.isDarkMode(context);
-    final textColor = isDarkMode ? Colors.white : Colors.black;
-
     final category = taskProvider.categories.firstWhere(
       (c) => c.id == task.categoryId,
       orElse:
@@ -253,19 +234,19 @@ class _TimelineScreenState extends State<TimelineScreen>
 
     switch (task.status) {
       case TaskStatus.completed:
-        statusColor = Colors.green;
+        statusColor = AppColors.success;
         statusIcon = Icons.check_circle;
         break;
       case TaskStatus.inProgress:
-        statusColor = Colors.blue;
+        statusColor = AppColors.primary;
         statusIcon = Icons.pending;
         break;
       case TaskStatus.notStarted:
-        statusColor = isOverdue ? Colors.red : Colors.orange;
+        statusColor = isOverdue ? AppColors.error : AppColors.warning;
         statusIcon = isOverdue ? Icons.warning : Icons.circle_outlined;
         break;
       case TaskStatus.overdue:
-        statusColor = Colors.red;
+        statusColor = AppColors.error;
         statusIcon = Icons.warning;
         break;
     }
@@ -304,7 +285,20 @@ class _TimelineScreenState extends State<TimelineScreen>
                 Container(
                   width: 2,
                   height: 60,
-                  color: isDarkMode ? Colors.grey[700] : Colors.grey[300],
+                  color:
+                      UIUtils.isDarkMode(context)
+                          ? Color.fromRGBO(
+                            AppColors.disabled.r.toInt(),
+                            AppColors.disabled.g.toInt(),
+                            AppColors.disabled.b.toInt(),
+                            0.7,
+                          )
+                          : Color.fromRGBO(
+                            AppColors.disabled.r.toInt(),
+                            AppColors.disabled.g.toInt(),
+                            AppColors.disabled.b.toInt(),
+                            0.3,
+                          ),
                 ),
               ],
             ),
@@ -329,30 +323,11 @@ class _TimelineScreenState extends State<TimelineScreen>
                             size: 16,
                           ),
                           const SizedBox(width: 8),
-                          Text(
-                            category.name,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color:
-                                  isDarkMode
-                                      ? Colors.grey[400]
-                                      : Colors.grey[600],
-                            ),
-                          ),
+                          Text(category.name, style: TextStyles.bodySmall),
                           const Spacer(),
                           Text(
                             DateFormat('MMM d').format(task.dueDate),
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                              color:
-                                  isOverdue &&
-                                          task.status != TaskStatus.completed
-                                      ? Colors.red
-                                      : isDarkMode
-                                      ? Colors.grey[400]
-                                      : Colors.grey[600],
-                            ),
+                            style: TextStyles.bodySmall,
                           ),
                         ],
                       ),
@@ -362,10 +337,8 @@ class _TimelineScreenState extends State<TimelineScreen>
                           Expanded(
                             child: Text(
                               task.title,
-                              style: TextStyle(
-                                fontSize: 16,
+                              style: TextStyles.bodyLarge.copyWith(
                                 fontWeight: FontWeight.bold,
-                                color: textColor,
                               ),
                             ),
                           ),
@@ -378,13 +351,7 @@ class _TimelineScreenState extends State<TimelineScreen>
                         const SizedBox(height: 4),
                         Text(
                           task.description!,
-                          style: TextStyle(
-                            fontSize: 14,
-                            color:
-                                isDarkMode
-                                    ? Colors.grey[400]
-                                    : Colors.grey[600],
-                          ),
+                          style: TextStyles.bodyMedium,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -404,7 +371,7 @@ class _TimelineScreenState extends State<TimelineScreen>
                               icon: const Icon(Icons.check, size: 16),
                               label: const Text('Mark Complete'),
                               style: TextButton.styleFrom(
-                                foregroundColor: Colors.green,
+                                foregroundColor: AppColors.success,
                                 padding: EdgeInsets.zero,
                                 minimumSize: const Size(0, 0),
                                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -477,8 +444,18 @@ class _TimelineScreenState extends State<TimelineScreen>
               thickness: 1,
               color:
                   UIUtils.isDarkMode(context)
-                      ? Colors.grey[800]
-                      : Colors.grey[300],
+                      ? Color.fromRGBO(
+                        AppColors.disabled.r.toInt(),
+                        AppColors.disabled.g.toInt(),
+                        AppColors.disabled.b.toInt(),
+                        0.8,
+                      )
+                      : Color.fromRGBO(
+                        AppColors.disabled.r.toInt(),
+                        AppColors.disabled.g.toInt(),
+                        AppColors.disabled.b.toInt(),
+                        0.3,
+                      ),
             ),
             // Checklist on the right (40% of width)
             Expanded(flex: 40, child: ChecklistScreen(eventId: widget.eventId)),
@@ -502,7 +479,11 @@ class _TimelineScreenState extends State<TimelineScreen>
             message: 'This task depends on other tasks',
             child: Padding(
               padding: EdgeInsets.only(left: 4),
-              child: Icon(Icons.arrow_downward, size: 16, color: Colors.orange),
+              child: Icon(
+                Icons.arrow_downward,
+                size: 16,
+                color: AppColors.warning,
+              ),
             ),
           ),
         if (hasDependents)
@@ -510,7 +491,11 @@ class _TimelineScreenState extends State<TimelineScreen>
             message: 'Other tasks depend on this task',
             child: Padding(
               padding: EdgeInsets.only(left: 4),
-              child: Icon(Icons.arrow_upward, size: 16, color: Colors.blue),
+              child: Icon(
+                Icons.arrow_upward,
+                size: 16,
+                color: AppColors.primary,
+              ),
             ),
           ),
       ],

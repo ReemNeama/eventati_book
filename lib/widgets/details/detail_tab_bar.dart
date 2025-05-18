@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+
 class DetailTabBar extends StatelessWidget implements PreferredSizeWidget {
   final TabController tabController;
   final List<String> tabTitles;

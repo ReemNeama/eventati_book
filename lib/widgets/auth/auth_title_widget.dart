@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/utils/utils.dart';
 
+import 'package:eventati_book/styles/text_styles.dart';
+
+
 class AuthTitleWidget extends StatelessWidget {
   final double fontSize;
   final String title;
@@ -11,7 +14,7 @@ class AuthTitleWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       title.isEmpty ? AppConstants.appName : title,
-      style: TextStyle(
+      style: TextStyles.title.copyWith(
         fontSize: fontSize,
         color: Colors.white,
         fontWeight: FontWeight.bold,

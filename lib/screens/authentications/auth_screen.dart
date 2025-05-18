@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/widgets/responsive/responsive.dart';
 import 'package:eventati_book/routing/routing.dart';
+import 'package:eventati_book/styles/app_colors.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 /// Main authentication screen that provides options to login, register, or reset password
 class AuthScreen extends StatefulWidget {
@@ -44,10 +46,9 @@ class _AuthScreenState extends State<AuthScreen> {
         Center(
           child: Text(
             AppConstants.appName,
-            style: TextStyle(
+            style: TextStyles.title.copyWith(
               fontSize: titleFontSize,
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
+              color: AppColors.white,
             ),
             textAlign: TextAlign.center,
           ),
@@ -81,10 +82,9 @@ class _AuthScreenState extends State<AuthScreen> {
           child: Center(
             child: Text(
               AppConstants.appName,
-              style: TextStyle(
+              style: TextStyles.title.copyWith(
                 fontSize: titleFontSize,
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
+                color: AppColors.white,
               ),
               textAlign: TextAlign.center,
             ),
@@ -126,7 +126,7 @@ class _AuthScreenState extends State<AuthScreen> {
           ),
         ),
         minimumSize: WidgetStateProperty.all(Size(width, 40)),
-        backgroundColor: WidgetStateProperty.all(Colors.white),
+        backgroundColor: WidgetStateProperty.all(AppColors.white),
         elevation: WidgetStateProperty.all(0),
         shape: WidgetStateProperty.all(
           RoundedRectangleBorder(
@@ -136,9 +136,8 @@ class _AuthScreenState extends State<AuthScreen> {
       ),
       child: Text(
         'Login',
-        style: TextStyle(
+        style: TextStyles.buttonText.copyWith(
           fontSize: fontSize,
-          fontWeight: FontWeight.bold,
           color: Theme.of(context).primaryColor,
         ),
       ),
@@ -174,10 +173,9 @@ class _AuthScreenState extends State<AuthScreen> {
       ),
       child: Text(
         'Register',
-        style: TextStyle(
+        style: TextStyles.buttonText.copyWith(
           fontSize: fontSize,
-          fontWeight: FontWeight.bold,
-          color: Colors.white,
+          color: AppColors.white,
         ),
       ),
     );
@@ -194,10 +192,9 @@ class _AuthScreenState extends State<AuthScreen> {
           },
           child: Text(
             'Forgot Password?',
-            style: TextStyle(
+            style: TextStyles.buttonText.copyWith(
               fontSize: fontSize,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: AppColors.white,
             ),
           ),
         ),

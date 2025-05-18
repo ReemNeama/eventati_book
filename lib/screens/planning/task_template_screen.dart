@@ -8,6 +8,8 @@ import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/logger.dart';
 import 'package:eventati_book/widgets/common/loading_indicator.dart';
+import 'package:eventati_book/styles/text_styles.dart';
+
 
 /// Screen for managing task templates
 class TaskTemplateScreen extends StatefulWidget {
@@ -99,7 +101,14 @@ class _TaskTemplateScreenState extends State<TaskTemplateScreen> {
               ? Center(
                 child: Text(
                   _errorMessage!,
-                  style: TextStyle(color: Colors.red[700]),
+                  style: TextStyle(
+                    color: Color.fromRGBO(
+                      AppColors.error.r.toInt(),
+                      AppColors.error.g.toInt(),
+                      AppColors.error.b.toInt(),
+                      0.7,
+                    ),
+                  ),
                 ),
               )
               : _buildTemplateList(),
@@ -159,13 +168,7 @@ class _TaskTemplateScreenState extends State<TaskTemplateScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
-                    child: Text(
-                      template.name,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    child: Text(template.name, style: TextStyles.sectionTitle),
                   ),
                   _buildTemplateMenu(template),
                 ],
@@ -174,7 +177,20 @@ class _TaskTemplateScreenState extends State<TaskTemplateScreen> {
               Text(
                 template.description,
                 style: TextStyle(
-                  color: isDarkMode ? Colors.grey[300] : Colors.grey[700],
+                  color:
+                      isDarkMode
+                          ? Color.fromRGBO(
+                            AppColors.disabled.r.toInt(),
+                            AppColors.disabled.g.toInt(),
+                            AppColors.disabled.b.toInt(),
+                            0.3,
+                          )
+                          : Color.fromRGBO(
+                            AppColors.disabled.r.toInt(),
+                            AppColors.disabled.g.toInt(),
+                            AppColors.disabled.b.toInt(),
+                            0.7,
+                          ),
                 ),
               ),
               const SizedBox(height: 8),
@@ -185,7 +201,12 @@ class _TaskTemplateScreenState extends State<TaskTemplateScreen> {
                     backgroundColor:
                         isDarkMode
                             ? AppColorsDark.info
-                            : AppColors.info.withAlpha(50),
+                            : Color.fromRGBO(
+                              AppColors.info.r.toInt(),
+                              AppColors.info.g.toInt(),
+                              AppColors.info.b.toInt(),
+                              0.20,
+                            ),
                   ),
                   const SizedBox(width: 8),
                   Chip(
@@ -193,7 +214,12 @@ class _TaskTemplateScreenState extends State<TaskTemplateScreen> {
                     backgroundColor:
                         isDarkMode
                             ? AppColorsDark.success
-                            : AppColors.success.withAlpha(50),
+                            : Color.fromRGBO(
+                              AppColors.success.r.toInt(),
+                              AppColors.success.g.toInt(),
+                              AppColors.success.b.toInt(),
+                              0.20,
+                            ),
                   ),
                 ],
               ),
@@ -240,9 +266,9 @@ class _TaskTemplateScreenState extends State<TaskTemplateScreen> {
               value: 'delete',
               child: Row(
                 children: [
-                  Icon(Icons.delete, color: Colors.red),
+                  Icon(Icons.delete, color: AppColors.error),
                   SizedBox(width: 8),
-                  Text('Delete', style: TextStyle(color: Colors.red)),
+                  Text('Delete', style: TextStyle(color: AppColors.error)),
                 ],
               ),
             ),
@@ -321,9 +347,9 @@ class _TaskTemplateScreenState extends State<TaskTemplateScreen> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                const Text(
+                Text(
                   'Note: This will add all tasks from this template to the specified event.',
-                  style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
+                  style: TextStyles.bodySmall,
                 ),
               ],
             ),
@@ -475,7 +501,7 @@ class _TaskTemplateScreenState extends State<TaskTemplateScreen> {
                 },
                 child: const Text(
                   'Delete',
-                  style: TextStyle(color: Colors.red),
+                  style: TextStyle(color: AppColors.error),
                 ),
               ),
             ],

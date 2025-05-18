@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:eventati_book/models/planning_models/task.dart';
 import 'package:eventati_book/models/planning_models/task_category.dart';
 import 'package:eventati_book/providers/planning_providers/task_provider.dart';
+import 'package:eventati_book/styles/app_colors.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 /// Example app demonstrating task dependency functionality
 class TaskDependencyExample extends StatefulWidget {
@@ -47,11 +49,11 @@ class _TaskDependencyExampleState extends State<TaskDependencyExample> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Instructions
-                  const Text(
+                  Text(
                     'This example demonstrates how to use the task dependency system. '
                     'Select a prerequisite task and a dependent task, then click "Add Dependency" '
                     'to create a dependency between them.',
-                    style: TextStyle(fontSize: 16),
+                    style: TextStyles.bodyLarge,
                   ),
                   const SizedBox(height: 24),
 
@@ -107,7 +109,7 @@ class _TaskDependencyExampleState extends State<TaskDependencyExample> {
                       padding: const EdgeInsets.only(top: 16.0),
                       child: Text(
                         _errorMessage!,
-                        style: const TextStyle(color: Colors.red),
+                        style: const TextStyle(color: AppColors.error),
                       ),
                     ),
 
@@ -191,7 +193,7 @@ class _TaskDependencyExampleState extends State<TaskDependencyExample> {
                         const SizedBox(width: 4),
                         Text(
                           category.name,
-                          style: const TextStyle(fontSize: 12),
+                          style: TextStyles.bodySmall,
                         ),
                       ],
                     ),
@@ -203,7 +205,7 @@ class _TaskDependencyExampleState extends State<TaskDependencyExample> {
                     const SizedBox(height: 4),
                     Text(
                       'Due: ${task.dueDate.toString().substring(0, 10)}',
-                      style: const TextStyle(fontSize: 12),
+                      style: TextStyles.bodySmall,
                     ),
                   ],
                 ),
@@ -272,7 +274,7 @@ class _TaskDependencyExampleState extends State<TaskDependencyExample> {
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.delete, color: Colors.red),
+                  icon: const Icon(Icons.delete, color: AppColors.error),
                   onPressed:
                       () => _removeDependency(
                         taskProvider,

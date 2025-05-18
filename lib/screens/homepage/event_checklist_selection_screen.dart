@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 class EventChecklistSelectionScreen extends StatefulWidget {
   const EventChecklistSelectionScreen({super.key});
@@ -17,10 +18,7 @@ class _EventChecklistSelectionScreenState
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
         elevation: 0,
-        title: const Text(
-          'Eventati Book',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-        ),
+        title: Text('Eventati Book', style: TextStyles.title),
         centerTitle: true,
       ),
       body: const Column(),

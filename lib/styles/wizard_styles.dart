@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/utils.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 /// Styles for the event wizard
 class WizardStyles {
@@ -30,22 +31,26 @@ class WizardStyles {
 
   /// Get the style for the wizard title
   static TextStyle getTitleStyle() {
-    return const TextStyle(
-      fontSize: 24,
-      fontWeight: FontWeight.bold,
-      color: Colors.white,
-    );
+    return TextStyles.title;
   }
 
   /// Get the style for the step title
   static TextStyle getStepTitleStyle() {
-    return const TextStyle(fontSize: 18, fontWeight: FontWeight.bold);
+    return TextStyles.sectionTitle;
   }
 
   /// Get the style for the previous button
   static ButtonStyle getPreviousButtonStyle(BuildContext context) {
     final isDarkMode = UIUtils.isDarkMode(context);
-    final backgroundColor = isDarkMode ? Colors.grey[700] : Colors.grey;
+    final backgroundColor =
+        isDarkMode
+            ? Color.fromRGBO(
+              AppColors.disabled.r.toInt(),
+              AppColors.disabled.g.toInt(),
+              AppColors.disabled.b.toInt(),
+              0.7,
+            )
+            : AppColors.disabled;
 
     return ElevatedButton.styleFrom(
       backgroundColor: backgroundColor,
@@ -73,33 +78,38 @@ class WizardStyles {
 
   /// Get the style for the button text
   static TextStyle getButtonTextStyle() {
-    return const TextStyle(
-      fontSize: 16,
-      fontWeight: FontWeight.bold,
-      color: Colors.white,
-    );
+    return TextStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold);
   }
 
   /// Get the decoration for the review container
   static BoxDecoration getReviewContainerDecoration() {
     return BoxDecoration(
-      border: Border.all(color: Colors.grey.shade300),
+      border: Border.all(
+        color: Color.fromRGBO(
+          AppColors.disabled.r.toInt(),
+          AppColors.disabled.g.toInt(),
+          AppColors.disabled.b.toInt(),
+          0.3,
+        ),
+      ),
       borderRadius: BorderRadius.circular(4),
     );
   }
 
   /// Get the style for the review section title
   static TextStyle getReviewSectionTitleStyle(BuildContext context) {
-    final isDarkMode = UIUtils.isDarkMode(context);
-    final color = isDarkMode ? AppColorsDark.primary : AppColors.primary;
-
-    return TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: color);
+    return TextStyles.sectionTitle;
   }
 
   /// Get the style for the progress indicator
   static BoxDecoration getProgressIndicatorDecoration() {
     return BoxDecoration(
-      color: Colors.grey.shade200,
+      color: Color.fromRGBO(
+        AppColors.disabled.r.toInt(),
+        AppColors.disabled.g.toInt(),
+        AppColors.disabled.b.toInt(),
+        0.2,
+      ),
       borderRadius: BorderRadius.circular(10),
     );
   }
@@ -114,11 +124,7 @@ class WizardStyles {
 
   /// Get the style for the progress text
   static TextStyle getProgressTextStyle() {
-    return const TextStyle(
-      fontSize: 12,
-      fontWeight: FontWeight.bold,
-      color: Colors.white,
-    );
+    return TextStyles.bodySmall;
   }
 
   /// Get the decoration for the wizard card
@@ -128,7 +134,12 @@ class WizardStyles {
       borderRadius: BorderRadius.circular(8),
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withAlpha(25),
+          color: Color.fromRGBO(
+            Colors.black.r.toInt(),
+            Colors.black.g.toInt(),
+            Colors.black.b.toInt(),
+            0.10,
+          ),
           blurRadius: 4,
           offset: const Offset(0, 2),
         ),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/utils/utils.dart';
+import 'package:eventati_book/styles/app_colors.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 /// A button for social authentication methods
 class SocialAuthButton extends StatelessWidget {
@@ -61,7 +63,7 @@ class SocialAuthButton extends StatelessWidget {
               borderRadius: BorderRadius.circular(
                 AppConstants.smallBorderRadius,
               ),
-              side: BorderSide(color: Colors.grey.shade300),
+              side: BorderSide(color: Color.fromRGBO(AppColors.disabled.r.toInt(), AppColors.disabled.g.toInt(), AppColors.disabled.b.toInt(), 0.3)),
             ),
           ),
           elevation: WidgetStateProperty.all(1),
@@ -76,11 +78,7 @@ class SocialAuthButton extends StatelessWidget {
             const SizedBox(width: 12),
             Text(
               text,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: txtColor,
-              ),
+              style: TextStyles.bodyLarge,
             ),
           ],
         ),

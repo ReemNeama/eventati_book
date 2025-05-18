@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:eventati_book/providers/providers.dart';
 import 'package:eventati_book/screens/event_wizard/wizard_factory.dart';
 import 'package:eventati_book/utils/utils.dart';
+import 'package:eventati_book/styles/text_styles.dart';
+
 
 class EventSelectionScreen extends StatefulWidget {
   const EventSelectionScreen({super.key});
@@ -19,10 +21,7 @@ class _EventSelectionScreenState extends State<EventSelectionScreen> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
         elevation: 0,
-        title: const Text(
-          AppConstants.appName,
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-        ),
+        title: Text(AppConstants.appName, style: TextStyles.title),
         centerTitle: true,
       ),
       body: Padding(
@@ -141,9 +140,7 @@ class _EventSelectionScreenState extends State<EventSelectionScreen> {
       ),
       child: Text(
         title,
-        style: TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
+        style: TextStyles.sectionTitle.copyWith(
           color: Theme.of(context).primaryColor,
         ),
       ),

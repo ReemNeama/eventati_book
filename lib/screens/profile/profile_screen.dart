@@ -4,6 +4,8 @@ import 'package:eventati_book/widgets/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:eventati_book/routing/routing.dart';
 import 'package:eventati_book/screens/profile/edit_profile_screen.dart';
+import 'package:eventati_book/styles/app_colors.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 /// Profile screen that displays user information and settings
 class ProfileScreen extends StatelessWidget {
@@ -62,21 +64,9 @@ class ProfileScreen extends StatelessWidget {
                             ),
                           ),
                       const SizedBox(height: 16),
-                      Text(
-                        user.name,
-                        style: const TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      Text(user.name, style: TextStyles.title),
                       const SizedBox(height: 4),
-                      Text(
-                        user.email,
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: isDarkMode ? Colors.white70 : Colors.black54,
-                        ),
-                      ),
+                      Text(user.email, style: TextStyles.bodyLarge),
                       if (!user.emailVerified && user.authProvider == 'email')
                         Padding(
                           padding: const EdgeInsets.only(top: 8),
@@ -92,11 +82,11 @@ class ProfileScreen extends StatelessWidget {
                             },
                             icon: const Icon(
                               Icons.warning,
-                              color: Colors.orange,
+                              color: AppColors.warning,
                             ),
                             label: const Text(
                               'Verify Email',
-                              style: TextStyle(color: Colors.orange),
+                              style: TextStyle(color: AppColors.warning),
                             ),
                           ),
                         ),
@@ -106,10 +96,7 @@ class ProfileScreen extends StatelessWidget {
                 ),
 
                 // Settings section
-                const Text(
-                  'Settings',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
+                Text('Settings', style: TextStyles.sectionTitle),
                 const SizedBox(height: 8),
                 _buildSettingItem(
                   context,
@@ -153,10 +140,7 @@ class ProfileScreen extends StatelessWidget {
                 const SizedBox(height: 24),
 
                 // Account section
-                const Text(
-                  'Account',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
+                Text('Account', style: TextStyles.sectionTitle),
                 const SizedBox(height: 8),
                 _buildSettingItem(
                   context,
@@ -202,7 +186,7 @@ class ProfileScreen extends StatelessWidget {
                   context,
                   icon: Icons.logout,
                   title: 'Logout',
-                  textColor: Colors.red,
+                  textColor: AppColors.error,
                   onTap: () {
                     _showLogoutConfirmationDialog(context, authProvider);
                   },

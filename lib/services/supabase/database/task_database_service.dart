@@ -231,6 +231,61 @@ class TaskDatabaseService {
     TaskDependency dependency,
   ) async {
     try {
+      // Validate input parameters
+      if (eventId.isEmpty) {
+        throw ArgumentError('Event ID cannot be empty');
+      }
+
+      if (dependency.prerequisiteTaskId.isEmpty) {
+        throw ArgumentError('Prerequisite task ID cannot be empty');
+      }
+
+      if (dependency.dependentTaskId.isEmpty) {
+        throw ArgumentError('Dependent task ID cannot be empty');
+      }
+
+      if (dependency.prerequisiteTaskId == dependency.dependentTaskId) {
+        throw ArgumentError('A task cannot depend on itself');
+      }
+
+      // Check if the tasks exist
+      final prerequisiteTaskExists = await _checkTaskExists(
+        eventId,
+        dependency.prerequisiteTaskId,
+      );
+
+      if (!prerequisiteTaskExists) {
+        throw ArgumentError(
+          'Prerequisite task ${dependency.prerequisiteTaskId} does not exist',
+        );
+      }
+
+      final dependentTaskExists = await _checkTaskExists(
+        eventId,
+        dependency.dependentTaskId,
+      );
+
+      if (!dependentTaskExists) {
+        throw ArgumentError(
+          'Dependent task ${dependency.dependentTaskId} does not exist',
+        );
+      }
+
+      // Check for circular dependencies
+      final wouldCreateCircularDependency =
+          await _wouldCreateCircularDependency(
+            eventId,
+            dependency.prerequisiteTaskId,
+            dependency.dependentTaskId,
+          );
+
+      if (wouldCreateCircularDependency) {
+        throw ArgumentError(
+          'Adding this dependency would create a circular dependency',
+        );
+      }
+
+      // Prepare the data
       final data = {
         'prerequisite_task_id': dependency.prerequisiteTaskId,
         'dependent_task_id': dependency.dependentTaskId,
@@ -241,6 +296,7 @@ class TaskDatabaseService {
         'updated_at': DateTime.now().toIso8601String(),
       };
 
+      // Add the dependency
       await _supabase
           .from(_dependenciesTable)
           .upsert(data, onConflict: 'prerequisite_task_id, dependent_task_id');
@@ -253,6 +309,92 @@ class TaskDatabaseService {
       Logger.e('Error adding task dependency: $e', tag: 'TaskDatabaseService');
       rethrow;
     }
+  }
+
+  /// Check if a task exists
+  Future<bool> _checkTaskExists(String eventId, String taskId) async {
+    try {
+      final response = await _supabase
+          .from(_tasksTable)
+          .select('id')
+          .eq('id', taskId)
+          .eq('event_id', eventId)
+          .limit(1);
+
+      return response.isNotEmpty;
+    } catch (e) {
+      Logger.e('Error checking if task exists: $e', tag: 'TaskDatabaseService');
+      return false;
+    }
+  }
+
+  /// Check if adding a dependency would create a circular dependency
+  Future<bool> _wouldCreateCircularDependency(
+    String eventId,
+    String prerequisiteTaskId,
+    String dependentTaskId,
+  ) async {
+    try {
+      // If the dependent task is already a prerequisite for the prerequisite task,
+      // then adding this dependency would create a circular dependency
+
+      // Get all dependencies for the event
+      final dependencies = await getTaskDependencies(eventId);
+
+      // Check if there's a path from dependent to prerequisite
+      return _isReachable(
+        dependencies,
+        dependentTaskId,
+        prerequisiteTaskId,
+        <String>{},
+      );
+    } catch (e) {
+      Logger.e(
+        'Error checking for circular dependency: $e',
+        tag: 'TaskDatabaseService',
+      );
+      // Default to false to allow the dependency to be added
+      return false;
+    }
+  }
+
+  /// Check if there's a path from start to end in the dependency graph
+  bool _isReachable(
+    List<TaskDependency> dependencies,
+    String start,
+    String end,
+    Set<String> visited,
+  ) {
+    // If we've already visited this task, skip it to avoid cycles
+    if (visited.contains(start)) {
+      return false;
+    }
+
+    // Mark the current task as visited
+    visited.add(start);
+
+    // If start and end are the same, we've found a path
+    if (start == end) {
+      return true;
+    }
+
+    // Check all dependencies where the current task is a prerequisite
+    for (final dependency in dependencies) {
+      if (dependency.prerequisiteTaskId == start) {
+        // Recursively check if there's a path from the dependent task to the end
+        if (_isReachable(
+          dependencies,
+          dependency.dependentTaskId,
+          end,
+          visited,
+        )) {
+          return true;
+        }
+      }
+    }
+
+    // No path found
+    return false;
   }
 
   /// Add a dependency between two tasks with explicit event ID
@@ -292,12 +434,53 @@ class TaskDatabaseService {
     String dependentTaskId,
   ) async {
     try {
-      await _supabase
-          .from(_dependenciesTable)
-          .delete()
-          .eq('prerequisite_task_id', prerequisiteTaskId)
-          .eq('dependent_task_id', dependentTaskId)
-          .eq('event_id', eventId);
+      // Validate input parameters
+      if (eventId.isEmpty) {
+        throw ArgumentError('Event ID cannot be empty');
+      }
+
+      if (prerequisiteTaskId.isEmpty) {
+        throw ArgumentError('Prerequisite task ID cannot be empty');
+      }
+
+      if (dependentTaskId.isEmpty) {
+        throw ArgumentError('Dependent task ID cannot be empty');
+      }
+
+      // Check if the dependency exists
+      final dependencyExists = await _checkDependencyExists(
+        eventId,
+        prerequisiteTaskId,
+        dependentTaskId,
+      );
+
+      if (!dependencyExists) {
+        Logger.w(
+          'Dependency does not exist: $prerequisiteTaskId -> $dependentTaskId',
+          tag: 'TaskDatabaseService',
+        );
+        // Return without error since the end result is the same (no dependency)
+        return;
+      }
+
+      // Remove the dependency
+      final result =
+          await _supabase
+              .from(_dependenciesTable)
+              .delete()
+              .eq('prerequisite_task_id', prerequisiteTaskId)
+              .eq('dependent_task_id', dependentTaskId)
+              .eq('event_id', eventId)
+              .select();
+
+      // Check if any rows were affected
+      if (result.isEmpty) {
+        Logger.w(
+          'No dependency was removed: $prerequisiteTaskId -> $dependentTaskId',
+          tag: 'TaskDatabaseService',
+        );
+        return;
+      }
 
       Logger.i(
         'Removed task dependency: $prerequisiteTaskId -> $dependentTaskId',
@@ -309,6 +492,31 @@ class TaskDatabaseService {
         tag: 'TaskDatabaseService',
       );
       rethrow;
+    }
+  }
+
+  /// Check if a dependency exists
+  Future<bool> _checkDependencyExists(
+    String eventId,
+    String prerequisiteTaskId,
+    String dependentTaskId,
+  ) async {
+    try {
+      final response = await _supabase
+          .from(_dependenciesTable)
+          .select('prerequisite_task_id, dependent_task_id')
+          .eq('prerequisite_task_id', prerequisiteTaskId)
+          .eq('dependent_task_id', dependentTaskId)
+          .eq('event_id', eventId)
+          .limit(1);
+
+      return response.isNotEmpty;
+    } catch (e) {
+      Logger.e(
+        'Error checking if dependency exists: $e',
+        tag: 'TaskDatabaseService',
+      );
+      return false;
     }
   }
 

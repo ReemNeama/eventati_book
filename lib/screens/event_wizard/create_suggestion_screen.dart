@@ -6,6 +6,7 @@ import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/widgets/common/loading_indicator.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 /// Screen for creating a custom suggestion
 class CreateSuggestionScreen extends StatefulWidget {
@@ -32,8 +33,6 @@ class _CreateSuggestionScreenState extends State<CreateSuggestionScreen> {
   Widget build(BuildContext context) {
     final isDarkMode = UIUtils.isDarkMode(context);
     final primaryColor = isDarkMode ? AppColorsDark.primary : AppColors.primary;
-    final textColor =
-        isDarkMode ? AppColorsDark.textPrimary : AppColors.textPrimary;
 
     return Scaffold(
       appBar: AppBar(
@@ -162,11 +161,7 @@ class _CreateSuggestionScreenState extends State<CreateSuggestionScreen> {
                         // Optional fields section
                         Text(
                           'Optional Information',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: textColor,
-                          ),
+                          style: TextStyles.sectionTitle,
                         ),
                         const SizedBox(height: 16),
 
@@ -212,12 +207,10 @@ class _CreateSuggestionScreenState extends State<CreateSuggestionScreen> {
                                 borderRadius: BorderRadius.circular(8),
                               ),
                             ),
-                            child: const Text(
+                            child: Text(
                               'Save Suggestion',
-                              style: TextStyle(
-                                fontSize: 16,
+                              style: TextStyles.bodyLarge.copyWith(
                                 fontWeight: FontWeight.bold,
-                                color: Colors.white,
                               ),
                             ),
                           ),
@@ -284,7 +277,7 @@ class _CreateSuggestionScreenState extends State<CreateSuggestionScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Suggestion added successfully!'),
-              backgroundColor: Colors.green,
+              backgroundColor: AppColors.success,
             ),
           );
 
@@ -297,7 +290,7 @@ class _CreateSuggestionScreenState extends State<CreateSuggestionScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Failed to add suggestion. Please try again.'),
-              backgroundColor: Colors.red,
+              backgroundColor: AppColors.error,
             ),
           );
         }
@@ -306,7 +299,10 @@ class _CreateSuggestionScreenState extends State<CreateSuggestionScreen> {
       // Show error message
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+          SnackBar(
+            content: Text('Error: $e'),
+            backgroundColor: AppColors.error,
+          ),
         );
       }
     } finally {

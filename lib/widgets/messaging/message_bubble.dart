@@ -5,6 +5,7 @@ import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:intl/intl.dart';
 
+
 class MessageBubble extends StatelessWidget {
   final Message message;
   final double maxWidth;
@@ -25,7 +26,20 @@ class MessageBubble extends StatelessWidget {
     const userTextColor = Colors.white;
 
     // Colors for vendor messages
-    final vendorBubbleColor = isDarkMode ? Colors.grey[800] : Colors.grey[200];
+    final vendorBubbleColor =
+        isDarkMode
+            ? Color.fromRGBO(
+              AppColors.disabled.r.toInt(),
+              AppColors.disabled.g.toInt(),
+              AppColors.disabled.b.toInt(),
+              0.8,
+            )
+            : Color.fromRGBO(
+              AppColors.disabled.r.toInt(),
+              AppColors.disabled.g.toInt(),
+              AppColors.disabled.b.toInt(),
+              0.2,
+            );
     final vendorTextColor = isDarkMode ? Colors.white : Colors.black87;
 
     // Timestamp color

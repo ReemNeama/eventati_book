@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/styles/app_colors.dart';
-import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/widgets/responsive/responsive.dart';
 import 'package:eventati_book/routing/routing.dart';
 import 'package:eventati_book/providers/providers.dart';
 import 'package:eventati_book/widgets/recommendations/recommendation_widgets.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 class HomepageScreen extends StatefulWidget {
   const HomepageScreen({super.key});
@@ -51,11 +51,6 @@ class _HomepageScreenState extends State<HomepageScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDarkMode = UIUtils.isDarkMode(context);
-    final textPrimary =
-        isDarkMode ? AppColorsDark.textPrimary : AppColors.textPrimary;
-    final textSecondary =
-        isDarkMode ? AppColorsDark.textSecondary : AppColors.textSecondary;
 
     return Scaffold(
       appBar: AppBar(
@@ -70,18 +65,11 @@ class _HomepageScreenState extends State<HomepageScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Welcome section
-              Text(
-                'Welcome back!',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: textPrimary,
-                ),
-              ),
+              Text('Welcome back!', style: TextStyles.title.copyWith()),
               const SizedBox(height: 4),
               Text(
                 'Plan your perfect event with us',
-                style: TextStyle(fontSize: 16, color: textSecondary),
+                style: TextStyles.bodyLarge,
               ),
               const SizedBox(height: AppConstants.largePadding),
 
@@ -215,10 +203,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
   }
 
   Widget _sectionTitle(String title) {
-    return Text(
-      title,
-      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-    );
+    return Text(title, style: TextStyles.subtitle);
   }
 
   Widget _emptyStateCard(String title, String subtitle) {
@@ -230,20 +215,29 @@ class _HomepageScreenState extends State<HomepageScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.event_busy, size: 48, color: Colors.grey[400]),
-            const SizedBox(height: 16),
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey[600],
+            Icon(
+              Icons.event_busy,
+              size: 48,
+              color: Color.fromRGBO(
+                AppColors.disabled.r.toInt(),
+                AppColors.disabled.g.toInt(),
+                AppColors.disabled.b.toInt(),
+                0.4,
               ),
             ),
+            const SizedBox(height: 16),
+            Text(title, style: TextStyles.sectionTitle),
             const SizedBox(height: 8),
             Text(
               subtitle,
-              style: TextStyle(color: Colors.grey[600]),
+              style: TextStyle(
+                color: Color.fromRGBO(
+                  AppColors.disabled.r.toInt(),
+                  AppColors.disabled.g.toInt(),
+                  AppColors.disabled.b.toInt(),
+                  0.6,
+                ),
+              ),
               textAlign: TextAlign.center,
             ),
           ],
@@ -281,10 +275,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
                 size: 30,
               ),
             ),
-            title: Text(
-              event['name'],
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-            ),
+            title: Text(event['name'], style: TextStyles.sectionTitle),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -395,21 +386,19 @@ class _HomepageScreenState extends State<HomepageScreen> {
                             const Icon(
                               Icons.star,
                               size: 14,
-                              color: Colors.amber,
+                              color: AppColors.ratingStarColor,
                             ),
                             const SizedBox(width: 4),
                             Text(
                               venue['rating'].toString(),
-                              style: const TextStyle(fontSize: 12),
+                              style: TextStyles.bodySmall,
                             ),
                           ],
                         ),
                         const SizedBox(height: 4),
                         Text(
                           venue['price'],
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Theme.of(context).primaryColor,
+                          style: TextStyles.bodySmall.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
                           maxLines: 1,
@@ -432,7 +421,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
       {
         'title': 'Venues',
         'icon': Icons.location_on,
-        'color': Colors.blue,
+        'color': AppColors.primary,
         'onTap': () {
           // Navigate to venues tab in services screen
         },
@@ -440,7 +429,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
       {
         'title': 'Catering',
         'icon': Icons.restaurant,
-        'color': Colors.orange,
+        'color': AppColors.warning,
         'onTap': () {
           // Navigate to catering tab in services screen
         },
@@ -456,7 +445,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
       {
         'title': 'Planners',
         'icon': Icons.people,
-        'color': Colors.green,
+        'color': AppColors.success,
         'onTap': () {
           // Navigate to planners tab in services screen
         },

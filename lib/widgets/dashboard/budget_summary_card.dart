@@ -3,6 +3,7 @@ import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 /// Extension on BudgetItem to add missing properties
 extension BudgetItemExtension on BudgetItem {
@@ -22,7 +23,15 @@ class BudgetSummaryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isDarkMode = UIUtils.isDarkMode(context);
-    final Color cardColor = isDarkMode ? Colors.grey[850]! : Colors.white;
+    final Color cardColor =
+        isDarkMode
+            ? Color.fromRGBO(
+              AppColors.disabled.r.toInt(),
+              AppColors.disabled.g.toInt(),
+              AppColors.disabled.b.toInt(),
+              0.85,
+            )
+            : Colors.white;
     final Color textPrimary =
         isDarkMode ? AppColorsDark.textPrimary : AppColors.textPrimary;
     final Color textSecondary =
@@ -56,26 +65,22 @@ class BudgetSummaryCard extends StatelessWidget {
               children: [
                 Text(
                   'Budget Overview',
-                  style: TextStyle(
-                    fontSize: 16,
+                  style: TextStyles.bodyLarge.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: textPrimary,
                   ),
                 ),
-                Text(
-                  '$percentSpent% spent',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: _getPercentColor(percentSpent),
-                  ),
-                ),
+                Text('$percentSpent% spent', style: TextStyles.bodyMedium),
               ],
             ),
             const SizedBox(height: 12),
             LinearProgressIndicator(
               value: percentSpent / 100,
-              backgroundColor: Colors.grey[300],
+              backgroundColor: Color.fromRGBO(
+                AppColors.disabled.r.toInt(),
+                AppColors.disabled.g.toInt(),
+                AppColors.disabled.b.toInt(),
+                0.3,
+              ),
               valueColor: AlwaysStoppedAnimation<Color>(
                 _getPercentColor(percentSpent),
               ),
@@ -121,27 +126,20 @@ class BudgetSummaryCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: TextStyle(fontSize: 12, color: textSecondary)),
+        Text(label, style: TextStyles.bodySmall),
         const SizedBox(height: 4),
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-            color: textPrimary,
-          ),
-        ),
+        Text(value, style: TextStyles.bodyMedium),
       ],
     );
   }
 
   Color _getPercentColor(int percent) {
     if (percent < 50) {
-      return Colors.green;
+      return AppColors.success;
     } else if (percent < 75) {
-      return Colors.orange;
+      return AppColors.warning;
     } else {
-      return Colors.red;
+      return AppColors.error;
     }
   }
 }

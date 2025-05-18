@@ -387,7 +387,7 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
                   ? 'Booking updated successfully'
                   : 'Booking created successfully',
             ),
-            backgroundColor: Colors.green,
+            backgroundColor: AppColors.success,
           ),
         );
         Navigator.of(context).pop(true);

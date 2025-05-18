@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 import 'package:eventati_book/utils/utils.dart';
 
 class ServiceFilterBar extends StatelessWidget {
@@ -32,9 +33,9 @@ class ServiceFilterBar extends StatelessWidget {
             ? AppColorsDark.filterBarBackground
             : AppColors.filterBarBackground;
     final Color searchBarBg =
-        isDarkMode ? AppColorsDark.searchBarBackground : Colors.white;
+        isDarkMode ? AppColorsDark.searchBarBackground : AppColors.white;
     final Color sortFilterBg =
-        isDarkMode ? AppColorsDark.sortFilterBackground : Colors.white;
+        isDarkMode ? AppColorsDark.sortFilterBackground : AppColors.white;
     final Color borderColor =
         isDarkMode ? AppColorsDark.divider : AppColors.divider;
 
@@ -89,16 +90,16 @@ class ServiceFilterBar extends StatelessWidget {
                         color:
                             isDarkMode
                                 ? AppColorsDark.textSecondary
-                                : Colors.black87,
+                                : AppColors.textPrimary,
                       ),
                       const SizedBox(width: 8),
                       Text(
                         'Sort by: ',
-                        style: TextStyle(
+                        style: TextStyles.bodyMedium.copyWith(
                           color:
                               isDarkMode
                                   ? AppColorsDark.textSecondary
-                                  : Colors.black87,
+                                  : AppColors.textPrimary,
                         ),
                       ),
                       Expanded(
@@ -153,12 +154,11 @@ class ServiceFilterBar extends StatelessWidget {
                       const SizedBox(width: 8),
                       Text(
                         'Filter',
-                        style: TextStyle(
+                        style: TextStyles.buttonText.copyWith(
                           color:
                               isDarkMode
                                   ? AppColorsDark.primary
                                   : AppColors.primary,
-                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ],

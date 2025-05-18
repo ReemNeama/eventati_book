@@ -3,6 +3,7 @@ import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/utils.dart';
 
+
 class PriceRangeFilter extends StatelessWidget {
   final String title;
   final RangeValues currentRange;
@@ -50,7 +51,12 @@ class PriceRangeFilter extends StatelessWidget {
           inactiveColor:
               UIUtils.isDarkMode(context)
                   ? AppColorsDark.primaryWithAlpha(0.2)
-                  : AppColors.primaryWithAlpha(0.2),
+                  : Color.fromRGBO(
+                    AppColors.primary.r.toInt(),
+                    AppColors.primary.g.toInt(),
+                    AppColors.primary.b.toInt(),
+                    0.2,
+                  ),
           labels: RangeLabels(
             labelBuilder(currentRange.start),
             labelBuilder(currentRange.end),

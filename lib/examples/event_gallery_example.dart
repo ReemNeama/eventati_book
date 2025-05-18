@@ -3,6 +3,8 @@ import 'package:eventati_book/widgets/widgets.dart';
 import 'package:eventati_book/models/event_models/event.dart';
 import 'package:eventati_book/utils/file_utils.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:eventati_book/styles/app_colors.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 /// Example screen showing how to use the ImageGallery widget with an event
 class EventGalleryExample extends StatefulWidget {
@@ -104,10 +106,7 @@ class _EventGalleryExampleState extends State<EventGalleryExample> {
             const SizedBox(height: 16),
 
             // Image gallery
-            const Text(
-              'Event Photos',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
+            Text('Event Photos', style: TextStyles.sectionTitle),
             const SizedBox(height: 8),
             ImageGallery(
               imageUrls: _imageUrls,
@@ -129,7 +128,10 @@ class _EventGalleryExampleState extends State<EventGalleryExample> {
 
             // Error message
             if (_errorMessage != null) ...[
-              Text(_errorMessage!, style: const TextStyle(color: Colors.red)),
+              Text(
+                _errorMessage!,
+                style: const TextStyle(color: AppColors.error),
+              ),
               const SizedBox(height: 16),
             ],
 

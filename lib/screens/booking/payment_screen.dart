@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
+
 /// Screen for processing payments
 class PaymentScreen extends StatefulWidget {
   /// The booking to process payment for
@@ -89,7 +90,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.error_outline, color: Colors.red, size: 64),
+            const Icon(Icons.error_outline, color: AppColors.error, size: 64),
             const SizedBox(height: 16),
             Text('Payment Error', style: TextStyles.title),
             const SizedBox(height: 16),
@@ -121,7 +122,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.check_circle, color: Colors.green, size: 64),
+            const Icon(Icons.check_circle, color: AppColors.success, size: 64),
             const SizedBox(height: 16),
             Text('Payment Successful', style: TextStyles.title),
             const SizedBox(height: 16),

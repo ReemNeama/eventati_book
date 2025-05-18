@@ -9,6 +9,7 @@ import 'package:eventati_book/utils/ui/ui_utils.dart';
 import 'package:eventati_book/widgets/common/loading_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:eventati_book/utils/utils.dart';
 
 /// Screen for managing notification preferences
 class NotificationPreferencesScreen extends StatefulWidget {
@@ -244,11 +245,11 @@ class _NotificationPreferencesScreenState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Text(
             'Notification Channels',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.bold),
           ),
         ),
         SwitchListTile(
@@ -298,11 +299,11 @@ class _NotificationPreferencesScreenState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Text(
             'Notification Types',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.bold),
           ),
         ),
         ...groupedTopics.entries.map((entry) {

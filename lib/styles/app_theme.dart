@@ -3,6 +3,9 @@ import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/core/constants.dart';
 
+import 'package:eventati_book/utils/utils.dart';
+
+
 /// A class that defines the application's theme using the colors from AppColors.
 /// This provides a consistent look and feel across the entire application.
 class AppTheme {
@@ -90,7 +93,12 @@ class AppTheme {
       chipTheme: ChipThemeData(
         backgroundColor: AppColors.chipBackground,
         selectedColor: AppColors.primary,
-        secondarySelectedColor: AppColors.primaryWithAlpha(0.7),
+        secondarySelectedColor: Color.fromRGBO(
+          AppColors.primary.r.toInt(),
+          AppColors.primary.g.toInt(),
+          AppColors.primary.b.toInt(),
+          0.7,
+        ),
         padding: const EdgeInsets.symmetric(
           horizontal: AppConstants.smallPadding,
           vertical: AppConstants.smallPadding / 2,

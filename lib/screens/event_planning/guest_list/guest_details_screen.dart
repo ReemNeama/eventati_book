@@ -5,6 +5,7 @@ import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/screens/event_planning/guest_list/guest_form_screen.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 class GuestDetailsScreen extends StatelessWidget {
   final String eventId;
@@ -22,7 +23,6 @@ class GuestDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDarkMode = UIUtils.isDarkMode(context);
     final primaryColor = isDarkMode ? AppColorsDark.primary : AppColors.primary;
-    final textColor = isDarkMode ? Colors.white : Colors.black;
 
     // Get group name
     String groupName = 'No Group';
@@ -43,22 +43,22 @@ class GuestDetailsScreen extends StatelessWidget {
 
     switch (guest.rsvpStatus) {
       case RsvpStatus.confirmed:
-        statusColor = Colors.green;
+        statusColor = AppColors.success;
         statusIcon = Icons.check_circle;
         statusText = 'Confirmed';
         break;
       case RsvpStatus.pending:
-        statusColor = Colors.orange;
+        statusColor = AppColors.warning;
         statusIcon = Icons.pending;
         statusText = 'Pending';
         break;
       case RsvpStatus.declined:
-        statusColor = Colors.red;
+        statusColor = AppColors.error;
         statusIcon = Icons.cancel;
         statusText = 'Declined';
         break;
       case RsvpStatus.tentative:
-        statusColor = Colors.blue;
+        statusColor = AppColors.primary;
         statusIcon = Icons.help;
         statusText = 'Tentative';
         break;
@@ -121,14 +121,7 @@ class GuestDetailsScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        guest.fullName,
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: textColor,
-                        ),
-                      ),
+                      Text(guest.fullName, style: TextStyles.title),
                       const SizedBox(height: 8),
                       // RSVP status
                       Container(
@@ -145,14 +138,7 @@ class GuestDetailsScreen extends StatelessWidget {
                           children: [
                             Icon(statusIcon, color: statusColor, size: 18),
                             const SizedBox(width: 8),
-                            Text(
-                              statusText,
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: statusColor,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                            Text(statusText, style: TextStyles.bodyLarge),
                           ],
                         ),
                       ),
@@ -183,7 +169,20 @@ class GuestDetailsScreen extends StatelessWidget {
                     Text(
                       'No contact information provided',
                       style: TextStyle(
-                        color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
+                        color:
+                            isDarkMode
+                                ? Color.fromRGBO(
+                                  AppColors.disabled.r.toInt(),
+                                  AppColors.disabled.g.toInt(),
+                                  AppColors.disabled.b.toInt(),
+                                  0.4,
+                                )
+                                : Color.fromRGBO(
+                                  AppColors.disabled.r.toInt(),
+                                  AppColors.disabled.g.toInt(),
+                                  AppColors.disabled.b.toInt(),
+                                  0.6,
+                                ),
                         fontStyle: FontStyle.italic,
                       ),
                     ),
@@ -216,7 +215,20 @@ class GuestDetailsScreen extends StatelessWidget {
                   : Text(
                     'No additional guests',
                     style: TextStyle(
-                      color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
+                      color:
+                          isDarkMode
+                              ? Color.fromRGBO(
+                                AppColors.disabled.r.toInt(),
+                                AppColors.disabled.g.toInt(),
+                                AppColors.disabled.b.toInt(),
+                                0.4,
+                              )
+                              : Color.fromRGBO(
+                                AppColors.disabled.r.toInt(),
+                                AppColors.disabled.g.toInt(),
+                                AppColors.disabled.b.toInt(),
+                                0.6,
+                              ),
                       fontStyle: FontStyle.italic,
                     ),
                   ),
@@ -229,10 +241,7 @@ class GuestDetailsScreen extends StatelessWidget {
                 context,
                 'Notes',
                 Icons.note,
-                Text(
-                  guest.notes!,
-                  style: TextStyle(fontSize: 16, color: textColor),
-                ),
+                Text(guest.notes!, style: TextStyles.bodyLarge),
               ),
           ],
         ),
@@ -254,7 +263,6 @@ class GuestDetailsScreen extends StatelessWidget {
   ) {
     final isDarkMode = UIUtils.isDarkMode(context);
     final primaryColor = isDarkMode ? AppColorsDark.primary : AppColors.primary;
-    final textColor = isDarkMode ? Colors.white : Colors.black;
 
     return Card(
       elevation: 2,
@@ -268,14 +276,7 @@ class GuestDetailsScreen extends StatelessWidget {
               children: [
                 Icon(icon, color: primaryColor, size: 20),
                 const SizedBox(width: 8),
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: textColor,
-                  ),
-                ),
+                Text(title, style: TextStyles.sectionTitle),
               ],
             ),
             const SizedBox(height: 16),
@@ -293,27 +294,33 @@ class GuestDetailsScreen extends StatelessWidget {
     IconData icon,
   ) {
     final isDarkMode = UIUtils.isDarkMode(context);
-    final textColor = isDarkMode ? Colors.white : Colors.black;
 
     return Row(
       children: [
         Icon(
           icon,
           size: 16,
-          color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
+          color:
+              isDarkMode
+                  ? Color.fromRGBO(
+                    AppColors.disabled.r.toInt(),
+                    AppColors.disabled.g.toInt(),
+                    AppColors.disabled.b.toInt(),
+                    0.4,
+                  )
+                  : Color.fromRGBO(
+                    AppColors.disabled.r.toInt(),
+                    AppColors.disabled.g.toInt(),
+                    AppColors.disabled.b.toInt(),
+                    0.6,
+                  ),
         ),
         const SizedBox(width: 8),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 14,
-                color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
-              ),
-            ),
-            Text(value, style: TextStyle(fontSize: 16, color: textColor)),
+            Text(label, style: TextStyles.bodyMedium),
+            Text(value, style: TextStyles.bodyLarge),
           ],
         ),
       ],
@@ -341,7 +348,7 @@ class GuestDetailsScreen extends StatelessWidget {
                         children: [
                           Icon(
                             Icons.check_circle,
-                            color: Colors.green,
+                            color: AppColors.success,
                             size: 20,
                           ),
                           SizedBox(width: 8),
@@ -359,7 +366,11 @@ class GuestDetailsScreen extends StatelessWidget {
                     RadioListTile<RsvpStatus>(
                       title: const Row(
                         children: [
-                          Icon(Icons.pending, color: Colors.orange, size: 20),
+                          Icon(
+                            Icons.pending,
+                            color: AppColors.warning,
+                            size: 20,
+                          ),
                           SizedBox(width: 8),
                           Text('Pending'),
                         ],
@@ -375,7 +386,7 @@ class GuestDetailsScreen extends StatelessWidget {
                     RadioListTile<RsvpStatus>(
                       title: const Row(
                         children: [
-                          Icon(Icons.cancel, color: Colors.red, size: 20),
+                          Icon(Icons.cancel, color: AppColors.error, size: 20),
                           SizedBox(width: 8),
                           Text('Declined'),
                         ],
@@ -391,7 +402,7 @@ class GuestDetailsScreen extends StatelessWidget {
                     RadioListTile<RsvpStatus>(
                       title: const Row(
                         children: [
-                          Icon(Icons.help, color: Colors.blue, size: 20),
+                          Icon(Icons.help, color: AppColors.primary, size: 20),
                           SizedBox(width: 8),
                           Text('Tentative'),
                         ],

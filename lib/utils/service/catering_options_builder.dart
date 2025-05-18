@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/models/service_options/catering_options.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 /// Builder class for catering options form fields
 class CateringOptionsBuilder {
@@ -54,10 +55,7 @@ class CateringOptionsBuilder {
 
     return [
       const SizedBox(height: 16),
-      const Text(
-        'Catering Service Options',
-        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-      ),
+      Text('Catering Service Options', style: TextStyles.sectionTitle),
       const SizedBox(height: 16),
 
       // Build each section of the form
@@ -109,9 +107,9 @@ class CateringOptionsBuilder {
     required Function(String) onCustomDescriptionChanged,
   }) {
     return [
-      const Text(
+      Text(
         'Meal Service Style',
-        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.bold),
       ),
       const SizedBox(height: 8),
 
@@ -177,9 +175,9 @@ class CateringOptionsBuilder {
     ];
 
     return [
-      const Text(
+      Text(
         'Dietary Restrictions to Accommodate',
-        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.bold),
       ),
       const SizedBox(height: 8),
 
@@ -224,9 +222,9 @@ class CateringOptionsBuilder {
     required Function(String) onCustomDescriptionChanged,
   }) {
     return [
-      const Text(
+      Text(
         'Beverage Service',
-        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.bold),
       ),
       const SizedBox(height: 8),
 

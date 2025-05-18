@@ -7,6 +7,7 @@ import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 /// Screen for editing user profile information
 class EditProfileScreen extends StatefulWidget {
@@ -128,7 +129,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('No user is logged in'),
-          backgroundColor: Colors.red,
+          backgroundColor: AppColors.error,
         ),
       );
       return;
@@ -145,7 +146,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(_uploadError!), backgroundColor: Colors.red),
+            SnackBar(
+              content: Text(_uploadError!),
+              backgroundColor: AppColors.error,
+            ),
           );
         }
         return;
@@ -169,7 +173,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Profile updated successfully'),
-          backgroundColor: Colors.green,
+          backgroundColor: AppColors.success,
         ),
       );
 
@@ -180,7 +184,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           content: Text(
             authProvider.errorMessage ?? 'Failed to update profile',
           ),
-          backgroundColor: Colors.red,
+          backgroundColor: AppColors.error,
         ),
       );
     }
@@ -256,21 +260,26 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       padding: const EdgeInsets.only(top: 8),
                       child: Column(
                         children: [
-                          const Text(
+                          Text(
                             'Uploading image...',
-                            style: TextStyle(fontSize: 12),
+                            style: TextStyles.bodySmall,
                           ),
                           const SizedBox(height: 4),
                           LinearProgressIndicator(
                             value: _uploadProgress,
-                            backgroundColor: Colors.grey[300],
+                            backgroundColor: Color.fromRGBO(
+                              AppColors.disabled.r.toInt(),
+                              AppColors.disabled.g.toInt(),
+                              AppColors.disabled.b.toInt(),
+                              0.3,
+                            ),
                             valueColor: AlwaysStoppedAnimation<Color>(
                               primaryColor,
                             ),
                           ),
                           Text(
                             '${(_uploadProgress * 100).toInt()}%',
-                            style: const TextStyle(fontSize: 12),
+                            style: TextStyles.bodySmall,
                           ),
                         ],
                       ),
@@ -280,7 +289,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       padding: const EdgeInsets.only(top: 8),
                       child: Text(
                         _uploadError!,
-                        style: const TextStyle(color: Colors.red),
+                        style: const TextStyle(color: AppColors.error),
                       ),
                     ),
                   const SizedBox(height: 24),
@@ -342,10 +351,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             ? const CircularProgressIndicator(
                               color: Colors.white,
                             )
-                            : const Text(
-                              'Save Changes',
-                              style: TextStyle(fontSize: 16),
-                            ),
+                            : Text('Save Changes', style: TextStyles.bodyLarge),
                   ),
                 ],
               ),

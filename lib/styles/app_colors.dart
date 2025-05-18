@@ -24,11 +24,16 @@ class AppColors {
     211,
   ); // Original canvasColor
 
+  // Basic colors
+  static const Color white = Colors.white;
+  static const Color black = Colors.black;
+  static const Color transparent = Colors.transparent;
+
   // Background colors
   static const Color background = canvasColor;
-  static const Color surface = Colors.white;
-  static const Color card = Colors.white;
-  static const Color cardBackground = Colors.white;
+  static const Color surface = white;
+  static const Color card = white;
+  static const Color cardBackground = white;
 
   // Text colors
   static const Color textPrimary = Colors.black87;
@@ -38,8 +43,8 @@ class AppColors {
   // Status colors
   static const Color success = Colors.green;
   static const Color error = Colors.red;
-  static const Color warning = Colors.amber;
-  static const Color info = Colors.blue;
+  static const Color warning = Colors.orange;
+  static const Color info = primary;
 
   // Other common colors
   static const Color divider = Colors.grey;

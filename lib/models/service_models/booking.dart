@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/models/service_options/service_options.dart';
 import 'package:eventati_book/models/service_models/payment.dart';
+import 'package:eventati_book/styles/app_colors.dart';
 
 /// Enum representing the status of a booking
 enum BookingStatus { pending, confirmed, cancelled, completed, noShow }
@@ -27,15 +28,15 @@ extension BookingStatusExtension on BookingStatus {
   Color get color {
     switch (this) {
       case BookingStatus.pending:
-        return Colors.orange;
+        return AppColors.warning;
       case BookingStatus.confirmed:
-        return Colors.green;
+        return AppColors.success;
       case BookingStatus.cancelled:
-        return Colors.red;
+        return AppColors.error;
       case BookingStatus.completed:
-        return Colors.blue;
+        return AppColors.primary;
       case BookingStatus.noShow:
-        return Colors.grey;
+        return AppColors.disabled;
     }
   }
 

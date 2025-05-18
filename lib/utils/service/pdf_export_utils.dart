@@ -11,6 +11,20 @@ import 'package:share_plus/share_plus.dart';
 
 import 'package:eventati_book/models/models.dart';
 
+
+/// PDF-specific colors for document styling
+class PdfAppColors {
+  static const PdfColor disabled300 = PdfColor.fromInt(0xFFE0E0E0);
+  static const PdfColor disabled700 = PdfColor.fromInt(0xFF616161);
+}
+
+/// PDF-specific text styles
+class PdfTextStyles {
+  static const pw.TextStyle bodySmall = pw.TextStyle(fontSize: 10);
+  static const pw.TextStyle bodyMedium = pw.TextStyle(fontSize: 12);
+  static const pw.TextStyle caption = pw.TextStyle(fontSize: 10, color: PdfAppColors.disabled700);
+}
+
 /// Utility class for exporting data to PDF format
 class PDFExportUtils {
   /// Generate a PDF document from a saved comparison
@@ -170,7 +184,7 @@ class PDFExportUtils {
                   style: pw.TextStyle(
                     font: italicFont,
                     fontSize: 10,
-                    color: PdfColors.grey700,
+                    color: PdfAppColors.disabled700,
                   ),
                 ),
               ),
@@ -192,7 +206,7 @@ class PDFExportUtils {
       padding: const pw.EdgeInsets.only(bottom: 16),
       decoration: const pw.BoxDecoration(
         border: pw.Border(
-          bottom: pw.BorderSide(color: PdfColors.grey300, width: 1),
+          bottom: pw.BorderSide(color: PdfAppColors.disabled300, width: 1),
         ),
       ),
       child: pw.Row(
@@ -211,16 +225,13 @@ class PDFExportUtils {
               pw.SizedBox(height: 4),
               pw.Text(
                 'Service Type: $serviceType',
-                style: const pw.TextStyle(
-                  fontSize: 14,
-                  color: PdfColors.grey700,
-                ),
+                style: PdfTextStyles.bodySmall,
               ),
             ],
           ),
           pw.Text(
             'Eventati Book',
-            style: const pw.TextStyle(fontSize: 16, color: PdfColors.grey700),
+            style: PdfTextStyles.bodyMedium,
           ),
         ],
       ),
@@ -233,19 +244,16 @@ class PDFExportUtils {
       padding: const pw.EdgeInsets.only(top: 16),
       decoration: const pw.BoxDecoration(
         border: pw.Border(
-          top: pw.BorderSide(color: PdfColors.grey300, width: 1),
+          top: pw.BorderSide(color: PdfAppColors.disabled300, width: 1),
         ),
       ),
       child: pw.Row(
         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
         children: [
-          pw.Text(
-            date,
-            style: const pw.TextStyle(fontSize: 12, color: PdfColors.grey700),
-          ),
+          pw.Text(date, style: PdfTextStyles.caption),
           pw.Text(
             'Page ${context.pageNumber} of ${context.pagesCount}',
-            style: const pw.TextStyle(fontSize: 12, color: PdfColors.grey700),
+            style: PdfTextStyles.caption,
           ),
         ],
       ),

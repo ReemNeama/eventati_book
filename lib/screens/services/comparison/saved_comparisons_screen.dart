@@ -11,6 +11,7 @@ import 'package:eventati_book/utils/service/pdf_export_utils.dart';
 import 'package:eventati_book/widgets/common/empty_state.dart';
 import 'package:eventati_book/widgets/common/error_message.dart';
 import 'package:eventati_book/widgets/services/comparison/annotation_dialog.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 /// Screen to display and manage saved comparisons
 class SavedComparisonsScreen extends StatefulWidget {
@@ -241,10 +242,7 @@ class _SavedComparisonsScreenState extends State<SavedComparisonsScreen> {
                   Expanded(
                     child: Text(
                       comparison.title,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: TextStyles.sectionTitle,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -262,11 +260,7 @@ class _SavedComparisonsScreenState extends State<SavedComparisonsScreen> {
                     ),
                     child: Text(
                       comparison.serviceType,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: primaryColor,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: TextStyles.bodySmall,
                     ),
                   ),
                 ],
@@ -277,7 +271,7 @@ class _SavedComparisonsScreenState extends State<SavedComparisonsScreen> {
               // Services being compared
               Text(
                 'Comparing: ${comparison.serviceNames.join(', ')}',
-                style: const TextStyle(fontSize: 14),
+                style: TextStyles.bodyMedium,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -295,10 +289,7 @@ class _SavedComparisonsScreenState extends State<SavedComparisonsScreen> {
                   const SizedBox(width: 4),
                   Text(
                     _formatDate(comparison.createdAt),
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: textColor.withAlpha(150),
-                    ),
+                    style: TextStyles.bodySmall,
                   ),
                   if (comparison.eventName != null) ...[
                     const SizedBox(width: 16),
@@ -311,10 +302,7 @@ class _SavedComparisonsScreenState extends State<SavedComparisonsScreen> {
                     Expanded(
                       child: Text(
                         comparison.eventName!,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: textColor.withAlpha(150),
-                        ),
+                        style: TextStyles.bodySmall,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -358,7 +346,9 @@ class _SavedComparisonsScreenState extends State<SavedComparisonsScreen> {
                     icon: const Icon(Icons.delete),
                     label: const Text('Delete'),
                     onPressed: () => _deleteComparison(comparison),
-                    style: TextButton.styleFrom(foregroundColor: Colors.red),
+                    style: TextButton.styleFrom(
+                      foregroundColor: AppColors.error,
+                    ),
                   ),
                 ],
               ),
@@ -942,7 +932,7 @@ class _SavedComparisonsScreenState extends State<SavedComparisonsScreen> {
                     }
                   });
                 },
-                style: TextButton.styleFrom(foregroundColor: Colors.red),
+                style: TextButton.styleFrom(foregroundColor: AppColors.error),
                 child: const Text('Delete'),
               ),
             ],

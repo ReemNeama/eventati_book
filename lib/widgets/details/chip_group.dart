@@ -23,7 +23,12 @@ class ChipGroup extends StatelessWidget {
               .map(
                 (item) => Chip(
                   label: Text(item),
-                  backgroundColor: AppColors.primaryWithAlpha(0.7),
+                  backgroundColor: Color.fromRGBO(
+                    AppColors.primary.r.toInt(),
+                    AppColors.primary.g.toInt(),
+                    AppColors.primary.b.toInt(),
+                    0.5,
+                  ),
                 ),
               )
               .toList(),

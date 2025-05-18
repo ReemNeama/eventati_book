@@ -4,6 +4,7 @@ import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:intl/intl.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 /// A card displaying an overview of an event
 class EventOverviewCard extends StatelessWidget {
@@ -14,11 +15,17 @@ class EventOverviewCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isDarkMode = UIUtils.isDarkMode(context);
-    final Color cardColor = isDarkMode ? Colors.grey[850]! : Colors.white;
+    final Color cardColor =
+        isDarkMode
+            ? Color.fromRGBO(
+              AppColors.disabled.r.toInt(),
+              AppColors.disabled.g.toInt(),
+              AppColors.disabled.b.toInt(),
+              0.85,
+            )
+            : Colors.white;
     final Color textPrimary =
         isDarkMode ? AppColorsDark.textPrimary : AppColors.textPrimary;
-    final Color textSecondary =
-        isDarkMode ? AppColorsDark.textSecondary : AppColors.textSecondary;
     final Color accentColor =
         isDarkMode ? AppColorsDark.primary : AppColors.primary;
 
@@ -43,17 +50,13 @@ class EventOverviewCard extends StatelessWidget {
                     children: [
                       Text(
                         event.name,
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: textPrimary,
-                        ),
+                        style: TextStyles.subtitle.copyWith(),
                         overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 4),
                       Text(
                         'Type: ${StringUtils.capitalize(event.type.toString().split('.').last)}',
-                        style: TextStyle(fontSize: 14, color: textSecondary),
+                        style: TextStyles.bodyMedium,
                       ),
                     ],
                   ),
@@ -64,7 +67,20 @@ class EventOverviewCard extends StatelessWidget {
                     vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: isUpcoming ? Colors.green[100] : Colors.red[100],
+                    color:
+                        isUpcoming
+                            ? Color.fromRGBO(
+                              AppColors.success.r.toInt(),
+                              AppColors.success.g.toInt(),
+                              AppColors.success.b.toInt(),
+                              0.1,
+                            )
+                            : Color.fromRGBO(
+                              AppColors.error.r.toInt(),
+                              AppColors.error.g.toInt(),
+                              AppColors.error.b.toInt(),
+                              0.1,
+                            ),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -74,7 +90,20 @@ class EventOverviewCard extends StatelessWidget {
                             : '$daysUntil days left'
                         : '${daysUntil.abs()} days ago',
                     style: TextStyle(
-                      color: isUpcoming ? Colors.green[800] : Colors.red[800],
+                      color:
+                          isUpcoming
+                              ? Color.fromRGBO(
+                                AppColors.success.r.toInt(),
+                                AppColors.success.g.toInt(),
+                                AppColors.success.b.toInt(),
+                                0.8,
+                              )
+                              : Color.fromRGBO(
+                                AppColors.error.r.toInt(),
+                                AppColors.error.g.toInt(),
+                                AppColors.error.b.toInt(),
+                                0.8,
+                              ),
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -114,18 +143,11 @@ class EventOverviewCard extends StatelessWidget {
             ),
             if (event.description != null && event.description!.isNotEmpty) ...[
               const SizedBox(height: 16),
-              Text(
-                'Description:',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: textPrimary,
-                ),
-              ),
+              Text('Description:', style: TextStyles.bodyMedium),
               const SizedBox(height: 4),
               Text(
                 event.description!,
-                style: TextStyle(fontSize: 14, color: textSecondary),
+                style: TextStyles.bodyMedium,
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -152,20 +174,13 @@ class EventOverviewCard extends StatelessWidget {
             children: [
               Icon(icon, size: 16, color: iconColor),
               const SizedBox(width: 4),
-              Text(
-                label,
-                style: TextStyle(fontSize: 12, color: textColor.withAlpha(179)),
-              ),
+              Text(label, style: TextStyles.bodySmall),
             ],
           ),
           const SizedBox(height: 4),
           Text(
             value,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: textColor,
-            ),
+            style: TextStyles.bodyMedium,
             overflow: TextOverflow.ellipsis,
           ),
         ],

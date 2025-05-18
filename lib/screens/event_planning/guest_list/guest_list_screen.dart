@@ -10,6 +10,7 @@ import 'package:eventati_book/widgets/common/responsive_layout.dart';
 import 'package:eventati_book/screens/event_planning/guest_list/guest_form_screen.dart';
 import 'package:eventati_book/screens/event_planning/guest_list/guest_details_screen.dart';
 import 'package:eventati_book/screens/event_planning/guest_list/guest_groups_screen.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 class GuestListScreen extends StatefulWidget {
   final String eventId;
@@ -159,7 +160,19 @@ class _GuestListScreenState extends State<GuestListScreen>
           width: 1,
           thickness: 1,
           color:
-              UIUtils.isDarkMode(context) ? Colors.grey[800] : Colors.grey[300],
+              UIUtils.isDarkMode(context)
+                  ? Color.fromRGBO(
+                    AppColors.disabled.r.toInt(),
+                    AppColors.disabled.g.toInt(),
+                    AppColors.disabled.b.toInt(),
+                    0.8,
+                  )
+                  : Color.fromRGBO(
+                    AppColors.disabled.r.toInt(),
+                    AppColors.disabled.g.toInt(),
+                    AppColors.disabled.b.toInt(),
+                    0.3,
+                  ),
         ),
         // Summary on the right (40% of width)
         Expanded(flex: 40, child: _buildSummaryTab(guestListProvider)),
@@ -232,7 +245,6 @@ class _GuestListScreenState extends State<GuestListScreen>
   Widget _buildSummaryTab(GuestListProvider guestListProvider) {
     final isDarkMode = UIUtils.isDarkMode(context);
     final primaryColor = isDarkMode ? AppColorsDark.primary : AppColors.primary;
-    final textColor = isDarkMode ? Colors.white : Colors.black;
 
     // Calculate total guests including plus ones
     int totalGuestCount = guestListProvider.guests.length;
@@ -264,11 +276,7 @@ class _GuestListScreenState extends State<GuestListScreen>
                 children: [
                   Text(
                     'RSVP Summary',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: textColor,
-                    ),
+                    style: TextStyles.sectionTitle.copyWith(),
                   ),
                   const SizedBox(height: 16),
                   Row(
@@ -282,28 +290,24 @@ class _GuestListScreenState extends State<GuestListScreen>
                       _buildRsvpStat(
                         'Confirmed',
                         guestListProvider.confirmedGuests,
-                        Colors.green,
+                        AppColors.success,
                       ),
                       _buildRsvpStat(
                         'Pending',
                         guestListProvider.pendingGuests,
-                        Colors.orange,
+                        AppColors.warning,
                       ),
                       _buildRsvpStat(
                         'Declined',
                         guestListProvider.declinedGuests,
-                        Colors.red,
+                        AppColors.error,
                       ),
                     ],
                   ),
                   const SizedBox(height: 16),
                   Text(
                     'Total Guest Count (including plus ones): $totalGuestCount',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: textColor,
-                    ),
+                    style: TextStyles.bodyMedium,
                   ),
                 ],
               ),
@@ -322,14 +326,7 @@ class _GuestListScreenState extends State<GuestListScreen>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Groups',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: textColor,
-                    ),
-                  ),
+                  Text('Groups', style: TextStyles.sectionTitle.copyWith()),
                   const SizedBox(height: 16),
                   ...guestListProvider.groups.map((group) {
                     final groupGuests = guestListProvider.getGuestsByGroup(
@@ -341,16 +338,11 @@ class _GuestListScreenState extends State<GuestListScreen>
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            group.name,
-                            style: TextStyle(fontSize: 16, color: textColor),
-                          ),
+                          Text(group.name, style: TextStyles.bodyLarge),
                           Text(
                             '${groupGuests.length} guests',
-                            style: TextStyle(
-                              fontSize: 16,
+                            style: TextStyles.bodyLarge.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: primaryColor,
                             ),
                           ),
                         ],
@@ -368,9 +360,6 @@ class _GuestListScreenState extends State<GuestListScreen>
   }
 
   Widget _buildRsvpStat(String label, int count, Color color) {
-    final isDarkMode = UIUtils.isDarkMode(context);
-    final textColor = isDarkMode ? Colors.white : Colors.black;
-
     return Column(
       children: [
         Container(
@@ -381,18 +370,11 @@ class _GuestListScreenState extends State<GuestListScreen>
             shape: BoxShape.circle,
           ),
           child: Center(
-            child: Text(
-              count.toString(),
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: color,
-              ),
-            ),
+            child: Text(count.toString(), style: TextStyles.title.copyWith()),
           ),
         ),
         const SizedBox(height: 8),
-        Text(label, style: TextStyle(fontSize: 14, color: textColor)),
+        Text(label, style: TextStyles.bodyMedium),
       ],
     );
   }
@@ -438,7 +420,20 @@ class _GuestListScreenState extends State<GuestListScreen>
   Widget _buildFilterBar(GuestListProvider guestListProvider) {
     final isDarkMode = UIUtils.isDarkMode(context);
     final primaryColor = isDarkMode ? AppColorsDark.primary : AppColors.primary;
-    final backgroundColor = isDarkMode ? Colors.grey[800] : Colors.grey[200];
+    final backgroundColor =
+        isDarkMode
+            ? Color.fromRGBO(
+              AppColors.disabled.r.toInt(),
+              AppColors.disabled.g.toInt(),
+              AppColors.disabled.b.toInt(),
+              0.8,
+            )
+            : Color.fromRGBO(
+              AppColors.disabled.r.toInt(),
+              AppColors.disabled.g.toInt(),
+              AppColors.disabled.b.toInt(),
+              0.2,
+            );
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -456,7 +451,15 @@ class _GuestListScreenState extends State<GuestListScreen>
                 borderSide: BorderSide.none,
               ),
               filled: true,
-              fillColor: isDarkMode ? Colors.grey[700] : Colors.white,
+              fillColor:
+                  isDarkMode
+                      ? Color.fromRGBO(
+                        AppColors.disabled.r.toInt(),
+                        AppColors.disabled.g.toInt(),
+                        AppColors.disabled.b.toInt(),
+                        0.7,
+                      )
+                      : Colors.white,
               contentPadding: const EdgeInsets.symmetric(vertical: 0),
             ),
             onChanged: (value) {
@@ -508,28 +511,28 @@ class _GuestListScreenState extends State<GuestListScreen>
                   RsvpStatus.confirmed,
                   'Confirmed',
                   Icons.check_circle,
-                  Colors.green,
+                  AppColors.success,
                 ),
                 _buildRsvpStatusChip(
                   context,
                   RsvpStatus.pending,
                   'Pending',
                   Icons.pending,
-                  Colors.orange,
+                  AppColors.warning,
                 ),
                 _buildRsvpStatusChip(
                   context,
                   RsvpStatus.declined,
                   'Declined',
                   Icons.cancel,
-                  Colors.red,
+                  AppColors.error,
                 ),
                 _buildRsvpStatusChip(
                   context,
                   RsvpStatus.tentative,
                   'Tentative',
                   Icons.help,
-                  Colors.blue,
+                  AppColors.primary,
                 ),
               ],
             ),
@@ -564,7 +567,15 @@ class _GuestListScreenState extends State<GuestListScreen>
                   ? Colors.white
                   : color,
         ),
-        backgroundColor: isDarkMode ? Colors.grey[700] : Colors.white,
+        backgroundColor:
+            isDarkMode
+                ? Color.fromRGBO(
+                  AppColors.disabled.r.toInt(),
+                  AppColors.disabled.g.toInt(),
+                  AppColors.disabled.b.toInt(),
+                  0.7,
+                )
+                : Colors.white,
         selectedColor: color,
         checkmarkColor: Colors.white,
         labelStyle: TextStyle(
@@ -609,7 +620,15 @@ class _GuestListScreenState extends State<GuestListScreen>
                   ? Colors.white
                   : color,
         ),
-        backgroundColor: isDarkMode ? Colors.grey[700] : Colors.white,
+        backgroundColor:
+            isDarkMode
+                ? Color.fromRGBO(
+                  AppColors.disabled.r.toInt(),
+                  AppColors.disabled.g.toInt(),
+                  AppColors.disabled.b.toInt(),
+                  0.7,
+                )
+                : Colors.white,
         selectedColor: color,
         checkmarkColor: Colors.white,
         labelStyle: TextStyle(
@@ -635,7 +654,6 @@ class _GuestListScreenState extends State<GuestListScreen>
     GuestListProvider guestListProvider,
   ) {
     final isDarkMode = UIUtils.isDarkMode(context);
-    final textColor = isDarkMode ? Colors.white : Colors.black;
 
     // Get group name
     String groupName = 'No Group';
@@ -656,22 +674,22 @@ class _GuestListScreenState extends State<GuestListScreen>
 
     switch (guest.rsvpStatus) {
       case RsvpStatus.confirmed:
-        statusColor = Colors.green;
+        statusColor = AppColors.success;
         statusIcon = Icons.check_circle;
         statusText = 'Confirmed';
         break;
       case RsvpStatus.pending:
-        statusColor = Colors.orange;
+        statusColor = AppColors.warning;
         statusIcon = Icons.pending;
         statusText = 'Pending';
         break;
       case RsvpStatus.declined:
-        statusColor = Colors.red;
+        statusColor = AppColors.error;
         statusIcon = Icons.cancel;
         statusText = 'Declined';
         break;
       case RsvpStatus.tentative:
-        statusColor = Colors.blue;
+        statusColor = AppColors.primary;
         statusIcon = Icons.help;
         statusText = 'Tentative';
         break;
@@ -712,11 +730,7 @@ class _GuestListScreenState extends State<GuestListScreen>
                     radius: 24,
                     child: Text(
                       '${guest.firstName[0]}${guest.lastName[0]}',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: statusColor,
-                      ),
+                      style: TextStyles.sectionTitle,
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -725,14 +739,7 @@ class _GuestListScreenState extends State<GuestListScreen>
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          guest.fullName,
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: textColor,
-                          ),
-                        ),
+                        Text(guest.fullName, style: TextStyles.sectionTitle),
                         const SizedBox(height: 4),
                         if (guest.email != null) ...[
                           Row(
@@ -742,20 +749,21 @@ class _GuestListScreenState extends State<GuestListScreen>
                                 size: 14,
                                 color:
                                     isDarkMode
-                                        ? Colors.grey[400]
-                                        : Colors.grey[600],
+                                        ? Color.fromRGBO(
+                                          AppColors.disabled.r.toInt(),
+                                          AppColors.disabled.g.toInt(),
+                                          AppColors.disabled.b.toInt(),
+                                          0.4,
+                                        )
+                                        : Color.fromRGBO(
+                                          AppColors.disabled.r.toInt(),
+                                          AppColors.disabled.g.toInt(),
+                                          AppColors.disabled.b.toInt(),
+                                          0.6,
+                                        ),
                               ),
                               const SizedBox(width: 4),
-                              Text(
-                                guest.email!,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color:
-                                      isDarkMode
-                                          ? Colors.grey[400]
-                                          : Colors.grey[600],
-                                ),
-                              ),
+                              Text(guest.email!, style: TextStyles.bodyMedium),
                             ],
                           ),
                           const SizedBox(height: 2),
@@ -768,20 +776,21 @@ class _GuestListScreenState extends State<GuestListScreen>
                                 size: 14,
                                 color:
                                     isDarkMode
-                                        ? Colors.grey[400]
-                                        : Colors.grey[600],
+                                        ? Color.fromRGBO(
+                                          AppColors.disabled.r.toInt(),
+                                          AppColors.disabled.g.toInt(),
+                                          AppColors.disabled.b.toInt(),
+                                          0.4,
+                                        )
+                                        : Color.fromRGBO(
+                                          AppColors.disabled.r.toInt(),
+                                          AppColors.disabled.g.toInt(),
+                                          AppColors.disabled.b.toInt(),
+                                          0.6,
+                                        ),
                               ),
                               const SizedBox(width: 4),
-                              Text(
-                                guest.phone!,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color:
-                                      isDarkMode
-                                          ? Colors.grey[400]
-                                          : Colors.grey[600],
-                                ),
-                              ),
+                              Text(guest.phone!, style: TextStyles.bodyMedium),
                             ],
                           ),
                         ],
@@ -803,14 +812,7 @@ class _GuestListScreenState extends State<GuestListScreen>
                       children: [
                         Icon(statusIcon, color: statusColor, size: 14),
                         const SizedBox(width: 4),
-                        Text(
-                          statusText,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: statusColor,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                        Text(statusText, style: TextStyles.bodySmall),
                       ],
                     ),
                   ),
@@ -825,16 +827,23 @@ class _GuestListScreenState extends State<GuestListScreen>
                   Icon(
                     Icons.group,
                     size: 16,
-                    color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
+                    color:
+                        isDarkMode
+                            ? Color.fromRGBO(
+                              AppColors.disabled.r.toInt(),
+                              AppColors.disabled.g.toInt(),
+                              AppColors.disabled.b.toInt(),
+                              0.4,
+                            )
+                            : Color.fromRGBO(
+                              AppColors.disabled.r.toInt(),
+                              AppColors.disabled.g.toInt(),
+                              AppColors.disabled.b.toInt(),
+                              0.6,
+                            ),
                   ),
                   const SizedBox(width: 4),
-                  Text(
-                    groupName,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
-                    ),
-                  ),
+                  Text(groupName, style: TextStyles.bodyMedium),
                 ],
               ),
               if (guest.plusOne) ...[
@@ -844,15 +853,25 @@ class _GuestListScreenState extends State<GuestListScreen>
                     Icon(
                       Icons.person_add,
                       size: 16,
-                      color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
+                      color:
+                          isDarkMode
+                              ? Color.fromRGBO(
+                                AppColors.disabled.r.toInt(),
+                                AppColors.disabled.g.toInt(),
+                                AppColors.disabled.b.toInt(),
+                                0.4,
+                              )
+                              : Color.fromRGBO(
+                                AppColors.disabled.r.toInt(),
+                                AppColors.disabled.g.toInt(),
+                                AppColors.disabled.b.toInt(),
+                                0.6,
+                              ),
                     ),
                     const SizedBox(width: 4),
                     Text(
                       'Plus ${guest.plusOneCount ?? 1}',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
-                      ),
+                      style: TextStyles.bodyMedium,
                     ),
                   ],
                 ),

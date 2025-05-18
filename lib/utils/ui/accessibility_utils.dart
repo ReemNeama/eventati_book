@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:eventati_book/styles/app_colors.dart';
+
 import 'dart:math' as math;
 
 /// Utility functions for accessibility
@@ -286,7 +288,14 @@ class AccessibilityUtils {
 
   /// Get a high contrast primary color
   static Color getHighContrastPrimaryColor(bool isDarkMode) {
-    return isDarkMode ? Colors.yellow : Colors.blue.shade900;
+    return isDarkMode
+        ? Colors.yellow
+        : Color.fromRGBO(
+          AppColors.primary.r.toInt(),
+          AppColors.primary.g.toInt(),
+          AppColors.primary.b.toInt(),
+          0.9,
+        );
   }
 
   /// Get a high contrast secondary color
@@ -296,22 +305,70 @@ class AccessibilityUtils {
 
   /// Get a high contrast error color
   static Color getHighContrastErrorColor(bool isDarkMode) {
-    return isDarkMode ? Colors.red.shade300 : Colors.red.shade900;
+    return isDarkMode
+        ? Color.fromRGBO(
+          AppColors.error.r.toInt(),
+          AppColors.error.g.toInt(),
+          AppColors.error.b.toInt(),
+          0.3,
+        )
+        : Color.fromRGBO(
+          AppColors.error.r.toInt(),
+          AppColors.error.g.toInt(),
+          AppColors.error.b.toInt(),
+          0.9,
+        );
   }
 
   /// Get a high contrast success color
   static Color getHighContrastSuccessColor(bool isDarkMode) {
-    return isDarkMode ? Colors.green.shade300 : Colors.green.shade900;
+    return isDarkMode
+        ? Color.fromRGBO(
+          AppColors.success.r.toInt(),
+          AppColors.success.g.toInt(),
+          AppColors.success.b.toInt(),
+          0.3,
+        )
+        : Color.fromRGBO(
+          AppColors.success.r.toInt(),
+          AppColors.success.g.toInt(),
+          AppColors.success.b.toInt(),
+          0.9,
+        );
   }
 
   /// Get a high contrast warning color
   static Color getHighContrastWarningColor(bool isDarkMode) {
-    return isDarkMode ? Colors.orange.shade300 : Colors.orange.shade900;
+    return isDarkMode
+        ? Color.fromRGBO(
+          AppColors.warning.r.toInt(),
+          AppColors.warning.g.toInt(),
+          AppColors.warning.b.toInt(),
+          0.3,
+        )
+        : Color.fromRGBO(
+          AppColors.warning.r.toInt(),
+          AppColors.warning.g.toInt(),
+          AppColors.warning.b.toInt(),
+          0.9,
+        );
   }
 
   /// Get a high contrast info color
   static Color getHighContrastInfoColor(bool isDarkMode) {
-    return isDarkMode ? Colors.blue.shade300 : Colors.blue.shade900;
+    return isDarkMode
+        ? Color.fromRGBO(
+          AppColors.primary.r.toInt(),
+          AppColors.primary.g.toInt(),
+          AppColors.primary.b.toInt(),
+          0.3,
+        )
+        : Color.fromRGBO(
+          AppColors.primary.r.toInt(),
+          AppColors.primary.g.toInt(),
+          AppColors.primary.b.toInt(),
+          0.9,
+        );
   }
 
   /// Get a high contrast theme data

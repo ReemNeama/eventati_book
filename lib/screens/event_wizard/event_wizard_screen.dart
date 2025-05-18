@@ -15,6 +15,7 @@ import 'package:eventati_book/widgets/event_wizard/wizard_progress_indicator.dar
 import 'package:eventati_book/widgets/milestones/milestone_celebration_overlay.dart';
 import 'package:eventati_book/widgets/supabase_persistence_status.dart';
 
+
 /// A unified wizard screen for creating events of different types
 class EventWizardScreen extends StatefulWidget {
   /// The template for the event type

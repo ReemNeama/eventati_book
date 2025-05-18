@@ -66,6 +66,8 @@ analyzer:
     unused_import: warning
     unused_local_variable: warning
 
+    # Note: Custom rules for styles are defined in the dart_code_metrics section below
+
   exclude:
     # Exclude generated files
     - '**/*.g.dart'
@@ -111,6 +113,14 @@ dart_code_metrics:
     - avoid-throw-in-catch-block
     - avoid-non-null-assertion
     - avoid-nested-conditional-expressions
+
+    # Custom rules for styles
+    - no-hardcoded-colors
+    - prefer-extracting-callbacks
+    - avoid-hardcoded-styles
+    - use-centralized-styles
+    - use-text-styles
+    - use-app-colors
   anti-patterns:
     - long-method
     - long-parameter-list

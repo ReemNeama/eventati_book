@@ -6,6 +6,8 @@ import 'package:eventati_book/widgets/auth/auth_button.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:provider/provider.dart';
 import 'package:eventati_book/routing/routing.dart';
+import 'package:eventati_book/styles/app_colors.dart';
+
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -71,7 +73,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             'Registration successful! Please verify your email.',
             style: TextStyle(color: Colors.white),
           ),
-          backgroundColor: Colors.green,
+          backgroundColor: AppColors.success,
         ),
       );
 
@@ -98,7 +100,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             authProvider.errorMessage ?? 'Registration failed',
             style: const TextStyle(color: Colors.white),
           ),
-          backgroundColor: Colors.red,
+          backgroundColor: AppColors.error,
         ),
       );
     }

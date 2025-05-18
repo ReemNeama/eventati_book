@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:eventati_book/widgets/common/error_message.dart';
 import 'package:eventati_book/widgets/common/error_screen.dart';
 import 'package:eventati_book/utils/utils.dart';
+import 'package:eventati_book/styles/app_colors.dart';
+
 
 /// Utility functions for error handling
 class ErrorHandlingUtils {
@@ -86,7 +88,20 @@ class ErrorHandlingUtils {
                     width: double.infinity,
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: isDarkMode ? Colors.grey[800] : Colors.grey[200],
+                      color:
+                          isDarkMode
+                              ? Color.fromRGBO(
+                                AppColors.disabled.r.toInt(),
+                                AppColors.disabled.g.toInt(),
+                                AppColors.disabled.b.toInt(),
+                                0.8,
+                              )
+                              : Color.fromRGBO(
+                                AppColors.disabled.r.toInt(),
+                                AppColors.disabled.g.toInt(),
+                                AppColors.disabled.b.toInt(),
+                                0.2,
+                              ),
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
@@ -342,11 +357,32 @@ class ErrorHandlingUtils {
 
     switch (severity) {
       case ErrorSeverity.low:
-        return isDarkMode ? Colors.blue[300]! : Colors.blue;
+        return isDarkMode
+            ? Color.fromRGBO(
+              AppColors.primary.r.toInt(),
+              AppColors.primary.g.toInt(),
+              AppColors.primary.b.toInt(),
+              0.3,
+            )
+            : AppColors.primary;
       case ErrorSeverity.medium:
-        return isDarkMode ? Colors.orange[300]! : Colors.orange;
+        return isDarkMode
+            ? Color.fromRGBO(
+              AppColors.warning.r.toInt(),
+              AppColors.warning.g.toInt(),
+              AppColors.warning.b.toInt(),
+              0.3,
+            )
+            : AppColors.warning;
       case ErrorSeverity.high:
-        return isDarkMode ? Colors.red[300]! : Colors.red;
+        return isDarkMode
+            ? Color.fromRGBO(
+              AppColors.error.r.toInt(),
+              AppColors.error.g.toInt(),
+              AppColors.error.b.toInt(),
+              0.3,
+            )
+            : AppColors.error;
     }
   }
 }

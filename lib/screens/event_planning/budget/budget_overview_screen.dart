@@ -6,6 +6,7 @@ import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/screens/event_planning/budget/budget_details_screen.dart';
 import 'package:eventati_book/screens/event_planning/budget/budget_item_form_screen.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 class BudgetOverviewScreen extends StatelessWidget {
   final String eventId;
@@ -29,14 +30,7 @@ class BudgetOverviewScreen extends StatelessWidget {
         appBar: AppBar(
           backgroundColor: primaryColor,
           elevation: 0,
-          title: Text(
-            'Budget for $eventName',
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
+          title: Text('Budget for $eventName', style: TextStyles.subtitle),
           centerTitle: true,
           iconTheme: const IconThemeData(color: Colors.white),
         ),
@@ -59,7 +53,15 @@ class BudgetOverviewScreen extends StatelessWidget {
 
             return Container(
               decoration: BoxDecoration(
-                color: isDarkMode ? Colors.grey[900] : Colors.white,
+                color:
+                    isDarkMode
+                        ? Color.fromRGBO(
+                          AppColors.disabled.r.toInt(),
+                          AppColors.disabled.g.toInt(),
+                          AppColors.disabled.b.toInt(),
+                          0.9,
+                        )
+                        : Colors.white,
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(30),
                   topRight: Radius.circular(30),
@@ -102,7 +104,6 @@ class BudgetOverviewScreen extends StatelessWidget {
     BudgetProvider budgetProvider,
   ) {
     final isDarkMode = UIUtils.isDarkMode(context);
-    final textColor = isDarkMode ? Colors.white : Colors.black;
     final primaryColor = isDarkMode ? AppColorsDark.primary : AppColors.primary;
 
     return Container(
@@ -130,7 +131,7 @@ class BudgetOverviewScreen extends StatelessWidget {
                   decimalPlaces: 0,
                 ),
                 Icons.receipt_long,
-                Colors.orange,
+                AppColors.warning,
               ),
             ],
           ),
@@ -146,7 +147,7 @@ class BudgetOverviewScreen extends StatelessWidget {
                   decimalPlaces: 0,
                 ),
                 Icons.check_circle,
-                Colors.green,
+                AppColors.success,
               ),
               _buildSummaryCard(
                 context,
@@ -156,7 +157,7 @@ class BudgetOverviewScreen extends StatelessWidget {
                   decimalPlaces: 0,
                 ),
                 Icons.pending,
-                Colors.red,
+                AppColors.error,
               ),
             ],
           ),
@@ -166,14 +167,7 @@ class BudgetOverviewScreen extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Categories',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: textColor,
-                ),
-              ),
+              Text('Categories', style: TextStyles.sectionTitle),
               TextButton(
                 onPressed: () {
                   Navigator.push(
@@ -210,8 +204,20 @@ class BudgetOverviewScreen extends StatelessWidget {
     Color color,
   ) {
     final isDarkMode = UIUtils.isDarkMode(context);
-    final cardColor = isDarkMode ? Colors.grey[800] : Colors.grey[100];
-    final textColor = isDarkMode ? Colors.white : Colors.black;
+    final cardColor =
+        isDarkMode
+            ? Color.fromRGBO(
+              AppColors.disabled.r.toInt(),
+              AppColors.disabled.g.toInt(),
+              AppColors.disabled.b.toInt(),
+              0.8,
+            )
+            : Color.fromRGBO(
+              AppColors.disabled.r.toInt(),
+              AppColors.disabled.g.toInt(),
+              AppColors.disabled.b.toInt(),
+              0.1,
+            );
 
     return Container(
       width: MediaQuery.of(context).size.width * 0.43,
@@ -227,25 +233,11 @@ class BudgetOverviewScreen extends StatelessWidget {
             children: [
               Icon(icon, color: color, size: 20),
               const SizedBox(width: 8),
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: textColor,
-                ),
-              ),
+              Text(title, style: TextStyles.bodyMedium),
             ],
           ),
           const SizedBox(height: 8),
-          Text(
-            amount,
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: textColor,
-            ),
-          ),
+          Text(amount, style: TextStyles.sectionTitle),
         ],
       ),
     );
@@ -256,7 +248,6 @@ class BudgetOverviewScreen extends StatelessWidget {
     BudgetProvider budgetProvider,
   ) {
     final isDarkMode = UIUtils.isDarkMode(context);
-    final textColor = isDarkMode ? Colors.white : Colors.black;
     final categoryTotals = budgetProvider.getCategoryTotals();
 
     return Expanded(
@@ -290,13 +281,11 @@ class BudgetOverviewScreen extends StatelessWidget {
               ),
               title: Text(
                 category.name,
-                style: TextStyle(fontWeight: FontWeight.bold, color: textColor),
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               subtitle: Text(
                 '${categoryItems.length} items',
-                style: TextStyle(
-                  color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
-                ),
+                style: TextStyles.bodySmall,
               ),
               trailing: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -304,17 +293,11 @@ class BudgetOverviewScreen extends StatelessWidget {
                 children: [
                   Text(
                     ServiceUtils.formatPrice(categoryTotal, decimalPlaces: 0),
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: textColor,
-                    ),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   Text(
                     '${((categoryTotal / budgetProvider.totalEstimated) * 100).toStringAsFixed(0)}%',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
-                    ),
+                    style: TextStyles.bodySmall,
                   ),
                 ],
               ),

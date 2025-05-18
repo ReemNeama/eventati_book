@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:eventati_book/screens/settings/notification_settings_screen.dart';
 import 'package:eventati_book/screens/settings/pending_shares_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:eventati_book/styles/app_colors.dart';
 
 /// Screen for app settings
 class SettingsScreen extends StatelessWidget {
@@ -11,7 +12,7 @@ class SettingsScreen extends StatelessWidget {
   /// Show an info snackbar
   void _showInfoSnackBar(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: Colors.blue),
+      SnackBar(content: Text(message), backgroundColor: AppColors.primary),
     );
   }
 
@@ -27,7 +28,7 @@ class SettingsScreen extends StatelessWidget {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text('Profile settings not implemented yet'),
-                  backgroundColor: Colors.blue,
+                  backgroundColor: AppColors.primary,
                 ),
               );
             }),

@@ -70,7 +70,15 @@ class _EventDashboardScreenState extends State<EventDashboardScreen> {
     final bool isDarkMode = UIUtils.isDarkMode(context);
     final Color primaryColor =
         isDarkMode ? AppColorsDark.primary : AppColors.primary;
-    final Color cardColor = isDarkMode ? Colors.grey[850]! : Colors.white;
+    final Color cardColor =
+        isDarkMode
+            ? Color.fromRGBO(
+              AppColors.disabled.r.toInt(),
+              AppColors.disabled.g.toInt(),
+              AppColors.disabled.b.toInt(),
+              0.85,
+            )
+            : Colors.white;
     final Color textPrimary =
         isDarkMode ? AppColorsDark.textPrimary : AppColors.textPrimary;
     final Color textSecondary =

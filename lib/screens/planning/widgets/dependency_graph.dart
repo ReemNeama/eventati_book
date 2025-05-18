@@ -6,6 +6,7 @@ import 'package:eventati_book/screens/planning/widgets/task_card.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/utils/core/constants.dart';
 
+
 /// A widget that visualizes task dependencies as a graph
 class DependencyGraph extends StatefulWidget {
   /// The list of tasks
@@ -108,7 +109,12 @@ class _DependencyGraphState extends State<DependencyGraph> {
     return CustomPaint(
       painter: GridPainter(
         gridSpacing: 50 * _scale,
-        gridColor: Colors.grey.withAlpha(51), // 0.2 * 255 = 51
+        gridColor: Color.fromRGBO(
+          AppColors.disabled.r.toInt(),
+          AppColors.disabled.g.toInt(),
+          AppColors.disabled.b.toInt(),
+          0.20,
+        ), // 0.2 * 255 = 51
       ),
       size: Size.infinite,
     );
@@ -171,7 +177,12 @@ class _DependencyGraphState extends State<DependencyGraph> {
                 _selectedTask?.id == prerequisiteTask.id ||
                         _selectedTask?.id == dependentTask.id
                     ? AppColors.primary
-                    : Colors.grey.withAlpha(128), // 0.5 * 255 = 128
+                    : Color.fromRGBO(
+                      AppColors.disabled.r.toInt(),
+                      AppColors.disabled.g.toInt(),
+                      AppColors.disabled.b.toInt(),
+                      0.50,
+                    ), // 0.5 * 255 = 128
             strokeWidth:
                 _selectedTask?.id == prerequisiteTask.id ||
                         _selectedTask?.id == dependentTask.id
@@ -248,11 +259,21 @@ class _DependencyGraphState extends State<DependencyGraph> {
     return Container(
       padding: const EdgeInsets.all(AppConstants.smallPadding),
       decoration: BoxDecoration(
-        color: Colors.white.withAlpha(230),
+        color: Color.fromRGBO(
+          Colors.white.r.toInt(),
+          Colors.white.g.toInt(),
+          Colors.white.b.toInt(),
+          0.90,
+        ),
         borderRadius: BorderRadius.circular(8),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withAlpha(40),
+            color: Color.fromRGBO(
+              Colors.black.r.toInt(),
+              Colors.black.g.toInt(),
+              Colors.black.b.toInt(),
+              0.16,
+            ),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -319,7 +340,7 @@ class _DependencyGraphState extends State<DependencyGraph> {
             ),
             Text(
               description,
-              style: const TextStyle(fontSize: 9, color: Colors.grey),
+              style: const TextStyle(fontSize: 9, color: AppColors.disabled),
             ),
           ],
         ),
@@ -456,7 +477,7 @@ class DependencyLinePainter extends CustomPainter {
   DependencyLinePainter({
     required this.start,
     required this.end,
-    this.color = Colors.grey,
+    this.color = AppColors.disabled,
     this.strokeWidth = 1.0,
     this.dependencyType,
     this.offsetDays = 0,
@@ -569,7 +590,12 @@ class DependencyLinePainter extends CustomPainter {
           color: color,
           fontSize: 12,
           fontWeight: FontWeight.bold,
-          backgroundColor: Colors.white.withAlpha(200),
+          backgroundColor: Color.fromRGBO(
+            Colors.white.r.toInt(),
+            Colors.white.g.toInt(),
+            Colors.white.b.toInt(),
+            0.78,
+          ),
         ),
       );
 
@@ -639,7 +665,7 @@ class _LegendLinePainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final paint =
         Paint()
-          ..color = Colors.grey
+          ..color = AppColors.disabled
           ..strokeWidth = 2.0
           ..style = PaintingStyle.stroke;
 
@@ -654,7 +680,7 @@ class _LegendLinePainter extends CustomPainter {
         paint.strokeJoin = StrokeJoin.round;
         paint.strokeWidth = 2.5;
         paint.shader = const LinearGradient(
-          colors: [Colors.grey, Colors.transparent],
+          colors: [AppColors.disabled, Colors.transparent],
           stops: [0.7, 0.3],
           tileMode: TileMode.repeated,
         ).createShader(const Rect.fromLTWH(0, 0, 10, 2));
@@ -665,7 +691,7 @@ class _LegendLinePainter extends CustomPainter {
         paint.strokeJoin = StrokeJoin.round;
         paint.strokeWidth = 3.0;
         paint.shader = const LinearGradient(
-          colors: [Colors.grey, Colors.transparent],
+          colors: [AppColors.disabled, Colors.transparent],
           stops: [0.5, 0.5],
           tileMode: TileMode.repeated,
         ).createShader(const Rect.fromLTWH(0, 0, 6, 2));
@@ -677,9 +703,9 @@ class _LegendLinePainter extends CustomPainter {
         paint.strokeWidth = 2.5;
         paint.shader = const LinearGradient(
           colors: [
-            Colors.grey,
+            AppColors.disabled,
             Colors.transparent,
-            Colors.grey,
+            AppColors.disabled,
             Colors.transparent,
           ],
           stops: [0.5, 0.2, 0.1, 0.2],
@@ -698,7 +724,7 @@ class _LegendLinePainter extends CustomPainter {
     // Draw arrow at the end
     final arrowPaint =
         Paint()
-          ..color = Colors.grey
+          ..color = AppColors.disabled
           ..style = PaintingStyle.fill;
 
     final arrowPath =
@@ -726,7 +752,7 @@ class GridPainter extends CustomPainter {
   final Color gridColor;
 
   /// Creates a new grid painter
-  GridPainter({this.gridSpacing = 50.0, this.gridColor = Colors.grey});
+  GridPainter({this.gridSpacing = 50.0, this.gridColor = AppColors.disabled});
 
   @override
   void paint(Canvas canvas, Size size) {

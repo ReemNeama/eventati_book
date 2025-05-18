@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/widgets/common/cached_network_image_widget.dart';
 import 'package:eventati_book/widgets/details/image_placeholder.dart';
+import 'package:eventati_book/styles/app_colors.dart';
+
 
 /// A widget that displays a gallery of images
 class ImageGallery extends StatefulWidget {
@@ -162,7 +164,12 @@ class _ImageGalleryState extends State<ImageGallery> {
                 color:
                     _currentIndex == index
                         ? Theme.of(context).primaryColor
-                        : Colors.grey.withAlpha(128),
+                        : Color.fromRGBO(
+                          AppColors.disabled.r.toInt(),
+                          AppColors.disabled.g.toInt(),
+                          AppColors.disabled.b.toInt(),
+                          0.50,
+                        ),
               ),
             );
           }).toList(),

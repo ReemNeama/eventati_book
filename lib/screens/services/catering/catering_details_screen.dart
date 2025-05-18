@@ -10,6 +10,7 @@ import 'package:eventati_book/widgets/details/image_placeholder.dart';
 import 'package:eventati_book/routing/routing.dart';
 import 'package:eventati_book/providers/providers.dart';
 import 'package:provider/provider.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 class CateringDetailsScreen extends StatefulWidget {
   final CateringService cateringService;
@@ -169,8 +170,18 @@ class _CateringDetailsScreenState extends State<CateringDetailsScreen>
             _selectedPackageIndex >= 0
                 ? primaryColor
                 : isDarkMode
-                ? Colors.grey[700]
-                : Colors.grey[400],
+                ? Color.fromRGBO(
+                  AppColors.disabled.r.toInt(),
+                  AppColors.disabled.g.toInt(),
+                  AppColors.disabled.b.toInt(),
+                  0.7,
+                )
+                : Color.fromRGBO(
+                  AppColors.disabled.r.toInt(),
+                  AppColors.disabled.g.toInt(),
+                  AppColors.disabled.b.toInt(),
+                  0.4,
+                ),
         label: const Text('Book Now'),
         icon: const Icon(Icons.calendar_today),
         tooltip:
@@ -230,13 +241,13 @@ class _CateringDetailsScreenState extends State<CateringDetailsScreen>
             children: [
               Row(
                 children: [
-                  const Icon(Icons.thumb_up, color: Colors.green),
+                  const Icon(Icons.thumb_up, color: AppColors.success),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       recommendationReason ??
                           'This catering service is recommended for your event',
-                      style: const TextStyle(fontSize: 16),
+                      style: TextStyles.bodyLarge,
                     ),
                   ),
                 ],
@@ -280,7 +291,6 @@ class _CateringDetailsScreenState extends State<CateringDetailsScreen>
               additionalInfo: Text(
                 '/person',
                 style: TextStyle(
-                  fontSize: 14,
                   color:
                       UIUtils.isDarkMode(context)
                           ? AppColorsDark.primary
@@ -350,9 +360,8 @@ class _CateringDetailsScreenState extends State<CateringDetailsScreen>
                                       Expanded(
                                         child: Text(
                                           item.name,
-                                          style: const TextStyle(
+                                          style: TextStyles.bodyLarge.copyWith(
                                             fontWeight: FontWeight.bold,
-                                            fontSize: 16,
                                           ),
                                         ),
                                       ),
@@ -375,8 +384,18 @@ class _CateringDetailsScreenState extends State<CateringDetailsScreen>
                                     style: TextStyle(
                                       color:
                                           isDarkMode
-                                              ? Colors.grey[300]
-                                              : Colors.grey[700],
+                                              ? Color.fromRGBO(
+                                                AppColors.disabled.r.toInt(),
+                                                AppColors.disabled.g.toInt(),
+                                                AppColors.disabled.b.toInt(),
+                                                0.3,
+                                              )
+                                              : Color.fromRGBO(
+                                                AppColors.disabled.r.toInt(),
+                                                AppColors.disabled.g.toInt(),
+                                                AppColors.disabled.b.toInt(),
+                                                0.7,
+                                              ),
                                       fontSize: 14,
                                     ),
                                   ),

@@ -7,6 +7,7 @@ import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/widgets/common/loading_indicator.dart';
 import 'package:eventati_book/widgets/common/error_message.dart';
+
 import 'package:eventati_book/widgets/common/share_button.dart' as share_button;
 import 'package:eventati_book/widgets/common/platform_share_buttons.dart'
     as platform_buttons;
@@ -219,7 +220,7 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
             icon: const Icon(Icons.cancel),
             label: const Text('Cancel'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
+              backgroundColor: AppColors.error,
               foregroundColor: Colors.white,
             ),
           ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/models/service_options/photography_options.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 /// Builder class for photography options form fields
 class PhotographyOptionsBuilder {
@@ -55,10 +56,7 @@ class PhotographyOptionsBuilder {
 
     return [
       const SizedBox(height: 16),
-      const Text(
-        'Photography Service Options',
-        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-      ),
+      Text('Photography Service Options', style: TextStyles.sectionTitle),
       const SizedBox(height: 16),
 
       // Build each section of the form
@@ -113,9 +111,9 @@ class PhotographyOptionsBuilder {
     required Function(String) onCustomDescriptionChanged,
   }) {
     return [
-      const Text(
+      Text(
         'Session Types',
-        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.bold),
       ),
       const SizedBox(height: 8),
 
@@ -176,9 +174,9 @@ class PhotographyOptionsBuilder {
     required Function(String) onSpecificLocationChanged,
   }) {
     return [
-      const Text(
+      Text(
         'Location Preference',
-        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.bold),
       ),
       const SizedBox(height: 8),
 
@@ -242,9 +240,9 @@ class PhotographyOptionsBuilder {
     ];
 
     return [
-      const Text(
+      Text(
         'Equipment Requests',
-        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.bold),
       ),
       const SizedBox(height: 8),
 
@@ -289,9 +287,9 @@ class PhotographyOptionsBuilder {
     required Function(bool) onIncludeVideographyChanged,
   }) {
     return [
-      const Text(
+      Text(
         'Additional Services',
-        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.bold),
       ),
       const SizedBox(height: 8),
 

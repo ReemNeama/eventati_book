@@ -6,6 +6,8 @@ import 'package:eventati_book/providers/providers.dart';
 import 'package:eventati_book/screens/planning/widgets/dependency_graph.dart';
 import 'package:eventati_book/screens/planning/widgets/dependency_indicator.dart';
 import 'package:eventati_book/screens/planning/widgets/task_card.dart';
+import 'package:eventati_book/styles/app_colors.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 /// Enum for the different view modes
 enum ViewMode {
@@ -173,7 +175,7 @@ class _TaskDependencyScreenState extends State<TaskDependencyScreen>
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Dependency added successfully'),
-              backgroundColor: Colors.green,
+              backgroundColor: AppColors.success,
             ),
           );
 
@@ -232,7 +234,7 @@ class _TaskDependencyScreenState extends State<TaskDependencyScreen>
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Dependency removed successfully'),
-              backgroundColor: Colors.green,
+              backgroundColor: AppColors.success,
             ),
           );
         }
@@ -292,12 +294,24 @@ class _TaskDependencyScreenState extends State<TaskDependencyScreen>
                   padding: const EdgeInsets.all(8.0),
                   margin: const EdgeInsets.only(bottom: 16.0),
                   decoration: BoxDecoration(
-                    color: Colors.red.shade100,
+                    color: Color.fromRGBO(
+                      AppColors.error.r.toInt(),
+                      AppColors.error.g.toInt(),
+                      AppColors.error.b.toInt(),
+                      0.1,
+                    ),
                     borderRadius: BorderRadius.circular(8.0),
                   ),
                   child: Text(
                     _errorMessage!,
-                    style: TextStyle(color: Colors.red.shade900),
+                    style: TextStyles.bodyMedium.copyWith(
+                      color: Color.fromRGBO(
+                        AppColors.error.r.toInt(),
+                        AppColors.error.g.toInt(),
+                        AppColors.error.b.toInt(),
+                        0.9,
+                      ),
+                    ),
                   ),
                 ),
 
@@ -308,19 +322,18 @@ class _TaskDependencyScreenState extends State<TaskDependencyScreen>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         'Add New Dependency',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: TextStyles.sectionTitle,
                       ),
                       const SizedBox(height: 16),
 
                       // Prerequisite task selection
-                      const Text(
+                      Text(
                         'Prerequisite Task (Must be completed first):',
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: TextStyles.bodyMedium.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(height: 8),
 
@@ -388,9 +401,11 @@ class _TaskDependencyScreenState extends State<TaskDependencyScreen>
                       const SizedBox(height: 16),
 
                       // Dependent task selection
-                      const Text(
+                      Text(
                         'Dependent Task (Can only start after prerequisite):',
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: TextStyles.bodyMedium.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(height: 8),
 
@@ -453,9 +468,11 @@ class _TaskDependencyScreenState extends State<TaskDependencyScreen>
                       const SizedBox(height: 16),
 
                       // Dependency type selection
-                      const Text(
+                      Text(
                         'Dependency Type:',
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: TextStyles.bodyMedium.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(height: 8),
 
@@ -502,9 +519,11 @@ class _TaskDependencyScreenState extends State<TaskDependencyScreen>
                       const SizedBox(height: 16),
 
                       // Offset days selection
-                      const Text(
+                      Text(
                         'Offset Days:',
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: TextStyles.bodyMedium.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(height: 8),
 
@@ -558,16 +577,25 @@ class _TaskDependencyScreenState extends State<TaskDependencyScreen>
                         padding: const EdgeInsets.all(8),
                         margin: const EdgeInsets.symmetric(vertical: 8),
                         decoration: BoxDecoration(
-                          color: Colors.blue.withAlpha(25), // 0.1 * 255 = 25
+                          color: Color.fromRGBO(
+                            AppColors.primary.r.toInt(),
+                            AppColors.primary.g.toInt(),
+                            AppColors.primary.b.toInt(),
+                            0.1,
+                          ),
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
-                            color: Colors.blue.withAlpha(76), // 0.3 * 255 = 76
+                            color: Color.fromRGBO(
+                              AppColors.primary.r.toInt(),
+                              AppColors.primary.g.toInt(),
+                              AppColors.primary.b.toInt(),
+                              0.3,
+                            ),
                           ),
                         ),
                         child: Text(
                           _getDependencyExplanation(),
-                          style: const TextStyle(
-                            fontSize: 12,
+                          style: TextStyles.bodySmall.copyWith(
                             fontStyle: FontStyle.italic,
                           ),
                         ),
@@ -620,20 +648,16 @@ class _TaskDependencyScreenState extends State<TaskDependencyScreen>
               const SizedBox(height: 24),
 
               // Existing dependencies section
-              const Text(
-                'Existing Dependencies',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
+              Text('Existing Dependencies', style: TextStyles.sectionTitle),
               const SizedBox(height: 8),
 
               Expanded(
                 child:
                     dependencies.isEmpty
-                        ? const Center(
+                        ? Center(
                           child: Text(
                             'No dependencies yet',
-                            style: TextStyle(
-                              fontSize: 16,
+                            style: TextStyles.bodyLarge.copyWith(
                               fontStyle: FontStyle.italic,
                             ),
                           ),
@@ -719,10 +743,10 @@ class _TaskDependencyScreenState extends State<TaskDependencyScreen>
                                         Expanded(
                                           child: Text(
                                             prerequisiteTask.title,
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16,
-                                            ),
+                                            style: TextStyles.bodyLarge
+                                                .copyWith(
+                                                  fontWeight: FontWeight.bold,
+                                                ),
                                           ),
                                         ),
                                         _buildStatusChip(
@@ -732,10 +756,10 @@ class _TaskDependencyScreenState extends State<TaskDependencyScreen>
                                     ),
 
                                     // Dependency indicator and type
-                                    const Center(
+                                    Center(
                                       child: Column(
                                         children: [
-                                          Padding(
+                                          const Padding(
                                             padding: EdgeInsets.symmetric(
                                               vertical: 8.0,
                                             ),
@@ -745,11 +769,12 @@ class _TaskDependencyScreenState extends State<TaskDependencyScreen>
                                           // So we'll just show a generic message
                                           Text(
                                             'Dependency',
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              fontStyle: FontStyle.italic,
-                                              color: Colors.grey,
-                                            ),
+                                            style: TextStyles.bodySmall
+                                                .copyWith(
+                                                  fontStyle: FontStyle.italic,
+                                                  color:
+                                                      AppColors.textSecondary,
+                                                ),
                                           ),
                                         ],
                                       ),
@@ -769,10 +794,10 @@ class _TaskDependencyScreenState extends State<TaskDependencyScreen>
                                         Expanded(
                                           child: Text(
                                             dependentTask.title,
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16,
-                                            ),
+                                            style: TextStyles.bodyLarge
+                                                .copyWith(
+                                                  fontWeight: FontWeight.bold,
+                                                ),
                                           ),
                                         ),
                                         _buildStatusChip(dependentTask.status),
@@ -813,20 +838,20 @@ class _TaskDependencyScreenState extends State<TaskDependencyScreen>
                                                     valueColor:
                                                         AlwaysStoppedAnimation<
                                                           Color
-                                                        >(Colors.red),
+                                                        >(AppColors.error),
                                                   ),
                                                 )
                                                 : const Icon(
                                                   Icons.delete,
-                                                  color: Colors.red,
+                                                  color: AppColors.error,
                                                 ),
                                         label: Text(
                                           _isRemovingDependencyId ==
                                                   '${dependency.prerequisiteTaskId}_${dependency.dependentTaskId}'
                                               ? 'Removing...'
                                               : 'Remove Dependency',
-                                          style: const TextStyle(
-                                            color: Colors.red,
+                                          style: TextStyles.bodyMedium.copyWith(
+                                            color: AppColors.error,
                                           ),
                                         ),
                                       ),
@@ -854,8 +879,8 @@ class _TaskDependencyScreenState extends State<TaskDependencyScreen>
         final categories = taskProvider.categories;
 
         if (tasks.isEmpty) {
-          return const Center(
-            child: Text('No tasks available', style: TextStyle(fontSize: 16)),
+          return Center(
+            child: Text('No tasks available', style: TextStyles.bodyLarge),
           );
         }
 
@@ -934,19 +959,19 @@ class _TaskDependencyScreenState extends State<TaskDependencyScreen>
 
     switch (status) {
       case TaskStatus.completed:
-        color = Colors.green;
+        color = AppColors.success;
         label = 'Completed';
         break;
       case TaskStatus.inProgress:
-        color = Colors.blue;
+        color = AppColors.primary;
         label = 'In Progress';
         break;
       case TaskStatus.overdue:
-        color = Colors.red;
+        color = AppColors.error;
         label = 'Overdue';
         break;
       case TaskStatus.notStarted:
-        color = Colors.grey;
+        color = AppColors.disabled;
         label = 'Not Started';
         break;
     }
@@ -963,7 +988,7 @@ class _TaskDependencyScreenState extends State<TaskDependencyScreen>
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: color),
       ),
-      child: Text(label, style: TextStyle(color: color, fontSize: 12)),
+      child: Text(label, style: TextStyles.bodySmall.copyWith(color: color)),
     );
   }
 }

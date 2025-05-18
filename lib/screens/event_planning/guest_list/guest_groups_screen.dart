@@ -4,6 +4,7 @@ import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 class GuestGroupsScreen extends StatefulWidget {
   final String eventId;
@@ -67,7 +68,6 @@ class _GuestGroupsScreenState extends State<GuestGroupsScreen> {
   ) {
     final isDarkMode = UIUtils.isDarkMode(context);
     final primaryColor = isDarkMode ? AppColorsDark.primary : AppColors.primary;
-    final textColor = isDarkMode ? Colors.white : Colors.black;
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
@@ -95,33 +95,13 @@ class _GuestGroupsScreenState extends State<GuestGroupsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    group.name,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: textColor,
-                    ),
-                  ),
+                  Text(group.name, style: TextStyles.sectionTitle),
                   if (group.description != null) ...[
                     const SizedBox(height: 4),
-                    Text(
-                      group.description!,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
-                      ),
-                    ),
+                    Text(group.description!, style: TextStyles.bodyMedium),
                   ],
                   const SizedBox(height: 4),
-                  Text(
-                    '$guestCount guests',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: primaryColor,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  Text('$guestCount guests', style: TextStyles.bodyMedium),
                 ],
               ),
             ),
@@ -256,7 +236,7 @@ class _GuestGroupsScreenState extends State<GuestGroupsScreen> {
                   Text(
                     'Warning: This group has ${groupGuests.length} guests. '
                     'Deleting this group will remove the group assignment from these guests.',
-                    style: const TextStyle(color: Colors.red),
+                    style: const TextStyle(color: AppColors.error),
                   ),
                 ],
               ],
@@ -281,7 +261,7 @@ class _GuestGroupsScreenState extends State<GuestGroupsScreen> {
                 },
                 child: const Text(
                   'Delete',
-                  style: TextStyle(color: Colors.red),
+                  style: TextStyle(color: AppColors.error),
                 ),
               ),
             ],

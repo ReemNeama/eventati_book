@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/utils/utils.dart';
+import 'package:eventati_book/styles/app_colors.dart';
 
 class ImagePlaceholder extends StatelessWidget {
   final double height;
@@ -24,8 +25,8 @@ class ImagePlaceholder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = UIUtils.isDarkMode(context);
-    final defaultBgColor = isDarkMode ? Colors.grey[800] : Colors.grey[300];
-    final defaultIconColor = isDarkMode ? Colors.grey[400] : Colors.grey[600];
+    final defaultBgColor = isDarkMode ? Color.fromRGBO(AppColors.disabled.r.toInt(), AppColors.disabled.g.toInt(), AppColors.disabled.b.toInt(), 0.8) : Color.fromRGBO(AppColors.disabled.r.toInt(), AppColors.disabled.g.toInt(), AppColors.disabled.b.toInt(), 0.3);
+    final defaultIconColor = isDarkMode ? Color.fromRGBO(AppColors.disabled.r.toInt(), AppColors.disabled.g.toInt(), AppColors.disabled.b.toInt(), 0.4) : Color.fromRGBO(AppColors.disabled.r.toInt(), AppColors.disabled.g.toInt(), AppColors.disabled.b.toInt(), 0.6);
 
     return Container(
       height: height,

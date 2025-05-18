@@ -3,6 +3,7 @@ import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/widgets/services/card/recommended_badge.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 class ServiceCard extends StatelessWidget {
   final String name;
@@ -35,8 +36,34 @@ class ServiceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = UIUtils.isDarkMode(context);
-    final backgroundColor = isDarkMode ? Colors.grey[800] : Colors.grey[300];
-    final iconColor = isDarkMode ? Colors.grey[400] : Colors.grey[600];
+    final backgroundColor =
+        isDarkMode
+            ? Color.fromRGBO(
+              AppColors.disabled.r.toInt(),
+              AppColors.disabled.g.toInt(),
+              AppColors.disabled.b.toInt(),
+              0.8,
+            )
+            : Color.fromRGBO(
+              AppColors.disabled.r.toInt(),
+              AppColors.disabled.g.toInt(),
+              AppColors.disabled.b.toInt(),
+              0.3,
+            );
+    final iconColor =
+        isDarkMode
+            ? Color.fromRGBO(
+              AppColors.disabled.r.toInt(),
+              AppColors.disabled.g.toInt(),
+              AppColors.disabled.b.toInt(),
+              0.4,
+            )
+            : Color.fromRGBO(
+              AppColors.disabled.r.toInt(),
+              AppColors.disabled.g.toInt(),
+              AppColors.disabled.b.toInt(),
+              0.6,
+            );
 
     return Card(
       margin: const EdgeInsets.symmetric(
@@ -87,10 +114,7 @@ class ServiceCard extends StatelessWidget {
                       Expanded(
                         child: Text(
                           name,
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: TextStyles.sectionTitle,
                         ),
                       ),
                       Row(

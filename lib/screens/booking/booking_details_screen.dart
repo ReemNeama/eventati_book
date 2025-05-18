@@ -454,7 +454,7 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
                                         icon: const Icon(Icons.payment),
                                         label: const Text('Pay Now'),
                                         style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.green,
+                                          backgroundColor: AppColors.success,
                                           foregroundColor: Colors.white,
                                           padding: const EdgeInsets.symmetric(
                                             vertical: 12,
@@ -495,7 +495,7 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
                                     icon: const Icon(Icons.cancel),
                                     label: const Text('Cancel'),
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.red,
+                                      backgroundColor: AppColors.error,
                                       padding: const EdgeInsets.symmetric(
                                         vertical: 12,
                                       ),
@@ -575,7 +575,7 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Booking cancelled successfully'),
-        backgroundColor: Colors.green,
+        backgroundColor: AppColors.success,
       ),
     );
   }
@@ -899,7 +899,7 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
             content:
                 'Are you sure you want to cancel this booking? This action cannot be undone.',
             confirmText: 'Cancel Booking',
-            confirmColor: Colors.red,
+            confirmColor: AppColors.error,
           ),
     );
 

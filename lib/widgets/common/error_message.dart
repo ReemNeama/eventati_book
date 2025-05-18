@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/utils.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 /// Error display type
 enum ErrorDisplayType {
@@ -230,15 +231,13 @@ class ErrorMessage extends StatelessWidget {
     Color primaryColor,
   ) {
     final isDarkMode = UIUtils.isDarkMode(context);
-    final textColor = isDarkMode ? Colors.white70 : Colors.black87;
-    final secondaryTextColor = isDarkMode ? Colors.white60 : Colors.black54;
+    final textColor = isDarkMode ? AppColorsDark.textPrimary : AppColors.textPrimary;
+    final secondaryTextColor = isDarkMode ? AppColorsDark.textSecondary : AppColors.textSecondary;
 
     // Get responsive values
     final isTablet =
         ResponsiveUtils.getDeviceType(context) != DeviceType.mobile;
     final iconSize = isTablet ? 56.0 : 48.0;
-    final titleSize = isTablet ? 22.0 : 20.0;
-    final messageSize = isTablet ? 18.0 : 16.0;
 
     return Center(
       child: Padding(
@@ -257,16 +256,16 @@ class ErrorMessage extends StatelessWidget {
             ],
             Text(
               _getSeverityTitle(),
-              style: TextStyle(
-                color: errorColor,
-                fontSize: titleSize,
-                fontWeight: FontWeight.bold,
-              ),
+              style: isTablet 
+                ? TextStyles.title.copyWith(color: errorColor)
+                : TextStyles.subtitle.copyWith(color: errorColor),
             ),
             const SizedBox(height: 8),
             Text(
               message,
-              style: TextStyle(color: textColor, fontSize: messageSize),
+              style: isTablet 
+                ? TextStyles.bodyLarge.copyWith(color: textColor)
+                : TextStyles.bodyMedium.copyWith(color: textColor),
               textAlign: TextAlign.center,
             ),
             if (details != null) ...[
@@ -274,14 +273,26 @@ class ErrorMessage extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: isDarkMode ? Colors.grey[800] : Colors.grey[200],
+                  color:
+                      isDarkMode
+                          ? Color.fromRGBO(
+                            AppColors.disabled.r.toInt(),
+                            AppColors.disabled.g.toInt(),
+                            AppColors.disabled.b.toInt(),
+                            0.8,
+                          )
+                          : Color.fromRGBO(
+                            AppColors.disabled.r.toInt(),
+                            AppColors.disabled.g.toInt(),
+                            AppColors.disabled.b.toInt(),
+                            0.2,
+                          ),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
                   details ?? '',
-                  style: TextStyle(
+                  style: TextStyles.bodySmall.copyWith(
                     color: secondaryTextColor,
-                    fontSize: 12,
                     fontFamily: 'monospace',
                   ),
                 ),
@@ -365,9 +376,8 @@ class ErrorMessage extends StatelessWidget {
               children: [
                 Text(
                   message,
-                  style: TextStyle(
+                  style: TextStyles.bodyMedium.copyWith(
                     color: textColor,
-                    fontSize: 14,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -375,7 +385,7 @@ class ErrorMessage extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     details ?? '',
-                    style: TextStyle(color: secondaryTextColor, fontSize: 12),
+                    style: TextStyles.bodySmall.copyWith(color: secondaryTextColor),
                   ),
                 ],
               ],
@@ -447,7 +457,7 @@ class ErrorMessage extends StatelessWidget {
           Expanded(
             child: Text(
               message,
-              style: TextStyle(color: errorColor, fontSize: 12),
+              style: TextStyles.bodySmall.copyWith(color: errorColor),
             ),
           ),
         ],
@@ -463,27 +473,20 @@ class ErrorMessage extends StatelessWidget {
   ) {
     final isDarkMode = UIUtils.isDarkMode(context);
     // Create colors with opacity
-    final backgroundColor =
-        isDarkMode
-            ? Color.fromARGB(
-              51, // 20% opacity (51/255)
-              errorColor.r.toInt(),
-              errorColor.g.toInt(),
-              errorColor.b.toInt(),
-            )
-            : Color.fromARGB(
-              26, // 10% opacity (26/255)
-              errorColor.r.toInt(),
-              errorColor.g.toInt(),
-              errorColor.b.toInt(),
-            );
-    final borderColor = Color.fromARGB(
-      128, // 50% opacity (128/255)
+    final backgroundColor = Color.fromRGBO(
       errorColor.r.toInt(),
       errorColor.g.toInt(),
       errorColor.b.toInt(),
+      isDarkMode ? 0.2 : 0.1,
     );
-    final textColor = isDarkMode ? Colors.white : Colors.black87;
+    final borderColor = Color.fromRGBO(
+      errorColor.r.toInt(),
+      errorColor.g.toInt(),
+      errorColor.b.toInt(),
+      0.5,
+    );
+    final textColor = isDarkMode ? AppColorsDark.textPrimary : AppColors.textPrimary;
+    final iconColor = isDarkMode ? AppColorsDark.textSecondary : AppColors.textSecondary;
 
     return Material(
       elevation: 4,
@@ -510,7 +513,7 @@ class ErrorMessage extends StatelessWidget {
             Expanded(
               child: Text(
                 message,
-                style: TextStyle(color: textColor, fontSize: 14),
+                style: TextStyles.bodyMedium.copyWith(color: textColor),
               ),
             ),
             if (showCloseButton && onDismiss != null) ...[
@@ -524,7 +527,7 @@ class ErrorMessage extends StatelessWidget {
                 iconSize: 18,
                 padding: EdgeInsets.zero,
                 constraints: const BoxConstraints(minWidth: 24, minHeight: 24),
-                color: isDarkMode ? Colors.white70 : Colors.black54,
+                color: iconColor,
                 tooltip: 'Dismiss',
               ),
             ],
@@ -541,21 +544,14 @@ class ErrorMessage extends StatelessWidget {
     Color primaryColor,
   ) {
     final isDarkMode = UIUtils.isDarkMode(context);
-    final backgroundColor =
-        isDarkMode
-            ? Color.fromARGB(
-              51, // 20% opacity (51/255)
-              errorColor.r.toInt(),
-              errorColor.g.toInt(),
-              errorColor.b.toInt(),
-            )
-            : Color.fromARGB(
-              26, // 10% opacity (26/255)
-              errorColor.r.toInt(),
-              errorColor.g.toInt(),
-              errorColor.b.toInt(),
-            );
-    final textColor = isDarkMode ? Colors.white : Colors.black87;
+    final backgroundColor = Color.fromRGBO(
+      errorColor.r.toInt(),
+      errorColor.g.toInt(),
+      errorColor.b.toInt(),
+      isDarkMode ? 0.2 : 0.1,
+    );
+    final textColor = isDarkMode ? AppColorsDark.textPrimary : AppColors.textPrimary;
+    final secondaryTextColor = isDarkMode ? AppColorsDark.textSecondary : AppColors.textSecondary;
 
     return Container(
       width: double.infinity,
@@ -589,9 +585,8 @@ class ErrorMessage extends StatelessWidget {
               children: [
                 Text(
                   message,
-                  style: TextStyle(
+                  style: TextStyles.bodyMedium.copyWith(
                     color: textColor,
-                    fontSize: 14,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -599,9 +594,8 @@ class ErrorMessage extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     details ?? '',
-                    style: TextStyle(
-                      color: isDarkMode ? Colors.white70 : Colors.black54,
-                      fontSize: 12,
+                    style: TextStyles.bodySmall.copyWith(
+                      color: secondaryTextColor,
                     ),
                   ),
                 ],
@@ -665,7 +659,7 @@ class ErrorMessage extends StatelessWidget {
           Flexible(
             child: Text(
               message,
-              style: TextStyle(color: errorColor, fontSize: 12),
+              style: TextStyles.bodySmall.copyWith(color: errorColor),
             ),
           ),
         ],

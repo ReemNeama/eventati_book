@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/utils/utils.dart';
+import 'package:eventati_book/styles/app_colors.dart';
+
 
 /// A badge widget to highlight recommended services with relevance score
 class RecommendationBadge extends StatelessWidget {
@@ -32,7 +34,12 @@ class RecommendationBadge extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withAlpha(26),
+            color: Color.fromRGBO(
+              Colors.black.r.toInt(),
+              Colors.black.g.toInt(),
+              Colors.black.b.toInt(),
+              0.10,
+            ),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -66,16 +73,16 @@ class RecommendationBadge extends StatelessWidget {
   Color _getBadgeColor(int score, bool isDarkMode) {
     if (score >= 90) {
       // Excellent match
-      return Colors.green;
+      return AppColors.success;
     } else if (score >= 70) {
       // Good match
       return Colors.lightGreen;
     } else if (score >= 50) {
       // Moderate match
-      return Colors.amber;
+      return AppColors.ratingStarColor;
     } else {
       // Low match
-      return Colors.orange;
+      return AppColors.warning;
     }
   }
 }

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/utils/utils.dart';
 
+import 'package:eventati_book/styles/text_styles.dart';
+
+
 class PackageCard extends StatelessWidget {
   final String name;
   final String description;
@@ -47,19 +50,10 @@ class PackageCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded(
-                    child: Text(
-                      name,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
+                  Expanded(child: Text(name, style: TextStyles.sectionTitle)),
                   Text(
                     NumberUtils.formatCurrency(price, decimalPlaces: 0),
-                    style: TextStyle(
-                      fontSize: 16,
+                    style: TextStyles.bodyLarge.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).primaryColor,
                     ),
@@ -70,8 +64,8 @@ class PackageCard extends StatelessWidget {
               Text(description),
               if (additionalInfo != null) ...[
                 const SizedBox(height: 8),
-                // Use the non-null additionalInfo directly without the assertion
-                additionalInfo ?? const SizedBox.shrink(),
+                // Use the non-null additionalInfo directly
+                additionalInfo!,
               ],
               const SizedBox(height: 16),
               const Text(

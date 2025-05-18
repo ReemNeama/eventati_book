@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/utils.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 /// Display type for empty states
 enum EmptyStateDisplayType {
@@ -141,7 +142,7 @@ class EmptyState extends StatelessWidget {
         textColor ?? (isDarkMode ? Colors.white70 : Colors.black87);
     final secondaryTextColor = isDarkMode ? Colors.white54 : Colors.black54;
     final defaultIconColor =
-        iconColor ?? (isDarkMode ? Colors.grey[600] : Colors.grey[400]);
+        iconColor ?? (isDarkMode ? Color.fromRGBO(AppColors.disabled.r.toInt(), AppColors.disabled.g.toInt(), AppColors.disabled.b.toInt(), 0.6) : Color.fromRGBO(AppColors.disabled.r.toInt(), AppColors.disabled.g.toInt(), AppColors.disabled.b.toInt(), 0.4));
 
     // Create the base widget based on display type
     Widget emptyStateWidget;
@@ -280,7 +281,7 @@ class EmptyState extends StatelessWidget {
   ) {
     final isDarkMode = UIUtils.isDarkMode(context);
     final defaultIconColor =
-        iconColor ?? (isDarkMode ? Colors.grey[600] : Colors.grey[400]);
+        iconColor ?? (isDarkMode ? Color.fromRGBO(AppColors.disabled.r.toInt(), AppColors.disabled.g.toInt(), AppColors.disabled.b.toInt(), 0.6) : Color.fromRGBO(AppColors.disabled.r.toInt(), AppColors.disabled.g.toInt(), AppColors.disabled.b.toInt(), 0.4));
 
     return Center(
       child: Padding(
@@ -301,13 +302,7 @@ class EmptyState extends StatelessWidget {
             SizedBox(height: spacing * 3),
             Text(
               title,
-              style:
-                  titleStyle ??
-                  TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: textColor,
-                  ),
+              style: titleStyle ?? TextStyles.title.copyWith(color: textColor),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: spacing),
@@ -315,7 +310,7 @@ class EmptyState extends StatelessWidget {
               message,
               style:
                   messageStyle ??
-                  TextStyle(fontSize: 16, color: secondaryTextColor),
+                  TextStyles.bodyLarge.copyWith(color: secondaryTextColor),
               textAlign: TextAlign.center,
             ),
             if (actionText != null && onAction != null) ...[
@@ -361,7 +356,7 @@ class EmptyState extends StatelessWidget {
   ) {
     final isDarkMode = UIUtils.isDarkMode(context);
     final defaultIconColor =
-        iconColor ?? (isDarkMode ? Colors.grey[600] : Colors.grey[400]);
+        iconColor ?? (isDarkMode ? Color.fromRGBO(AppColors.disabled.r.toInt(), AppColors.disabled.g.toInt(), AppColors.disabled.b.toInt(), 0.6) : Color.fromRGBO(AppColors.disabled.r.toInt(), AppColors.disabled.g.toInt(), AppColors.disabled.b.toInt(), 0.4));
 
     return Center(
       child: Padding(
@@ -388,18 +383,16 @@ class EmptyState extends StatelessWidget {
                     title,
                     style:
                         titleStyle ??
-                        TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: textColor,
-                        ),
+                        TextStyles.subtitle.copyWith(color: textColor),
                   ),
                   SizedBox(height: spacing / 2),
                   Text(
                     message,
                     style:
                         messageStyle ??
-                        TextStyle(fontSize: 14, color: secondaryTextColor),
+                        TextStyles.bodyMedium.copyWith(
+                          color: secondaryTextColor,
+                        ),
                   ),
                   if (actionText != null && onAction != null) ...[
                     SizedBox(height: spacing),
@@ -455,7 +448,7 @@ class EmptyState extends StatelessWidget {
           message,
           style:
               messageStyle ??
-              TextStyle(fontSize: 14, color: secondaryTextColor),
+              TextStyles.bodyMedium.copyWith(color: secondaryTextColor),
           textAlign: TextAlign.center,
         ),
       ),
@@ -472,7 +465,7 @@ class EmptyState extends StatelessWidget {
   ) {
     final isDarkMode = UIUtils.isDarkMode(context);
     final cardColor =
-        backgroundColor ?? (isDarkMode ? Colors.grey[850] : Colors.white);
+        backgroundColor ?? (isDarkMode ? Color.fromRGBO(AppColors.disabled.r.toInt(), AppColors.disabled.g.toInt(), AppColors.disabled.b.toInt(), 0.85) : Colors.white);
 
     return Center(
       child: Padding(
@@ -502,11 +495,7 @@ class EmptyState extends StatelessWidget {
                   title,
                   style:
                       titleStyle ??
-                      TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: textColor,
-                      ),
+                      TextStyles.subtitle.copyWith(color: textColor),
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(height: spacing),
@@ -514,7 +503,7 @@ class EmptyState extends StatelessWidget {
                   message,
                   style:
                       messageStyle ??
-                      TextStyle(fontSize: 14, color: secondaryTextColor),
+                      TextStyles.bodyMedium.copyWith(color: secondaryTextColor),
                   textAlign: TextAlign.center,
                 ),
                 if (actionText != null && onAction != null) ...[
@@ -558,7 +547,7 @@ class EmptyState extends StatelessWidget {
     Color? iconColor,
   ) {
     final isDarkMode = UIUtils.isDarkMode(context);
-    final placeholderColor = isDarkMode ? Colors.grey[700] : Colors.grey[300];
+    final placeholderColor = isDarkMode ? Color.fromRGBO(AppColors.disabled.r.toInt(), AppColors.disabled.g.toInt(), AppColors.disabled.b.toInt(), 0.7) : Color.fromRGBO(AppColors.disabled.r.toInt(), AppColors.disabled.g.toInt(), AppColors.disabled.b.toInt(), 0.3);
 
     return Center(
       child: Padding(

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/services/utils/network_connectivity_service.dart';
+import 'package:eventati_book/styles/app_colors.dart';
+
 
 /// Widget that shows an indicator when the device is offline
 class OfflineIndicator extends StatefulWidget {
@@ -33,10 +35,10 @@ class OfflineIndicator extends StatefulWidget {
     required this.child,
     this.showBanner = true,
     this.showIcon = true,
-    this.bannerColor = Colors.red,
+    this.bannerColor = AppColors.error,
     this.bannerTextColor = Colors.white,
     this.bannerText = 'You are offline. Some features may be unavailable.',
-    this.iconColor = Colors.red,
+    this.iconColor = AppColors.error,
     this.iconSize = 16,
   });
 

@@ -9,6 +9,7 @@ import 'package:eventati_book/screens/event_planning/timeline/task_form_screen.d
 import 'package:eventati_book/routing/route_names.dart';
 import 'package:eventati_book/routing/route_arguments.dart';
 import 'package:intl/intl.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 class ChecklistScreen extends StatefulWidget {
   final String eventId;
@@ -112,7 +113,20 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
   Widget _buildFilterBar(BuildContext context, TaskProvider taskProvider) {
     final isDarkMode = UIUtils.isDarkMode(context);
     final primaryColor = isDarkMode ? AppColorsDark.primary : AppColors.primary;
-    final backgroundColor = isDarkMode ? Colors.grey[800] : Colors.grey[200];
+    final backgroundColor =
+        isDarkMode
+            ? Color.fromRGBO(
+              AppColors.disabled.r.toInt(),
+              AppColors.disabled.g.toInt(),
+              AppColors.disabled.b.toInt(),
+              0.8,
+            )
+            : Color.fromRGBO(
+              AppColors.disabled.r.toInt(),
+              AppColors.disabled.g.toInt(),
+              AppColors.disabled.b.toInt(),
+              0.2,
+            );
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -161,28 +175,28 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
                   TaskStatus.notStarted,
                   'Not Started',
                   Icons.circle_outlined,
-                  Colors.orange,
+                  AppColors.warning,
                 ),
                 _buildStatusChip(
                   context,
                   TaskStatus.inProgress,
                   'In Progress',
                   Icons.pending,
-                  Colors.blue,
+                  AppColors.primary,
                 ),
                 _buildStatusChip(
                   context,
                   TaskStatus.completed,
                   'Completed',
                   Icons.check_circle,
-                  Colors.green,
+                  AppColors.success,
                 ),
                 _buildStatusChip(
                   context,
                   TaskStatus.overdue,
                   'Overdue',
                   Icons.warning,
-                  Colors.red,
+                  AppColors.error,
                 ),
               ],
             ),
@@ -255,7 +269,15 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
                   ? Colors.white
                   : color,
         ),
-        backgroundColor: isDarkMode ? Colors.grey[700] : Colors.white,
+        backgroundColor:
+            isDarkMode
+                ? Color.fromRGBO(
+                  AppColors.disabled.r.toInt(),
+                  AppColors.disabled.g.toInt(),
+                  AppColors.disabled.b.toInt(),
+                  0.7,
+                )
+                : Colors.white,
         selectedColor: color,
         checkmarkColor: Colors.white,
         labelStyle: TextStyle(
@@ -300,7 +322,15 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
                   ? Colors.white
                   : color,
         ),
-        backgroundColor: isDarkMode ? Colors.grey[700] : Colors.white,
+        backgroundColor:
+            isDarkMode
+                ? Color.fromRGBO(
+                  AppColors.disabled.r.toInt(),
+                  AppColors.disabled.g.toInt(),
+                  AppColors.disabled.b.toInt(),
+                  0.7,
+                )
+                : Colors.white,
         selectedColor: color,
         checkmarkColor: Colors.white,
         labelStyle: TextStyle(
@@ -325,9 +355,6 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
     Task task,
     TaskProvider taskProvider,
   ) {
-    final isDarkMode = UIUtils.isDarkMode(context);
-    final textColor = isDarkMode ? Colors.white : Colors.black;
-
     final category = taskProvider.categories.firstWhere(
       (c) => c.id == task.categoryId,
       orElse:
@@ -351,19 +378,19 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
 
     switch (task.status) {
       case TaskStatus.completed:
-        statusColor = Colors.green;
+        statusColor = AppColors.success;
         statusIcon = Icons.check_circle;
         break;
       case TaskStatus.inProgress:
-        statusColor = Colors.blue;
+        statusColor = AppColors.primary;
         statusIcon = Icons.pending;
         break;
       case TaskStatus.notStarted:
-        statusColor = isOverdue ? Colors.red : Colors.orange;
+        statusColor = isOverdue ? AppColors.error : AppColors.warning;
         statusIcon = isOverdue ? Icons.warning : Icons.circle_outlined;
         break;
       case TaskStatus.overdue:
-        statusColor = Colors.red;
+        statusColor = AppColors.error;
         statusIcon = Icons.warning;
         break;
     }
@@ -416,16 +443,7 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
                           size: 16,
                         ),
                         const SizedBox(width: 8),
-                        Text(
-                          category.name,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color:
-                                isDarkMode
-                                    ? Colors.grey[400]
-                                    : Colors.grey[600],
-                          ),
-                        ),
+                        Text(category.name, style: TextStyles.bodySmall),
                       ],
                     ),
                     const SizedBox(height: 8),
@@ -434,14 +452,8 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
                         Expanded(
                           child: Text(
                             task.title,
-                            style: TextStyle(
-                              fontSize: 16,
+                            style: TextStyles.bodyLarge.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: textColor,
-                              decoration:
-                                  task.status == TaskStatus.completed
-                                      ? TextDecoration.lineThrough
-                                      : null,
                             ),
                           ),
                         ),
@@ -454,10 +466,7 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
                       const SizedBox(height: 4),
                       Text(
                         task.description!,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color:
-                              isDarkMode ? Colors.grey[400] : Colors.grey[600],
+                        style: TextStyles.bodyMedium.copyWith(
                           decoration:
                               task.status == TaskStatus.completed
                                   ? TextDecoration.lineThrough
@@ -473,20 +482,12 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
                       children: [
                         Text(
                           'Due: ${DateFormat('MMM d, yyyy').format(task.dueDate)}',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: _getDueDateTextColor(
-                              isOverdue,
-                              task.status,
-                              isDarkMode,
-                            ),
-                          ),
+                          style: TextStyles.bodySmall,
                         ),
                         if (task.status != TaskStatus.completed)
                           Checkbox(
                             value: false,
-                            activeColor: Colors.green,
+                            activeColor: AppColors.success,
                             onChanged: (_) {
                               // Store the current context and task ID before the async gap
                               final currentContext = context;
@@ -505,7 +506,7 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
                         else
                           Checkbox(
                             value: true,
-                            activeColor: Colors.green,
+                            activeColor: AppColors.success,
                             onChanged: (_) {
                               // For resetting a task to not started, we don't need to check dependencies
                               taskProvider.updateTaskStatus(
@@ -526,25 +527,23 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
     );
   }
 
-  /// Get the appropriate text color for the due date based on task status and theme
-  Color _getDueDateTextColor(
-    bool isOverdue,
-    TaskStatus status,
-    bool isDarkMode,
-  ) {
-    // If the task is overdue and not completed, show in red
-    if (isOverdue && status != TaskStatus.completed) {
-      return Colors.red;
-    }
-
-    // Otherwise, use theme-appropriate text color
-    return isDarkMode ? Colors.grey[400]! : Colors.grey[600]!;
-  }
-
   Widget _buildProgressBar(BuildContext context, TaskProvider taskProvider) {
     final isDarkMode = UIUtils.isDarkMode(context);
     final primaryColor = isDarkMode ? AppColorsDark.primary : AppColors.primary;
-    final backgroundColor = isDarkMode ? Colors.grey[800] : Colors.grey[200];
+    final backgroundColor =
+        isDarkMode
+            ? Color.fromRGBO(
+              AppColors.disabled.r.toInt(),
+              AppColors.disabled.g.toInt(),
+              AppColors.disabled.b.toInt(),
+              0.8,
+            )
+            : Color.fromRGBO(
+              AppColors.disabled.r.toInt(),
+              AppColors.disabled.g.toInt(),
+              AppColors.disabled.b.toInt(),
+              0.2,
+            );
 
     final completionPercentage = taskProvider.completionPercentage;
 
@@ -575,7 +574,20 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
           const SizedBox(height: 8),
           LinearProgressIndicator(
             value: completionPercentage / 100,
-            backgroundColor: isDarkMode ? Colors.grey[700] : Colors.grey[300],
+            backgroundColor:
+                isDarkMode
+                    ? Color.fromRGBO(
+                      AppColors.disabled.r.toInt(),
+                      AppColors.disabled.g.toInt(),
+                      AppColors.disabled.b.toInt(),
+                      0.7,
+                    )
+                    : Color.fromRGBO(
+                      AppColors.disabled.r.toInt(),
+                      AppColors.disabled.g.toInt(),
+                      AppColors.disabled.b.toInt(),
+                      0.3,
+                    ),
             valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
             minHeight: 8,
             borderRadius: BorderRadius.circular(4),
@@ -586,17 +598,11 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
             children: [
               Text(
                 '${taskProvider.completedTasks} of ${taskProvider.totalTasks} tasks completed',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
-                ),
+                style: TextStyles.bodySmall,
               ),
               Text(
                 '${taskProvider.pendingTasks} remaining',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
-                ),
+                style: TextStyles.bodySmall,
               ),
             ],
           ),
@@ -629,7 +635,7 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(errorMessage),
-          backgroundColor: Colors.red,
+          backgroundColor: AppColors.error,
           duration: const Duration(seconds: 5),
           action: SnackBarAction(
             label: 'View Dependencies',
@@ -666,7 +672,11 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
             message: 'This task depends on other tasks',
             child: Padding(
               padding: EdgeInsets.only(left: 4),
-              child: Icon(Icons.arrow_downward, size: 16, color: Colors.orange),
+              child: Icon(
+                Icons.arrow_downward,
+                size: 16,
+                color: AppColors.warning,
+              ),
             ),
           ),
         if (hasDependents)
@@ -674,7 +684,11 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
             message: 'Other tasks depend on this task',
             child: Padding(
               padding: EdgeInsets.only(left: 4),
-              child: Icon(Icons.arrow_upward, size: 16, color: Colors.blue),
+              child: Icon(
+                Icons.arrow_upward,
+                size: 16,
+                color: AppColors.primary,
+              ),
             ),
           ),
       ],

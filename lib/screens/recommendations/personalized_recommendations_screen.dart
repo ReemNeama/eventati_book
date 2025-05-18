@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/providers/providers.dart';
 import 'package:eventati_book/utils/core/constants.dart';
+import 'package:eventati_book/styles/app_colors.dart';
+
 
 /// Screen for displaying personalized recommendations based on wizard data
 class PersonalizedRecommendationsScreen extends StatefulWidget {
@@ -65,7 +67,11 @@ class _PersonalizedRecommendationsScreenState
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.error_outline, color: Colors.red, size: 48),
+                  const Icon(
+                    Icons.error_outline,
+                    color: AppColors.error,
+                    size: 48,
+                  ),
                   const SizedBox(height: 16),
                   Text(
                     'Error loading recommendations',
@@ -109,7 +115,7 @@ class _PersonalizedRecommendationsScreenState
                 children: [
                   const Icon(
                     Icons.lightbulb_outline,
-                    color: Colors.amber,
+                    color: AppColors.ratingStarColor,
                     size: 48,
                   ),
                   const SizedBox(height: 16),

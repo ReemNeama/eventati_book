@@ -5,6 +5,8 @@ import 'package:eventati_book/models/planning_models/task_dependency.dart';
 import 'package:eventati_book/providers/providers.dart';
 import 'package:eventati_book/utils/logger.dart';
 import 'package:eventati_book/widgets/common/loading_indicator.dart';
+import 'package:eventati_book/styles/app_colors.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 /// Screen for creating or editing a task template
 class TaskTemplateFormScreen extends StatefulWidget {
@@ -118,17 +120,37 @@ class _TaskTemplateFormScreenState extends State<TaskTemplateFormScreen> {
                           padding: const EdgeInsets.all(8),
                           margin: const EdgeInsets.only(bottom: 16),
                           decoration: BoxDecoration(
-                            color: Colors.red[100],
+                            color: Color.fromRGBO(
+                              AppColors.error.r.toInt(),
+                              AppColors.error.g.toInt(),
+                              AppColors.error.b.toInt(),
+                              0.1,
+                            ),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Row(
                             children: [
-                              Icon(Icons.error, color: Colors.red[700]),
+                              Icon(
+                                Icons.error,
+                                color: Color.fromRGBO(
+                                  AppColors.error.r.toInt(),
+                                  AppColors.error.g.toInt(),
+                                  AppColors.error.b.toInt(),
+                                  0.7,
+                                ),
+                              ),
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
                                   _errorMessage!,
-                                  style: TextStyle(color: Colors.red[700]),
+                                  style: TextStyle(
+                                    color: Color.fromRGBO(
+                                      AppColors.error.r.toInt(),
+                                      AppColors.error.g.toInt(),
+                                      AppColors.error.b.toInt(),
+                                      0.7,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ],
@@ -210,10 +232,7 @@ class _TaskTemplateFormScreenState extends State<TaskTemplateFormScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
-              'Tasks',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
+            Text('Tasks', style: TextStyles.sectionTitle),
             ElevatedButton.icon(
               onPressed: _addTaskDefinition,
               icon: const Icon(Icons.add),
@@ -259,9 +278,8 @@ class _TaskTemplateFormScreenState extends State<TaskTemplateFormScreen> {
                 Expanded(
                   child: Text(
                     task.title,
-                    style: const TextStyle(
+                    style: TextStyles.bodyLarge.copyWith(
                       fontWeight: FontWeight.bold,
-                      fontSize: 16,
                     ),
                   ),
                 ),
@@ -271,7 +289,7 @@ class _TaskTemplateFormScreenState extends State<TaskTemplateFormScreen> {
                   tooltip: 'Edit task',
                 ),
                 IconButton(
-                  icon: const Icon(Icons.delete, color: Colors.red),
+                  icon: const Icon(Icons.delete, color: AppColors.error),
                   onPressed: () => _removeTaskDefinition(index),
                   tooltip: 'Remove task',
                 ),
@@ -293,7 +311,7 @@ class _TaskTemplateFormScreenState extends State<TaskTemplateFormScreen> {
                     padding: EdgeInsets.only(left: 8),
                     child: Chip(
                       label: Text('Important'),
-                      backgroundColor: Colors.amber,
+                      backgroundColor: AppColors.ratingStarColor,
                     ),
                   ),
               ],
@@ -312,10 +330,7 @@ class _TaskTemplateFormScreenState extends State<TaskTemplateFormScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
-              'Dependencies',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
+            Text('Dependencies', style: TextStyles.sectionTitle),
             ElevatedButton.icon(
               onPressed: _taskDefinitions.length >= 2 ? _addDependency : null,
               icon: const Icon(Icons.add),
@@ -390,7 +405,7 @@ class _TaskTemplateFormScreenState extends State<TaskTemplateFormScreen> {
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.delete, color: Colors.red),
+                  icon: const Icon(Icons.delete, color: AppColors.error),
                   onPressed: () => _removeDependency(index),
                   tooltip: 'Remove dependency',
                 ),
@@ -420,10 +435,7 @@ class _TaskTemplateFormScreenState extends State<TaskTemplateFormScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
-              'Tags',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
+            Text('Tags', style: TextStyles.sectionTitle),
             ElevatedButton.icon(
               onPressed: _addTag,
               icon: const Icon(Icons.add),
@@ -837,12 +849,9 @@ class _TaskTemplateFormScreenState extends State<TaskTemplateFormScreen> {
                           },
                         ),
                         const SizedBox(height: 8),
-                        const Text(
+                        Text(
                           'Note: Offset days is the number of days to wait after the prerequisite condition is met.',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontStyle: FontStyle.italic,
-                          ),
+                          style: TextStyles.bodySmall,
                         ),
                       ],
                     ),

@@ -12,6 +12,7 @@ import 'package:eventati_book/routing/routing.dart';
 
 // Import widgets using barrel file
 import 'package:eventati_book/widgets/widgets.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 class EventPlanningToolsScreen extends StatelessWidget {
   final String eventId;
@@ -44,28 +45,41 @@ class EventPlanningToolsScreen extends StatelessWidget {
   Widget _buildScreen(BuildContext context) {
     final isDarkMode = UIUtils.isDarkMode(context);
     final primaryColor = isDarkMode ? AppColorsDark.primary : AppColors.primary;
-    final cardColor = isDarkMode ? Colors.grey[800] : Colors.white;
-    final textColor = isDarkMode ? Colors.white : Colors.black;
+    final cardColor =
+        isDarkMode
+            ? Color.fromRGBO(
+              AppColors.disabled.r.toInt(),
+              AppColors.disabled.g.toInt(),
+              AppColors.disabled.b.toInt(),
+              0.8,
+            )
+            : Colors.white;
 
     return Scaffold(
       backgroundColor: primaryColor,
       appBar: AppBar(
         backgroundColor: primaryColor,
         elevation: 0,
-        title: const Text(
-          'Planning Tools',
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
+        title: Text('Planning Tools', style: TextStyles.title),
         centerTitle: true,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Container(
         decoration: BoxDecoration(
-          color: isDarkMode ? Colors.grey[900] : Colors.grey[100],
+          color:
+              isDarkMode
+                  ? Color.fromRGBO(
+                    AppColors.disabled.r.toInt(),
+                    AppColors.disabled.g.toInt(),
+                    AppColors.disabled.b.toInt(),
+                    0.9,
+                  )
+                  : Color.fromRGBO(
+                    AppColors.disabled.r.toInt(),
+                    AppColors.disabled.g.toInt(),
+                    AppColors.disabled.b.toInt(),
+                    0.1,
+                  ),
           borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(AppConstants.largeBorderRadius * 2),
             topRight: Radius.circular(AppConstants.largeBorderRadius * 2),
@@ -84,7 +98,12 @@ class EventPlanningToolsScreen extends StatelessWidget {
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withAlpha(26), // 0.1 * 255 = 25.5 ≈ 26
+                    color: Color.fromRGBO(
+                      Colors.black.r.toInt(),
+                      Colors.black.g.toInt(),
+                      Colors.black.b.toInt(),
+                      0.10,
+                    ), // 0.1 * 255 = 25.5 ≈ 26
                     blurRadius: 10,
                     offset: const Offset(0, 5),
                   ),
@@ -93,29 +112,32 @@ class EventPlanningToolsScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    eventName,
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: textColor,
-                    ),
-                  ),
+                  Text(eventName, style: TextStyles.subtitle),
                   const SizedBox(height: AppConstants.smallPadding),
                   Row(
                     children: [
                       Icon(
                         Icons.event,
                         size: 16,
-                        color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
+                        color:
+                            isDarkMode
+                                ? Color.fromRGBO(
+                                  AppColors.disabled.r.toInt(),
+                                  AppColors.disabled.g.toInt(),
+                                  AppColors.disabled.b.toInt(),
+                                  0.4,
+                                )
+                                : Color.fromRGBO(
+                                  AppColors.disabled.r.toInt(),
+                                  AppColors.disabled.g.toInt(),
+                                  AppColors.disabled.b.toInt(),
+                                  0.6,
+                                ),
                       ),
                       const SizedBox(width: AppConstants.smallPadding),
                       Text(
                         DateTimeUtils.formatDate(eventDate),
-                        style: TextStyle(
-                          color:
-                              isDarkMode ? Colors.grey[400] : Colors.grey[600],
-                        ),
+                        style: TextStyles.bodySmall,
                       ),
                     ],
                   ),
@@ -125,16 +147,23 @@ class EventPlanningToolsScreen extends StatelessWidget {
                       Icon(
                         Icons.category,
                         size: 16,
-                        color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
+                        color:
+                            isDarkMode
+                                ? Color.fromRGBO(
+                                  AppColors.disabled.r.toInt(),
+                                  AppColors.disabled.g.toInt(),
+                                  AppColors.disabled.b.toInt(),
+                                  0.4,
+                                )
+                                : Color.fromRGBO(
+                                  AppColors.disabled.r.toInt(),
+                                  AppColors.disabled.g.toInt(),
+                                  AppColors.disabled.b.toInt(),
+                                  0.6,
+                                ),
                       ),
                       const SizedBox(width: AppConstants.smallPadding),
-                      Text(
-                        eventType,
-                        style: TextStyle(
-                          color:
-                              isDarkMode ? Colors.grey[400] : Colors.grey[600],
-                        ),
-                      ),
+                      Text(eventType, style: TextStyles.bodySmall),
                     ],
                   ),
                   const SizedBox(height: AppConstants.mediumPadding),
@@ -142,28 +171,29 @@ class EventPlanningToolsScreen extends StatelessWidget {
                     value:
                         0.35, // This would be calculated based on completed tasks
                     backgroundColor:
-                        isDarkMode ? Colors.grey[700] : Colors.grey[300],
+                        isDarkMode
+                            ? Color.fromRGBO(
+                              AppColors.disabled.r.toInt(),
+                              AppColors.disabled.g.toInt(),
+                              AppColors.disabled.b.toInt(),
+                              0.7,
+                            )
+                            : Color.fromRGBO(
+                              AppColors.disabled.r.toInt(),
+                              AppColors.disabled.g.toInt(),
+                              AppColors.disabled.b.toInt(),
+                              0.3,
+                            ),
                     valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
                   ),
                   const SizedBox(height: AppConstants.smallPadding),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        '35% Complete',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color:
-                              isDarkMode ? Colors.grey[400] : Colors.grey[600],
-                        ),
-                      ),
+                      Text('35% Complete', style: TextStyles.bodySmall),
                       Text(
                         '${_getDaysUntil(eventDate)} days left',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: primaryColor,
-                        ),
+                        style: TextStyles.bodySmall,
                       ),
                     ],
                   ),
@@ -207,7 +237,7 @@ class EventPlanningToolsScreen extends StatelessWidget {
       {
         'title': 'Budget Calculator',
         'icon': Icons.calculate,
-        'color': Colors.green,
+        'color': AppColors.success,
         'onTap': (BuildContext context) {
           NavigationUtils.navigateToNamed(
             context,
@@ -219,7 +249,7 @@ class EventPlanningToolsScreen extends StatelessWidget {
       {
         'title': 'Guest List',
         'icon': Icons.people,
-        'color': Colors.blue,
+        'color': AppColors.primary,
         'onTap': (BuildContext context) {
           NavigationUtils.navigateToNamed(
             context,
@@ -234,7 +264,7 @@ class EventPlanningToolsScreen extends StatelessWidget {
       {
         'title': 'Timeline & Checklist',
         'icon': Icons.checklist,
-        'color': Colors.orange,
+        'color': AppColors.warning,
         'onTap': (BuildContext context) {
           NavigationUtils.navigateToNamed(
             context,
@@ -294,7 +324,7 @@ class EventPlanningToolsScreen extends StatelessWidget {
       {
         'title': 'Personalized Recommendations',
         'icon': Icons.lightbulb,
-        'color': Colors.amber,
+        'color': AppColors.ratingStarColor,
         'onTap': (BuildContext context) {
           NavigationUtils.navigateToNamed(
             context,

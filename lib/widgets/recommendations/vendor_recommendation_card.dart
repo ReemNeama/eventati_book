@@ -5,6 +5,7 @@ import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/widgets/recommendations/recommendation_badge.dart';
 
+
 /// Card widget to display a vendor recommendation
 class VendorRecommendationCard extends StatelessWidget {
   /// The recommendation to display
@@ -87,7 +88,12 @@ class VendorRecommendationCard extends StatelessWidget {
                   left: 12,
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.black.withAlpha(100),
+                      color: Color.fromRGBO(
+                        Colors.black.r.toInt(),
+                        Colors.black.g.toInt(),
+                        Colors.black.b.toInt(),
+                        0.39,
+                      ),
                       shape: BoxShape.circle,
                     ),
                     child: IconButton(
@@ -125,8 +131,18 @@ class VendorRecommendationCard extends StatelessWidget {
                         begin: Alignment.bottomCenter,
                         end: Alignment.topCenter,
                         colors: [
-                          Colors.black.withAlpha(200),
-                          Colors.black.withAlpha(100),
+                          Color.fromRGBO(
+                            Colors.black.r.toInt(),
+                            Colors.black.g.toInt(),
+                            Colors.black.b.toInt(),
+                            0.78,
+                          ),
+                          Color.fromRGBO(
+                            Colors.black.r.toInt(),
+                            Colors.black.g.toInt(),
+                            Colors.black.b.toInt(),
+                            0.39,
+                          ),
                           Colors.transparent,
                         ],
                         stops: const [0.0, 0.7, 1.0],
@@ -194,13 +210,29 @@ class VendorRecommendationCard extends StatelessWidget {
                       // Rating stars
                       Row(
                         children: [
-                          const Icon(Icons.star, color: Colors.amber, size: 16),
-                          const Icon(Icons.star, color: Colors.amber, size: 16),
-                          const Icon(Icons.star, color: Colors.amber, size: 16),
-                          const Icon(Icons.star, color: Colors.amber, size: 16),
+                          const Icon(
+                            Icons.star,
+                            color: AppColors.ratingStarColor,
+                            size: 16,
+                          ),
+                          const Icon(
+                            Icons.star,
+                            color: AppColors.ratingStarColor,
+                            size: 16,
+                          ),
+                          const Icon(
+                            Icons.star,
+                            color: AppColors.ratingStarColor,
+                            size: 16,
+                          ),
+                          const Icon(
+                            Icons.star,
+                            color: AppColors.ratingStarColor,
+                            size: 16,
+                          ),
                           const Icon(
                             Icons.star_half,
-                            color: Colors.amber,
+                            color: AppColors.ratingStarColor,
                             size: 16,
                           ),
                           const SizedBox(width: 4),
@@ -344,7 +376,12 @@ class VendorRecommendationCard extends StatelessWidget {
     final backgroundColor =
         isDarkMode
             ? AppColorsDark.primary.withAlpha(26)
-            : AppColors.primary.withAlpha(26);
+            : Color.fromRGBO(
+              AppColors.primary.r.toInt(),
+              AppColors.primary.g.toInt(),
+              AppColors.primary.b.toInt(),
+              0.10,
+            );
     final iconColor = isDarkMode ? AppColorsDark.primary : AppColors.primary;
 
     return Container(
@@ -383,15 +420,15 @@ class VendorRecommendationCard extends StatelessWidget {
 
     switch (priority) {
       case SuggestionPriority.high:
-        chipColor = Colors.red;
+        chipColor = AppColors.error;
         label = 'High Priority';
         break;
       case SuggestionPriority.medium:
-        chipColor = Colors.orange;
+        chipColor = AppColors.warning;
         label = 'Medium';
         break;
       case SuggestionPriority.low:
-        chipColor = Colors.green;
+        chipColor = AppColors.success;
         label = 'Optional';
         break;
     }

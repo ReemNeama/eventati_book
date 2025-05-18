@@ -7,6 +7,7 @@ import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/screens/recommendations/recommendation_screens.dart';
 
+
 /// A section for the home screen that displays personalized recommendations
 class PersonalizedRecommendationsSection extends StatelessWidget {
   /// The event ID to show recommendations for
@@ -168,7 +169,12 @@ class _RecommendationCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withAlpha(20),
+            color: Color.fromRGBO(
+              Colors.black.r.toInt(),
+              Colors.black.g.toInt(),
+              Colors.black.b.toInt(),
+              0.08,
+            ),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -211,7 +217,12 @@ class _RecommendationCard extends StatelessWidget {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.black.withAlpha(150),
+                      color: Color.fromRGBO(
+                        Colors.black.r.toInt(),
+                        Colors.black.g.toInt(),
+                        Colors.black.b.toInt(),
+                        0.59,
+                      ),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Row(
@@ -287,7 +298,12 @@ class _RecommendationCard extends StatelessWidget {
     final backgroundColor =
         isDarkMode
             ? AppColorsDark.primary.withAlpha(26)
-            : AppColors.primary.withAlpha(26);
+            : Color.fromRGBO(
+              AppColors.primary.r.toInt(),
+              AppColors.primary.g.toInt(),
+              AppColors.primary.b.toInt(),
+              0.10,
+            );
     final iconColor = isDarkMode ? AppColorsDark.primary : AppColors.primary;
 
     return Container(
@@ -365,7 +381,12 @@ class _LoadingRecommendationsSection extends StatelessWidget {
       width: 180,
       margin: EdgeInsets.only(left: isFirst ? 0 : 12, right: 12, bottom: 8),
       decoration: BoxDecoration(
-        color: Colors.grey.withAlpha(50),
+        color: Color.fromRGBO(
+          AppColors.disabled.r.toInt(),
+          AppColors.disabled.g.toInt(),
+          AppColors.disabled.b.toInt(),
+          0.20,
+        ),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -375,7 +396,12 @@ class _LoadingRecommendationsSection extends StatelessWidget {
           Container(
             height: 120,
             decoration: BoxDecoration(
-              color: Colors.grey.withAlpha(100),
+              color: Color.fromRGBO(
+                AppColors.disabled.r.toInt(),
+                AppColors.disabled.g.toInt(),
+                AppColors.disabled.b.toInt(),
+                0.39,
+              ),
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(12),
                 topRight: Radius.circular(12),
@@ -394,7 +420,12 @@ class _LoadingRecommendationsSection extends StatelessWidget {
                   height: 14,
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: Colors.grey.withAlpha(100),
+                    color: Color.fromRGBO(
+                      AppColors.disabled.r.toInt(),
+                      AppColors.disabled.g.toInt(),
+                      AppColors.disabled.b.toInt(),
+                      0.39,
+                    ),
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),
@@ -403,7 +434,12 @@ class _LoadingRecommendationsSection extends StatelessWidget {
                   height: 14,
                   width: 100,
                   decoration: BoxDecoration(
-                    color: Colors.grey.withAlpha(100),
+                    color: Color.fromRGBO(
+                      AppColors.disabled.r.toInt(),
+                      AppColors.disabled.g.toInt(),
+                      AppColors.disabled.b.toInt(),
+                      0.39,
+                    ),
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),
@@ -414,7 +450,12 @@ class _LoadingRecommendationsSection extends StatelessWidget {
                   height: 12,
                   width: 80,
                   decoration: BoxDecoration(
-                    color: Colors.grey.withAlpha(100),
+                    color: Color.fromRGBO(
+                      AppColors.disabled.r.toInt(),
+                      AppColors.disabled.g.toInt(),
+                      AppColors.disabled.b.toInt(),
+                      0.39,
+                    ),
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),

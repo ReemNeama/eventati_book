@@ -8,6 +8,7 @@ import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/widgets/common/empty_state.dart';
 import 'package:eventati_book/widgets/common/responsive_layout.dart';
 import 'package:eventati_book/screens/event_planning/budget/budget_item_form_screen.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 class BudgetDetailsScreen extends StatefulWidget {
   final String eventId;
@@ -154,7 +155,19 @@ class _BudgetDetailsScreenState extends State<BudgetDetailsScreen> {
           width: 1,
           thickness: 1,
           color:
-              UIUtils.isDarkMode(context) ? Colors.grey[800] : Colors.grey[300],
+              UIUtils.isDarkMode(context)
+                  ? Color.fromRGBO(
+                    AppColors.disabled.r.toInt(),
+                    AppColors.disabled.g.toInt(),
+                    AppColors.disabled.b.toInt(),
+                    0.8,
+                  )
+                  : Color.fromRGBO(
+                    AppColors.disabled.r.toInt(),
+                    AppColors.disabled.g.toInt(),
+                    AppColors.disabled.b.toInt(),
+                    0.3,
+                  ),
         ),
         // Right panel: Budget summary (30% width)
         Expanded(flex: 30, child: _buildBudgetSummary(budgetProvider)),
@@ -217,7 +230,6 @@ class _BudgetDetailsScreenState extends State<BudgetDetailsScreen> {
   /// Builds a summary of the budget with totals and category breakdown
   Widget _buildBudgetSummary(BudgetProvider budgetProvider) {
     final isDarkMode = UIUtils.isDarkMode(context);
-    final textColor = isDarkMode ? Colors.white : Colors.black;
     final primaryColor = isDarkMode ? AppColorsDark.primary : AppColors.primary;
 
     // Calculate budget totals
@@ -251,14 +263,7 @@ class _BudgetDetailsScreenState extends State<BudgetDetailsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Budget Summary',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: textColor,
-            ),
-          ),
+          Text('Budget Summary', style: TextStyles.subtitle.copyWith()),
           const SizedBox(height: 24),
 
           // Budget totals
@@ -274,10 +279,8 @@ class _BudgetDetailsScreenState extends State<BudgetDetailsScreen> {
                 children: [
                   Text(
                     'Totals',
-                    style: TextStyle(
-                      fontSize: 16,
+                    style: TextStyles.bodyLarge.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: textColor,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -287,12 +290,16 @@ class _BudgetDetailsScreenState extends State<BudgetDetailsScreen> {
                     primaryColor,
                   ),
                   const SizedBox(height: 8),
-                  _buildBudgetSummaryRow('Actual', totalActual, Colors.blue),
+                  _buildBudgetSummaryRow(
+                    'Actual',
+                    totalActual,
+                    AppColors.primary,
+                  ),
                   const SizedBox(height: 8),
                   _buildBudgetSummaryRow(
                     'Remaining',
                     totalRemaining,
-                    totalRemaining >= 0 ? Colors.green : Colors.red,
+                    totalRemaining >= 0 ? AppColors.success : AppColors.error,
                   ),
                 ],
               ),
@@ -303,11 +310,7 @@ class _BudgetDetailsScreenState extends State<BudgetDetailsScreen> {
           // Category breakdown
           Text(
             'Category Breakdown',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: textColor,
-            ),
+            style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
           ...categoryTotals.entries.map((entry) {
@@ -327,24 +330,29 @@ class _BudgetDetailsScreenState extends State<BudgetDetailsScreen> {
                 children: [
                   CircleAvatar(
                     backgroundColor:
-                        isDarkMode ? Colors.grey[800] : Colors.grey[200],
+                        isDarkMode
+                            ? Color.fromRGBO(
+                              AppColors.disabled.r.toInt(),
+                              AppColors.disabled.g.toInt(),
+                              AppColors.disabled.b.toInt(),
+                              0.8,
+                            )
+                            : Color.fromRGBO(
+                              AppColors.disabled.r.toInt(),
+                              AppColors.disabled.g.toInt(),
+                              AppColors.disabled.b.toInt(),
+                              0.2,
+                            ),
                     radius: 16,
                     child: Icon(category.icon, color: primaryColor, size: 16),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
-                    child: Text(
-                      category.name,
-                      style: TextStyle(fontSize: 14, color: textColor),
-                    ),
+                    child: Text(category.name, style: TextStyles.bodyMedium),
                   ),
                   Text(
                     ServiceUtils.formatPrice(entry.value, decimalPlaces: 0),
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: textColor,
-                    ),
+                    style: TextStyles.bodyMedium,
                   ),
                 ],
               ),
@@ -357,25 +365,13 @@ class _BudgetDetailsScreenState extends State<BudgetDetailsScreen> {
 
   /// Builds a row for the budget summary
   Widget _buildBudgetSummaryRow(String label, double amount, Color color) {
-    final isDarkMode = UIUtils.isDarkMode(context);
-
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 14,
-            color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
-          ),
-        ),
+        Text(label, style: TextStyles.bodyMedium),
         Text(
           ServiceUtils.formatPrice(amount, decimalPlaces: 0),
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: color,
-          ),
+          style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.bold),
         ),
       ],
     );
@@ -384,7 +380,20 @@ class _BudgetDetailsScreenState extends State<BudgetDetailsScreen> {
   Widget _buildFilterBar(BuildContext context, BudgetProvider budgetProvider) {
     final isDarkMode = UIUtils.isDarkMode(context);
     final primaryColor = isDarkMode ? AppColorsDark.primary : AppColors.primary;
-    final backgroundColor = isDarkMode ? Colors.grey[800] : Colors.grey[200];
+    final backgroundColor =
+        isDarkMode
+            ? Color.fromRGBO(
+              AppColors.disabled.r.toInt(),
+              AppColors.disabled.g.toInt(),
+              AppColors.disabled.b.toInt(),
+              0.8,
+            )
+            : Color.fromRGBO(
+              AppColors.disabled.r.toInt(),
+              AppColors.disabled.g.toInt(),
+              AppColors.disabled.b.toInt(),
+              0.2,
+            );
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -402,7 +411,15 @@ class _BudgetDetailsScreenState extends State<BudgetDetailsScreen> {
                 borderSide: BorderSide.none,
               ),
               filled: true,
-              fillColor: isDarkMode ? Colors.grey[700] : Colors.white,
+              fillColor:
+                  isDarkMode
+                      ? Color.fromRGBO(
+                        AppColors.disabled.r.toInt(),
+                        AppColors.disabled.g.toInt(),
+                        AppColors.disabled.b.toInt(),
+                        0.7,
+                      )
+                      : Colors.white,
               contentPadding: const EdgeInsets.symmetric(vertical: 0),
             ),
             onChanged: (value) {
@@ -466,7 +483,15 @@ class _BudgetDetailsScreenState extends State<BudgetDetailsScreen> {
                   ? Colors.white
                   : primaryColor,
         ),
-        backgroundColor: isDarkMode ? Colors.grey[700] : Colors.white,
+        backgroundColor:
+            isDarkMode
+                ? Color.fromRGBO(
+                  AppColors.disabled.r.toInt(),
+                  AppColors.disabled.g.toInt(),
+                  AppColors.disabled.b.toInt(),
+                  0.7,
+                )
+                : Colors.white,
         selectedColor: primaryColor,
         checkmarkColor: Colors.white,
         labelStyle: TextStyle(
@@ -517,13 +542,7 @@ class _BudgetDetailsScreenState extends State<BudgetDetailsScreen> {
                   child: Icon(category.icon, color: Colors.white, size: 16),
                 ),
                 const SizedBox(width: 8),
-                Text(
-                  category.name,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
-                  ),
-                ),
+                Text(category.name, style: TextStyles.bodyMedium),
                 const Spacer(),
                 if (item.isPaid)
                   Container(
@@ -532,24 +551,23 @@ class _BudgetDetailsScreenState extends State<BudgetDetailsScreen> {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.green.withAlpha(51), // 0.2 * 255 = 51
+                      color: Color.fromRGBO(
+                        AppColors.success.r.toInt(),
+                        AppColors.success.g.toInt(),
+                        AppColors.success.b.toInt(),
+                        0.20,
+                      ), // 0.2 * 255 = 51
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Row(
                       children: [
                         const Icon(
                           Icons.check_circle,
-                          color: Colors.green,
+                          color: AppColors.success,
                           size: 14,
                         ),
                         const SizedBox(width: 4),
-                        Text(
-                          'Paid',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: isDarkMode ? Colors.white : Colors.black,
-                          ),
-                        ),
+                        Text('Paid', style: TextStyles.bodySmall),
                       ],
                     ),
                   ),
@@ -558,11 +576,7 @@ class _BudgetDetailsScreenState extends State<BudgetDetailsScreen> {
             const SizedBox(height: 12),
             Text(
               item.description,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: isDarkMode ? Colors.white : Colors.black,
-              ),
+              style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
             Row(
@@ -571,22 +585,14 @@ class _BudgetDetailsScreenState extends State<BudgetDetailsScreen> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Estimated',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
-                      ),
-                    ),
+                    Text('Estimated', style: TextStyles.bodySmall),
                     Text(
                       ServiceUtils.formatPrice(
                         item.estimatedCost,
                         decimalPlaces: 0,
                       ),
-                      style: TextStyle(
-                        fontSize: 16,
+                      style: TextStyles.bodyLarge.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: isDarkMode ? Colors.white : Colors.black,
                       ),
                     ),
                   ],
@@ -595,23 +601,14 @@ class _BudgetDetailsScreenState extends State<BudgetDetailsScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text(
-                        'Actual',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color:
-                              isDarkMode ? Colors.grey[400] : Colors.grey[600],
-                        ),
-                      ),
+                      Text('Actual', style: TextStyles.bodySmall),
                       Text(
                         ServiceUtils.formatPrice(
                           item.actualCost!,
                           decimalPlaces: 0,
                         ),
-                        style: TextStyle(
-                          fontSize: 16,
+                        style: TextStyles.bodyLarge.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: isDarkMode ? Colors.white : Colors.black,
                         ),
                       ),
                     ],
@@ -620,21 +617,8 @@ class _BudgetDetailsScreenState extends State<BudgetDetailsScreen> {
             ),
             if (item.notes != null && item.notes!.isNotEmpty) ...[
               const SizedBox(height: 12),
-              Text(
-                'Notes:',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
-                ),
-              ),
-              Text(
-                item.notes!,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: isDarkMode ? Colors.grey[300] : Colors.grey[700],
-                ),
-              ),
+              Text('Notes:', style: TextStyles.bodySmall),
+              Text(item.notes!, style: TextStyles.bodyMedium),
             ],
             const SizedBox(height: 12),
             Row(
@@ -662,7 +646,7 @@ class _BudgetDetailsScreenState extends State<BudgetDetailsScreen> {
                   },
                   child: const Text(
                     'Delete',
-                    style: TextStyle(color: Colors.red),
+                    style: TextStyle(color: AppColors.error),
                   ),
                 ),
               ],
@@ -698,7 +682,7 @@ class _BudgetDetailsScreenState extends State<BudgetDetailsScreen> {
                 },
                 child: const Text(
                   'Delete',
-                  style: TextStyle(color: Colors.red),
+                  style: TextStyle(color: AppColors.error),
                 ),
               ),
             ],

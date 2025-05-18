@@ -5,6 +5,7 @@ import 'package:eventati_book/models/planning_models/task_template.dart';
 import 'package:eventati_book/providers/planning_providers/task_template_provider.dart';
 import 'package:eventati_book/widgets/common/loading_indicator.dart';
 import 'package:eventati_book/widgets/common/error_message.dart';
+import 'package:eventati_book/styles/app_colors.dart';
 
 /// Screen to display task template details
 class TaskTemplateDetailsScreen extends StatefulWidget {
@@ -127,14 +128,14 @@ class _TaskTemplateDetailsScreenState extends State<TaskTemplateDetailsScreen> {
             Icon(
               template.isSystemTemplate ? Icons.public : Icons.person,
               size: 16,
-              color: Colors.grey,
+              color: AppColors.disabled,
             ),
             const SizedBox(width: 8),
             Text(
               template.isSystemTemplate ? 'System Template' : 'User Template',
               style: Theme.of(
                 context,
-              ).textTheme.bodySmall?.copyWith(color: Colors.grey),
+              ).textTheme.bodySmall?.copyWith(color: AppColors.disabled),
             ),
           ],
         ),
@@ -169,7 +170,7 @@ class _TaskTemplateDetailsScreenState extends State<TaskTemplateDetailsScreen> {
                   trailing: Text('${task.daysBeforeEvent} days before'),
                   leading:
                       task.isImportant
-                          ? const Icon(Icons.star, color: Colors.amber)
+                          ? const Icon(Icons.star, color: AppColors.ratingStarColor)
                           : const Icon(Icons.check_circle_outline),
                 ),
               );

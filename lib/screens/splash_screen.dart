@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:eventati_book/providers/core_providers/auth_provider.dart';
-import 'package:eventati_book/providers/core_providers/onboarding_provider.dart';
-import 'package:eventati_book/routing/route_names.dart';
-import 'package:eventati_book/routing/route_arguments.dart';
-import 'package:eventati_book/utils/ui/navigation_utils.dart';
+import 'package:eventati_book/providers/providers.dart';
+import 'package:eventati_book/routing/routing.dart';
+import 'package:eventati_book/styles/text_styles.dart';
+import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/utils/logger.dart';
 import 'package:eventati_book/widgets/common/loading_indicator.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
@@ -112,10 +111,9 @@ class _SplashScreenState extends State<SplashScreen> {
             // App logo or name
             Text(
               'Eventati Book',
-              style: TextStyle(
-                fontSize: 40,
-                fontWeight: FontWeight.bold,
+              style: TextStyles.title.copyWith(
                 color: theme.colorScheme.onPrimary,
+                fontSize: 40,
               ),
             ),
 

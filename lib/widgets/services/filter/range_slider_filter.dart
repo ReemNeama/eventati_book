@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 
+
 class RangeSliderFilter extends StatelessWidget {
   final String title;
   final RangeValues currentRange;
@@ -49,7 +50,12 @@ class RangeSliderFilter extends StatelessWidget {
           max: max,
           divisions: divisions,
           activeColor: AppColors.primary,
-          inactiveColor: AppColors.primaryWithAlpha(0.2),
+          inactiveColor: Color.fromRGBO(
+            AppColors.primary.r.toInt(),
+            AppColors.primary.g.toInt(),
+            AppColors.primary.b.toInt(),
+            0.2,
+          ),
           labels: RangeLabels(
             labelBuilder(currentRange.start),
             labelBuilder(currentRange.end),

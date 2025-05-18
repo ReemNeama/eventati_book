@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/utils/utils.dart';
+import 'package:eventati_book/styles/app_colors.dart';
 
 class DatePickerTile extends StatelessWidget {
   final DateTime? selectedDate;
@@ -19,7 +20,7 @@ class DatePickerTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey),
+        border: Border.all(color: AppColors.disabled),
         borderRadius: BorderRadius.circular(4),
       ),
       child: ListTile(

@@ -4,6 +4,7 @@ import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:intl/intl.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 /// Extension on Booking to add missing properties
 extension BookingExtension on Booking {
@@ -29,9 +30,16 @@ class BookingSummaryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isDarkMode = UIUtils.isDarkMode(context);
-    final Color cardColor = isDarkMode ? Colors.grey[850]! : Colors.white;
-    final Color textPrimary =
-        isDarkMode ? AppColorsDark.textPrimary : AppColors.textPrimary;
+    final Color cardColor =
+        isDarkMode
+            ? Color.fromRGBO(
+              AppColors.disabled.r.toInt(),
+              AppColors.disabled.g.toInt(),
+              AppColors.disabled.b.toInt(),
+              0.85,
+            )
+            : Colors.white;
+
     final Color textSecondary =
         isDarkMode ? AppColorsDark.textSecondary : AppColors.textSecondary;
 
@@ -56,16 +64,11 @@ class BookingSummaryCard extends StatelessWidget {
               children: [
                 Text(
                   'Recent Bookings',
-                  style: TextStyle(
-                    fontSize: 16,
+                  style: TextStyles.bodyLarge.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: textPrimary,
                   ),
                 ),
-                Text(
-                  '${bookings.length} total',
-                  style: TextStyle(fontSize: 14, color: textSecondary),
-                ),
+                Text('${bookings.length} total', style: TextStyles.bodyMedium),
               ],
             ),
             const SizedBox(height: 12),
@@ -92,12 +95,6 @@ class BookingSummaryCard extends StatelessWidget {
   }
 
   Widget _buildBookingItem(BuildContext context, Booking booking) {
-    final bool isDarkMode = UIUtils.isDarkMode(context);
-    final Color textPrimary =
-        isDarkMode ? AppColorsDark.textPrimary : AppColors.textPrimary;
-    final Color textSecondary =
-        isDarkMode ? AppColorsDark.textSecondary : AppColors.textSecondary;
-
     return Padding(
       padding: const EdgeInsets.only(bottom: 12.0),
       child: Row(
@@ -123,34 +120,23 @@ class BookingSummaryCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  booking.serviceName,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: textPrimary,
-                  ),
-                ),
+                Text(booking.serviceName, style: TextStyles.bodyMedium),
                 const SizedBox(height: 2),
                 Text(
                   'Type: ${StringUtils.capitalize(booking.serviceType)}',
-                  style: TextStyle(fontSize: 12, color: textSecondary),
+                  style: TextStyles.bodySmall,
                 ),
                 const SizedBox(height: 2),
                 Text(
                   'Date: ${DateFormat('MMM d, yyyy').format(booking.bookingDate)}',
-                  style: TextStyle(fontSize: 12, color: textSecondary),
+                  style: TextStyles.bodySmall,
                 ),
               ],
             ),
           ),
           Text(
             ServiceUtils.formatPrice(booking.totalAmount),
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: textPrimary,
-            ),
+            style: TextStyles.bodyMedium,
           ),
         ],
       ),
@@ -175,15 +161,15 @@ class BookingSummaryCard extends StatelessWidget {
   Color _getServiceTypeColor(String serviceType) {
     switch (serviceType.toLowerCase()) {
       case 'venue':
-        return Colors.blue;
+        return AppColors.primary;
       case 'catering':
-        return Colors.orange;
+        return AppColors.warning;
       case 'photography':
         return Colors.purple;
       case 'planner':
-        return Colors.green;
+        return AppColors.success;
       default:
-        return Colors.grey;
+        return AppColors.disabled;
     }
   }
 }

@@ -27,4 +27,4 @@ export 'utils/database_service.dart';
 export 'utils/supabase_exceptions.dart';
 
 // Test utilities
-export 'test/task_test_data_generator.dart';
+// export 'test/task_test_data_generator.dart';

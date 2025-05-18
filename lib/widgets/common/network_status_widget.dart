@@ -5,6 +5,7 @@ import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/widgets/common/pending_shares_widget.dart';
 
+
 /// Widget to display the network status and pending shares
 class NetworkStatusWidget extends StatelessWidget {
   /// Whether to show the pending shares

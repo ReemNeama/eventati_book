@@ -4,6 +4,7 @@ import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/routing/routing.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 /// Card widget for displaying a service in the comparison view
 class ComparisonItemCard extends StatelessWidget {
@@ -28,8 +29,34 @@ class ComparisonItemCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDarkMode = UIUtils.isDarkMode(context);
     final primaryColor = isDarkMode ? AppColorsDark.primary : AppColors.primary;
-    final backgroundColor = isDarkMode ? Colors.grey[800] : Colors.grey[300];
-    final iconColor = isDarkMode ? Colors.grey[400] : Colors.grey[600];
+    final backgroundColor =
+        isDarkMode
+            ? Color.fromRGBO(
+              AppColors.disabled.r.toInt(),
+              AppColors.disabled.g.toInt(),
+              AppColors.disabled.b.toInt(),
+              0.8,
+            )
+            : Color.fromRGBO(
+              AppColors.disabled.r.toInt(),
+              AppColors.disabled.g.toInt(),
+              AppColors.disabled.b.toInt(),
+              0.3,
+            );
+    final iconColor =
+        isDarkMode
+            ? Color.fromRGBO(
+              AppColors.disabled.r.toInt(),
+              AppColors.disabled.g.toInt(),
+              AppColors.disabled.b.toInt(),
+              0.4,
+            )
+            : Color.fromRGBO(
+              AppColors.disabled.r.toInt(),
+              AppColors.disabled.g.toInt(),
+              AppColors.disabled.b.toInt(),
+              0.6,
+            );
 
     // Get service details based on service type
     String name = '';
@@ -92,10 +119,7 @@ class ComparisonItemCard extends StatelessWidget {
                 // Service name
                 Text(
                   name,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.bold),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),

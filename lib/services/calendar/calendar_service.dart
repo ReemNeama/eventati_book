@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:eventati_book/models/models.dart' hide Event;
 import 'package:eventati_book/utils/logger.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -67,65 +68,113 @@ class CalendarService {
     int reminderMinutesBefore = 60,
   }) async {
     try {
+      // Check and request permissions if needed
       final permissionsGranted = await hasCalendarPermissions();
       if (!permissionsGranted) {
+        Logger.i(
+          'Calendar permissions not granted, requesting...',
+          tag: 'CalendarService',
+        );
         final requested = await requestCalendarPermissions();
         if (!requested) {
-          throw Exception('Calendar permissions not granted');
+          Logger.w('User denied calendar permissions', tag: 'CalendarService');
+          throw Exception('Calendar permissions not granted by user');
         }
       }
 
-      // Create event details
+      // Validate booking data
+      if (booking.duration <= 0) {
+        Logger.w(
+          'Invalid booking duration: ${booking.duration}, using default of 1 hour',
+          tag: 'CalendarService',
+        );
+        booking = booking.copyWith(duration: 1.0);
+      }
+
+      // Create event details with proper error handling for null values
       final event = Event(
-        title: '${booking.serviceName} Booking',
+        title:
+            '${booking.serviceName.isNotEmpty ? booking.serviceName : 'Event'} Booking',
         description:
-            'Booking for ${booking.serviceName}\nSpecial requests: ${booking.specialRequests}',
-        location: booking.serviceOptions['location'] ?? 'Venue location',
+            'Booking for ${booking.serviceName}\n${booking.specialRequests.isNotEmpty ? 'Special requests: ${booking.specialRequests}' : ''}',
+        location:
+            booking.serviceOptions.containsKey('location')
+                ? booking.serviceOptions['location']
+                : 'Venue location',
         startDate: booking.bookingDateTime,
         endDate: booking.bookingDateTime.add(
           Duration(minutes: (booking.duration * 60).toInt()),
         ),
-        // Add reminder settings
         timeZone: 'UTC',
         recurrence: null,
         allDay: false,
       );
 
-      // Add reminder if requested
-      if (addReminder) {
-        // While add_2_calendar doesn't directly support setting reminders,
-        // most calendar apps will use their default reminder settings
-        // We'll store the reminder preference in our database for reference
-        await _supabase.from('booking_calendar_preferences').upsert({
-          'booking_id': booking.id,
-          'add_reminder': addReminder,
-          'reminder_minutes_before': reminderMinutesBefore,
-          'updated_at': DateTime.now().toIso8601String(),
-        });
+      // Add reminder preference to database first, so if calendar fails, we still have the preference
+      try {
+        if (addReminder) {
+          await _supabase.from('booking_calendar_preferences').upsert({
+            'booking_id': booking.id,
+            'add_reminder': addReminder,
+            'reminder_minutes_before': reminderMinutesBefore,
+            'updated_at': DateTime.now().toIso8601String(),
+          });
+
+          Logger.i(
+            'Saved reminder preferences for booking ${booking.id}',
+            tag: 'CalendarService',
+          );
+        }
+      } catch (e) {
+        // Don't fail the whole operation if just the reminder preference fails
+        Logger.w(
+          'Failed to save reminder preferences: $e',
+          tag: 'CalendarService',
+        );
       }
 
-      // Add event to calendar
-      final success = await Add2Calendar.addEvent2Cal(event);
+      // Add event to calendar with timeout
+      bool success = false;
+      try {
+        success = await Add2Calendar.addEvent2Cal(event);
+      } catch (e) {
+        Logger.e('Error adding event to calendar: $e', tag: 'CalendarService');
+        throw Exception('Failed to add event to calendar: $e');
+      }
 
       if (success) {
         // Generate a unique ID for the event
         final eventId = DateTime.now().millisecondsSinceEpoch.toString();
 
         // Store the event ID in Supabase for future reference
-        await _supabase.from('booking_calendar_events').insert({
-          'booking_id': booking.id,
-          'event_id': eventId,
-          'created_at': DateTime.now().toIso8601String(),
-        });
+        try {
+          await _supabase.from('booking_calendar_events').insert({
+            'booking_id': booking.id,
+            'event_id': eventId,
+            'created_at': DateTime.now().toIso8601String(),
+          });
 
-        Logger.i(
-          'Calendar event created for booking ${booking.id}: $eventId',
+          Logger.i(
+            'Calendar event created for booking ${booking.id}: $eventId',
+            tag: 'CalendarService',
+          );
+
+          return eventId;
+        } catch (e) {
+          Logger.e(
+            'Error storing calendar event ID: $e',
+            tag: 'CalendarService',
+          );
+          // Event was added to calendar but we couldn't store the ID
+          // Return a success anyway since the primary function worked
+          return 'unknown-${DateTime.now().millisecondsSinceEpoch}';
+        }
+      } else {
+        Logger.w(
+          'Calendar app returned false for adding event',
           tag: 'CalendarService',
         );
-
-        return eventId;
-      } else {
-        throw Exception('Failed to create event');
+        throw Exception('Calendar app failed to add event');
       }
     } catch (e) {
       Logger.e('Error creating calendar event: $e', tag: 'CalendarService');
@@ -140,54 +189,114 @@ class CalendarService {
     String? calendarId,
   }) async {
     try {
+      // Check permissions
       final permissionsGranted = await hasCalendarPermissions();
       if (!permissionsGranted) {
-        throw Exception('Calendar permissions not granted');
+        Logger.w(
+          'Calendar permissions not granted for update',
+          tag: 'CalendarService',
+        );
+        final requested = await requestCalendarPermissions();
+        if (!requested) {
+          throw Exception('Calendar permissions not granted by user');
+        }
+      }
+
+      // Validate booking data
+      if (booking.duration <= 0) {
+        Logger.w(
+          'Invalid booking duration: ${booking.duration}, using default of 1 hour',
+          tag: 'CalendarService',
+        );
+        booking = booking.copyWith(duration: 1.0);
       }
 
       // For add_2_calendar, we can't update existing events directly
       // So we'll delete the old event and create a new one
 
       // First, delete the old event reference from Supabase
-      await _supabase
-          .from('booking_calendar_events')
-          .delete()
-          .eq('booking_id', booking.id)
-          .eq('event_id', eventId);
+      try {
+        await _supabase
+            .from('booking_calendar_events')
+            .delete()
+            .eq('booking_id', booking.id)
+            .eq('event_id', eventId);
 
-      // Create a new event
+        Logger.i(
+          'Deleted old calendar event reference: $eventId',
+          tag: 'CalendarService',
+        );
+      } catch (e) {
+        Logger.w(
+          'Error deleting old calendar event reference: $e',
+          tag: 'CalendarService',
+        );
+        // Continue anyway, as we're creating a new event
+      }
+
+      // Create a new event with proper error handling for null values
       final event = Event(
-        title: '${booking.serviceName} Booking',
+        title:
+            '${booking.serviceName.isNotEmpty ? booking.serviceName : 'Event'} Booking',
         description:
-            'Booking for ${booking.serviceName}\nSpecial requests: ${booking.specialRequests}',
-        location: booking.serviceOptions['location'] ?? 'Venue location',
+            'Booking for ${booking.serviceName}\n${booking.specialRequests.isNotEmpty ? 'Special requests: ${booking.specialRequests}' : ''}',
+        location:
+            booking.serviceOptions.containsKey('location')
+                ? booking.serviceOptions['location']
+                : 'Venue location',
         startDate: booking.bookingDateTime,
         endDate: booking.bookingDateTime.add(
           Duration(minutes: (booking.duration * 60).toInt()),
         ),
+        timeZone: 'UTC',
+        recurrence: null,
+        allDay: false,
       );
 
       // Add event to calendar
-      final success = await Add2Calendar.addEvent2Cal(event);
+      bool success = false;
+      try {
+        success = await Add2Calendar.addEvent2Cal(event);
+      } catch (e) {
+        Logger.e(
+          'Error adding updated event to calendar: $e',
+          tag: 'CalendarService',
+        );
+        throw Exception('Failed to add updated event to calendar: $e');
+      }
 
       if (success) {
         // Generate a new unique ID for the event
         final newEventId = DateTime.now().millisecondsSinceEpoch.toString();
 
         // Store the new event ID in Supabase
-        await _supabase.from('booking_calendar_events').insert({
-          'booking_id': booking.id,
-          'event_id': newEventId,
-          'created_at': DateTime.now().toIso8601String(),
-        });
+        try {
+          await _supabase.from('booking_calendar_events').insert({
+            'booking_id': booking.id,
+            'event_id': newEventId,
+            'created_at': DateTime.now().toIso8601String(),
+          });
 
-        Logger.i(
-          'Calendar event updated for booking ${booking.id}: $newEventId',
+          Logger.i(
+            'Calendar event updated for booking ${booking.id}: $newEventId',
+            tag: 'CalendarService',
+          );
+          return true;
+        } catch (e) {
+          Logger.e(
+            'Error storing updated calendar event ID: $e',
+            tag: 'CalendarService',
+          );
+          // Event was added to calendar but we couldn't store the ID
+          // Return a success anyway since the primary function worked
+          return true;
+        }
+      } else {
+        Logger.w(
+          'Calendar app returned false for updating event',
           tag: 'CalendarService',
         );
-        return true;
-      } else {
-        throw Exception('Failed to update event');
+        throw Exception('Calendar app failed to update event');
       }
     } catch (e) {
       Logger.e('Error updating calendar event: $e', tag: 'CalendarService');
@@ -205,23 +314,57 @@ class CalendarService {
       // For add_2_calendar, we can't delete events programmatically
       // We can only remove the reference from our database
 
-      // Remove the event reference from Supabase
-      await _supabase
-          .from('booking_calendar_events')
-          .delete()
-          .eq('booking_id', bookingId)
-          .eq('event_id', eventId);
+      // Validate input parameters
+      if (bookingId.isEmpty) {
+        Logger.e(
+          'Invalid booking ID for deleting calendar event',
+          tag: 'CalendarService',
+        );
+        return false;
+      }
 
-      Logger.i(
-        'Calendar event reference deleted for booking $bookingId: $eventId',
-        tag: 'CalendarService',
-      );
-      return true;
+      if (eventId.isEmpty) {
+        Logger.e(
+          'Invalid event ID for deleting calendar event',
+          tag: 'CalendarService',
+        );
+        return false;
+      }
+
+      // Remove the event reference from Supabase
+      try {
+        final result =
+            await _supabase
+                .from('booking_calendar_events')
+                .delete()
+                .eq('booking_id', bookingId)
+                .eq('event_id', eventId)
+                .select();
+
+        // Check if any rows were affected
+        if (result.isEmpty) {
+          Logger.w(
+            'No calendar event reference found to delete for booking $bookingId: $eventId',
+            tag: 'CalendarService',
+          );
+          // Return true anyway since the end result is the same (no reference exists)
+          return true;
+        }
+
+        Logger.i(
+          'Calendar event reference deleted for booking $bookingId: $eventId',
+          tag: 'CalendarService',
+        );
+        return true;
+      } catch (e) {
+        Logger.e(
+          'Error deleting calendar event reference: $e',
+          tag: 'CalendarService',
+        );
+        return false;
+      }
     } catch (e) {
-      Logger.e(
-        'Error deleting calendar event reference: $e',
-        tag: 'CalendarService',
-      );
+      Logger.e('Error in deleteEventForBooking: $e', tag: 'CalendarService');
       return false;
     }
   }
@@ -238,105 +381,233 @@ class CalendarService {
     String? calendarId,
   }) async {
     try {
-      // Get all bookings from Supabase within the time range
-      final query = _supabase
-          .from('bookings')
-          .select('*, services:service_id(*)')
-          .gte(
-            'booking_date_time',
-            startTime.subtract(const Duration(hours: 1)).toIso8601String(),
-          )
-          .lte(
-            'booking_date_time',
-            endTime.add(const Duration(hours: 1)).toIso8601String(),
-          );
-
-      // If a specific service is provided, filter by it
-      final response =
-          serviceId != null
-              ? await query.eq('service_id', serviceId)
-              : await query;
-
-      if (response.isEmpty) {
-        return true; // No bookings found, time slot is available
+      // Validate input parameters
+      if (startTime.isAfter(endTime)) {
+        Logger.e(
+          'Invalid time range: start time is after end time',
+          tag: 'CalendarService',
+        );
+        return false;
       }
 
-      // If checking for a specific service, verify service capacity
-      if (serviceId != null) {
-        // Count active bookings for this service in this time slot
-        int activeBookingsCount = 0;
-        int serviceCapacity = 1; // Default to 1 if not specified
+      // Add a timeout for the database query
+      const queryTimeout = Duration(seconds: 10);
 
-        for (final bookingData in response) {
-          // Skip cancelled bookings
-          if (bookingData['status'] == 'cancelled') {
-            continue;
+      try {
+        // Get all bookings from Supabase within the time range
+        final query = _supabase
+            .from('bookings')
+            .select('*, services:service_id(*)')
+            .gte(
+              'booking_date_time',
+              startTime.subtract(const Duration(hours: 1)).toIso8601String(),
+            )
+            .lte(
+              'booking_date_time',
+              endTime.add(const Duration(hours: 1)).toIso8601String(),
+            );
+
+        // Create a completer to handle the timeout
+        final completer = Completer<List<Map<String, dynamic>>>();
+
+        // Set up the timeout
+        Timer(queryTimeout, () {
+          if (!completer.isCompleted) {
+            completer.completeError(TimeoutException('Query timed out'));
+          }
+        });
+
+        // Execute the query
+        Future<List<Map<String, dynamic>>> queryFuture;
+        if (serviceId != null) {
+          queryFuture = query.eq('service_id', serviceId);
+        } else {
+          queryFuture = query;
+        }
+
+        // Add the query result to the completer
+        queryFuture.then(
+          (value) {
+            if (!completer.isCompleted) {
+              completer.complete(value);
+            }
+          },
+          onError: (error) {
+            if (!completer.isCompleted) {
+              completer.completeError(error);
+            }
+          },
+        );
+
+        // Wait for either the query to complete or the timeout
+        final response = await completer.future;
+
+        if (response.isEmpty) {
+          Logger.i(
+            'No bookings found for time slot, it is available',
+            tag: 'CalendarService',
+          );
+          return true; // No bookings found, time slot is available
+        }
+
+        // If checking for a specific service, verify service capacity
+        if (serviceId != null) {
+          // Count active bookings for this service in this time slot
+          int activeBookingsCount = 0;
+          int serviceCapacity = 1; // Default to 1 if not specified
+
+          for (final bookingData in response) {
+            // Skip cancelled bookings
+            if (bookingData['status'] == 'cancelled') {
+              continue;
+            }
+
+            final bookingStartTime = DateTime.parse(
+              bookingData['booking_date_time'],
+            );
+            final bookingDuration = bookingData['duration'] ?? 1.0;
+            final bookingEndTime = bookingStartTime.add(
+              Duration(minutes: (bookingDuration * 60).toInt()),
+            );
+
+            // Check if there's an overlap with the requested time
+            if (startTime.isBefore(bookingEndTime) &&
+                endTime.isAfter(bookingStartTime)) {
+              activeBookingsCount++;
+              Logger.i(
+                'Found overlapping booking: ${bookingData['id']}',
+                tag: 'CalendarService',
+              );
+
+              // Get service capacity if available
+              if (bookingData['services'] != null &&
+                  bookingData['services']['max_concurrent_bookings'] != null) {
+                serviceCapacity =
+                    bookingData['services']['max_concurrent_bookings'];
+                Logger.i(
+                  'Service capacity: $serviceCapacity',
+                  tag: 'CalendarService',
+                );
+              }
+            }
           }
 
-          final bookingStartTime = DateTime.parse(
-            bookingData['booking_date_time'],
-          );
-          final bookingDuration = bookingData['duration'] ?? 1.0;
-          final bookingEndTime = bookingStartTime.add(
-            Duration(minutes: (bookingDuration * 60).toInt()),
-          );
+          // Check if we've reached capacity
+          if (activeBookingsCount >= serviceCapacity) {
+            Logger.i(
+              'Service is at capacity ($activeBookingsCount/$serviceCapacity)',
+              tag: 'CalendarService',
+            );
+            return false; // Service is at capacity for this time slot
+          }
 
-          // Check if there's an overlap with the requested time
-          if (startTime.isBefore(bookingEndTime) &&
-              endTime.isAfter(bookingStartTime)) {
-            activeBookingsCount++;
+          Logger.i(
+            'Service has capacity ($activeBookingsCount/$serviceCapacity)',
+            tag: 'CalendarService',
+          );
+        } else {
+          // If not checking for a specific service, just check for any overlap
+          for (final bookingData in response) {
+            // Skip cancelled bookings
+            if (bookingData['status'] == 'cancelled') {
+              continue;
+            }
 
-            // Get service capacity if available
-            if (bookingData['services'] != null &&
-                bookingData['services']['max_concurrent_bookings'] != null) {
-              serviceCapacity =
-                  bookingData['services']['max_concurrent_bookings'];
+            final bookingStartTime = DateTime.parse(
+              bookingData['booking_date_time'],
+            );
+            final bookingDuration = bookingData['duration'] ?? 1.0;
+            final bookingEndTime = bookingStartTime.add(
+              Duration(minutes: (bookingDuration * 60).toInt()),
+            );
+
+            // Check if there's an overlap
+            if (startTime.isBefore(bookingEndTime) &&
+                endTime.isAfter(bookingStartTime)) {
+              Logger.i(
+                'Found overlapping booking: ${bookingData['id']}',
+                tag: 'CalendarService',
+              );
+              return false; // Overlap found, time slot is not available
             }
           }
         }
 
-        // Check if we've reached capacity
-        if (activeBookingsCount >= serviceCapacity) {
-          return false; // Service is at capacity for this time slot
+        // Check for recurring events that might overlap
+        try {
+          // Create a completer to handle the timeout
+          final recurringCompleter = Completer<bool>();
+
+          // Set up the timeout
+          Timer(queryTimeout, () {
+            if (!recurringCompleter.isCompleted) {
+              recurringCompleter.completeError(
+                TimeoutException('Recurring events check timed out'),
+              );
+            }
+          });
+
+          // Execute the check
+          _checkRecurringEventOverlap(startTime, endTime).then(
+            (value) {
+              if (!recurringCompleter.isCompleted) {
+                recurringCompleter.complete(value);
+              }
+            },
+            onError: (error) {
+              if (!recurringCompleter.isCompleted) {
+                recurringCompleter.completeError(error);
+              }
+            },
+          );
+
+          // Wait for either the check to complete or the timeout
+          final recurringEventsOverlap = await recurringCompleter.future;
+
+          if (recurringEventsOverlap) {
+            Logger.i(
+              'Found overlapping recurring event',
+              tag: 'CalendarService',
+            );
+            return false; // Overlap with recurring event found
+          }
+        } catch (e) {
+          if (e is TimeoutException) {
+            Logger.w(
+              'Recurring events check timed out, assuming no overlap',
+              tag: 'CalendarService',
+            );
+            // Continue without checking recurring events
+          } else {
+            Logger.e(
+              'Error checking recurring events: $e',
+              tag: 'CalendarService',
+            );
+            // Continue without checking recurring events
+          }
         }
-      } else {
-        // If not checking for a specific service, just check for any overlap
-        for (final bookingData in response) {
-          // Skip cancelled bookings
-          if (bookingData['status'] == 'cancelled') {
-            continue;
-          }
 
-          final bookingStartTime = DateTime.parse(
-            bookingData['booking_date_time'],
+        // If we get here, the time slot is available
+        Logger.i('Time slot is available', tag: 'CalendarService');
+        return true;
+      } catch (e) {
+        if (e is TimeoutException) {
+          Logger.w(
+            'Database query timed out, assuming time slot is available',
+            tag: 'CalendarService',
           );
-          final bookingDuration = bookingData['duration'] ?? 1.0;
-          final bookingEndTime = bookingStartTime.add(
-            Duration(minutes: (bookingDuration * 60).toInt()),
-          );
-
-          // Check if there's an overlap
-          if (startTime.isBefore(bookingEndTime) &&
-              endTime.isAfter(bookingStartTime)) {
-            return false; // Overlap found, time slot is not available
-          }
+          return true; // Assume available if query times out
+        } else {
+          Logger.e('Error querying bookings: $e', tag: 'CalendarService');
+          throw Exception('Error querying bookings: $e');
         }
       }
-
-      // Check for recurring events that might overlap
-      final recurringEventsOverlap = await _checkRecurringEventOverlap(
-        startTime,
-        endTime,
-      );
-      if (recurringEventsOverlap) {
-        return false; // Overlap with recurring event found
-      }
-
-      // If we get here, the time slot is available
-      return true;
     } catch (e) {
       Logger.e('Error checking availability: $e', tag: 'CalendarService');
-      return false;
+      // Default to available if there's an error, to avoid blocking bookings
+      // This is a business decision - we'd rather have a double booking than
+      // prevent a valid booking
+      return true;
     }
   }
 

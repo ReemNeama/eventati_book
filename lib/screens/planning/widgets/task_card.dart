@@ -4,6 +4,7 @@ import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/utils/core/constants.dart';
 import 'package:intl/intl.dart';
 
+
 /// A card widget that displays task information
 class TaskCard extends StatelessWidget {
   /// The task to display
@@ -50,11 +51,26 @@ class TaskCard extends StatelessWidget {
     // Determine card color based on selection state
     Color cardColor = theme.cardTheme.color ?? Colors.white;
     if (isSelected) {
-      cardColor = AppColors.primaryWithAlpha(0.15);
+      cardColor = Color.fromRGBO(
+        AppColors.primary.r.toInt(),
+        AppColors.primary.g.toInt(),
+        AppColors.primary.b.toInt(),
+        0.15,
+      );
     } else if (isPrerequisite) {
-      cardColor = Colors.blue.withAlpha(26); // 0.1 * 255 = 26
+      cardColor = Color.fromRGBO(
+        AppColors.primary.r.toInt(),
+        AppColors.primary.g.toInt(),
+        AppColors.primary.b.toInt(),
+        0.10,
+      ); // 0.1 * 255 = 26
     } else if (isDependent) {
-      cardColor = Colors.orange.withAlpha(26); // 0.1 * 255 = 26
+      cardColor = Color.fromRGBO(
+        AppColors.warning.r.toInt(),
+        AppColors.warning.g.toInt(),
+        AppColors.warning.b.toInt(),
+        0.10,
+      ); // 0.1 * 255 = 26
     }
 
     // Determine border color based on selection state
@@ -62,9 +78,9 @@ class TaskCard extends StatelessWidget {
     if (isSelected) {
       borderColor = AppColors.primary;
     } else if (isPrerequisite) {
-      borderColor = Colors.blue;
+      borderColor = AppColors.primary;
     } else if (isDependent) {
-      borderColor = Colors.orange;
+      borderColor = AppColors.warning;
     }
 
     return Card(
@@ -189,7 +205,7 @@ class TaskCard extends StatelessWidget {
                         _buildDependencyBadge(
                           count: prerequisiteCount,
                           icon: Icons.arrow_upward,
-                          color: Colors.blue,
+                          color: AppColors.primary,
                           tooltip:
                               'Depends on $prerequisiteCount ${prerequisiteCount == 1 ? 'task' : 'tasks'}',
                         ),
@@ -199,7 +215,7 @@ class TaskCard extends StatelessWidget {
                         _buildDependencyBadge(
                           count: dependentCount,
                           icon: Icons.arrow_downward,
-                          color: Colors.orange,
+                          color: AppColors.warning,
                           tooltip:
                               '$dependentCount ${dependentCount == 1 ? 'task depends' : 'tasks depend'} on this',
                         ),

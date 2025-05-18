@@ -5,6 +5,8 @@ import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/routing/routing.dart';
 import 'package:eventati_book/providers/providers.dart';
 import 'package:provider/provider.dart';
+import 'package:eventati_book/styles/app_colors.dart';
+
 
 class VerificationScreen extends StatefulWidget {
   final String email;
@@ -39,7 +41,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
             'Verification email sent. Please check your inbox.',
             style: TextStyle(color: Colors.white),
           ),
-          backgroundColor: Colors.green,
+          backgroundColor: AppColors.success,
         ),
       );
     } else {
@@ -49,7 +51,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
             authProvider.errorMessage ?? 'Failed to send verification email',
             style: const TextStyle(color: Colors.white),
           ),
-          backgroundColor: Colors.red,
+          backgroundColor: AppColors.error,
         ),
       );
     }
@@ -76,7 +78,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
             'Email verified successfully!',
             style: TextStyle(color: Colors.white),
           ),
-          backgroundColor: Colors.green,
+          backgroundColor: AppColors.success,
         ),
       );
 
@@ -89,7 +91,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
             'Email not verified yet. Please check your inbox and click the verification link.',
             style: TextStyle(color: Colors.white),
           ),
-          backgroundColor: Colors.orange,
+          backgroundColor: AppColors.warning,
         ),
       );
     }

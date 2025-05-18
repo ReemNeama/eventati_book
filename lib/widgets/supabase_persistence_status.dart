@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:eventati_book/providers/providers.dart';
+import 'package:eventati_book/styles/app_colors.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 /// Widget to display the Supabase persistence status
 class SupabasePersistenceStatus extends StatelessWidget {
@@ -16,8 +18,8 @@ class SupabasePersistenceStatus extends StatelessWidget {
       decoration: BoxDecoration(
         color:
             wizardProvider.useSupabase
-                ? Colors.green.withAlpha(51) // 0.2 * 255 = 51
-                : Colors.grey.withAlpha(51),
+                ? Color.fromRGBO(AppColors.success.r.toInt(), AppColors.success.g.toInt(), AppColors.success.b.toInt(), 0.20) // 0.2 * 255 = 51
+                : Color.fromRGBO(AppColors.disabled.r.toInt(), AppColors.disabled.g.toInt(), AppColors.disabled.b.toInt(), 0.20),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -26,18 +28,14 @@ class SupabasePersistenceStatus extends StatelessWidget {
           Icon(
             wizardProvider.useSupabase ? Icons.cloud_done : Icons.cloud_off,
             size: 16,
-            color: wizardProvider.useSupabase ? Colors.green : Colors.grey,
+            color: wizardProvider.useSupabase ? AppColors.success : AppColors.disabled,
           ),
           const SizedBox(width: 4),
           Text(
             wizardProvider.useSupabase
                 ? 'Supabase Sync On'
                 : 'Local Storage Only',
-            style: TextStyle(
-              fontSize: 12,
-              color: wizardProvider.useSupabase ? Colors.green : Colors.grey,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyles.bodySmall,
           ),
         ],
       ),

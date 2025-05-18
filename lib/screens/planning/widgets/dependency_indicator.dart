@@ -24,7 +24,7 @@ class DependencyIndicator extends StatelessWidget {
             color:
                 isCreating
                     ? AppColors.primary
-                    : AppColors.textSecondary.withAlpha(128), // 0.5 * 255 = 128
+                    : Color.fromRGBO(AppColors.textSecondary.r.toInt(), AppColors.textSecondary.g.toInt(), AppColors.textSecondary.b.toInt(), 0.50), // 0.5 * 255 = 128
           ),
 
           // Arrow

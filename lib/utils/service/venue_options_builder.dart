@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/models/service_options/venue_options.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 /// Builder class for venue options form fields
 class VenueOptionsBuilder {
@@ -44,10 +45,7 @@ class VenueOptionsBuilder {
 
     return [
       const SizedBox(height: 16),
-      const Text(
-        'Venue Service Options',
-        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-      ),
+      Text('Venue Service Options', style: TextStyles.sectionTitle),
       const SizedBox(height: 16),
 
       // Build each section of the form
@@ -95,10 +93,8 @@ class VenueOptionsBuilder {
     final bool isSmallScreen =
         context != null && MediaQuery.of(context).size.width < 600;
 
-    final textStyle = TextStyle(
-      fontSize: 16,
+    final textStyle = TextStyles.bodyLarge.copyWith(
       fontWeight: FontWeight.bold,
-      color: theme.colorScheme.primary,
     );
 
     final inputDecoration = InputDecoration(
@@ -154,9 +150,9 @@ class VenueOptionsBuilder {
     required Function(String) onCustomDescriptionChanged,
   }) {
     return [
-      const Text(
+      Text(
         'Venue Layout',
-        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.bold),
       ),
       const SizedBox(height: 8),
 
@@ -222,9 +218,9 @@ class VenueOptionsBuilder {
     ];
 
     return [
-      const Text(
+      Text(
         'Equipment Needs',
-        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.bold),
       ),
       const SizedBox(height: 8),
 

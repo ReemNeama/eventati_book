@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/models/models.dart';
+import 'package:eventati_book/styles/app_colors.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 /// An overlay to celebrate milestone completion
 class MilestoneCelebrationOverlay extends StatefulWidget {
@@ -64,7 +66,12 @@ class _MilestoneCelebrationOverlayState
     return GestureDetector(
       onTap: widget.onDismiss,
       child: Container(
-        color: Colors.black.withAlpha(150),
+        color: Color.fromRGBO(
+          Colors.black.r.toInt(),
+          Colors.black.g.toInt(),
+          Colors.black.b.toInt(),
+          0.59,
+        ),
         child: Center(
           child: AnimatedBuilder(
             animation: _controller!,
@@ -85,7 +92,12 @@ class _MilestoneCelebrationOverlayState
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withAlpha(50),
+                    color: Color.fromRGBO(
+                      Colors.black.r.toInt(),
+                      Colors.black.g.toInt(),
+                      Colors.black.b.toInt(),
+                      0.20,
+                    ),
                     blurRadius: 10,
                     spreadRadius: 2,
                   ),
@@ -95,17 +107,17 @@ class _MilestoneCelebrationOverlayState
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   // Confetti icon
-                  const Icon(Icons.celebration, size: 48, color: Colors.amber),
+                  const Icon(
+                    Icons.celebration,
+                    size: 48,
+                    color: AppColors.ratingStarColor,
+                  ),
                   const SizedBox(height: 16),
 
                   // Milestone achieved text
-                  const Text(
+                  Text(
                     'Milestone Achieved!',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
+                    style: TextStyles.title,
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 16),
@@ -119,11 +131,7 @@ class _MilestoneCelebrationOverlayState
                   const SizedBox(height: 16),
                   Text(
                     widget.milestone.title,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
+                    style: TextStyles.subtitle,
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 8),
@@ -131,7 +139,7 @@ class _MilestoneCelebrationOverlayState
                   // Reward text
                   Text(
                     widget.milestone.rewardText,
-                    style: const TextStyle(fontSize: 16, color: Colors.black54),
+                    style: TextStyles.bodyLarge,
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 16),
@@ -153,11 +161,7 @@ class _MilestoneCelebrationOverlayState
                         const SizedBox(width: 8),
                         Text(
                           '+${widget.milestone.points} points',
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
+                          style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
@@ -177,12 +181,9 @@ class _MilestoneCelebrationOverlayState
                       ),
                     ),
                     onPressed: widget.onDismiss,
-                    child: const Text(
+                    child: Text(
                       'Awesome!',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.bold),
                     ),
                   ),
                 ],

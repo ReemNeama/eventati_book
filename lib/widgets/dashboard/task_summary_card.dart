@@ -3,6 +3,7 @@ import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 /// A card displaying a summary of tasks
 class TaskSummaryCard extends StatelessWidget {
@@ -13,9 +14,15 @@ class TaskSummaryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isDarkMode = UIUtils.isDarkMode(context);
-    final Color cardColor = isDarkMode ? Colors.grey[850]! : Colors.white;
-    final Color textPrimary =
-        isDarkMode ? AppColorsDark.textPrimary : AppColors.textPrimary;
+    final Color cardColor =
+        isDarkMode
+            ? Color.fromRGBO(
+              AppColors.disabled.r.toInt(),
+              AppColors.disabled.g.toInt(),
+              AppColors.disabled.b.toInt(),
+              0.85,
+            )
+            : Colors.white;
     final Color textSecondary =
         isDarkMode ? AppColorsDark.textSecondary : AppColors.textSecondary;
 
@@ -30,11 +37,7 @@ class TaskSummaryCard extends StatelessWidget {
           children: [
             Text(
               'Upcoming Tasks',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: textPrimary,
-              ),
+              style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
             ...tasks.map((task) => _buildTaskItem(context, task)),
@@ -58,25 +61,19 @@ class TaskSummaryCard extends StatelessWidget {
   }
 
   Widget _buildTaskItem(BuildContext context, Task task) {
-    final bool isDarkMode = UIUtils.isDarkMode(context);
-    final Color textPrimary =
-        isDarkMode ? AppColorsDark.textPrimary : AppColors.textPrimary;
-    final Color textSecondary =
-        isDarkMode ? AppColorsDark.textSecondary : AppColors.textSecondary;
-
     final daysUntil = task.dueDate.difference(DateTime.now()).inDays;
     final isOverdue = daysUntil < 0;
     final isToday = daysUntil == 0;
 
     Color statusColor;
     if (isOverdue) {
-      statusColor = Colors.red;
+      statusColor = AppColors.error;
     } else if (isToday) {
-      statusColor = Colors.orange;
+      statusColor = AppColors.warning;
     } else if (daysUntil <= 3) {
-      statusColor = Colors.amber;
+      statusColor = AppColors.ratingStarColor;
     } else {
-      statusColor = Colors.green;
+      statusColor = AppColors.success;
     }
 
     String dueText;
@@ -107,29 +104,15 @@ class TaskSummaryCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  task.title,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: textPrimary,
-                  ),
-                ),
+                Text(task.title, style: TextStyles.bodyMedium),
                 const SizedBox(height: 2),
-                Text(
-                  dueText,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: statusColor,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
+                Text(dueText, style: TextStyles.bodySmall),
                 if (task.description != null &&
                     task.description!.isNotEmpty) ...[
                   const SizedBox(height: 2),
                   Text(
                     task.description!,
-                    style: TextStyle(fontSize: 12, color: textSecondary),
+                    style: TextStyles.bodySmall,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),

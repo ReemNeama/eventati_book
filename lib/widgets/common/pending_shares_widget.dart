@@ -3,6 +3,8 @@ import 'package:eventati_book/services/sharing/offline_sharing_service.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/logger.dart';
+
+
 import 'package:timeago/timeago.dart' as timeago;
 
 /// Enum for sharing platforms
@@ -226,7 +228,7 @@ class _PendingSharesWidgetState extends State<PendingSharesWidget> {
   Widget _buildPlatformIcon(dynamic platform, dynamic colors) {
     // Default values
     IconData icon = Icons.share;
-    Color color = Colors.blue;
+    Color color = AppColors.primary;
 
     // Convert the platform to our local enum if needed
     SharingPlatform localPlatform;

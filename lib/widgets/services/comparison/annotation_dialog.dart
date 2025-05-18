@@ -3,6 +3,7 @@ import 'package:eventati_book/models/feature_models/comparison_annotation.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/ui/ui_utils.dart';
+import 'package:eventati_book/utils/utils.dart';
 
 // Constants for padding and border radius
 const double smallPadding = 8.0;
@@ -47,11 +48,11 @@ class _AnnotationDialogState extends State<AnnotationDialog> {
   // Predefined colors for highlights
   final List<Color> _highlightColors = [
     Colors.yellow,
-    Colors.green.shade200,
-    Colors.blue.shade200,
-    Colors.red.shade200,
+    Color.fromRGBO(AppColors.success.r.toInt(), AppColors.success.g.toInt(), AppColors.success.b.toInt(), 0.2),
+    Color.fromRGBO(AppColors.primary.r.toInt(), AppColors.primary.g.toInt(), AppColors.primary.b.toInt(), 0.2),
+    Color.fromRGBO(AppColors.error.r.toInt(), AppColors.error.g.toInt(), AppColors.error.b.toInt(), 0.2),
     Colors.purple.shade200,
-    Colors.orange.shade200,
+    Color.fromRGBO(AppColors.warning.r.toInt(), AppColors.warning.g.toInt(), AppColors.warning.b.toInt(), 0.2),
     Colors.pink.shade200,
     Colors.teal.shade200,
   ];
@@ -208,7 +209,7 @@ class _AnnotationDialogState extends State<AnnotationDialog> {
                           decoration: BoxDecoration(
                             color: color,
                             border: Border.all(
-                              color: isSelected ? primaryColor : Colors.grey,
+                              color: isSelected ? primaryColor : AppColors.disabled,
                               width: isSelected ? 3 : 1,
                             ),
                             borderRadius: BorderRadius.circular(

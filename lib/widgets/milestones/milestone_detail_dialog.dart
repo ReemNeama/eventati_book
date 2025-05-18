@@ -4,6 +4,7 @@ import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/utils.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 /// A dialog to show milestone details
 class MilestoneDetailDialog extends StatelessWidget {
@@ -31,12 +32,17 @@ class MilestoneDetailDialog extends StatelessWidget {
               color:
                   milestone.status == MilestoneStatus.completed
                       ? primaryColor
-                      : Colors.grey[400],
+                      : Color.fromRGBO(
+                        AppColors.disabled.r.toInt(),
+                        AppColors.disabled.g.toInt(),
+                        AppColors.disabled.b.toInt(),
+                        0.4,
+                      ),
             ),
             const SizedBox(height: 16),
             Text(
               milestone.title,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyles.subtitle,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
@@ -50,11 +56,7 @@ class MilestoneDetailDialog extends StatelessWidget {
               ),
               child: Text(
                 _getStatusText(milestone.status),
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: _getTextColorForStatus(milestone.status, isDarkMode),
-                ),
+                style: TextStyles.bodyMedium,
               ),
             ),
             const SizedBox(height: 16),
@@ -62,10 +64,7 @@ class MilestoneDetailDialog extends StatelessWidget {
             // Description
             Text(
               milestone.description,
-              style: TextStyle(
-                fontSize: 16,
-                color: isDarkMode ? Colors.white70 : Colors.black87,
-              ),
+              style: TextStyles.bodyLarge,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
@@ -78,11 +77,7 @@ class MilestoneDetailDialog extends StatelessWidget {
                 const SizedBox(width: 4),
                 Text(
                   '${milestone.points} points',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: primaryColor,
-                  ),
+                  style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -95,10 +90,7 @@ class MilestoneDetailDialog extends StatelessWidget {
                 child: Text(
                   // Use null-safe approach with null coalescing operator
                   'Completed on ${DateFormat('MMMM d, yyyy').format(milestone.completedDate ?? DateTime.now())}',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: isDarkMode ? Colors.white70 : Colors.black54,
-                  ),
+                  style: TextStyles.bodyMedium,
                 ),
               ),
 
@@ -117,9 +109,9 @@ class MilestoneDetailDialog extends StatelessWidget {
                 ),
               ),
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text(
+              child: Text(
                 'Close',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.bold),
               ),
             ),
           ],
@@ -132,29 +124,38 @@ class MilestoneDetailDialog extends StatelessWidget {
   Color _getStatusColor(MilestoneStatus status, bool isDarkMode) {
     switch (status) {
       case MilestoneStatus.completed:
-        return Colors.green;
+        return AppColors.success;
       case MilestoneStatus.unlocked:
         // Use null-safe approach with explicit cast
         return isDarkMode
-            ? (Colors.blue[700] ?? Colors.blue[600]) as Color
-            : (Colors.blue[100] ?? Colors.blue[200]) as Color;
+            ? Color.fromRGBO(
+              AppColors.primary.r.toInt(),
+              AppColors.primary.g.toInt(),
+              AppColors.primary.b.toInt(),
+              0.7,
+            )
+            : Color.fromRGBO(
+              AppColors.primary.r.toInt(),
+              AppColors.primary.g.toInt(),
+              AppColors.primary.b.toInt(),
+              0.1,
+            );
       case MilestoneStatus.locked:
         // Use null-safe approach with explicit cast
         return isDarkMode
-            ? (Colors.grey[800] ?? Colors.grey[700]) as Color
-            : (Colors.grey[300] ?? Colors.grey[400]) as Color;
+            ? Color.fromRGBO(
+              AppColors.disabled.r.toInt(),
+              AppColors.disabled.g.toInt(),
+              AppColors.disabled.b.toInt(),
+              0.8,
+            )
+            : Color.fromRGBO(
+              AppColors.disabled.r.toInt(),
+              AppColors.disabled.g.toInt(),
+              AppColors.disabled.b.toInt(),
+              0.3,
+            );
     }
-  }
-
-  /// Get text color based on milestone status and theme
-  Color _getTextColorForStatus(MilestoneStatus status, bool isDarkMode) {
-    // If milestone is completed, always use white text
-    if (status == MilestoneStatus.completed) {
-      return Colors.white;
-    }
-
-    // Otherwise, use theme-appropriate text color
-    return isDarkMode ? Colors.white : Colors.black87;
   }
 
   /// Get text for milestone status

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/utils/database_utils.dart';
 import 'package:eventati_book/models/event_models/wizard_state.dart';
+import 'package:eventati_book/styles/app_colors.dart';
 
 /// Categories for different types of suggestions
 enum SuggestionCategory {
@@ -30,9 +31,9 @@ enum SuggestionCategory {
 
 /// Priority levels for suggestions
 enum SuggestionPriority {
-  high('High', Colors.red),
-  medium('Medium', Colors.orange),
-  low('Low', Colors.blue);
+  high('High', AppColors.error),
+  medium('Medium', AppColors.warning),
+  low('Low', AppColors.primary);
 
   final String label;
   final Color color;

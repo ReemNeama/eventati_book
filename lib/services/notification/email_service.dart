@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:eventati_book/models/service_models/booking.dart';
 import 'package:eventati_book/services/supabase/database/user_database_service.dart';
 import 'package:eventati_book/services/notification/email_templates.dart';
@@ -284,21 +285,149 @@ class EmailService {
 
   /// Send an email using Supabase Edge Function
   Future<void> _sendEmail(String to, String subject, String htmlContent) async {
-    try {
-      // Call the Supabase Edge Function to send the email
-      final response = await _supabase.functions.invoke(
-        'send-email',
-        body: {'to': to, 'subject': subject, 'html': htmlContent},
-      );
+    // Maximum number of retry attempts
+    const maxRetries = 3;
+    // Delay between retries (in seconds)
+    const retryDelay = 2;
 
-      if (response.status != 200) {
-        throw Exception('Failed to send email: ${response.data}');
+    // Validate input parameters
+    if (to.isEmpty) {
+      Logger.e('Email address is empty', tag: 'EmailService');
+      throw Exception('Email address is empty');
+    }
+
+    if (subject.isEmpty) {
+      Logger.w('Email subject is empty', tag: 'EmailService');
+      // Continue with empty subject, but log a warning
+    }
+
+    if (htmlContent.isEmpty) {
+      Logger.e('Email content is empty', tag: 'EmailService');
+      throw Exception('Email content is empty');
+    }
+
+    // Prepare the request body
+    final body = {'to': to, 'subject': subject, 'html': htmlContent};
+
+    // Add tracking information
+    final trackingId = DateTime.now().millisecondsSinceEpoch.toString();
+    body['tracking_id'] = trackingId;
+
+    // Log the email attempt
+    Logger.i(
+      'Attempting to send email to $to (Tracking ID: $trackingId)',
+      tag: 'EmailService',
+    );
+
+    // Try to send the email with retries
+    int attempts = 0;
+    while (attempts < maxRetries) {
+      attempts++;
+
+      try {
+        // Set a timeout for the function call
+        const timeout = Duration(seconds: 10);
+
+        // Create a completer to handle the timeout
+        final completer = Completer<FunctionResponse>();
+
+        // Set up the timeout
+        Timer(timeout, () {
+          if (!completer.isCompleted) {
+            completer.completeError(
+              TimeoutException('Email function call timed out'),
+            );
+          }
+        });
+
+        // Execute the function call
+        _supabase.functions
+            .invoke('send-email', body: body)
+            .then(
+              (response) {
+                if (!completer.isCompleted) {
+                  completer.complete(response);
+                }
+              },
+              onError: (error) {
+                if (!completer.isCompleted) {
+                  completer.completeError(error);
+                }
+              },
+            );
+
+        // Wait for either the function to complete or the timeout
+        final response = await completer.future;
+
+        // Check the response status
+        if (response.status != 200) {
+          throw Exception('Failed to send email: ${response.data}');
+        }
+
+        // Log success and return
+        Logger.i(
+          'Email sent successfully to $to (Tracking ID: $trackingId)',
+          tag: 'EmailService',
+        );
+
+        // Record the email in the database
+        try {
+          await _supabase.from('email_logs').insert({
+            'recipient': to,
+            'subject': subject,
+            'status': 'sent',
+            'tracking_id': trackingId,
+            'sent_at': DateTime.now().toIso8601String(),
+          });
+        } catch (e) {
+          // Don't fail if we can't log the email
+          Logger.w(
+            'Failed to record email in database: $e',
+            tag: 'EmailService',
+          );
+        }
+
+        return;
+      } catch (e) {
+        // Log the error
+        Logger.e(
+          'Error sending email (Attempt $attempts/$maxRetries): $e',
+          tag: 'EmailService',
+        );
+
+        // If this was the last attempt, rethrow the error
+        if (attempts >= maxRetries) {
+          // Record the failed email in the database
+          try {
+            await _supabase.from('email_logs').insert({
+              'recipient': to,
+              'subject': subject,
+              'status': 'failed',
+              'tracking_id': trackingId,
+              'sent_at': DateTime.now().toIso8601String(),
+              'error_message': e.toString(),
+            });
+          } catch (dbError) {
+            // Don't fail if we can't log the error
+            Logger.w(
+              'Failed to record email error in database: $dbError',
+              tag: 'EmailService',
+            );
+          }
+
+          throw Exception(
+            'Failed to send email after $maxRetries attempts: $e',
+          );
+        }
+
+        // Wait before retrying
+        await Future.delayed(Duration(seconds: retryDelay * attempts));
+
+        Logger.i(
+          'Retrying email to $to (Attempt ${attempts + 1}/$maxRetries)',
+          tag: 'EmailService',
+        );
       }
-
-      Logger.i('Email sent successfully to $to', tag: 'EmailService');
-    } catch (e) {
-      Logger.e('Error sending email: $e', tag: 'EmailService');
-      throw Exception('Failed to send email: $e');
     }
   }
 }

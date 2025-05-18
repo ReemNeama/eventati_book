@@ -4,6 +4,7 @@ import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/utils.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 /// A card to display a milestone
 class MilestoneCard extends StatelessWidget {
@@ -22,40 +23,58 @@ class MilestoneCard extends StatelessWidget {
 
     // Determine the card color based on milestone status
     Color cardColor;
-    Color textColor;
+    // Text color is determined by the card color
     Color iconColor;
 
     switch (milestone.status) {
       case MilestoneStatus.completed:
         cardColor = primaryColor;
-        textColor = Colors.white;
         iconColor = Colors.white;
         break;
       case MilestoneStatus.unlocked:
         // Use null-safe approach with explicit cast
         cardColor =
             isDarkMode
-                ? (Colors.grey[800] ?? Colors.grey[700]) as Color
+                ? Color.fromRGBO(
+                  AppColors.disabled.r.toInt(),
+                  AppColors.disabled.g.toInt(),
+                  AppColors.disabled.b.toInt(),
+                  0.8,
+                )
                 : Colors.white;
-        textColor = isDarkMode ? Colors.white : Colors.black87;
         iconColor = primaryColor;
         break;
       case MilestoneStatus.locked:
         // Use null-safe approach with explicit cast
         cardColor =
             isDarkMode
-                ? (Colors.grey[900] ?? Colors.grey[800]) as Color
-                : (Colors.grey[200] ?? Colors.grey[300]) as Color;
-        // Use null-safe approach with explicit cast
-        textColor =
-            isDarkMode
-                ? (Colors.grey[400] ?? Colors.grey[500]) as Color
-                : (Colors.grey[600] ?? Colors.grey[500]) as Color;
-        // Use null-safe approach with explicit cast
+                ? Color.fromRGBO(
+                  AppColors.disabled.r.toInt(),
+                  AppColors.disabled.g.toInt(),
+                  AppColors.disabled.b.toInt(),
+                  0.9,
+                )
+                : Color.fromRGBO(
+                  AppColors.disabled.r.toInt(),
+                  AppColors.disabled.g.toInt(),
+                  AppColors.disabled.b.toInt(),
+                  0.2,
+                );
+
         iconColor =
             isDarkMode
-                ? (Colors.grey[600] ?? Colors.grey[500]) as Color
-                : (Colors.grey[400] ?? Colors.grey[500]) as Color;
+                ? Color.fromRGBO(
+                  AppColors.disabled.r.toInt(),
+                  AppColors.disabled.g.toInt(),
+                  AppColors.disabled.b.toInt(),
+                  0.6,
+                )
+                : Color.fromRGBO(
+                  AppColors.disabled.r.toInt(),
+                  AppColors.disabled.g.toInt(),
+                  AppColors.disabled.b.toInt(),
+                  0.4,
+                );
         break;
     }
 
@@ -84,11 +103,7 @@ class MilestoneCard extends StatelessWidget {
               // Title
               Text(
                 milestone.title,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: textColor,
-                ),
+                style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 8),
@@ -99,20 +114,18 @@ class MilestoneCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   color:
                       milestone.status == MilestoneStatus.completed
-                          ? Colors.white.withAlpha(50)
+                          ? Color.fromRGBO(
+                            Colors.white.r.toInt(),
+                            Colors.white.g.toInt(),
+                            Colors.white.b.toInt(),
+                            0.20,
+                          )
                           : primaryColor.withAlpha(50),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
                   '${milestone.points} pts',
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color:
-                        milestone.status == MilestoneStatus.completed
-                            ? Colors.white
-                            : primaryColor,
-                  ),
+                  style: TextStyles.bodySmall,
                 ),
               ),
 
@@ -124,10 +137,7 @@ class MilestoneCard extends StatelessWidget {
                   child: Text(
                     // Use null-safe approach with null coalescing operator
                     'Completed ${DateFormat('MMM d, yyyy').format(milestone.completedDate ?? DateTime.now())}',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: textColor.withAlpha(200),
-                    ),
+                    style: TextStyles.bodySmall,
                   ),
                 ),
             ],

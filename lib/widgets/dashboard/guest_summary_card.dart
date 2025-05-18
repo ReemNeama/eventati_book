@@ -3,6 +3,7 @@ import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 /// Enum representing the status of a guest
 enum GuestStatus { pending, confirmed, declined, tentative }
@@ -26,7 +27,15 @@ class GuestSummaryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isDarkMode = UIUtils.isDarkMode(context);
-    final Color cardColor = isDarkMode ? Colors.grey[850]! : Colors.white;
+    final Color cardColor =
+        isDarkMode
+            ? Color.fromRGBO(
+              AppColors.disabled.r.toInt(),
+              AppColors.disabled.g.toInt(),
+              AppColors.disabled.b.toInt(),
+              0.85,
+            )
+            : Colors.white;
     final Color textPrimary =
         isDarkMode ? AppColorsDark.textPrimary : AppColors.textPrimary;
     // We don't need textSecondary in this widget
@@ -51,11 +60,7 @@ class GuestSummaryCard extends StatelessWidget {
           children: [
             Text(
               'Guest List Summary',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: textPrimary,
-              ),
+              style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             Row(
@@ -64,25 +69,25 @@ class GuestSummaryCard extends StatelessWidget {
                 _buildGuestStatItem(
                   'Total',
                   totalGuests,
-                  Colors.blue,
+                  AppColors.primary,
                   textPrimary,
                 ),
                 _buildGuestStatItem(
                   'Confirmed',
                   confirmedGuests,
-                  Colors.green,
+                  AppColors.success,
                   textPrimary,
                 ),
                 _buildGuestStatItem(
                   'Pending',
                   pendingGuests,
-                  Colors.orange,
+                  AppColors.warning,
                   textPrimary,
                 ),
                 _buildGuestStatItem(
                   'Declined',
                   declinedGuests,
-                  Colors.red,
+                  AppColors.error,
                   textPrimary,
                 ),
               ],
@@ -111,16 +116,12 @@ class GuestSummaryCard extends StatelessWidget {
           child: Center(
             child: Text(
               count.toString(),
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: color,
-              ),
+              style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.bold),
             ),
           ),
         ),
         const SizedBox(height: 8),
-        Text(label, style: TextStyle(fontSize: 12, color: textColor)),
+        Text(label, style: TextStyles.bodySmall),
       ],
     );
   }

@@ -11,6 +11,7 @@ import 'package:eventati_book/utils/logger.dart';
 import 'package:eventati_book/widgets/common/empty_state.dart';
 import 'package:eventati_book/widgets/common/loading_indicator.dart';
 import 'package:eventati_book/widgets/search/search_result_card.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 /// A screen for global search across all features
 class GlobalSearchScreen extends StatefulWidget {
@@ -229,10 +230,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen>
                     const SizedBox(height: 8),
                     Text(
                       'Enter a search term to find events, services, tasks, and more',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: textSecondary.withAlpha(179),
-                      ),
+                      style: TextStyles.bodyMedium,
                       textAlign: TextAlign.center,
                     ),
                   ],

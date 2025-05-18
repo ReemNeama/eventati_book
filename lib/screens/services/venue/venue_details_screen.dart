@@ -16,6 +16,7 @@ import 'package:provider/provider.dart';
 
 import 'package:eventati_book/routing/routing.dart';
 
+
 class VenueDetailsScreen extends StatefulWidget {
   final Venue venue;
 
@@ -201,7 +202,19 @@ class _VenueDetailsScreenState extends State<VenueDetailsScreen>
       return primaryColor;
     } else {
       // Package not selected, use a disabled color based on theme
-      return isDarkMode ? Colors.grey[700]! : Colors.grey[400]!;
+      return isDarkMode
+          ? Color.fromRGBO(
+            AppColors.disabled.r.toInt(),
+            AppColors.disabled.g.toInt(),
+            AppColors.disabled.b.toInt(),
+            0.7,
+          )
+          : Color.fromRGBO(
+            AppColors.disabled.r.toInt(),
+            AppColors.disabled.g.toInt(),
+            AppColors.disabled.b.toInt(),
+            0.4,
+          );
     }
   }
 

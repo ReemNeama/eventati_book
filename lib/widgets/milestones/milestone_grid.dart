@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/widgets/milestones/milestone_card.dart';
 
+import 'package:eventati_book/styles/text_styles.dart';
+
 /// A grid of milestones
 class MilestoneGrid extends StatelessWidget {
   /// The milestones to display
@@ -42,7 +44,7 @@ class MilestoneGrid extends StatelessWidget {
       return Center(
         child: Text(
           'No milestones available',
-          style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+          style: TextStyles.bodyLarge,
         ),
       );
     }

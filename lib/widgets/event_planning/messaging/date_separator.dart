@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:intl/intl.dart';
 
+
 class DateSeparator extends StatelessWidget {
   final DateTime date;
 

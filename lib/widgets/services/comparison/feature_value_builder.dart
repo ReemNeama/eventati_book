@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/utils/utils.dart';
+import 'package:eventati_book/styles/app_colors.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 /// Builder class for feature comparison values
 class FeatureValueBuilder {
@@ -149,7 +151,7 @@ class FeatureValueBuilder {
                   Expanded(
                     child: Text(
                       item.toString(),
-                      style: const TextStyle(fontSize: 12),
+                      style: TextStyles.bodySmall,
                     ),
                   ),
                 ],
@@ -168,8 +170,24 @@ class FeatureValueBuilder {
     required String serviceType,
     required bool isDarkMode,
   }) {
-    final goodColor = isDarkMode ? Colors.green[300] : Colors.green;
-    final badColor = isDarkMode ? Colors.red[300] : Colors.red;
+    final goodColor =
+        isDarkMode
+            ? Color.fromRGBO(
+              AppColors.success.r.toInt(),
+              AppColors.success.g.toInt(),
+              AppColors.success.b.toInt(),
+              0.3,
+            )
+            : AppColors.success;
+    final badColor =
+        isDarkMode
+            ? Color.fromRGBO(
+              AppColors.error.r.toInt(),
+              AppColors.error.g.toInt(),
+              AppColors.error.b.toInt(),
+              0.3,
+            )
+            : AppColors.error;
     final bool isBest;
 
     if (feature['type'] == 'list' && value is List) {
@@ -201,8 +219,8 @@ class FeatureValueBuilder {
           decoration: BoxDecoration(
             color:
                 feature['higher_is_better']
-                    ? goodColor!.withAlpha(51) // 0.2 * 255 = 51
-                    : badColor!.withAlpha(51),
+                    ? goodColor.withAlpha(51) // 0.2 * 255 = 51
+                    : badColor.withAlpha(51),
             borderRadius: BorderRadius.circular(AppConstants.smallBorderRadius),
           ),
           child: Row(

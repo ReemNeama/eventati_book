@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/utils/utils.dart';
+import 'package:eventati_book/styles/app_colors.dart';
 
 class ServicesSelection extends StatelessWidget {
   final Map<String, bool> selectedServices;
@@ -17,7 +18,7 @@ class ServicesSelection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade300),
+        border: Border.all(color: Color.fromRGBO(AppColors.disabled.r.toInt(), AppColors.disabled.g.toInt(), AppColors.disabled.b.toInt(), 0.3)),
         borderRadius: BorderRadius.circular(AppConstants.smallBorderRadius),
       ),
       child: Column(

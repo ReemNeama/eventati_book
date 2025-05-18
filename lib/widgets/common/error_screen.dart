@@ -3,6 +3,7 @@ import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/utils.dart';
 
+
 /// Error screen type for different visual presentations
 enum ErrorScreenType {
   /// Standard full-screen error
@@ -130,7 +131,20 @@ class ErrorScreen extends StatelessWidget {
     final isDarkMode = UIUtils.isDarkMode(context);
     final errorColor = isDarkMode ? AppColorsDark.error : AppColors.error;
     final primaryColor = isDarkMode ? AppColorsDark.primary : AppColors.primary;
-    final backgroundColor = isDarkMode ? Colors.grey[900] : Colors.grey[100];
+    final backgroundColor =
+        isDarkMode
+            ? Color.fromRGBO(
+              AppColors.disabled.r.toInt(),
+              AppColors.disabled.g.toInt(),
+              AppColors.disabled.b.toInt(),
+              0.9,
+            )
+            : Color.fromRGBO(
+              AppColors.disabled.r.toInt(),
+              AppColors.disabled.g.toInt(),
+              AppColors.disabled.b.toInt(),
+              0.1,
+            );
     final textColor = isDarkMode ? Colors.white70 : Colors.black87;
 
     // Get responsive values
@@ -221,7 +235,20 @@ class ErrorScreen extends StatelessWidget {
                       width: double.infinity,
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: isDarkMode ? Colors.grey[800] : Colors.grey[200],
+                        color:
+                            isDarkMode
+                                ? Color.fromRGBO(
+                                  AppColors.disabled.r.toInt(),
+                                  AppColors.disabled.g.toInt(),
+                                  AppColors.disabled.b.toInt(),
+                                  0.8,
+                                )
+                                : Color.fromRGBO(
+                                  AppColors.disabled.r.toInt(),
+                                  AppColors.disabled.g.toInt(),
+                                  AppColors.disabled.b.toInt(),
+                                  0.2,
+                                ),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(

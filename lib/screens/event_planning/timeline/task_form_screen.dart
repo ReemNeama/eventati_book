@@ -7,6 +7,7 @@ import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/routing/route_names.dart';
 import 'package:eventati_book/routing/route_arguments.dart';
 import 'package:intl/intl.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 class TaskFormScreen extends StatefulWidget {
   final String eventId;
@@ -192,7 +193,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                       Icon(
                         Icons.circle_outlined,
                         size: 20,
-                        color: Colors.orange,
+                        color: AppColors.warning,
                       ),
                       SizedBox(width: 8),
                       Text('Not Started'),
@@ -203,7 +204,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                   value: TaskStatus.inProgress,
                   child: Row(
                     children: [
-                      Icon(Icons.pending, size: 20, color: Colors.blue),
+                      Icon(Icons.pending, size: 20, color: AppColors.primary),
                       SizedBox(width: 8),
                       Text('In Progress'),
                     ],
@@ -213,7 +214,11 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                   value: TaskStatus.completed,
                   child: Row(
                     children: [
-                      Icon(Icons.check_circle, size: 20, color: Colors.green),
+                      Icon(
+                        Icons.check_circle,
+                        size: 20,
+                        color: AppColors.success,
+                      ),
                       SizedBox(width: 8),
                       Text('Completed'),
                     ],
@@ -262,10 +267,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
               const SizedBox(height: 16),
 
               // Dependencies section
-              const Text(
-                'Task Dependencies',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
+              Text('Task Dependencies', style: TextStyles.sectionTitle),
               const SizedBox(height: 16),
 
               // Prerequisite tasks
@@ -320,7 +322,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
               onPressed: _saveTask,
               child: Text(
                 isEditing ? 'Update Task' : 'Add Task',
-                style: const TextStyle(fontSize: 16),
+                style: TextStyles.bodyLarge,
               ),
             ),
           ],
@@ -412,7 +414,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                 },
                 child: const Text(
                   'Delete',
-                  style: TextStyle(color: Colors.red),
+                  style: TextStyle(color: AppColors.error),
                 ),
               ),
             ],
@@ -469,14 +471,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                           task.status == TaskStatus.completed
                               ? 'Completed'
                               : 'Pending',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color:
-                                task.status == TaskStatus.completed
-                                    ? Colors.green
-                                    : Colors.orange,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: TextStyles.bodySmall,
                         ),
                       ],
                     ),

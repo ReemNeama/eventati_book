@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:eventati_book/styles/app_colors.dart';
 
 /// Text styles for the application
 class TextStyles {
@@ -50,7 +51,7 @@ class TextStyles {
   static final TextStyle caption = GoogleFonts.poppins(
     fontSize: 12,
     fontWeight: FontWeight.w400,
-    color: Colors.grey[600],
+    color: Color.fromRGBO(AppColors.disabled.r.toInt(), AppColors.disabled.g.toInt(), AppColors.disabled.b.toInt(), 0.6),
   );
 
   /// Chip text style for tags and chips
@@ -69,13 +70,13 @@ class TextStyles {
   static final TextStyle error = GoogleFonts.poppins(
     fontSize: 12,
     fontWeight: FontWeight.normal,
-    color: Colors.red,
+    color: AppColors.error,
   );
 
   /// Success text style for success messages
   static final TextStyle success = GoogleFonts.poppins(
     fontSize: 12,
     fontWeight: FontWeight.normal,
-    color: Colors.green,
+    color: AppColors.success,
   );
 }

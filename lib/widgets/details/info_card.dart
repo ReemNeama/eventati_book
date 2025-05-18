@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 class InfoCard extends StatelessWidget {
   final String title;
@@ -23,10 +24,7 @@ class InfoCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              title,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
+            Text(title, style: TextStyles.sectionTitle),
             const SizedBox(height: 16),
             content,
           ],

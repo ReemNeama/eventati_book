@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/utils/database_utils.dart';
+import 'package:eventati_book/styles/app_colors.dart';
 
 /// Task category model
 class TaskCategory {
@@ -154,10 +155,10 @@ class TaskCategory {
       if (color.startsWith('#')) {
         return Color(int.parse('0xFF${color.substring(1)}'));
       } else {
-        return Colors.blue;
+        return AppColors.primary;
       }
     } catch (e) {
-      return Colors.blue;
+      return AppColors.primary;
     }
   }
 

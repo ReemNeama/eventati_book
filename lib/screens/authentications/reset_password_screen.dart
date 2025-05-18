@@ -6,6 +6,8 @@ import 'package:eventati_book/widgets/auth/auth_button.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:provider/provider.dart';
 import 'package:eventati_book/routing/routing.dart';
+import 'package:eventati_book/styles/app_colors.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
   final String? oobCode; // Out-of-band code from password reset link
@@ -120,7 +122,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
               'Password reset successful! You can now login with your new password.',
               style: TextStyle(color: Colors.white),
             ),
-            backgroundColor: Colors.green,
+            backgroundColor: AppColors.success,
           ),
         );
 
@@ -138,7 +140,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
               authProvider.errorMessage ?? 'Failed to reset password',
               style: const TextStyle(color: Colors.white),
             ),
-            backgroundColor: Colors.red,
+            backgroundColor: AppColors.error,
           ),
         );
       }
@@ -156,7 +158,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
             'Failed to reset password: ${e.toString()}',
             style: const TextStyle(color: Colors.white),
           ),
-          backgroundColor: Colors.red,
+          backgroundColor: AppColors.error,
         ),
       );
     }
@@ -194,17 +196,14 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     children: [
                       const Icon(
                         Icons.error_outline,
-                        color: Colors.red,
+                        color: AppColors.error,
                         size: 60,
                       ),
                       const SizedBox(height: 20),
                       Text(
                         _errorMessage ?? 'Invalid reset link',
                         textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: Colors.white,
-                        ),
+                        style: TextStyles.bodyLarge,
                       ),
                       const SizedBox(height: 30),
                       ElevatedButton(

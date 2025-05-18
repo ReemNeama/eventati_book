@@ -20,6 +20,7 @@ import 'package:eventati_book/routing/routing.dart';
 // Import providers
 import 'package:eventati_book/providers/providers.dart';
 import 'package:provider/provider.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 class PlannerDetailsScreen extends StatefulWidget {
   final Planner planner;
@@ -162,8 +163,18 @@ class _PlannerDetailsScreenState extends State<PlannerDetailsScreen>
             _selectedPackageIndex >= 0
                 ? primaryColor
                 : isDarkMode
-                ? Colors.grey[700]
-                : Colors.grey[400],
+                ? Color.fromRGBO(
+                  AppColors.disabled.r.toInt(),
+                  AppColors.disabled.g.toInt(),
+                  AppColors.disabled.b.toInt(),
+                  0.7,
+                )
+                : Color.fromRGBO(
+                  AppColors.disabled.r.toInt(),
+                  AppColors.disabled.g.toInt(),
+                  AppColors.disabled.b.toInt(),
+                  0.4,
+                ),
         label: const Text('Book Now'),
         icon: const Icon(Icons.calendar_today),
         tooltip:
@@ -234,13 +245,13 @@ class _PlannerDetailsScreenState extends State<PlannerDetailsScreen>
             children: [
               Row(
                 children: [
-                  const Icon(Icons.thumb_up, color: Colors.green),
+                  const Icon(Icons.thumb_up, color: AppColors.success),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       recommendationReason ??
                           'This planner is recommended for your event',
-                      style: const TextStyle(fontSize: 16),
+                      style: TextStyles.bodyLarge,
                     ),
                   ),
                 ],

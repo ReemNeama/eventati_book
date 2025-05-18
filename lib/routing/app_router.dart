@@ -12,7 +12,6 @@ import 'package:eventati_book/services/supabase/database/service_database_servic
 import 'package:eventati_book/services/supabase/database/booking_database_service.dart';
 import 'package:eventati_book/di/service_locator.dart';
 import 'package:eventati_book/providers/planning_providers/task_template_provider.dart';
-import 'package:eventati_book/screens/testing/task_database_test_screen.dart';
 
 /// Router class for handling all navigation in the app
 class AppRouter {
@@ -311,11 +310,7 @@ class AppRouter {
               ),
         );
 
-      case RouteNames.taskDatabaseTest:
-        final args = settings.arguments as TaskDatabaseTestArguments;
-        return MaterialPageRoute(
-          builder: (context) => TaskDatabaseTestScreen(eventId: args.eventId),
-        );
+      // TaskDatabaseTest route removed
 
       case RouteNames.taskTemplates:
         // We're not using the arguments yet, but they're available for future use

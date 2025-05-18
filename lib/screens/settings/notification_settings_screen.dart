@@ -4,6 +4,10 @@ import 'package:eventati_book/models/notification_models/notification_topic.dart
 import 'package:eventati_book/utils/logger.dart';
 import 'package:eventati_book/utils/ui/ui_utils.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:eventati_book/styles/app_colors.dart';
+
+import 'package:eventati_book/utils/utils.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 /// Screen for managing notification settings
 class NotificationSettingsScreen extends StatefulWidget {
@@ -192,7 +196,10 @@ class _NotificationSettingsScreenState
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(_errorMessage!, style: const TextStyle(color: Colors.red)),
+            Text(
+              _errorMessage!,
+              style: const TextStyle(color: AppColors.error),
+            ),
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: _loadSettings,
@@ -246,11 +253,11 @@ class _NotificationSettingsScreenState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Text(
             'Notification Channels',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.bold),
           ),
         ),
         SwitchListTile(
@@ -294,7 +301,7 @@ class _NotificationSettingsScreenState
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Text(
             title,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.bold),
           ),
         ),
         ...topics.map((topic) => _buildTopicTile(topic)),

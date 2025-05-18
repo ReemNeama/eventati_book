@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:eventati_book/styles/app_colors.dart';
 
 /// Tags for categorizing and filtering suggestions
 class SuggestionTags {
@@ -127,19 +128,19 @@ class SuggestionTags {
   /// Get a color for a tag
   static Color getColorForTag(String tag) {
     if (venueTags.contains(tag)) {
-      return Colors.blue;
+      return AppColors.primary;
     } else if (cateringTags.contains(tag)) {
-      return Colors.orange;
+      return AppColors.warning;
     } else if (photographyTags.contains(tag)) {
       return Colors.purple;
     } else if (entertainmentTags.contains(tag)) {
-      return Colors.green;
+      return AppColors.success;
     } else if (decorationTags.contains(tag)) {
       return Colors.pink;
     } else if (styleTags.contains(tag)) {
       return Colors.teal;
     } else {
-      return Colors.grey;
+      return AppColors.disabled;
     }
   }
 

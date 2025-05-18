@@ -3,6 +3,7 @@ import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 
+
 /// Card widget to display a suggestion
 class SuggestionCard extends StatelessWidget {
   /// The suggestion to display
@@ -53,7 +54,12 @@ class SuggestionCard extends StatelessWidget {
                       color:
                           isDarkMode
                               ? AppColorsDark.primary.withAlpha(25)
-                              : AppColors.primary.withAlpha(25),
+                              : Color.fromRGBO(
+                                AppColors.primary.r.toInt(),
+                                AppColors.primary.g.toInt(),
+                                AppColors.primary.b.toInt(),
+                                0.10,
+                              ),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(
@@ -136,7 +142,12 @@ class SuggestionCard extends StatelessWidget {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.purple.withAlpha(25),
+                        color: Color.fromRGBO(
+                          Colors.purple.r.toInt(),
+                          Colors.purple.g.toInt(),
+                          Colors.purple.b.toInt(),
+                          0.10,
+                        ),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: const Row(
@@ -243,11 +254,11 @@ class SuggestionCard extends StatelessWidget {
   /// Get color based on relevance score
   Color _getRelevanceColor(int score) {
     if (score >= 80) {
-      return Colors.green;
+      return AppColors.success;
     } else if (score >= 60) {
-      return Colors.amber;
+      return AppColors.ratingStarColor;
     } else {
-      return Colors.blue;
+      return AppColors.primary;
     }
   }
 }

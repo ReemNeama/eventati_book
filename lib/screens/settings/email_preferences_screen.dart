@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:eventati_book/providers/feature_providers/email_preferences_provider.dart';
+import 'package:eventati_book/providers/providers.dart';
 import 'package:eventati_book/services/notification/email_preferences_service.dart';
-import 'package:eventati_book/utils/styles.dart';
+import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/widgets/common/loading_indicator.dart';
 import 'package:eventati_book/widgets/common/error_display.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 /// Screen for managing email preferences
 class EmailPreferencesScreen extends StatefulWidget {
@@ -37,7 +38,7 @@ class _EmailPreferencesScreenState extends State<EmailPreferencesScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Email Preferences'),
-        backgroundColor: AppColors.primaryColor,
+        backgroundColor: AppColors.primary,
       ),
       body: Consumer<EmailPreferencesProvider>(
         builder: (context, provider, child) {
@@ -59,14 +60,14 @@ class _EmailPreferencesScreenState extends State<EmailPreferencesScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'Manage your email preferences',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: TextStyles.sectionTitle,
                 ),
                 const SizedBox(height: 8),
-                const Text(
+                Text(
                   'Choose which types of emails you want to receive from Eventati Book.',
-                  style: TextStyle(fontSize: 14, color: Colors.grey),
+                  style: TextStyles.bodyMedium,
                 ),
                 const SizedBox(height: 24),
                 _buildPreferenceSection(
@@ -148,13 +149,9 @@ class _EmailPreferencesScreenState extends State<EmailPreferencesScreen> {
                   ],
                 ),
                 const SizedBox(height: 24),
-                const Text(
+                Text(
                   'Note: You will always receive important account-related emails such as password resets and security notifications.',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey,
-                    fontStyle: FontStyle.italic,
-                  ),
+                  style: TextStyles.bodySmall,
                 ),
               ],
             ),
@@ -173,11 +170,7 @@ class _EmailPreferencesScreenState extends State<EmailPreferencesScreen> {
       children: [
         Text(
           title,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: AppColors.primaryColor,
-          ),
+          style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
         Card(
@@ -197,13 +190,10 @@ class _EmailPreferencesScreenState extends State<EmailPreferencesScreen> {
   }) {
     return SwitchListTile(
       title: Text(title),
-      subtitle: Text(
-        subtitle,
-        style: const TextStyle(fontSize: 12, color: Colors.grey),
-      ),
+      subtitle: Text(subtitle, style: TextStyles.bodySmall),
       value: value,
       onChanged: onChanged,
-      activeColor: AppColors.primaryColor,
+      activeColor: AppColors.primary,
     );
   }
 

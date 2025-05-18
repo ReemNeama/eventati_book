@@ -7,6 +7,8 @@ import 'package:eventati_book/screens/event_wizard/suggestion_screen.dart';
 import 'package:eventati_book/screens/booking/booking_history_screen.dart';
 import 'package:eventati_book/widgets/notification/notification_badge.dart';
 import 'package:eventati_book/routing/route_names.dart';
+import 'package:eventati_book/styles/app_colors.dart';
+
 
 /// Main navigation screen that hosts the bottom navigation bar
 /// and manages switching between the main app sections
@@ -88,7 +90,9 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         decoration: const BoxDecoration(
           boxShadow: [
             BoxShadow(
-              color: Color(0x19000000), // Colors.black.withAlpha(25)
+              color: Color(
+                0x19000000,
+              ), // Color.fromRGBO(Colors.black.r.toInt(), Colors.black.g.toInt(), Colors.black.b.toInt(), 0.10)
               blurRadius: 10,
               offset: Offset(0, -2),
             ),
@@ -102,9 +106,30 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
             });
           },
           type: BottomNavigationBarType.fixed,
-          backgroundColor: isDarkMode ? Colors.grey[900] : Colors.white,
+          backgroundColor:
+              isDarkMode
+                  ? Color.fromRGBO(
+                    AppColors.disabled.r.toInt(),
+                    AppColors.disabled.g.toInt(),
+                    AppColors.disabled.b.toInt(),
+                    0.9,
+                  )
+                  : Colors.white,
           selectedItemColor: theme.primaryColor,
-          unselectedItemColor: isDarkMode ? Colors.grey[400] : Colors.grey[600],
+          unselectedItemColor:
+              isDarkMode
+                  ? Color.fromRGBO(
+                    AppColors.disabled.r.toInt(),
+                    AppColors.disabled.g.toInt(),
+                    AppColors.disabled.b.toInt(),
+                    0.4,
+                  )
+                  : Color.fromRGBO(
+                    AppColors.disabled.r.toInt(),
+                    AppColors.disabled.g.toInt(),
+                    AppColors.disabled.b.toInt(),
+                    0.6,
+                  ),
           selectedLabelStyle: const TextStyle(
             fontWeight: FontWeight.w600,
             fontSize: 12,

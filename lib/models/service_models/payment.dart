@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:eventati_book/styles/app_colors.dart';
 
 /// Enum representing the status of a payment
 enum PaymentStatus {
@@ -34,17 +35,17 @@ extension PaymentStatusExtension on PaymentStatus {
   Color get color {
     switch (this) {
       case PaymentStatus.pending:
-        return Colors.orange;
+        return AppColors.warning;
       case PaymentStatus.processing:
-        return Colors.blue;
+        return AppColors.primary;
       case PaymentStatus.succeeded:
-        return Colors.green;
+        return AppColors.success;
       case PaymentStatus.failed:
-        return Colors.red;
+        return AppColors.error;
       case PaymentStatus.refunded:
         return Colors.purple;
       case PaymentStatus.cancelled:
-        return Colors.grey;
+        return AppColors.disabled;
     }
   }
 

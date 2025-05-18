@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/widgets/details/image_placeholder.dart';
 import 'package:eventati_book/utils/image_utils.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 /// A widget that displays a network image with caching and loading states
 class CachedNetworkImageWidget extends StatelessWidget {
@@ -149,10 +150,7 @@ class CachedNetworkImageWidget extends StatelessWidget {
                         padding: const EdgeInsets.only(top: 8.0),
                         child: Text(
                           '${(progress * 100).toInt()}%',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: loadingIndicatorColor ?? defaultLoadingColor,
-                          ),
+                          style: TextStyles.bodySmall,
                         ),
                       ),
                   ],

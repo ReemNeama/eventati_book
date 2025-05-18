@@ -6,6 +6,8 @@ import 'package:eventati_book/widgets/auth/auth_button.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:provider/provider.dart';
 import 'package:eventati_book/routing/routing.dart';
+import 'package:eventati_book/styles/app_colors.dart';
+
 
 class ForgetpasswordScreen extends StatefulWidget {
   const ForgetpasswordScreen({super.key});
@@ -97,7 +99,7 @@ class _ForgetpasswordScreenState extends State<ForgetpasswordScreen> {
             authProvider.errorMessage ?? 'Failed to send reset email',
             style: const TextStyle(color: Colors.white),
           ),
-          backgroundColor: Colors.red,
+          backgroundColor: AppColors.error,
         ),
       );
     }

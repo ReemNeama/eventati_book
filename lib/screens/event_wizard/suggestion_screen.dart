@@ -9,6 +9,8 @@ import 'package:eventati_book/widgets/event_wizard/suggestion_card.dart';
 import 'package:eventati_book/widgets/common/loading_indicator.dart';
 import 'package:eventati_book/widgets/common/error_message.dart';
 import 'package:eventati_book/screens/event_wizard/create_suggestion_screen.dart';
+import 'package:eventati_book/styles/text_styles.dart';
+
 
 /// Screen to display suggestions based on the wizard state
 class SuggestionScreen extends StatefulWidget {
@@ -222,17 +224,23 @@ class _SuggestionScreenState extends State<SuggestionScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.lightbulb_outline, size: 64, color: Colors.grey[400]),
-          const SizedBox(height: 16),
-          const Text(
-            'No suggestions available',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          Icon(
+            Icons.lightbulb_outline,
+            size: 64,
+            color: Color.fromRGBO(
+              AppColors.disabled.r.toInt(),
+              AppColors.disabled.g.toInt(),
+              AppColors.disabled.b.toInt(),
+              0.4,
+            ),
           ),
+          const SizedBox(height: 16),
+          Text('No suggestions available', style: TextStyles.sectionTitle),
           const SizedBox(height: 8),
           const Text(
             'Complete more of your event details\nto get personalized suggestions',
             textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.grey),
+            style: TextStyle(color: AppColors.disabled),
           ),
         ],
       ),
@@ -300,7 +308,11 @@ class _SuggestionScreenState extends State<SuggestionScreen> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(Icons.star, size: 16, color: Colors.amber),
+                          const Icon(
+                            Icons.star,
+                            size: 16,
+                            color: AppColors.ratingStarColor,
+                          ),
                           const SizedBox(width: 4),
                           Text(
                             'Relevance: $relevanceScore%',
@@ -348,18 +360,9 @@ class _SuggestionScreenState extends State<SuggestionScreen> {
                     const SizedBox(height: 24),
 
                     // Description
-                    const Text(
-                      'Description',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    Text('Description', style: TextStyles.sectionTitle),
                     const SizedBox(height: 8),
-                    Text(
-                      suggestion.description,
-                      style: const TextStyle(fontSize: 16, height: 1.5),
-                    ),
+                    Text(suggestion.description, style: TextStyles.bodyLarge),
 
                     const SizedBox(height: 32),
 
@@ -379,12 +382,10 @@ class _SuggestionScreenState extends State<SuggestionScreen> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                           ),
-                          child: const Text(
+                          child: Text(
                             'Take Action',
-                            style: TextStyle(
-                              fontSize: 16,
+                            style: TextStyles.bodyLarge.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: Colors.white,
                             ),
                           ),
                         ),

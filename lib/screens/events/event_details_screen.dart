@@ -10,6 +10,7 @@ import 'package:eventati_book/widgets/details/image_placeholder.dart';
 import 'package:eventati_book/widgets/common/image_gallery.dart';
 import 'package:eventati_book/routing/routing.dart';
 import 'package:eventati_book/widgets/common/share_button.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 /// Screen to display event details
 class EventDetailsScreen extends StatefulWidget {
@@ -219,7 +220,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
           child: Icon(icon, size: 24),
         ),
         const SizedBox(height: 8),
-        Text(label, style: const TextStyle(fontSize: 12)),
+        Text(label, style: TextStyles.bodySmall),
       ],
     );
   }

@@ -107,7 +107,7 @@ class _VendorRecommendationsScreenState
                   children: [
                     const Icon(
                       Icons.error_outline,
-                      color: Colors.red,
+                      color: AppColors.error,
                       size: 48,
                     ),
                     const SizedBox(height: 16),
@@ -140,7 +140,7 @@ class _VendorRecommendationsScreenState
                   children: [
                     const Icon(
                       Icons.lightbulb_outline,
-                      color: Colors.amber,
+                      color: AppColors.ratingStarColor,
                       size: 48,
                     ),
                     const SizedBox(height: 16),
@@ -373,7 +373,7 @@ class _VendorRecommendationsScreenState
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error saving recommendation: $e'),
-            backgroundColor: Colors.red,
+            backgroundColor: AppColors.error,
             duration: const Duration(seconds: 3),
           ),
         );

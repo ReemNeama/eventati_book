@@ -8,6 +8,8 @@ import 'package:eventati_book/utils/service/validation_utils.dart';
 import 'package:eventati_book/widgets/common/loading_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
+import 'package:eventati_book/styles/app_colors.dart';
+
 
 /// A form for collecting user feedback
 class FeedbackForm extends StatefulWidget {
@@ -118,7 +120,7 @@ class _FeedbackFormState extends State<FeedbackForm> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Thank you for your feedback!'),
-              backgroundColor: Colors.green,
+              backgroundColor: AppColors.success,
             ),
           );
 
@@ -260,7 +262,10 @@ class _FeedbackFormState extends State<FeedbackForm> {
               children: [
                 Icon(
                   rating <= _rating ? Icons.star : Icons.star_border,
-                  color: rating <= _rating ? Colors.amber : Colors.grey,
+                  color:
+                      rating <= _rating
+                          ? AppColors.ratingStarColor
+                          : AppColors.disabled,
                   size: 32,
                 ),
                 const SizedBox(height: 4),

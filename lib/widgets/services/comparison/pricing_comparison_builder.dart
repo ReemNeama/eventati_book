@@ -4,6 +4,7 @@ import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/utils.dart';
 
+
 /// Builder class for pricing comparison table components
 class PricingComparisonBuilder {
   /// Build calculation parameters section
@@ -295,7 +296,12 @@ class PricingComparisonBuilder {
               decoration:
                   isLowestCost
                       ? BoxDecoration(
-                        color: Colors.green.withAlpha(51), // 0.2 * 255 = 51
+                        color: Color.fromRGBO(
+                          AppColors.success.r.toInt(),
+                          AppColors.success.g.toInt(),
+                          AppColors.success.b.toInt(),
+                          0.20,
+                        ), // 0.2 * 255 = 51
                         borderRadius: BorderRadius.circular(
                           AppConstants.smallBorderRadius,
                         ),
@@ -315,7 +321,7 @@ class PricingComparisonBuilder {
                     const SizedBox(width: 4),
                     const Icon(
                       Icons.check_circle,
-                      color: Colors.green,
+                      color: AppColors.success,
                       size: 16,
                     ),
                   ],

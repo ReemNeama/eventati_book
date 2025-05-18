@@ -12,6 +12,8 @@ import 'package:eventati_book/widgets/auth/auth_widgets.dart';
 
 // Import routing
 import 'package:eventati_book/routing/routing.dart';
+import 'package:eventati_book/styles/app_colors.dart';
+
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -74,7 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
               'Please verify your email before continuing.',
               style: TextStyle(color: Colors.white),
             ),
-            backgroundColor: Colors.orange,
+            backgroundColor: AppColors.warning,
           ),
         );
 
@@ -94,7 +96,7 @@ class _LoginScreenState extends State<LoginScreen> {
             'Login successful!',
             style: TextStyle(color: Colors.white),
           ),
-          backgroundColor: Colors.green,
+          backgroundColor: AppColors.success,
         ),
       );
 
@@ -108,7 +110,7 @@ class _LoginScreenState extends State<LoginScreen> {
             authProvider.errorMessage ?? 'Login failed',
             style: const TextStyle(color: Colors.white),
           ),
-          backgroundColor: Colors.red,
+          backgroundColor: AppColors.error,
         ),
       );
     }
@@ -149,7 +151,7 @@ class _LoginScreenState extends State<LoginScreen> {
             'Google login successful!',
             style: TextStyle(color: Colors.white),
           ),
-          backgroundColor: Colors.green,
+          backgroundColor: AppColors.success,
         ),
       );
 
@@ -163,7 +165,7 @@ class _LoginScreenState extends State<LoginScreen> {
             authProvider.errorMessage ?? 'Google login failed',
             style: const TextStyle(color: Colors.white),
           ),
-          backgroundColor: Colors.red,
+          backgroundColor: AppColors.error,
         ),
       );
     }
@@ -229,7 +231,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   Expanded(child: Divider()),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16),
-                    child: Text('OR', style: TextStyle(color: Colors.grey)),
+                    child: Text(
+                      'OR',
+                      style: TextStyle(color: AppColors.disabled),
+                    ),
                   ),
                   Expanded(child: Divider()),
                 ],

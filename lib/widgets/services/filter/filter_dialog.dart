@@ -3,6 +3,7 @@ import 'package:eventati_book/widgets/services/filter/price_range_filter.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/utils.dart';
 
+
 class FilterDialog extends StatelessWidget {
   final RangeValues priceRange;
   final Function(RangeValues) onPriceRangeChanged;

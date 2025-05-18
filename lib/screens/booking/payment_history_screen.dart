@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
+
 /// Screen for viewing payment history
 class PaymentHistoryScreen extends StatefulWidget {
   /// Constructor
@@ -148,14 +149,7 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
         children: [
           Icon(status.icon, size: 16, color: status.color),
           const SizedBox(width: 4),
-          Text(
-            status.displayName,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              color: status.color,
-            ),
-          ),
+          Text(status.displayName, style: TextStyles.bodySmall),
         ],
       ),
     );

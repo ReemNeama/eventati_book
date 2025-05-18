@@ -5,6 +5,7 @@ import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:intl/intl.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 class BudgetItemFormScreen extends StatefulWidget {
   final String eventId;
@@ -250,7 +251,7 @@ class _BudgetItemFormScreenState extends State<BudgetItemFormScreen> {
               onPressed: _saveItem,
               child: Text(
                 isEditing ? 'Update Item' : 'Add Item',
-                style: const TextStyle(fontSize: 16),
+                style: TextStyles.bodyLarge,
               ),
             ),
           ],

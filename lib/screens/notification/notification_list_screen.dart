@@ -10,6 +10,7 @@ import 'package:eventati_book/widgets/common/empty_state.dart';
 import 'package:eventati_book/widgets/common/loading_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
+import 'package:eventati_book/utils/utils.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 /// Screen for displaying all notifications
@@ -199,7 +200,12 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
     final unreadColor =
         isDarkMode
             ? AppColorsDark.primary.withAlpha(30)
-            : AppColors.primary.withAlpha(30);
+            : Color.fromRGBO(
+              AppColors.primary.r.toInt(),
+              AppColors.primary.g.toInt(),
+              AppColors.primary.b.toInt(),
+              0.12,
+            );
 
     return Dismissible(
       key: Key(notification.id),
@@ -207,7 +213,7 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
       background: Container(
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 16),
-        color: Colors.red,
+        color: AppColors.error,
         child: const Icon(Icons.delete, color: Colors.white),
       ),
       onDismissed: (direction) {
@@ -244,14 +250,11 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
                       ),
                     ),
                     const SizedBox(height: 4),
-                    Text(
-                      notification.body,
-                      style: const TextStyle(fontSize: 14),
-                    ),
+                    Text(notification.body, style: TextStyles.bodyMedium),
                     const SizedBox(height: 8),
                     Text(
                       timeago.format(notification.createdAt),
-                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                      style: TextStyles.bodySmall,
                     ),
                   ],
                 ),
@@ -276,31 +279,31 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
   /// Build an icon for a notification type
   Widget _buildNotificationIcon(notification_model.NotificationType type) {
     IconData iconData = Icons.notifications; // Default icon
-    Color iconColor = Colors.grey; // Default color
+    Color iconColor = AppColors.disabled; // Default color
 
     if (type == notification_model.NotificationType.bookingConfirmation ||
         type == notification_model.NotificationType.bookingUpdate ||
         type == notification_model.NotificationType.bookingReminder ||
         type == notification_model.NotificationType.bookingCancellation) {
       iconData = Icons.calendar_today;
-      iconColor = Colors.blue;
+      iconColor = AppColors.primary;
     } else if (type ==
             notification_model.NotificationType.paymentConfirmation ||
         type == notification_model.NotificationType.paymentReminder) {
       iconData = Icons.payment;
-      iconColor = Colors.green;
+      iconColor = AppColors.success;
     } else if (type == notification_model.NotificationType.eventReminder) {
       iconData = Icons.event;
       iconColor = Colors.purple;
     } else if (type == notification_model.NotificationType.taskReminder) {
       iconData = Icons.task_alt;
-      iconColor = Colors.orange;
+      iconColor = AppColors.warning;
     } else if (type == notification_model.NotificationType.system) {
       iconData = Icons.info;
-      iconColor = Colors.grey;
+      iconColor = AppColors.disabled;
     } else if (type == notification_model.NotificationType.marketing) {
       iconData = Icons.campaign;
-      iconColor = Colors.red;
+      iconColor = AppColors.error;
     }
 
     return Container(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 
 class ToolCard extends StatelessWidget {
   final String title;
@@ -20,12 +21,25 @@ class ToolCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = UIUtils.isDarkMode(context);
-    final cardColor = isDarkMode ? Colors.grey[800] : Colors.white;
-    final textColor = isDarkMode ? Colors.white : Colors.black;
+    final cardColor =
+        isDarkMode
+            ? Color.fromRGBO(
+              AppColors.disabled.r.toInt(),
+              AppColors.disabled.g.toInt(),
+              AppColors.disabled.b.toInt(),
+              0.8,
+            )
+            : Colors.white;
+
     final shadowColor =
         isDarkMode
             ? AppColorsDark.primaryWithAlpha(0.1)
-            : AppColors.primaryWithAlpha(0.1);
+            : Color.fromRGBO(
+              AppColors.primary.r.toInt(),
+              AppColors.primary.g.toInt(),
+              AppColors.primary.b.toInt(),
+              0.1,
+            );
 
     return InkWell(
       onTap: onTap,
@@ -56,11 +70,7 @@ class ToolCard extends StatelessWidget {
             const SizedBox(height: AppConstants.mediumPadding),
             Text(
               title,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: textColor,
-              ),
+              style: TextStyles.bodyLarge.copyWith(fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
           ],

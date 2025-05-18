@@ -179,13 +179,6 @@ class EventDetailsArguments extends RouteArguments {
   const EventDetailsArguments({required this.eventId}) : super();
 }
 
-/// Arguments for task database test screen
-class TaskDatabaseTestArguments extends RouteArguments {
-  final String eventId;
-
-  const TaskDatabaseTestArguments({required this.eventId}) : super();
-}
-
 /// Arguments for task templates screen
 class TaskTemplatesArguments extends RouteArguments {
   final String? eventId;
