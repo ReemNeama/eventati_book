@@ -24,6 +24,9 @@ export 'common/route_guard_wrapper.dart'; // Wrapper for applying route guards
 export 'common/feature_guard_wrapper.dart'; // Wrapper for applying feature guards
 export 'common/cached_network_image_widget.dart'; // Widget for displaying cached network images
 export 'common/image_gallery.dart'; // Widget for displaying image galleries
+export 'common/step_progress_indicator.dart'; // Progress indicator for multi-step flows
+export 'common/back_to_top_button.dart'; // Button to scroll back to top
+export 'common/scroll_to_top_wrapper.dart'; // Wrapper that adds a back to top button
 
 // -------------------------
 // AUTHENTICATION WIDGETS
@@ -119,6 +122,22 @@ export 'notification/notification_widgets.dart'; // Barrel file for notification
 // Includes:
 // - NotificationBadge: Badge showing unread notification count
 // - NotificationCenter: Dropdown for displaying notifications
+
+// -------------------------
+// NAVIGATION WIDGETS
+// -------------------------
+// Widgets for navigation and breadcrumbs
+export 'navigation/navigation_widgets.dart'; // Barrel file for navigation widgets
+// Includes:
+// - BreadcrumbNavigation: Widget for displaying breadcrumb navigation paths
+
+// -------------------------
+// HOMEPAGE WIDGETS
+// -------------------------
+// Widgets used on the homepage
+export 'homepage/homepage_widgets.dart'; // Barrel file for homepage widgets
+// Includes:
+// - QuickActionButton: Button for quick actions on the homepage
 
 // -------------------------
 // SPECIAL NOTES

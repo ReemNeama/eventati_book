@@ -64,3 +64,13 @@ export 'notification_provider.dart';
 
 // Includes:
 // - NotificationProvider: Notification management
+
+// -------------------------
+// NAVIGATION PROVIDERS
+// -------------------------
+// Providers related to navigation
+// These handle state management for navigation features
+export 'navigation/breadcrumb_provider.dart';
+
+// Includes:
+// - BreadcrumbProvider: Breadcrumb navigation management

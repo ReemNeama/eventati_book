@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/models/models.dart';
-import 'package:eventati_book/widgets/services/filter/service_filter_bar.dart';
-import 'package:eventati_book/widgets/services/card/service_card.dart';
-import 'package:eventati_book/widgets/services/filter/filter_dialog.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/utils.dart';
-import 'package:eventati_book/widgets/common/empty_state.dart';
-import 'package:eventati_book/widgets/common/responsive_layout.dart';
+import 'package:eventati_book/widgets/widgets.dart';
 import 'package:eventati_book/providers/providers.dart';
 import 'package:provider/provider.dart';
-import 'package:eventati_book/widgets/services/filter/venue_filter.dart';
 import 'package:eventati_book/routing/routing.dart';
 
 class VenueListScreen extends StatefulWidget {
@@ -94,6 +89,9 @@ class _VenueListScreenState extends State<VenueListScreen> {
     );
   }
 
+  // Scroll controller for the venue list
+  final ScrollController _scrollController = ScrollController();
+
   @override
   Widget build(BuildContext context) {
     final serviceRecommendationProvider =
@@ -107,51 +105,58 @@ class _VenueListScreenState extends State<VenueListScreen> {
         backgroundColor: Theme.of(context).primaryColor,
         title: const Text('Venues'),
       ),
-      body: ResponsiveLayout(
+      body: ResponsiveBuilder(
         // Mobile layout (portrait phones)
-        mobileLayout: Column(
-          children: [
-            ServiceFilterBar(
-              searchHint: 'Search venues...',
-              searchController: _searchController,
-              onSearchChanged: (query) {
-                setState(() {
-                  _searchQuery = query;
-                });
-              },
-              selectedSortOption: _selectedSortOption,
-              sortOptions: const [
-                'Rating',
-                'Price (Low to High)',
-                'Price (High to Low)',
-                'Capacity',
-              ],
-              onSortChanged: (option) {
-                if (option != null) {
+        mobileBuilder: (context, constraints) {
+          return Column(
+            children: [
+              ServiceFilterBar(
+                searchHint: 'Search venues...',
+                searchController: _searchController,
+                onSearchChanged: (query) {
                   setState(() {
-                    _selectedSortOption = option;
+                    _searchQuery = query;
                   });
-                }
-              },
-              onFilterTap: () {
-                _showFilterDialog(context);
-              },
-            ),
-            Expanded(
-              child: _buildVenueList(
-                filteredVenues,
-                serviceRecommendationProvider,
-                comparisonProvider,
+                },
+                selectedSortOption: _selectedSortOption,
+                sortOptions: const [
+                  'Rating',
+                  'Price (Low to High)',
+                  'Price (High to Low)',
+                  'Capacity',
+                ],
+                onSortChanged: (option) {
+                  if (option != null) {
+                    setState(() {
+                      _selectedSortOption = option;
+                    });
+                  }
+                },
+                onFilterTap: () {
+                  _showFilterDialog(context);
+                },
               ),
-            ),
-          ],
-        ),
+              Expanded(
+                child: ScrollToTopWrapper(
+                  scrollController: _scrollController,
+                  child: _buildVenueList(
+                    filteredVenues,
+                    serviceRecommendationProvider,
+                    comparisonProvider,
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
         // Tablet layout (landscape phones and tablets)
-        tabletLayout: _buildTabletLayout(
-          filteredVenues,
-          serviceRecommendationProvider,
-          comparisonProvider,
-        ),
+        tabletBuilder: (context, constraints) {
+          return _buildTabletLayout(
+            filteredVenues,
+            serviceRecommendationProvider,
+            comparisonProvider,
+          );
+        },
       ),
       floatingActionButton: Consumer<ComparisonProvider>(
         builder: (context, provider, child) {
@@ -230,6 +235,7 @@ class _VenueListScreenState extends State<VenueListScreen> {
           ),
         )
         : ListView.builder(
+          controller: _scrollController,
           padding: const EdgeInsets.all(16),
           itemCount: venues.length,
           itemBuilder: (context, index) {
@@ -242,60 +248,63 @@ class _VenueListScreenState extends State<VenueListScreen> {
                         .getVenueRecommendationReason(venue)
                     : null;
 
-            return ServiceCard(
-              name: venue.name,
-              description: venue.description,
-              rating: venue.rating,
-              imageUrl: venue.imageUrl,
-              isRecommended: isRecommended,
-              recommendationReason: recommendationReason,
-              isCompareSelected: comparisonProvider.isServiceSelected(venue),
-              onCompareToggle: (_) {
-                comparisonProvider.toggleServiceSelection(venue);
-              },
-              onTap: () {
-                NavigationUtils.navigateToNamed(
-                  context,
-                  RouteNames.venueDetails,
-                  arguments: VenueDetailsArguments(
-                    venueId: venue.name,
-                  ), // Using name as ID for now
-                );
-              },
-              additionalInfo: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 8,
-                    children:
-                        venue.venueTypes
-                            .map(
-                              (type) => Chip(
-                                label: Text(type),
-                                backgroundColor: Color.fromRGBO(
-                                  AppColors.primary.r.toInt(),
-                                  AppColors.primary.g.toInt(),
-                                  AppColors.primary.b.toInt(),
-                                  0.5,
+            return TooltipUtils.infoTooltip(
+              message: 'View details for ${venue.name}',
+              child: ServiceCard(
+                name: venue.name,
+                description: venue.description,
+                rating: venue.rating,
+                imageUrl: venue.imageUrl,
+                isRecommended: isRecommended,
+                recommendationReason: recommendationReason,
+                isCompareSelected: comparisonProvider.isServiceSelected(venue),
+                onCompareToggle: (_) {
+                  comparisonProvider.toggleServiceSelection(venue);
+                },
+                onTap: () {
+                  NavigationUtils.navigateToNamed(
+                    context,
+                    RouteNames.venueDetails,
+                    arguments: VenueDetailsArguments(
+                      venueId: venue.name,
+                    ), // Using name as ID for now
+                  );
+                },
+                additionalInfo: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8,
+                      children:
+                          venue.venueTypes
+                              .map(
+                                (type) => Chip(
+                                  label: Text(type),
+                                  backgroundColor: Color.fromRGBO(
+                                    AppColors.primary.r.toInt(),
+                                    AppColors.primary.g.toInt(),
+                                    AppColors.primary.b.toInt(),
+                                    0.5,
+                                  ),
                                 ),
-                              ),
-                            )
-                            .toList(),
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Capacity: ${NumberUtils.formatWithCommas(venue.minCapacity)}-${NumberUtils.formatWithCommas(venue.maxCapacity)} guests',
-                      ),
-                      Text(
-                        '${NumberUtils.formatCurrency(venue.pricePerEvent, decimalPlaces: 0)}/event',
-                      ),
-                    ],
-                  ),
-                ],
+                              )
+                              .toList(),
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Capacity: ${NumberUtils.formatWithCommas(venue.minCapacity)}-${NumberUtils.formatWithCommas(venue.maxCapacity)} guests',
+                        ),
+                        Text(
+                          '${NumberUtils.formatCurrency(venue.pricePerEvent, decimalPlaces: 0)}/event',
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             );
           },
@@ -474,10 +483,13 @@ class _VenueListScreenState extends State<VenueListScreen> {
               // Venue list on the right (70% width)
               Expanded(
                 flex: 70,
-                child: _buildVenueList(
-                  venues,
-                  serviceRecommendationProvider,
-                  comparisonProvider,
+                child: ScrollToTopWrapper(
+                  scrollController: _scrollController,
+                  child: _buildVenueList(
+                    venues,
+                    serviceRecommendationProvider,
+                    comparisonProvider,
+                  ),
                 ),
               ),
             ],
@@ -577,6 +589,7 @@ class _VenueListScreenState extends State<VenueListScreen> {
   @override
   void dispose() {
     _searchController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 }

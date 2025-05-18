@@ -334,6 +334,10 @@ This file contains all completed tasks from the Eventati Book development tracke
     - [x] Add semantic labels to all interactive elements
     - [x] Ensure proper contrast ratios for text
     - [x] Add keyboard navigation support
+  - [x] Password Strength Indicator
+    - [x] Create PasswordStrengthIndicator widget
+    - [x] Implement on registration screen
+    - [x] Implement on reset password screen
 
 ### Final Polish
 - [x] Perform performance optimization
@@ -347,6 +351,16 @@ This file contains all completed tasks from the Eventati Book development tracke
     - [x] Create feedback components
     - [x] Implement feedback collection
     - [x] Add triggers for feedback collection
+  - [x] Service Comparison Feature
+    - [x] Create pre-checkout comparison screen
+    - [x] Implement feature comparison table
+    - [x] Implement pricing comparison table
+    - [x] Connect to booking flow
+  - [x] Biometric Authentication
+    - [x] Implement biometric authentication service
+    - [x] Add biometric login option
+    - [x] Create biometric settings screen
+    - [x] Add secure credential storage
 
 ### Current Tasks (June 2024)
 - [x] Supabase Integration
@@ -400,6 +414,31 @@ This file contains all completed tasks from the Eventati Book development tracke
   - [x] Create fix_with_opacity.dart to specifically target withOpacity issues
   - [x] Create fix_text_styles.dart to specifically target TextStyle instances
   - [x] Create styles_usage_test.dart to test for proper style usage
+
+### Navigation and User Flow Improvements
+- [x] Improve navigation and user flows
+  - [x] Add progress indicators for multi-step flows
+    - [x] Create StepProgressIndicator component
+    - [x] Implement different styles (linear, dots, numbered)
+    - [x] Add customization options for colors and appearance
+    - [x] Update widgets.dart to include the new component
+  - [x] Implement breadcrumbs for deep navigation
+    - [x] Create BreadcrumbItem class and BreadcrumbProvider
+    - [x] Implement BreadcrumbNavigation component
+    - [x] Create BreadcrumbUtils for common operations
+    - [x] Update providers.dart and widgets.dart to include new components
+  - [x] Add "Back to top" buttons for long scrolling screens
+    - [x] Create BackToTopButton component
+    - [x] Implement ScrollToTopWrapper for easy integration
+    - [x] Add to VenueListScreen as an example implementation
+  - [x] Create "quick actions" on the homepage
+    - [x] Create QuickActionButton component
+    - [x] Update homepage to use the new component
+    - [x] Implement proper navigation to service screens
+  - [x] Add tooltips for unclear features
+    - [x] Create TooltipUtils with helper methods
+    - [x] Implement different tooltip styles
+    - [x] Add tooltips to service cards and quick actions
 
 ### Priority 4: Final Cleanup
 - [x] Remove all documentation files

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/styles/app_colors.dart';
-import 'package:eventati_book/widgets/responsive/responsive.dart';
+import 'package:eventati_book/widgets/widgets.dart';
 import 'package:eventati_book/routing/routing.dart';
 import 'package:eventati_book/providers/providers.dart';
 import 'package:eventati_book/widgets/recommendations/recommendation_widgets.dart';
@@ -424,6 +424,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
         'color': AppColors.primary,
         'onTap': () {
           // Navigate to venues tab in services screen
+          NavigationUtils.navigateToNamed(context, RouteNames.venueList);
         },
       },
       {
@@ -432,6 +433,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
         'color': AppColors.warning,
         'onTap': () {
           // Navigate to catering tab in services screen
+          NavigationUtils.navigateToNamed(context, RouteNames.cateringList);
         },
       },
       {
@@ -440,6 +442,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
         'color': AppColors.primary,
         'onTap': () {
           // Navigate to photography tab in services screen
+          NavigationUtils.navigateToNamed(context, RouteNames.photographerList);
         },
       },
       {
@@ -448,6 +451,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
         'color': AppColors.success,
         'onTap': () {
           // Navigate to planners tab in services screen
+          NavigationUtils.navigateToNamed(context, RouteNames.plannerList);
         },
       },
     ];
@@ -481,36 +485,15 @@ class _HomepageScreenState extends State<HomepageScreen> {
       itemBuilder: (context, index) {
         final link = quickLinks[index];
 
-        return InkWell(
-          onTap: link['onTap'],
-          child: Card(
-            elevation: 2,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 12.0,
-                vertical: 10.0,
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(link['icon'], size: 28, color: link['color']),
-                  const SizedBox(height: 6),
-                  Text(
-                    link['title'],
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
-            ),
+        // Use our new QuickActionButton component
+        return TooltipUtils.infoTooltip(
+          message: 'Browse ${link['title']}',
+          child: QuickActionButton(
+            label: link['title'],
+            icon: link['icon'],
+            iconColor: link['color'],
+            onTap: link['onTap'],
+            size: 100,
           ),
         );
       },

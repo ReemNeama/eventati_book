@@ -7,3 +7,5 @@ export 'navigation_utils.dart';
 export 'error_handling_utils.dart';
 export 'empty_state_utils.dart';
 export 'accessibility_utils.dart';
+export 'breadcrumb_utils.dart';
+export 'tooltip_utils.dart';
