@@ -27,6 +27,9 @@ export 'common/image_gallery.dart'; // Widget for displaying image galleries
 export 'common/step_progress_indicator.dart'; // Progress indicator for multi-step flows
 export 'common/back_to_top_button.dart'; // Button to scroll back to top
 export 'common/scroll_to_top_wrapper.dart'; // Wrapper that adds a back to top button
+export 'common/async_button.dart'; // Button that shows loading state during async operations
+export 'common/progress_indicator_widget.dart'; // Customizable progress indicator for long operations
+export 'common/toast_message.dart'; // Customizable toast message for confirmations
 
 // -------------------------
 // AUTHENTICATION WIDGETS
