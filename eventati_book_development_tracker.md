@@ -61,10 +61,10 @@
     - [x] Add "Continue where you left off" section
     - [x] Implement notification center or activity feed
     - [x] Add search bar for quick access
-  - [ ] Authentication
+  - [x] Authentication
     - [x] Add clear password requirements during registration
     - [x] Implement "Remember me" option
-    - [ ] Add biometric authentication option
+    - [x] Add biometric authentication option
   - [ ] Event Creation
     - [ ] Add ability to save progress and return later
     - [ ] Implement templates for common event types

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:eventati_book/screens/settings/notification_settings_screen.dart';
 import 'package:eventati_book/screens/settings/pending_shares_screen.dart';
 import 'package:eventati_book/screens/settings/accessibility_settings_screen.dart';
+import 'package:eventati_book/screens/settings/biometric_settings_screen.dart';
 import 'package:eventati_book/screens/profile/change_password_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:eventati_book/styles/app_colors.dart';
@@ -42,6 +43,19 @@ class SettingsScreen extends StatelessWidget {
                 ),
               );
             }),
+            _buildListTile(
+              context,
+              'Biometric Authentication',
+              Icons.fingerprint,
+              () {
+                // Navigate to biometric settings screen
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const BiometricSettingsScreen(),
+                  ),
+                );
+              },
+            ),
             _buildListTile(context, 'Sign Out', Icons.exit_to_app, () async {
               // Sign out
               await Supabase.instance.client.auth.signOut();
