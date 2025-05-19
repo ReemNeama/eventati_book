@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/screens/homepage/homepage_screen.dart';
 import 'package:eventati_book/screens/services/common/services_screen.dart';
-import 'package:eventati_book/screens/events/user_events_screen.dart';
+import 'package:eventati_book/screens/events/combined_events_screen.dart';
 import 'package:eventati_book/screens/profile/profile_screen.dart';
 import 'package:eventati_book/screens/event_wizard/suggestion_screen.dart';
-import 'package:eventati_book/screens/booking/booking_history_screen.dart';
 import 'package:eventati_book/widgets/notification/notification_badge.dart';
 import 'package:eventati_book/routing/route_names.dart';
 import 'package:eventati_book/styles/app_colors.dart';
@@ -31,8 +30,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     _screens = [
       const HomepageScreen(),
       const ServicesScreen(),
-      const UserEventsScreen(),
-      const BookingHistoryScreen(),
+      const CombinedEventsScreen(),
       const SuggestionScreen(),
       ProfileScreen(toggleTheme: widget.toggleTheme),
     ];
@@ -48,8 +46,6 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
       case 2:
         return 'My Events';
       case 3:
-        return 'Bookings';
-      case 4:
         return 'Suggestions';
       default:
         return 'Eventati Book';
@@ -63,7 +59,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
     return Scaffold(
       appBar:
-          _currentIndex != 5
+          _currentIndex != 4
               ? AppBar(
                 title: Text(_getAppBarTitle()),
                 actions: [
@@ -153,11 +149,6 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
               icon: Icon(Icons.event_outlined),
               activeIcon: Icon(Icons.event),
               label: 'My Events',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.calendar_today_outlined),
-              activeIcon: Icon(Icons.calendar_today),
-              label: 'Bookings',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.lightbulb_outline),

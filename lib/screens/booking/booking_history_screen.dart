@@ -13,8 +13,11 @@ import 'package:eventati_book/routing/routing.dart';
 
 /// Screen to display booking history
 class BookingHistoryScreen extends StatefulWidget {
+  /// Whether to show the app bar
+  final bool showAppBar;
+
   /// Constructor
-  const BookingHistoryScreen({super.key});
+  const BookingHistoryScreen({super.key, this.showAppBar = true});
 
   @override
   State<BookingHistoryScreen> createState() => _BookingHistoryScreenState();
@@ -77,15 +80,18 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen>
         isDarkMode ? AppColorsDark.textPrimary : AppColors.textPrimary;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('My Bookings'),
-        backgroundColor: primaryColor,
-        bottom: TabBar(
-          controller: _tabController,
-          indicatorColor: Colors.white,
-          tabs: const [Tab(text: 'Upcoming'), Tab(text: 'Past')],
-        ),
-      ),
+      appBar:
+          widget.showAppBar
+              ? AppBar(
+                title: const Text('My Bookings'),
+                backgroundColor: primaryColor,
+                bottom: TabBar(
+                  controller: _tabController,
+                  indicatorColor: Colors.white,
+                  tabs: const [Tab(text: 'Upcoming'), Tab(text: 'Past')],
+                ),
+              )
+              : null,
       body:
           _isLoading
               ? const Center(

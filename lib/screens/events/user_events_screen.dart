@@ -9,7 +9,11 @@ import 'package:eventati_book/styles/text_styles.dart';
 
 /// Screen that displays all events created or saved by the user
 class UserEventsScreen extends StatefulWidget {
-  const UserEventsScreen({super.key});
+  /// Whether to show the app bar
+  final bool showAppBar;
+
+  /// Constructor
+  const UserEventsScreen({super.key, this.showAppBar = true});
 
   @override
   State<UserEventsScreen> createState() => _UserEventsScreenState();
@@ -44,12 +48,15 @@ class _UserEventsScreenState extends State<UserEventsScreen> {
     final primaryColor = isDarkMode ? AppColorsDark.primary : AppColors.primary;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('My Events'),
-        centerTitle: true,
-        elevation: 0,
-        backgroundColor: primaryColor,
-      ),
+      appBar:
+          widget.showAppBar
+              ? AppBar(
+                title: const Text('My Events'),
+                centerTitle: true,
+                elevation: 0,
+                backgroundColor: primaryColor,
+              )
+              : null,
       body: _mockEvents.isEmpty ? _buildEmptyState() : _buildEventsList(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
