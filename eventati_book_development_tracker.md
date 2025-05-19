@@ -66,7 +66,7 @@
     - [x] Implement "Remember me" option
     - [x] Add biometric authentication option
   - [ ] Event Creation
-    - [ ] Add ability to save progress and return later
+    - [x] Add ability to save progress and return later
     - [ ] Implement templates for common event types
     - [ ] Add visual indicators of completion status
     - [ ] Include example images/descriptions for options
