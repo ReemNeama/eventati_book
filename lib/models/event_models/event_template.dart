@@ -14,6 +14,14 @@ class EventTemplate {
   final DateTime? createdAt; // When the event was created
   final DateTime? updatedAt; // When the event was last updated
   final String? status; // Status of the event (draft, active, completed, etc.)
+  final String? imageUrl; // URL to an image representing this template
+  final String?
+  detailedDescription; // More detailed description of the template
+  final Map<String, dynamic>? defaultValues; // Default values for wizard fields
+  final bool
+  isDetailedTemplate; // Whether this is a detailed template or a category
+  final String?
+  parentTemplateId; // ID of the parent template (for detailed templates)
 
   const EventTemplate({
     required this.id,
@@ -27,6 +35,11 @@ class EventTemplate {
     this.createdAt,
     this.updatedAt,
     this.status,
+    this.imageUrl,
+    this.detailedDescription,
+    this.defaultValues,
+    this.isDetailedTemplate = false,
+    this.parentTemplateId,
   });
 
   /// Create a copy of this template with modified fields
@@ -42,6 +55,11 @@ class EventTemplate {
     DateTime? createdAt,
     DateTime? updatedAt,
     String? status,
+    String? imageUrl,
+    String? detailedDescription,
+    Map<String, dynamic>? defaultValues,
+    bool? isDetailedTemplate,
+    String? parentTemplateId,
   }) {
     return EventTemplate(
       id: id ?? this.id,
@@ -55,6 +73,11 @@ class EventTemplate {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       status: status ?? this.status,
+      imageUrl: imageUrl ?? this.imageUrl,
+      detailedDescription: detailedDescription ?? this.detailedDescription,
+      defaultValues: defaultValues ?? this.defaultValues,
+      isDetailedTemplate: isDetailedTemplate ?? this.isDetailedTemplate,
+      parentTemplateId: parentTemplateId ?? this.parentTemplateId,
     );
   }
 
@@ -109,6 +132,14 @@ class EventTemplate {
       updatedAt:
           json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
       status: json['status'],
+      imageUrl: json['imageUrl'],
+      detailedDescription: json['detailedDescription'],
+      defaultValues:
+          json['defaultValues'] != null
+              ? Map<String, dynamic>.from(json['defaultValues'])
+              : null,
+      isDetailedTemplate: json['isDetailedTemplate'] ?? false,
+      parentTemplateId: json['parentTemplateId'],
     );
   }
 
@@ -131,6 +162,11 @@ class EventTemplate {
               ? DbTimestamp.fromDate(updatedAt!).toIso8601String()
               : DbFieldValue.serverTimestamp(),
       'status': status,
+      'imageUrl': imageUrl,
+      'detailedDescription': detailedDescription,
+      'defaultValues': defaultValues,
+      'isDetailedTemplate': isDetailedTemplate,
+      'parentTemplateId': parentTemplateId,
     };
   }
 
@@ -155,6 +191,14 @@ class EventTemplate {
       updatedAt:
           data['updatedAt'] != null ? DateTime.parse(data['updatedAt']) : null,
       status: data['status'],
+      imageUrl: data['imageUrl'],
+      detailedDescription: data['detailedDescription'],
+      defaultValues:
+          data['defaultValues'] != null
+              ? Map<String, dynamic>.from(data['defaultValues'])
+              : null,
+      isDetailedTemplate: data['isDetailedTemplate'] ?? false,
+      parentTemplateId: data['parentTemplateId'],
     );
   }
 }

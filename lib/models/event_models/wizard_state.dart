@@ -22,6 +22,9 @@ class WizardState {
   /// Selected event subtype
   final String? selectedEventType;
 
+  /// Selected detailed template ID
+  final String? selectedTemplateId;
+
   /// Event date
   final DateTime? eventDate;
 
@@ -62,9 +65,10 @@ class WizardState {
     String? id,
     required this.template,
     this.currentStep = 0,
-    this.totalSteps = 4,
+    this.totalSteps = 5,
     this.eventName = '',
     this.selectedEventType,
+    this.selectedTemplateId,
     this.eventDate,
     this.guestCount,
     Map<String, bool>? selectedServices,
@@ -89,6 +93,7 @@ class WizardState {
     int? totalSteps,
     String? eventName,
     String? selectedEventType,
+    String? selectedTemplateId,
     DateTime? eventDate,
     int? guestCount,
     Map<String, bool>? selectedServices,
@@ -108,6 +113,7 @@ class WizardState {
       totalSteps: totalSteps ?? this.totalSteps,
       eventName: eventName ?? this.eventName,
       selectedEventType: selectedEventType ?? this.selectedEventType,
+      selectedTemplateId: selectedTemplateId ?? this.selectedTemplateId,
       eventDate: eventDate ?? this.eventDate,
       guestCount: guestCount ?? this.guestCount,
       selectedServices: selectedServices ?? Map.from(this.selectedServices),
@@ -134,17 +140,21 @@ class WizardState {
   bool isStepValid(int step) {
     switch (step) {
       case 0: // Event Details
-
         return eventName.isNotEmpty && selectedEventType != null;
-      case 1: // Date & Guests
 
-        return eventDate != null && (guestCount != null && guestCount! > 0);
-      case 2: // Required Services
-
-        return selectedServices.values.any((selected) => selected);
-      case 3: // Review
-
+      case 1: // Template
+        // Template selection is optional, so always valid
         return true;
+
+      case 2: // Date & Guests
+        return eventDate != null && (guestCount != null && guestCount! > 0);
+
+      case 3: // Required Services
+        return selectedServices.values.any((selected) => selected);
+
+      case 4: // Review
+        return true;
+
       default:
         return false;
     }
@@ -159,6 +169,7 @@ class WizardState {
       'totalSteps': totalSteps,
       'eventName': eventName,
       'selectedEventType': selectedEventType,
+      'selectedTemplateId': selectedTemplateId,
       'eventDate': eventDate?.toIso8601String(),
       'guestCount': guestCount,
       'selectedServices': selectedServices,
@@ -194,6 +205,7 @@ class WizardState {
       totalSteps: json['totalSteps'] ?? 4,
       eventName: json['eventName'] ?? '',
       selectedEventType: json['selectedEventType'],
+      selectedTemplateId: json['selectedTemplateId'],
       eventDate:
           json['eventDate'] != null ? DateTime.parse(json['eventDate']) : null,
       guestCount: json['guestCount'],
@@ -228,6 +240,7 @@ class WizardState {
       'totalSteps': totalSteps,
       'eventName': eventName,
       'selectedEventType': selectedEventType,
+      'selectedTemplateId': selectedTemplateId,
       'eventDate':
           eventDate != null
               ? DbTimestamp.fromDate(eventDate!).toIso8601String()
@@ -266,6 +279,7 @@ class WizardState {
       totalSteps: data['totalSteps'] ?? 4,
       eventName: data['eventName'] ?? '',
       selectedEventType: data['selectedEventType'],
+      selectedTemplateId: data['selectedTemplateId'],
       eventDate:
           data['eventDate'] != null ? DateTime.parse(data['eventDate']) : null,
       guestCount: data['guestCount'],

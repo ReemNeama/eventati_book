@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:eventati_book/models/models.dart';
+import 'package:eventati_book/models/event_models/detailed_event_templates.dart';
 import 'package:eventati_book/providers/providers.dart';
 import 'package:eventati_book/screens/event_planning/milestones/milestone_screen.dart';
 import 'package:eventati_book/styles/wizard_styles.dart';
+import 'package:eventati_book/styles/text_styles.dart';
 import 'package:eventati_book/utils/utils.dart';
-import 'package:eventati_book/widgets/event_wizard/event_name_input.dart';
-import 'package:eventati_book/widgets/event_wizard/event_type_dropdown.dart';
-import 'package:eventati_book/widgets/event_wizard/date_picker_tile.dart';
-import 'package:eventati_book/widgets/event_wizard/guest_count_input.dart';
-import 'package:eventati_book/widgets/event_wizard/services_selection.dart';
-import 'package:eventati_book/widgets/event_wizard/time_picker_tile.dart';
-import 'package:eventati_book/widgets/event_wizard/wizard_progress_indicator.dart';
+import 'package:eventati_book/widgets/event_wizard/event_wizard_widgets.dart';
 import 'package:eventati_book/widgets/milestones/milestone_celebration_overlay.dart';
 import 'package:eventati_book/widgets/supabase_persistence_status.dart';
 
@@ -210,6 +206,7 @@ class _EventWizardScreenState extends State<EventWizardScreen> {
                     showStepLabels: true,
                     stepLabels: const [
                       'Event Details',
+                      'Template',
                       'Date & Guests',
                       'Services',
                       'Review',
@@ -329,7 +326,69 @@ class _EventWizardScreenState extends State<EventWizardScreen> {
                           isActive: state.currentStep >= 0,
                         ),
 
-                        // Step 2: Date & Guests
+                        // Step 2: Template Selection
+                        Step(
+                          title: Text(
+                            'Choose a Template',
+                            style: WizardStyles.getStepTitleStyle(),
+                          ),
+                          content: FutureBuilder<List<EventTemplate>>(
+                            future: _getDetailedTemplates(),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              }
+
+                              if (snapshot.hasError) {
+                                return Center(
+                                  child: Text(
+                                    'Error loading templates: ${snapshot.error}',
+                                    style: TextStyles.bodyMedium.copyWith(
+                                      color: Colors.red,
+                                    ),
+                                  ),
+                                );
+                              }
+
+                              final templates = snapshot.data ?? [];
+
+                              if (templates.isEmpty) {
+                                return Center(
+                                  child: Text(
+                                    'No templates available for ${widget.template.name}',
+                                    style: TextStyles.bodyMedium,
+                                  ),
+                                );
+                              }
+
+                              return TemplateSelectionWidget(
+                                parentTemplateId: widget.template.id,
+                                templates: templates,
+                                onTemplateSelected: (template) {
+                                  wizardProvider.applyDetailedTemplate(
+                                    template,
+                                  );
+
+                                  // Show a confirmation
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        'Applied template: ${template.name}',
+                                      ),
+                                      duration: const Duration(seconds: 2),
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                          isActive: state.currentStep >= 1,
+                        ),
+
+                        // Step 3: Date & Guests
                         Step(
                           title: Text(
                             'Date & Guests',
@@ -532,7 +591,7 @@ class _EventWizardScreenState extends State<EventWizardScreen> {
                               ),
                             ],
                           ),
-                          isActive: state.currentStep >= 1,
+                          isActive: state.currentStep >= 2,
                         ),
 
                         // Step 3: Required Services
@@ -551,7 +610,7 @@ class _EventWizardScreenState extends State<EventWizardScreen> {
                               );
                             },
                           ),
-                          isActive: state.currentStep >= 2,
+                          isActive: state.currentStep >= 3,
                         ),
 
                         // Step 4: Review
@@ -579,6 +638,27 @@ class _EventWizardScreenState extends State<EventWizardScreen> {
                                 Text(
                                   'Event Type: ${state.selectedEventType ?? "Not selected"}',
                                 ),
+                                if (state.selectedTemplateId != null)
+                                  FutureBuilder<List<EventTemplate>>(
+                                    future: _getDetailedTemplates(),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.hasData) {
+                                        final templates = snapshot.data!;
+                                        final selectedTemplate = templates
+                                            .firstWhere(
+                                              (t) =>
+                                                  t.id ==
+                                                  state.selectedTemplateId,
+                                              orElse: () => widget.template,
+                                            );
+
+                                        return Text(
+                                          'Template: ${selectedTemplate.name}',
+                                        );
+                                      }
+                                      return const SizedBox.shrink();
+                                    },
+                                  ),
                                 Text(
                                   'Date: ${state.eventDate != null ? DateTimeUtils.formatDate(state.eventDate!) : "Not selected"}',
                                 ),
@@ -628,7 +708,7 @@ class _EventWizardScreenState extends State<EventWizardScreen> {
                               ],
                             ),
                           ),
-                          isActive: state.currentStep >= 3,
+                          isActive: state.currentStep >= 4,
                         ),
                       ],
                     ),
@@ -640,6 +720,17 @@ class _EventWizardScreenState extends State<EventWizardScreen> {
         );
       },
     );
+  }
+
+  /// Get detailed templates for the current event type
+  Future<List<EventTemplate>> _getDetailedTemplates() async {
+    // Get all detailed templates
+    final allTemplates = DetailedEventTemplates.getAllTemplates();
+
+    // Filter templates for the current event type
+    return allTemplates
+        .where((template) => template.parentTemplateId == widget.template.id)
+        .toList();
   }
 
   /// Show milestone celebration overlay

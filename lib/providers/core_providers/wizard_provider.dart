@@ -152,6 +152,88 @@ class WizardProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Update the selected template
+  void updateSelectedTemplate(String templateId) {
+    if (_state == null) return;
+
+    _state = _state!.copyWith(selectedTemplateId: templateId);
+    _saveState();
+    notifyListeners();
+  }
+
+  /// Apply a detailed template to the wizard state
+  void applyDetailedTemplate(EventTemplate detailedTemplate) {
+    if (_state == null) return;
+
+    // Update the selected template ID
+    _state = _state!.copyWith(selectedTemplateId: detailedTemplate.id);
+
+    // Apply default values from the template if available
+    if (detailedTemplate.defaultValues != null) {
+      final defaultValues = detailedTemplate.defaultValues!;
+
+      // Apply event type if available
+      if (defaultValues.containsKey('eventType') &&
+          _state!.template.subtypes.contains(defaultValues['eventType'])) {
+        _state = _state!.copyWith(
+          selectedEventType: defaultValues['eventType'] as String,
+        );
+      }
+
+      // Apply guest count if available
+      if (defaultValues.containsKey('guestCount')) {
+        _state = _state!.copyWith(
+          guestCount: defaultValues['guestCount'] as int,
+        );
+      }
+
+      // Apply services if available
+      if (defaultValues.containsKey('services') &&
+          defaultValues['services'] is Map<String, bool>) {
+        final services = Map<String, bool>.from(
+          defaultValues['services'] as Map,
+        );
+        _state = _state!.copyWith(selectedServices: services);
+      }
+
+      // Apply business event specific values if applicable
+      if (_state!.template.id == 'business') {
+        if (defaultValues.containsKey('eventDuration')) {
+          _state = _state!.copyWith(
+            eventDuration: defaultValues['eventDuration'] as int,
+          );
+        }
+
+        if (defaultValues.containsKey('needsSetup')) {
+          _state = _state!.copyWith(
+            needsSetup: defaultValues['needsSetup'] as bool,
+          );
+        }
+
+        if (defaultValues.containsKey('setupHours')) {
+          _state = _state!.copyWith(
+            setupHours: defaultValues['setupHours'] as int,
+          );
+        }
+
+        if (defaultValues.containsKey('needsTeardown')) {
+          _state = _state!.copyWith(
+            needsTeardown: defaultValues['needsTeardown'] as bool,
+          );
+        }
+
+        if (defaultValues.containsKey('teardownHours')) {
+          _state = _state!.copyWith(
+            teardownHours: defaultValues['teardownHours'] as int,
+          );
+        }
+      }
+    }
+
+    _saveState();
+    notifyListeners();
+  }
+
   /// Update the event date
   void updateEventDate(DateTime date) {
     if (_state == null) return;

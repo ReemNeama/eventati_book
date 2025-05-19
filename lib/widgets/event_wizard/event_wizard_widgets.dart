@@ -10,6 +10,7 @@ export 'time_picker_tile.dart';
 
 // Selection widgets
 export 'services_selection.dart';
+export 'template_selection_widget.dart';
 
 // Progress and suggestion widgets
 export 'suggestion_card.dart';
