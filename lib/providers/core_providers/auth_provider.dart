@@ -6,6 +6,7 @@ import 'package:eventati_book/services/interfaces/auth_service_interface.dart';
 import 'package:eventati_book/services/supabase/database/user_database_service.dart';
 import 'package:eventati_book/services/auth/biometric/biometric_auth_service.dart';
 import 'package:eventati_book/di/service_locator.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 /// Authentication states
 enum AuthStatus {
@@ -72,6 +73,14 @@ class AuthProvider with ChangeNotifier {
   final UserDatabaseService _userDatabaseService =
       serviceLocator.userDatabaseService;
 
+  /// Secure storage for credentials
+  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
+
+  /// Storage keys for remember me credentials
+  static const String _rememberMeEnabledKey = 'remember_me_enabled';
+  static const String _rememberMeEmailKey = 'remember_me_email';
+  static const String _rememberMePasswordKey = 'remember_me_password';
+
   /// Current authentication status
   AuthStatus _status = AuthStatus.unauthenticated;
 
@@ -129,9 +138,27 @@ class AuthProvider with ChangeNotifier {
       if (user != null) {
         _user = user;
         _status = AuthStatus.authenticated;
-      } else {
-        _status = AuthStatus.unauthenticated;
+        notifyListeners();
+        return;
       }
+
+      // Check if remember me is enabled
+      final rememberMeEnabled = await _secureStorage.read(
+        key: _rememberMeEnabledKey,
+      );
+      if (rememberMeEnabled == 'true') {
+        // Get saved credentials
+        final email = await _secureStorage.read(key: _rememberMeEmailKey);
+        final password = await _secureStorage.read(key: _rememberMePasswordKey);
+
+        if (email != null && password != null) {
+          // Attempt to login with saved credentials
+          await login(email, password, rememberMe: true);
+          return;
+        }
+      }
+
+      _status = AuthStatus.unauthenticated;
       notifyListeners();
     } catch (e) {
       _status = AuthStatus.error;
@@ -141,7 +168,11 @@ class AuthProvider with ChangeNotifier {
   }
 
   /// Login with email and password
-  Future<AuthResult> login(String email, String password) async {
+  Future<AuthResult> login(
+    String email,
+    String password, {
+    bool rememberMe = false,
+  }) async {
     try {
       _status = AuthStatus.authenticating;
       _errorMessage = null;
@@ -156,6 +187,13 @@ class AuthProvider with ChangeNotifier {
         _user = result.user;
         _status = AuthStatus.authenticated;
         notifyListeners();
+
+        // Save credentials if remember me is enabled
+        if (rememberMe) {
+          await _saveRememberMeCredentials(email, password);
+        } else {
+          await _clearRememberMeCredentials();
+        }
 
         // Check if email is verified for non-social auth users
         if (_user != null &&
@@ -184,6 +222,30 @@ class AuthProvider with ChangeNotifier {
       _errorMessage = 'Login failed: ${e.toString()}';
       notifyListeners();
       return AuthResult(isSuccess: false, errorMessage: _errorMessage);
+    }
+  }
+
+  /// Save remember me credentials
+  Future<void> _saveRememberMeCredentials(String email, String password) async {
+    try {
+      await _secureStorage.write(key: _rememberMeEnabledKey, value: 'true');
+      await _secureStorage.write(key: _rememberMeEmailKey, value: email);
+      await _secureStorage.write(key: _rememberMePasswordKey, value: password);
+    } catch (e) {
+      // Silently fail - this is not critical functionality
+      debugPrint('Error saving remember me credentials: $e');
+    }
+  }
+
+  /// Clear remember me credentials
+  Future<void> _clearRememberMeCredentials() async {
+    try {
+      await _secureStorage.delete(key: _rememberMeEnabledKey);
+      await _secureStorage.delete(key: _rememberMeEmailKey);
+      await _secureStorage.delete(key: _rememberMePasswordKey);
+    } catch (e) {
+      // Silently fail - this is not critical functionality
+      debugPrint('Error clearing remember me credentials: $e');
     }
   }
 
@@ -261,6 +323,10 @@ class AuthProvider with ChangeNotifier {
   Future<void> logout() async {
     try {
       await _authService.signOut();
+
+      // Clear remember me credentials
+      await _clearRememberMeCredentials();
+
       _user = null;
       _status = AuthStatus.unauthenticated;
       notifyListeners();

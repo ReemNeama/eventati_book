@@ -63,7 +63,7 @@
     - [x] Add search bar for quick access
   - [ ] Authentication
     - [x] Add clear password requirements during registration
-    - [ ] Implement "Remember me" option
+    - [x] Implement "Remember me" option
     - [ ] Add biometric authentication option
   - [ ] Event Creation
     - [ ] Add ability to save progress and return later

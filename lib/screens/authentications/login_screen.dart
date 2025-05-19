@@ -28,6 +28,9 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
+  // Remember me option
+  bool _rememberMe = false;
+
   // Biometric authentication
   bool _isBiometricAvailable = false;
   List<BiometricType> _availableBiometrics = [];
@@ -96,6 +99,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final result = await authProvider.login(
       _emailController.text,
       _passwordController.text,
+      rememberMe: _rememberMe,
     );
 
     // Only proceed if the widget is still mounted
@@ -304,7 +308,38 @@ class _LoginScreenState extends State<LoginScreen> {
                       requireSpecialChars: false,
                     ),
               ),
-              const SizedBox(height: 30),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  Checkbox(
+                    value: _rememberMe,
+                    onChanged: (value) {
+                      setState(() {
+                        _rememberMe = value ?? false;
+                      });
+                    },
+                    activeColor: Theme.of(context).primaryColor,
+                  ),
+                  const Text(
+                    'Remember me',
+                    style: TextStyle(color: Colors.white70),
+                  ),
+                  const Spacer(),
+                  TextButton(
+                    onPressed: () {
+                      NavigationUtils.navigateToNamed(
+                        context,
+                        RouteNames.forgotPassword,
+                      );
+                    },
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors.white70,
+                    ),
+                    child: const Text('Forgot Password?'),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
               Consumer<AuthProvider>(
                 builder: (context, authProvider, _) {
                   return AuthButton(
