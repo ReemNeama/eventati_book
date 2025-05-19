@@ -3,6 +3,7 @@ import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/widgets/auth/password_strength_indicator.dart';
+import 'package:eventati_book/widgets/auth/password_requirements.dart';
 
 class AuthTextField extends StatefulWidget {
   final TextEditingController controller;
@@ -12,6 +13,12 @@ class AuthTextField extends StatefulWidget {
   final String? Function(String?)? validator;
   final TextInputType keyboardType;
   final bool showPasswordStrength;
+  final bool showPasswordRequirements;
+  final int passwordMinLength;
+  final bool requireUppercase;
+  final bool requireLowercase;
+  final bool requireNumbers;
+  final bool requireSpecialChars;
 
   const AuthTextField({
     super.key,
@@ -22,6 +29,12 @@ class AuthTextField extends StatefulWidget {
     this.validator,
     this.keyboardType = TextInputType.text,
     this.showPasswordStrength = false,
+    this.showPasswordRequirements = false,
+    this.passwordMinLength = 8,
+    this.requireUppercase = true,
+    this.requireLowercase = true,
+    this.requireNumbers = true,
+    this.requireSpecialChars = true,
   });
 
   @override
@@ -94,6 +107,17 @@ class _AuthTextFieldState extends State<AuthTextField> {
         if (widget.showPasswordStrength) ...[
           const SizedBox(height: 8),
           PasswordStrengthIndicator(password: widget.controller.text),
+        ],
+        if (widget.showPasswordRequirements) ...[
+          const SizedBox(height: 8),
+          PasswordRequirements(
+            password: widget.controller.text,
+            minLength: widget.passwordMinLength,
+            requireUppercase: widget.requireUppercase,
+            requireLowercase: widget.requireLowercase,
+            requireNumbers: widget.requireNumbers,
+            requireSpecialChars: widget.requireSpecialChars,
+          ),
         ],
       ],
     );

@@ -79,6 +79,9 @@ abstract class AuthServiceInterface {
   /// Confirm a password reset with a code and new password
   Future<AuthResult> confirmPasswordReset(String code, String newPassword);
 
+  /// Change password for authenticated user
+  Future<AuthResult> changePassword(String currentPassword, String newPassword);
+
   /// Verify a user's email
   Future<AuthResult> verifyEmail();
 

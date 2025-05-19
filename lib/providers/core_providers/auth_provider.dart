@@ -425,6 +425,35 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
+  /// Change password for authenticated user
+  Future<bool> changePassword(
+    String currentPassword,
+    String newPassword,
+  ) async {
+    try {
+      if (_user == null) {
+        _errorMessage = 'No user is logged in';
+        notifyListeners();
+        return false;
+      }
+
+      final result = await _authService.changePassword(
+        currentPassword,
+        newPassword,
+      );
+
+      if (!result.isSuccess) {
+        _errorMessage = result.errorMessage;
+        notifyListeners();
+      }
+      return result.isSuccess;
+    } catch (e) {
+      _errorMessage = 'Password change failed: ${e.toString()}';
+      notifyListeners();
+      return false;
+    }
+  }
+
   /// Update user profile
   Future<bool> updateProfile({
     String? name,

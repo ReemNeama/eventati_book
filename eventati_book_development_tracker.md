@@ -62,7 +62,7 @@
     - [x] Implement notification center or activity feed
     - [x] Add search bar for quick access
   - [ ] Authentication
-    - [ ] Add clear password requirements during registration
+    - [x] Add clear password requirements during registration
     - [ ] Implement "Remember me" option
     - [ ] Add biometric authentication option
   - [ ] Event Creation

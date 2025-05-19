@@ -194,6 +194,39 @@ class SupabaseAuthService implements AuthServiceInterface {
   }
 
   @override
+  Future<AuthResult> changePassword(
+    String currentPassword,
+    String newPassword,
+  ) async {
+    try {
+      // First verify the current password by attempting to sign in
+      final user = _supabase.auth.currentUser;
+      if (user == null) {
+        return AuthResult.failure('User not found');
+      }
+
+      // Verify current password by attempting to sign in
+      try {
+        await _supabase.auth.signInWithPassword(
+          email: user.email!,
+          password: currentPassword,
+        );
+      } on AuthException {
+        // If sign-in fails, the current password is incorrect
+        return AuthResult.failure('Current password is incorrect');
+      }
+
+      // Update the password
+      await _supabase.auth.updateUser(UserAttributes(password: newPassword));
+
+      return AuthResult.success(currentUser);
+    } catch (e) {
+      Logger.e('Error changing password: $e', tag: 'SupabaseAuthService');
+      return AuthResult.failure('Error changing password: $e');
+    }
+  }
+
+  @override
   Future<AuthResult> verifyEmail() async {
     // Not directly applicable for Supabase - handled by the redirect flow
     return AuthResult.success(null);

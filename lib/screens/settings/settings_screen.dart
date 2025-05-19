@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:eventati_book/screens/settings/notification_settings_screen.dart';
 import 'package:eventati_book/screens/settings/pending_shares_screen.dart';
 import 'package:eventati_book/screens/settings/accessibility_settings_screen.dart';
+import 'package:eventati_book/screens/profile/change_password_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 
@@ -35,7 +36,11 @@ class SettingsScreen extends StatelessWidget {
             }),
             _buildListTile(context, 'Change Password', Icons.lock, () {
               // Navigate to change password screen
-              _showInfoSnackBar(context, 'Change password not implemented yet');
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const ChangePasswordScreen(),
+                ),
+              );
             }),
             _buildListTile(context, 'Sign Out', Icons.exit_to_app, () async {
               // Sign out

@@ -209,6 +209,56 @@ class SupabaseAuthService implements AuthServiceInterface {
   }
 
   @override
+  Future<AuthResult> changePassword(
+    String currentPassword,
+    String newPassword,
+  ) async {
+    try {
+      // First verify the current password by attempting to sign in
+      final user = _supabaseClient.auth.currentUser;
+      if (user == null) {
+        return AuthResult(isSuccess: false, errorMessage: 'User not found');
+      }
+
+      // Verify current password by attempting to sign in
+      try {
+        await _supabaseClient.auth.signInWithPassword(
+          email: user.email!,
+          password: currentPassword,
+        );
+      } on AuthException {
+        // If sign-in fails, the current password is incorrect
+        return AuthResult(
+          isSuccess: false,
+          errorMessage: 'Current password is incorrect',
+        );
+      }
+
+      // Update the password
+      final response = await _supabaseClient.auth.updateUser(
+        UserAttributes(password: newPassword),
+      );
+
+      if (response.user == null) {
+        return AuthResult(
+          isSuccess: false,
+          errorMessage: 'Failed to change password',
+        );
+      }
+
+      return AuthResult(isSuccess: true);
+    } on AuthException catch (e) {
+      return AuthResult(
+        isSuccess: false,
+        errorMessage: _mapSupabaseAuthError(e.message),
+      );
+    } catch (e) {
+      Logger.e('Error changing password: $e', tag: 'SupabaseAuthService');
+      return AuthResult(isSuccess: false, errorMessage: 'Unknown error');
+    }
+  }
+
+  @override
   Future<AuthResult> verifyEmail() async {
     // Supabase handles email verification through a link sent to the user's email
     // This method is a placeholder for compatibility
