@@ -4,6 +4,7 @@ import 'package:eventati_book/providers/providers.dart';
 import 'package:eventati_book/screens/event_wizard/wizard_factory.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/styles/text_styles.dart';
+import 'package:eventati_book/widgets/event_wizard/event_wizard_widgets.dart';
 
 class EventSelectionScreen extends StatefulWidget {
   const EventSelectionScreen({super.key});
@@ -23,95 +24,114 @@ class _EventSelectionScreenState extends State<EventSelectionScreen> {
         title: Text(AppConstants.appName, style: TextStyles.title),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
+      body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const SizedBox(height: 40),
-            const Text(
-              'What type of event are\nyou planning?',
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
+            // In-progress wizards section
+            const InProgressWizardsSection(),
+
+            // New event section
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const Text(
+                    'What type of event are\nyou planning?',
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 40),
+                  _buildEventButton(
+                    title: 'Business Event',
+                    onPressed: () {
+                      // Initialize the wizard provider
+                      Provider.of<WizardProvider>(
+                        context,
+                        listen: false,
+                      ).resetWizard();
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (context) => ChangeNotifierProvider(
+                                create: (_) => WizardProvider(),
+                                child: WizardFactory.createWizardScreen(
+                                  context,
+                                  'business',
+                                ),
+                              ),
+                        ),
+                      ).then((_) {
+                        // Refresh the screen when returning from the wizard
+                        setState(() {});
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  _buildEventButton(
+                    title: 'Wedding/Engagement',
+                    onPressed: () {
+                      // Initialize the wizard provider
+                      Provider.of<WizardProvider>(
+                        context,
+                        listen: false,
+                      ).resetWizard();
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (context) => ChangeNotifierProvider(
+                                create: (_) => WizardProvider(),
+                                child: WizardFactory.createWizardScreen(
+                                  context,
+                                  'wedding',
+                                ),
+                              ),
+                        ),
+                      ).then((_) {
+                        // Refresh the screen when returning from the wizard
+                        setState(() {});
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  _buildEventButton(
+                    title: 'Celebration',
+                    onPressed: () {
+                      // Initialize the wizard provider
+                      Provider.of<WizardProvider>(
+                        context,
+                        listen: false,
+                      ).resetWizard();
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (context) => ChangeNotifierProvider(
+                                create: (_) => WizardProvider(),
+                                child: WizardFactory.createWizardScreen(
+                                  context,
+                                  'celebration',
+                                ),
+                              ),
+                        ),
+                      ).then((_) {
+                        // Refresh the screen when returning from the wizard
+                        setState(() {});
+                      });
+                    },
+                  ),
+                ],
               ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 60),
-            _buildEventButton(
-              title: 'Business Event',
-              onPressed: () {
-                // Initialize the wizard provider
-                Provider.of<WizardProvider>(
-                  context,
-                  listen: false,
-                ).resetWizard();
-
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder:
-                        (context) => ChangeNotifierProvider(
-                          create: (_) => WizardProvider(),
-                          child: WizardFactory.createWizardScreen(
-                            context,
-                            'business',
-                          ),
-                        ),
-                  ),
-                );
-              },
-            ),
-            const SizedBox(height: 20),
-            _buildEventButton(
-              title: 'Wedding/Engagement',
-              onPressed: () {
-                // Initialize the wizard provider
-                Provider.of<WizardProvider>(
-                  context,
-                  listen: false,
-                ).resetWizard();
-
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder:
-                        (context) => ChangeNotifierProvider(
-                          create: (_) => WizardProvider(),
-                          child: WizardFactory.createWizardScreen(
-                            context,
-                            'wedding',
-                          ),
-                        ),
-                  ),
-                );
-              },
-            ),
-            const SizedBox(height: 20),
-            _buildEventButton(
-              title: 'Celebration',
-              onPressed: () {
-                // Initialize the wizard provider
-                Provider.of<WizardProvider>(
-                  context,
-                  listen: false,
-                ).resetWizard();
-
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder:
-                        (context) => ChangeNotifierProvider(
-                          create: (_) => WizardProvider(),
-                          child: WizardFactory.createWizardScreen(
-                            context,
-                            'celebration',
-                          ),
-                        ),
-                  ),
-                );
-              },
             ),
           ],
         ),

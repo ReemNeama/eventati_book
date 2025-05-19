@@ -134,6 +134,47 @@ class _EventWizardScreenState extends State<EventWizardScreen> {
             centerTitle: true,
             iconTheme: const IconThemeData(color: Colors.white),
             actions: [
+              // Save & Exit button
+              TextButton.icon(
+                icon: const Icon(Icons.save, color: Colors.white),
+                label: const Text(
+                  'Save & Exit',
+                  style: TextStyle(color: Colors.white),
+                ),
+                onPressed: () {
+                  // Show confirmation dialog
+                  showDialog(
+                    context: context,
+                    builder:
+                        (context) => AlertDialog(
+                          title: const Text('Save Progress'),
+                          content: const Text(
+                            'Do you want to save your progress and exit? '
+                            'You can continue later from the home screen.',
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: const Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context); // Close dialog
+                                // Update the event name before saving
+                                if (state.currentStep == 0) {
+                                  wizardProvider.updateEventName(
+                                    _eventNameController.text,
+                                  );
+                                }
+                                wizardProvider.saveAndExit(context);
+                              },
+                              child: const Text('Save & Exit'),
+                            ),
+                          ],
+                        ),
+                  );
+                },
+              ),
               // Supabase persistence status
               const Padding(
                 padding: EdgeInsets.only(right: 8.0),

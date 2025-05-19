@@ -14,3 +14,7 @@ export 'services_selection.dart';
 // Progress and suggestion widgets
 export 'suggestion_card.dart';
 export 'wizard_progress_indicator.dart';
+
+// In-progress wizard widgets
+export 'in_progress_wizard_card.dart';
+export 'in_progress_wizards_section.dart';

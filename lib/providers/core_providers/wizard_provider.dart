@@ -319,6 +319,24 @@ class WizardProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Save the current wizard state and exit
+  void saveAndExit(BuildContext context) {
+    if (_state == null) return;
+
+    // Ensure the state is marked as not completed
+    if (_state!.isCompleted) {
+      _state = _state!.copyWith(isCompleted: false);
+    }
+
+    // Save the current state
+    _saveState();
+
+    // Navigate back
+    Navigator.of(context).pop();
+
+    notifyListeners();
+  }
+
   /// Connect the wizard to all planning tools
   void _connectToPlanningTools(BuildContext context) {
     if (_state == null) return;
@@ -421,6 +439,64 @@ class WizardProvider extends ChangeNotifier {
       notifyListeners();
 
       return null;
+    }
+  }
+
+  /// Get all in-progress wizard states for the current user
+  Future<List<WizardState>> getInProgressWizards() async {
+    final List<WizardState> result = [];
+
+    try {
+      // If Supabase is enabled and we have a user ID, get states from Supabase
+      if (_useSupabase && _userId != null) {
+        final states = await _databaseService.getWizardStatesForUser(_userId!);
+
+        // Filter to only include in-progress states (not completed)
+        for (final state in states) {
+          if (!state.isCompleted) {
+            result.add(state);
+          }
+        }
+
+        debugPrint(
+          'Loaded ${result.length} in-progress wizard states from Supabase',
+        );
+      }
+
+      // Also check SharedPreferences for backward compatibility
+      final prefs = await SharedPreferences.getInstance();
+      final allKeys = prefs.getKeys();
+
+      // Filter keys that start with 'wizard_'
+      final wizardKeys =
+          allKeys.where((key) => key.startsWith('wizard_')).toList();
+
+      for (final key in wizardKeys) {
+        final jsonData = prefs.getString(key);
+        if (jsonData != null) {
+          try {
+            final jsonMap = jsonDecode(jsonData) as Map<String, dynamic>;
+            final state = WizardState.fromJson(jsonMap);
+
+            if (state != null && !state.isCompleted) {
+              // Check if this state is already in the result list (from Supabase)
+              final isDuplicate = result.any((s) => s.id == state.id);
+
+              if (!isDuplicate) {
+                result.add(state);
+              }
+            }
+          } catch (e) {
+            debugPrint('Error parsing wizard state from SharedPreferences: $e');
+          }
+        }
+      }
+
+      return result;
+    } catch (e) {
+      _error = 'Failed to get in-progress wizards: $e';
+      notifyListeners();
+      return [];
     }
   }
 }
