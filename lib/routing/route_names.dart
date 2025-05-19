@@ -94,6 +94,9 @@ class RouteNames {
   static const String searchResults = '/search/results';
   static const String advancedSearch = '/search/advanced';
 
+  // Activity routes
+  static const String activityHistory = '/activity/history';
+
   // Dashboard routes
   static const String mainDashboard = '/dashboard';
 

@@ -54,3 +54,6 @@ export 'demo/demo_screens.dart';
 
 // Search screens
 export 'search/global_search_screen.dart';
+
+// Activity screens
+export 'activity/activity_screens.dart';

@@ -435,6 +435,11 @@ class AppRouter {
           builder: (context) => const BiometricSettingsScreen(),
         );
 
+      case RouteNames.activityHistory:
+        return MaterialPageRoute(
+          builder: (context) => const ActivityHistoryScreen(),
+        );
+
       case RouteNames.budgetOverview:
         // For now, we'll redirect to the user events screen
         return MaterialPageRoute(

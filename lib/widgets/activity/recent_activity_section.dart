@@ -63,11 +63,9 @@ class RecentActivitySection extends StatelessWidget {
                 if (showSeeAllButton && activities.length > maxActivities)
                   TextButton(
                     onPressed: () {
-                      // TODO: Add route for activity history
                       NavigationUtils.navigateToNamed(
                         context,
-                        RouteNames
-                            .profile, // Temporary, should be activityHistory
+                        RouteNames.activityHistory,
                       );
                     },
                     child: const Text('See All'),
