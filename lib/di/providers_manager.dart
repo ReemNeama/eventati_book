@@ -34,6 +34,7 @@ class ProvidersManager {
     ChangeNotifierProvider(create: (_) => WizardProvider()),
     ChangeNotifierProvider(create: (_) => OnboardingProvider()),
     ChangeNotifierProvider(create: (_) => EventProvider()),
+    ChangeNotifierProvider(create: (_) => AccessibilityProvider()),
 
     // Feature providers with dependencies
     ChangeNotifierProxyProvider<WizardProvider, MilestoneProvider>(
@@ -125,5 +126,8 @@ class ProvidersManager {
 
     // Initialize social sharing provider
     Provider.of<SocialSharingProvider>(context, listen: false);
+
+    // Initialize accessibility provider
+    Provider.of<AccessibilityProvider>(context, listen: false);
   }
 }

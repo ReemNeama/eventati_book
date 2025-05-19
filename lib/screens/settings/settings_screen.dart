@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/screens/settings/notification_settings_screen.dart';
 import 'package:eventati_book/screens/settings/pending_shares_screen.dart';
+import 'package:eventati_book/screens/settings/accessibility_settings_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 
@@ -82,6 +83,19 @@ class SettingsScreen extends StatelessWidget {
                 'Language settings not implemented yet',
               );
             }),
+            _buildListTile(
+              context,
+              'Accessibility',
+              Icons.accessibility_new,
+              () {
+                // Navigate to accessibility settings screen
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const AccessibilitySettingsScreen(),
+                  ),
+                );
+              },
+            ),
           ]),
           _buildSection(context, 'About', [
             _buildListTile(context, 'About Eventati Book', Icons.info, () {

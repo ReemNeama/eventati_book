@@ -30,6 +30,9 @@ export 'common/scroll_to_top_wrapper.dart'; // Wrapper that adds a back to top b
 export 'common/async_button.dart'; // Button that shows loading state during async operations
 export 'common/progress_indicator_widget.dart'; // Customizable progress indicator for long operations
 export 'common/toast_message.dart'; // Customizable toast message for confirmations
+export 'common/accessible_button.dart'; // Accessible button with semantic labels and minimum touch target size
+export 'common/accessible_text_field.dart'; // Accessible text field with semantic labels
+export 'common/minimum_touch_target.dart'; // Widget that ensures minimum touch target size
 
 // -------------------------
 // AUTHENTICATION WIDGETS

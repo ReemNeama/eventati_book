@@ -6,6 +6,10 @@ import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 
+// Import providers
+import 'package:eventati_book/providers/core_providers/accessibility_provider.dart';
+import 'package:eventati_book/utils/ui/accessibility_utils.dart';
+
 // Import app modules
 import 'package:eventati_book/styles/app_theme.dart';
 import 'package:eventati_book/routing/routing.dart';
@@ -164,22 +168,71 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Eventati Book',
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: _themeMode,
-      // Use the navigation service's navigator key
-      navigatorKey: serviceLocator.navigationService.navigatorKey,
-      // Define named routes for the app
-      initialRoute: RouteNames.splash,
-      // Use AppRouter for routes
-      routes: AppRouter.routes,
-      onGenerateRoute: AppRouter.onGenerateRoute,
-      onUnknownRoute: AppRouter.onUnknownRoute,
-      // Add route observer for analytics
-      navigatorObservers: [...RouteAnalytics.instance.observers],
+    return Consumer<AccessibilityProvider>(
+      builder: (context, accessibilityProvider, child) {
+        // Get the appropriate theme based on accessibility settings
+        ThemeData theme =
+            _themeMode == ThemeMode.light
+                ? AppTheme.lightTheme
+                : AppTheme.darkTheme;
+
+        // Apply high contrast mode if enabled
+        if (accessibilityProvider.highContrastEnabled) {
+          theme = AccessibilityUtils.getHighContrastTheme(
+            _themeMode == ThemeMode.dark,
+          );
+        }
+
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Eventati Book',
+          theme: theme,
+          darkTheme:
+              accessibilityProvider.highContrastEnabled
+                  ? AccessibilityUtils.getHighContrastTheme(true)
+                  : AppTheme.darkTheme,
+          themeMode: _themeMode,
+          // Use the navigation service's navigator key
+          navigatorKey: serviceLocator.navigationService.navigatorKey,
+          // Define named routes for the app
+          initialRoute: RouteNames.splash,
+          // Use AppRouter for routes
+          routes: AppRouter.routes,
+          onGenerateRoute: AppRouter.onGenerateRoute,
+          onUnknownRoute: AppRouter.onUnknownRoute,
+          // Add route observer for analytics
+          navigatorObservers: [...RouteAnalytics.instance.observers],
+          // Apply text scaling based on accessibility settings
+          builder: (context, child) {
+            // Get the appropriate text scale factor
+            final textScaler =
+                accessibilityProvider.useSystemTextScale
+                    ? MediaQuery.of(context).textScaler
+                    : TextScaler.linear(accessibilityProvider.textScaleFactor);
+
+            // Apply reduced animations if enabled
+            final useReducedMotion = accessibilityProvider.reduceAnimations;
+
+            return MediaQuery(
+              data: MediaQuery.of(context).copyWith(
+                textScaler: textScaler,
+                platformBrightness:
+                    _themeMode == ThemeMode.dark
+                        ? Brightness.dark
+                        : Brightness.light,
+              ),
+              child: AnimatedTheme(
+                data: theme,
+                duration:
+                    useReducedMotion
+                        ? Duration.zero
+                        : const Duration(milliseconds: 300),
+                child: child!,
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }

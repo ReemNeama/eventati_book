@@ -38,7 +38,7 @@
   - [ ] Standardize button styles and sizes
   - [ ] Implement consistent card and list item designs
   - [ ] Ensure consistent spacing and padding
-  - [ ] Check color contrast for accessibility
+  - [x] Check color contrast for accessibility ✅
   - [ ] Add visual feedback for user interactions
 
 - [x] Improve navigation and user flows ✅ Completed
@@ -54,12 +54,12 @@
 - [x] Improve feedback mechanisms ✅ Completed
   *All tasks moved to eventati_book_completed_tasks.md*
 
-- [ ] Enhance accessibility features
-  - [ ] Add semantic labels to interactive elements
-  - [ ] Support dynamic text sizing
-  - [ ] Ensure adequate touch targets (48x48dp)
-  - [ ] Implement high contrast mode
-  - [ ] Add keyboard navigation support
+- [x] Enhance accessibility features
+  - [x] Add semantic labels to interactive elements
+  - [x] Support dynamic text sizing
+  - [x] Ensure adequate touch targets (48x48dp)
+  - [x] Implement high contrast mode
+  - [x] Add keyboard navigation support
 
 - [ ] Improve key screens
   - [ ] Homepage
@@ -90,19 +90,19 @@
     - [x] Add tooltips for unclear features ✅
     - [ ] Implement consistent error messages
     - [x] Add loading indicators for async operations ✅
-    - [ ] Fix obvious contrast issues
+    - [x] Fix obvious contrast issues ✅
   - [ ] Phase 2: Core Improvements (2-4 weeks)
     - [x] Implement progress indicators for multi-step flows ✅
     - [x] Add "quick actions" to the homepage ✅
     - [x] Enhance empty states with guidance ✅
     - [x] Implement toast messages for feedback ✅
-    - [ ] Add semantic labels for accessibility
+    - [x] Add semantic labels for accessibility ✅
   - [ ] Phase 3: Advanced Enhancements (4-8 weeks)
     - [ ] Implement filtering and sorting for services
     - [ ] Add personalization features
     - [ ] Optimize for landscape mode
     - [ ] Implement comparison tools
-    - [ ] Add advanced accessibility features
+    - [x] Add advanced accessibility features ✅
 
 ### Week 3: Final Polish
 - [x] Performance optimization ✅ Completed

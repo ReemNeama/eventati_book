@@ -6,3 +6,4 @@ export 'wizard_provider.dart';
 export 'onboarding_provider.dart';
 export 'event_provider.dart';
 export 'feature_provider.dart';
+export 'accessibility_provider.dart';
