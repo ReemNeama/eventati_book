@@ -329,6 +329,15 @@ This file contains all completed tasks from the Eventati Book development tracke
   - [x] Ensured consistent spacing and padding with Spacing and StandardPadding components
   - [x] Added visual feedback for user interactions (hover, press, focus states)
 
+### Event Creation Improvements (July 11, 2024)
+- [x] Implement templates for common event types
+  - [x] Created detailed_event_templates.dart with predefined templates for different event types
+  - [x] Enhanced EventTemplate model to support detailed templates with additional fields
+  - [x] Created TemplateSelectionWidget for displaying and selecting templates
+  - [x] Updated WizardState model to track selected templates
+  - [x] Enhanced WizardProvider with template-related methods
+  - [x] Updated EventWizardScreen to include a template selection step
+
 ## June 2024 Completed Tasks
 
 ### Supabase Migration

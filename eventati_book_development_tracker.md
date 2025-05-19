@@ -67,7 +67,7 @@
     - [x] Add biometric authentication option
   - [ ] Event Creation
     - [x] Add ability to save progress and return later
-    - [ ] Implement templates for common event types
+    - [x] Implement templates for common event types
     - [ ] Add visual indicators of completion status
     - [ ] Include example images/descriptions for options
   - [ ] Service Browsing
