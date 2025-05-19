@@ -5,3 +5,4 @@ library;
 
 export 'notification_badge.dart';
 export 'notification_center_new.dart';
+export 'notification_feed_new.dart';

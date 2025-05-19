@@ -150,6 +150,23 @@ export 'homepage/homepage_widgets.dart'; // Barrel file for homepage widgets
 // - QuickActionButton: Button for quick actions on the homepage
 
 // -------------------------
+// ACTIVITY WIDGETS
+// -------------------------
+// Widgets for displaying user activities and recent actions
+export 'activity/activity_widgets.dart'; // Barrel file for activity widgets
+// Includes:
+// - RecentActivitySection: Section displaying recent user activities
+
+// -------------------------
+// SEARCH WIDGETS
+// -------------------------
+// Widgets for search functionality
+export 'search/search_widgets.dart'; // Barrel file for search widgets
+// Includes:
+// - SearchResultCard: Card displaying search results
+// - QuickSearchBar: Search bar for quick access
+
+// -------------------------
 // SPECIAL NOTES
 // -------------------------
 // Note: Messaging widgets are exported through event_planning_widgets.dart

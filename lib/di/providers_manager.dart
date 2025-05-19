@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:nested/nested.dart';
 import 'package:eventati_book/providers/providers.dart';
+import 'package:eventati_book/services/supabase/database/activity_database_service.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// Manager for registering and accessing providers
 ///
@@ -87,6 +89,17 @@ class ProvidersManager {
 
     // Sharing providers
     ChangeNotifierProvider(create: (_) => SocialSharingProvider(), lazy: true),
+
+    // Activity tracking providers
+    ChangeNotifierProvider(
+      create:
+          (context) => RecentActivityProvider(
+            activityDatabaseService: ActivityDatabaseService(
+              supabase: Supabase.instance.client,
+            ),
+          ),
+      lazy: true,
+    ),
   ];
 
   /// Initialize all providers that need initialization
@@ -129,5 +142,15 @@ class ProvidersManager {
 
     // Initialize accessibility provider
     Provider.of<AccessibilityProvider>(context, listen: false);
+
+    // Initialize recent activity provider if user is authenticated
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    if (authProvider.status == AuthStatus.authenticated &&
+        authProvider.currentUser != null) {
+      Provider.of<RecentActivityProvider>(
+        context,
+        listen: false,
+      ).initialize(authProvider.currentUser!.id);
+    }
   }
 }

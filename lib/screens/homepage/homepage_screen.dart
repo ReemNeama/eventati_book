@@ -65,13 +65,29 @@ class _HomepageScreenState extends State<HomepageScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Welcome section
-              Text('Welcome back!', style: TextStyles.title.copyWith()),
+              Consumer<AuthProvider>(
+                builder: (context, authProvider, _) {
+                  final userName = authProvider.currentUser?.name;
+                  return Text(
+                    'Welcome back${userName != null && userName.isNotEmpty ? ', $userName' : ''}!',
+                    style: TextStyles.title.copyWith(),
+                  );
+                },
+              ),
               const SizedBox(height: 4),
               Text(
                 'Plan your perfect event with us',
                 style: TextStyles.bodyLarge,
               ),
-              const SizedBox(height: AppConstants.largePadding),
+              const SizedBox(height: AppConstants.mediumPadding),
+
+              // Search bar
+              const QuickSearchBar(
+                placeholder: 'Search for venues, services, or events...',
+                showSearchIcon: true,
+                showFilterIcon: true,
+              ),
+              const SizedBox(height: AppConstants.mediumPadding),
 
               // Create new event button
               InkWell(
@@ -122,6 +138,40 @@ class _HomepageScreenState extends State<HomepageScreen> {
               ),
               const SizedBox(
                 height: AppConstants.largePadding + AppConstants.smallPadding,
+              ),
+
+              // Continue where you left off section
+              Consumer<AuthProvider>(
+                builder: (context, authProvider, _) {
+                  // Only show for authenticated users
+                  if (authProvider.status != AuthStatus.authenticated) {
+                    return const SizedBox.shrink();
+                  }
+
+                  return const Column(
+                    children: [
+                      RecentActivitySection(maxActivities: 2),
+                      SizedBox(height: AppConstants.largePadding),
+                    ],
+                  );
+                },
+              ),
+
+              // Notification feed section
+              Consumer<AuthProvider>(
+                builder: (context, authProvider, _) {
+                  // Only show for authenticated users
+                  if (authProvider.status != AuthStatus.authenticated) {
+                    return const SizedBox.shrink();
+                  }
+
+                  return const Column(
+                    children: [
+                      NotificationFeedNew(maxNotifications: 2),
+                      SizedBox(height: AppConstants.largePadding),
+                    ],
+                  );
+                },
               ),
 
               // Upcoming events section

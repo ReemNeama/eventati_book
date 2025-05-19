@@ -10,3 +10,4 @@ export 'comparison_saving_provider.dart';
 export 'calendar_provider.dart';
 export 'email_preferences_provider.dart';
 export 'social_sharing_provider.dart';
+export 'recent_activity_provider.dart';

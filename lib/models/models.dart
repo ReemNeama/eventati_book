@@ -77,6 +77,13 @@ export 'notification_models/notification_topic.dart'; // Notification topics
 export 'calendar_models/recurring_event.dart'; // Recurring event model
 
 // -------------------------
+// ACTIVITY MODELS
+// -------------------------
+// Models for tracking user activities and recent actions
+export 'activity_models/activity_models.dart'; // Barrel file for activity models
+export 'activity_models/recent_activity.dart'; // Recent user activity
+
+// -------------------------
 // LEGACY EXPORTS
 // -------------------------
 // Backward compatibility re-exports (will be removed in future)
