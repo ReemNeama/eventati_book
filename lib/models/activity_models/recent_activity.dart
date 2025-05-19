@@ -1,5 +1,3 @@
-import 'package:eventati_book/utils/database/db_timestamp.dart';
-
 /// Types of activities that can be tracked
 enum ActivityType {
   /// Viewed an event
@@ -116,7 +114,7 @@ class RecentActivity {
       'entityType': entityType,
       'route': route,
       'routeParams': routeParams,
-      'timestamp': timestamp.toIso8601String(),
+      'timestamp': timestamp.toString(),
     };
   }
 
@@ -131,7 +129,7 @@ class RecentActivity {
       'entity_type': entityType,
       'route': route,
       'route_params': routeParams,
-      'timestamp': DbTimestamp.fromDate(timestamp).toIso8601String(),
+      'timestamp': timestamp.toString(),
     };
   }
 
