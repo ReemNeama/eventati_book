@@ -73,7 +73,7 @@
   - [ ] Service Browsing
     - [ ] Add filtering and sorting options
     - [ ] Implement comparison feature
-    - [ ] Add "Recently Viewed" section
+    - [x] Add "Recently Viewed" section
     - [ ] Enhance service cards with more details
 - [x] Implement UI/UX Polish ✅ Completed
   *All tasks moved to eventati_book_completed_tasks.md*
@@ -97,6 +97,7 @@
     - [ ] Optimize for landscape mode
     - [ ] Implement comparison tools
     - [x] Add advanced accessibility features ✅
+    - [x] Add "Recently Viewed" section ✅
 
 ### Week 3: Final Polish
 - [x] Performance optimization ✅ Completed
