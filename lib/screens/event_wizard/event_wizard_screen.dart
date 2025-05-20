@@ -204,6 +204,7 @@ class _EventWizardScreenState extends State<EventWizardScreen> {
                     currentStep: state.currentStep,
                     totalSteps: state.totalSteps,
                     showStepLabels: true,
+                    showFieldCompletionStatus: true,
                     stepLabels: const [
                       'Event Details',
                       'Template',

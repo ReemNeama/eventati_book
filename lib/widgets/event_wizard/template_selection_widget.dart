@@ -4,6 +4,7 @@ import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/styles/text_styles.dart';
 import 'package:eventati_book/utils/utils.dart';
+import 'package:eventati_book/widgets/event_wizard/example_preview_widget.dart';
 
 /// A widget for selecting a detailed event template
 class TemplateSelectionWidget extends StatelessWidget {
@@ -197,6 +198,29 @@ class TemplateCard extends StatelessWidget {
                     ),
                   const SizedBox(height: 16),
 
+                  // Example preview button
+                  if (template.detailedDescription != null) ...[
+                    OutlinedButton.icon(
+                      onPressed: () {
+                        _showExamplePreview(context, template);
+                      },
+                      icon: const Icon(Icons.preview),
+                      label: const Text('View Example'),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: primaryColor,
+                        side: BorderSide(color: primaryColor),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                  ],
+
                   // Select button
                   ElevatedButton(
                     onPressed: () => onSelect(template),
@@ -295,6 +319,54 @@ class TemplateCard extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  /// Show example preview dialog
+  void _showExamplePreview(BuildContext context, EventTemplate template) {
+    showDialog(
+      context: context,
+      builder:
+          (context) => Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Title
+                  Text(
+                    '${template.name} Example',
+                    style: TextStyles.subtitle.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Example preview
+                  ExamplePreviewWidget(
+                    title: template.name,
+                    description:
+                        template.detailedDescription ?? template.description,
+                    imageUrl: template.imageUrl,
+                    fallbackIcon: template.icon,
+                    initiallyExpanded: true,
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Close button
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text('Close'),
+                  ),
+                ],
+              ),
+            ),
+          ),
     );
   }
 }

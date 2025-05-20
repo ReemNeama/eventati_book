@@ -65,11 +65,11 @@
     - [x] Add clear password requirements during registration
     - [x] Implement "Remember me" option
     - [x] Add biometric authentication option
-  - [ ] Event Creation
+  - [x] Event Creation
     - [x] Add ability to save progress and return later
     - [x] Implement templates for common event types
-    - [ ] Add visual indicators of completion status
-    - [ ] Include example images/descriptions for options
+    - [x] Add visual indicators of completion status
+    - [x] Include example images/descriptions for options
   - [ ] Service Browsing
     - [ ] Add filtering and sorting options
     - [ ] Implement comparison feature

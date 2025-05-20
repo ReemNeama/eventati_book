@@ -15,6 +15,8 @@ export 'template_selection_widget.dart';
 // Progress and suggestion widgets
 export 'suggestion_card.dart';
 export 'wizard_progress_indicator.dart';
+export 'field_completion_indicator.dart';
+export 'example_preview_widget.dart';
 
 // In-progress wizard widgets
 export 'in_progress_wizard_card.dart';

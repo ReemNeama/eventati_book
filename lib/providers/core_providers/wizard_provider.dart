@@ -59,6 +59,9 @@ class WizardProvider extends ChangeNotifier {
   /// Whether to use Supabase for persistence
   bool _useSupabase = false;
 
+  /// Map to track completion status of individual fields
+  final Map<String, bool> _fieldCompletionStatus = {};
+
   /// Database service for wizard state
   final WizardStateDatabaseService _databaseService =
       WizardStateDatabaseService();
@@ -79,6 +82,61 @@ class WizardProvider extends ChangeNotifier {
   set useSupabase(bool value) {
     _useSupabase = value;
     notifyListeners();
+  }
+
+  /// Get the field completion status map
+  Map<String, bool> get fieldCompletionStatus =>
+      Map.unmodifiable(_fieldCompletionStatus);
+
+  /// Check if a specific field is completed
+  bool isFieldCompleted(String fieldId) {
+    return _fieldCompletionStatus[fieldId] ?? false;
+  }
+
+  /// Update the completion status of a field
+  void updateFieldCompletionStatus(String fieldId, bool isCompleted) {
+    _fieldCompletionStatus[fieldId] = isCompleted;
+    notifyListeners();
+  }
+
+  /// Get the completion percentage for a specific step
+  double getStepCompletionPercentage(int step) {
+    if (_state == null) return 0.0;
+
+    // Get all fields for this step
+    final fieldsForStep = _getFieldsForStep(step);
+    if (fieldsForStep.isEmpty) return 0.0;
+
+    // Count completed fields
+    int completedFields = 0;
+    for (final field in fieldsForStep) {
+      if (isFieldCompleted(field)) {
+        completedFields++;
+      }
+    }
+
+    return (completedFields / fieldsForStep.length) * 100;
+  }
+
+  /// Get all fields for a specific step
+  List<String> _getFieldsForStep(int step) {
+    switch (step) {
+      case 0: // Event Details
+        return ['eventName', 'eventType'];
+      case 1: // Template
+        return ['template'];
+      case 2: // Date & Guests
+        return ['eventDate', 'guestCount'];
+      case 3: // Services
+        return _state?.selectedServices.keys
+                .map((service) => 'service_$service')
+                .toList() ??
+            [];
+      case 4: // Review
+        return ['review'];
+      default:
+        return [];
+    }
   }
 
   /// Initialize with user and event IDs for Supabase persistence
@@ -112,6 +170,8 @@ class WizardProvider extends ChangeNotifier {
   Future<void> initializeWizard(EventTemplate template) async {
     _isLoading = true;
     _error = null;
+    // Clear field completion status
+    _fieldCompletionStatus.clear();
     notifyListeners();
 
     try {
@@ -120,6 +180,8 @@ class WizardProvider extends ChangeNotifier {
 
       if (savedState != null) {
         _state = savedState;
+        // Initialize field completion status based on the loaded state
+        _initializeFieldCompletionStatus();
       } else {
         // Create a new state with the template
         _state = WizardState(template: template);
@@ -134,11 +196,50 @@ class WizardProvider extends ChangeNotifier {
     }
   }
 
+  /// Initialize field completion status based on the current state
+  void _initializeFieldCompletionStatus() {
+    if (_state == null) return;
+
+    // Event Details
+    updateFieldCompletionStatus('eventName', _state!.eventName.isNotEmpty);
+    updateFieldCompletionStatus(
+      'eventType',
+      _state!.selectedEventType != null &&
+          _state!.selectedEventType!.isNotEmpty,
+    );
+
+    // Template
+    updateFieldCompletionStatus(
+      'template',
+      _state!.selectedTemplateId != null &&
+          _state!.selectedTemplateId!.isNotEmpty,
+    );
+
+    // Date & Guests
+    updateFieldCompletionStatus('eventDate', _state!.eventDate != null);
+    updateFieldCompletionStatus(
+      'guestCount',
+      _state!.guestCount != null && _state!.guestCount! > 0,
+    );
+
+    // Services
+    for (final entry in _state!.selectedServices.entries) {
+      updateFieldCompletionStatus('service_${entry.key}', entry.value);
+    }
+
+    // Review is always considered complete if we reach it
+    if (_state!.currentStep >= 4) {
+      updateFieldCompletionStatus('review', true);
+    }
+  }
+
   /// Update the event name
   void updateEventName(String name) {
     if (_state == null) return;
 
     _state = _state!.copyWith(eventName: name);
+    // Update field completion status
+    updateFieldCompletionStatus('eventName', name.isNotEmpty);
     _saveState();
     notifyListeners();
   }
@@ -148,6 +249,8 @@ class WizardProvider extends ChangeNotifier {
     if (_state == null) return;
 
     _state = _state!.copyWith(selectedEventType: type);
+    // Update field completion status
+    updateFieldCompletionStatus('eventType', type.isNotEmpty);
     _saveState();
     notifyListeners();
   }
@@ -157,6 +260,8 @@ class WizardProvider extends ChangeNotifier {
     if (_state == null) return;
 
     _state = _state!.copyWith(selectedTemplateId: templateId);
+    // Update field completion status
+    updateFieldCompletionStatus('template', templateId.isNotEmpty);
     _saveState();
     notifyListeners();
   }
@@ -239,6 +344,8 @@ class WizardProvider extends ChangeNotifier {
     if (_state == null) return;
 
     _state = _state!.copyWith(eventDate: date);
+    // Update field completion status
+    updateFieldCompletionStatus('eventDate', true);
     _saveState();
     notifyListeners();
   }
@@ -248,6 +355,8 @@ class WizardProvider extends ChangeNotifier {
     if (_state == null) return;
 
     _state = _state!.copyWith(guestCount: count);
+    // Update field completion status
+    updateFieldCompletionStatus('guestCount', count > 0);
     _saveState();
     notifyListeners();
   }
@@ -260,6 +369,8 @@ class WizardProvider extends ChangeNotifier {
     updatedServices[service] = selected;
 
     _state = _state!.copyWith(selectedServices: updatedServices);
+    // Update field completion status for this service
+    updateFieldCompletionStatus('service_$service', selected);
     _saveState();
     notifyListeners();
   }
