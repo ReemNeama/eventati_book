@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/services/services.dart';
-import 'package:eventati_book/providers/auth/auth_provider.dart';
+import 'package:eventati_book/providers/core_providers/auth_provider.dart';
 
 /// Provider for managing saved comparisons
 class ComparisonSavingProvider extends ChangeNotifier {

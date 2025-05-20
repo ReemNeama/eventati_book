@@ -1,5 +1,3 @@
-import 'package:eventati_book/models/models.dart';
-
 /// A model representing a saved comparison
 class SavedComparison {
   /// The unique ID of the saved comparison

@@ -5,7 +5,6 @@ import 'package:eventati_book/providers/providers.dart';
 import 'package:provider/provider.dart';
 import 'package:eventati_book/routing/routing.dart';
 import 'package:eventati_book/widgets/widgets.dart';
-import 'package:eventati_book/services/services.dart';
 
 class PhotographerListScreen extends StatefulWidget {
   const PhotographerListScreen({super.key});
