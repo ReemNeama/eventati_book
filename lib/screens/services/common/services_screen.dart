@@ -6,6 +6,7 @@ import 'package:eventati_book/screens/services/planner/planner_list_screen.dart'
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
+import 'package:eventati_book/widgets/services/recently_viewed/recently_viewed_section.dart';
 
 /// Services screen that provides access to all service categories
 /// (venues, catering, photographers, planners)
@@ -64,13 +65,27 @@ class _ServicesScreenState extends State<ServicesScreen>
           ],
         ),
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: const [
-          VenueListScreen(),
-          CateringListScreen(),
-          PhotographerListScreen(),
-          PlannerListScreen(),
+      body: Column(
+        children: [
+          // Recently viewed services section
+          const RecentlyViewedSection(
+            title: 'Recently Viewed Services',
+            maxServices: 5,
+            showSeeAllButton: true,
+          ),
+
+          // Tab content
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: const [
+                VenueListScreen(),
+                CateringListScreen(),
+                PhotographerListScreen(),
+                PlannerListScreen(),
+              ],
+            ),
+          ),
         ],
       ),
     );

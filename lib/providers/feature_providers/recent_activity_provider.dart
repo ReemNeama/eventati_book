@@ -86,6 +86,36 @@ class RecentActivityProvider extends ChangeNotifier {
     }
   }
 
+  /// Clear only recently viewed services
+  Future<void> clearRecentlyViewedHistory(String userId) async {
+    _setLoading(true);
+    try {
+      // Delete all viewed service activities from the database
+      await _activityDatabaseService.deleteActivitiesByType(
+        userId,
+        ActivityType.viewedService.toString().split('.').last,
+      );
+
+      // Update local list by removing viewed services
+      _recentActivities =
+          _recentActivities
+              .where((activity) => activity.type != ActivityType.viewedService)
+              .toList();
+
+      _errorMessage = null;
+      notifyListeners();
+    } catch (e) {
+      Logger.e(
+        'Error clearing recently viewed history: $e',
+        tag: 'RecentActivityProvider',
+      );
+      _errorMessage = 'Failed to clear recently viewed history';
+      notifyListeners();
+    } finally {
+      _setLoading(false);
+    }
+  }
+
   /// Set loading state
   void _setLoading(bool loading) {
     _isLoading = loading;

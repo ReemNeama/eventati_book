@@ -13,8 +13,8 @@ import 'package:eventati_book/widgets/details/chip_group.dart';
 import 'package:eventati_book/widgets/common/image_gallery.dart';
 import 'package:eventati_book/providers/providers.dart';
 import 'package:provider/provider.dart';
-
 import 'package:eventati_book/routing/routing.dart';
+import 'package:uuid/uuid.dart';
 
 class VenueDetailsScreen extends StatefulWidget {
   final Venue venue;
@@ -125,6 +125,40 @@ class _VenueDetailsScreenState extends State<VenueDetailsScreen>
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _loadVenueImages();
+
+    // Track service view
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _trackServiceView();
+    });
+  }
+
+  /// Track that this service was viewed
+  void _trackServiceView() {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final activityProvider = Provider.of<RecentActivityProvider>(
+      context,
+      listen: false,
+    );
+
+    // Only track if user is logged in
+    if (authProvider.user == null) return;
+
+    // Create activity
+    final activity = RecentActivity(
+      id: const Uuid().v4(),
+      userId: authProvider.user!.id,
+      type: ActivityType.viewedService,
+      title: widget.venue.name,
+      description: widget.venue.description,
+      entityId: widget.venue.name, // Using name as ID for now
+      entityType: 'venue',
+      route: RouteNames.venueDetails,
+      routeParams: {'venueId': widget.venue.name},
+      timestamp: DateTime.now(),
+    );
+
+    // Add activity
+    activityProvider.addActivity(activity);
   }
 
   /// Load venue images from storage

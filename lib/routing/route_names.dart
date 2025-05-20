@@ -59,6 +59,7 @@ class RouteNames {
   static const String plannerList = '/services/planners/list';
   static const String plannerDetails = '/services/planners/details';
   static const String serviceComparison = '/services/comparison';
+  static const String recentlyViewedServices = '/services/recently-viewed';
 
   // Event routes
   static const String userEvents = '/events';

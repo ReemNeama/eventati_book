@@ -440,6 +440,11 @@ class AppRouter {
           builder: (context) => const ActivityHistoryScreen(),
         );
 
+      case RouteNames.recentlyViewedServices:
+        return MaterialPageRoute(
+          builder: (context) => const RecentlyViewedScreen(),
+        );
+
       case RouteNames.budgetOverview:
         // For now, we'll redirect to the user events screen
         return MaterialPageRoute(

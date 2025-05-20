@@ -14,6 +14,7 @@ import 'package:eventati_book/routing/routing.dart';
 import 'package:eventati_book/providers/providers.dart';
 import 'package:provider/provider.dart';
 import 'package:eventati_book/styles/text_styles.dart';
+import 'package:uuid/uuid.dart';
 
 class PhotographerDetailsScreen extends StatefulWidget {
   final Photographer photographer;
@@ -165,6 +166,40 @@ class _PhotographerDetailsScreenState extends State<PhotographerDetailsScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+
+    // Track service view
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _trackServiceView();
+    });
+  }
+
+  /// Track that this service was viewed
+  void _trackServiceView() {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final activityProvider = Provider.of<RecentActivityProvider>(
+      context,
+      listen: false,
+    );
+
+    // Only track if user is logged in
+    if (authProvider.user == null) return;
+
+    // Create activity
+    final activity = RecentActivity(
+      id: const Uuid().v4(),
+      userId: authProvider.user!.id,
+      type: ActivityType.viewedService,
+      title: widget.photographer.name,
+      description: widget.photographer.description,
+      entityId: widget.photographer.name, // Using name as ID for now
+      entityType: 'photographer',
+      route: RouteNames.photographerDetails,
+      routeParams: {'photographerId': widget.photographer.name},
+      timestamp: DateTime.now(),
+    );
+
+    // Add activity
+    activityProvider.addActivity(activity);
   }
 
   @override

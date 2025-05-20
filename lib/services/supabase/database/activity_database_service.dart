@@ -82,6 +82,43 @@ class ActivityDatabaseService {
     }
   }
 
+  /// Delete a specific activity by ID
+  Future<void> deleteActivity(String activityId) async {
+    try {
+      await _supabase.from(_collection).delete().eq('id', activityId);
+
+      Logger.i('Activity deleted: $activityId', tag: 'ActivityDatabaseService');
+    } catch (e) {
+      Logger.e('Error deleting activity: $e', tag: 'ActivityDatabaseService');
+      rethrow;
+    }
+  }
+
+  /// Delete activities by type for a user
+  Future<void> deleteActivitiesByType(
+    String userId,
+    String activityType,
+  ) async {
+    try {
+      await _supabase
+          .from(_collection)
+          .delete()
+          .eq('user_id', userId)
+          .eq('type', activityType);
+
+      Logger.i(
+        'Activities of type $activityType deleted for user: $userId',
+        tag: 'ActivityDatabaseService',
+      );
+    } catch (e) {
+      Logger.e(
+        'Error deleting activities by type: $e',
+        tag: 'ActivityDatabaseService',
+      );
+      rethrow;
+    }
+  }
+
   /// Convert string to ActivityType
   ActivityType _activityTypeFromString(String typeStr) {
     switch (typeStr) {
