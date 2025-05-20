@@ -251,16 +251,47 @@ class _VenueListScreenState extends State<VenueListScreen> {
             return TooltipUtils.infoTooltip(
               message: 'View details for ${venue.name}',
               child: ServiceCard(
+                // Basic info
                 name: venue.name,
                 description: venue.description,
                 rating: venue.rating,
                 imageUrl: venue.imageUrl,
+
+                // Recommendation and comparison
                 isRecommended: isRecommended,
                 recommendationReason: recommendationReason,
                 isCompareSelected: comparisonProvider.isServiceSelected(venue),
                 onCompareToggle: (_) {
                   comparisonProvider.toggleServiceSelection(venue);
                 },
+
+                // Enhanced features
+                price: venue.pricePerEvent,
+                priceType: PriceType.perEvent,
+                tags: venue.venueTypes,
+                minCapacity: venue.minCapacity,
+                maxCapacity: venue.maxCapacity,
+                isAvailable: true,
+                isFeatured: venue.name == 'Historic Manor House', // Example
+                // Quick actions
+                onShare: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Share functionality coming soon!'),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                },
+                onSave: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Save functionality coming soon!'),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                },
+
+                // Navigation
                 onTap: () {
                   NavigationUtils.navigateToNamed(
                     context,
@@ -270,41 +301,6 @@ class _VenueListScreenState extends State<VenueListScreen> {
                     ), // Using name as ID for now
                   );
                 },
-                additionalInfo: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 8),
-                    Wrap(
-                      spacing: 8,
-                      children:
-                          venue.venueTypes
-                              .map(
-                                (type) => Chip(
-                                  label: Text(type),
-                                  backgroundColor: Color.fromRGBO(
-                                    AppColors.primary.r.toInt(),
-                                    AppColors.primary.g.toInt(),
-                                    AppColors.primary.b.toInt(),
-                                    0.5,
-                                  ),
-                                ),
-                              )
-                              .toList(),
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Capacity: ${NumberUtils.formatWithCommas(venue.minCapacity)}-${NumberUtils.formatWithCommas(venue.maxCapacity)} guests',
-                        ),
-                        Text(
-                          '${NumberUtils.formatCurrency(venue.pricePerEvent, decimalPlaces: 0)}/event',
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
               ),
             );
           },

@@ -74,7 +74,7 @@
     - [ ] Add filtering and sorting options
     - [ ] Implement comparison feature
     - [x] Add "Recently Viewed" section
-    - [ ] Enhance service cards with more details
+    - [x] Enhance service cards with more details
 - [x] Implement UI/UX Polish ✅ Completed
   *All tasks moved to eventati_book_completed_tasks.md*
 

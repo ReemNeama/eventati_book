@@ -5,6 +5,7 @@
 export 'service.dart';
 export 'service_category.dart';
 export 'service_review.dart';
+export 'price_type.dart';
 
 // Specific service types
 export 'booking.dart';
