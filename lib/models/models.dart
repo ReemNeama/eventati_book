@@ -52,8 +52,8 @@ export 'service_models/service_models.dart'; // Barrel file for all service mode
 // -------------------------
 // Models for specific features like comparisons and suggestions
 export 'feature_models/feature_models.dart'; // Barrel file for feature models
-export 'feature_models/saved_comparison.dart'; // Saved service comparisons
 export 'feature_models/suggestion.dart'; // Suggestions based on user preferences
+export 'feature_models/saved_comparison.dart'; // Saved service comparisons
 
 // -------------------------
 // SERVICE OPTIONS MODELS
