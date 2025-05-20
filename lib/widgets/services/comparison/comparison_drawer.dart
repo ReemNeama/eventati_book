@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/styles/text_styles.dart';

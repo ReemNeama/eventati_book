@@ -56,7 +56,7 @@ class ComparisonFloatingButton extends StatelessWidget {
         backgroundColor: backgroundColor,
         label: Row(
           children: [
-            Icon(Icons.compare_arrows),
+            const Icon(Icons.compare_arrows),
             const SizedBox(width: 8),
             Text(
               'Compare ($selectedCount)',

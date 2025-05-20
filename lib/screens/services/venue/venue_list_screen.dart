@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/models/models.dart';
-import 'package:eventati_book/styles/app_colors.dart';
-import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/widgets/widgets.dart';
 import 'package:eventati_book/providers/providers.dart';
 import 'package:provider/provider.dart';
 import 'package:eventati_book/routing/routing.dart';
+import 'package:eventati_book/services/services.dart';
 
 class VenueListScreen extends StatefulWidget {
   const VenueListScreen({super.key});
@@ -23,6 +22,96 @@ class _VenueListScreenState extends State<VenueListScreen> {
   RangeValues _priceRange = const RangeValues(1000, 5000);
   RangeValues _capacityRange = const RangeValues(50, 300);
   bool _showRecommendedOnly = false;
+
+  /// Reset all filters to their default values
+  void _resetFilters() {
+    setState(() {
+      _searchQuery = '';
+      _searchController.clear();
+      _selectedVenueTypes.clear();
+      _priceRange = const RangeValues(1000, 5000);
+      _capacityRange = const RangeValues(50, 300);
+      _showRecommendedOnly = false;
+    });
+  }
+
+  /// Remove a specific filter based on its display text
+  void _removeFilter(String filter) {
+    if (filter.startsWith('Search:')) {
+      setState(() {
+        _searchQuery = '';
+        _searchController.clear();
+      });
+    } else if (filter.startsWith('Types:')) {
+      setState(() {
+        _selectedVenueTypes.clear();
+      });
+    } else if (filter.startsWith('Price:')) {
+      setState(() {
+        _priceRange = const RangeValues(1000, 5000);
+      });
+    } else if (filter.startsWith('Capacity:')) {
+      setState(() {
+        _capacityRange = const RangeValues(50, 300);
+      });
+    } else if (filter == 'Recommended Only') {
+      setState(() {
+        _showRecommendedOnly = false;
+      });
+    }
+  }
+
+  /// Show the comparison drawer
+  void _showComparisonDrawer(BuildContext context, List<Venue> venues) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder:
+          (context) => DraggableScrollableSheet(
+            initialChildSize: 0.9,
+            minChildSize: 0.5,
+            maxChildSize: 0.95,
+            builder: (context, scrollController) {
+              return ComparisonDrawer(
+                services: venues,
+                serviceType: 'Venue',
+                onFullComparisonPressed: () {
+                  Navigator.pop(context);
+                  NavigationUtils.navigateToNamed(
+                    context,
+                    RouteNames.serviceComparison,
+                    arguments: const ServiceComparisonArguments(
+                      serviceType: 'Venue',
+                    ),
+                  );
+                },
+                onSaveComparisonPressed: () {
+                  UIUtils.showSnackBar(
+                    context,
+                    'Save comparison functionality coming soon!',
+                  );
+                },
+                onShareComparisonPressed: () {
+                  UIUtils.showSnackBar(
+                    context,
+                    'Share comparison functionality coming soon!',
+                  );
+                },
+                onRemoveService: (service) {
+                  if (service is Venue) {
+                    Provider.of<ComparisonProvider>(
+                      context,
+                      listen: false,
+                    ).toggleServiceSelection(service);
+                    Navigator.pop(context);
+                  }
+                },
+              );
+            },
+          ),
+    );
+  }
 
   final List<Venue> _venues = [
     Venue(
@@ -97,13 +186,62 @@ class _VenueListScreenState extends State<VenueListScreen> {
     final serviceRecommendationProvider =
         Provider.of<ServiceRecommendationProvider>(context);
     final comparisonProvider = Provider.of<ComparisonProvider>(context);
-    final isDarkMode = UIUtils.isDarkMode(context);
+
+    // Get active filters for display
+    final List<String> activeFilters = [];
+    if (_searchQuery.isNotEmpty) {
+      activeFilters.add('Search: $_searchQuery');
+    }
+    if (_selectedVenueTypes.isNotEmpty) {
+      activeFilters.add('Types: ${_selectedVenueTypes.length} selected');
+    }
+    if (_priceRange.start > 1000 || _priceRange.end < 5000) {
+      activeFilters.add(
+        'Price: ${NumberUtils.formatCurrency(_priceRange.start)} - ${NumberUtils.formatCurrency(_priceRange.end)}',
+      );
+    }
+    if (_capacityRange.start > 50 || _capacityRange.end < 300) {
+      activeFilters.add(
+        'Capacity: ${_capacityRange.start.round()} - ${_capacityRange.end.round()} guests',
+      );
+    }
+    if (_showRecommendedOnly) {
+      activeFilters.add('Recommended Only');
+    }
+
+    // Get comparison count
+    final int comparisonCount = comparisonProvider.getSelectedCount('Venue');
+    final bool canCompare = comparisonCount >= 2;
+
+    // Get selected venues for comparison
+    final List<Venue> selectedVenues = comparisonProvider.selectedVenues;
 
     return Scaffold(
       backgroundColor: Theme.of(context).canvasColor,
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
         title: const Text('Venues'),
+        actions: [
+          // Comparison button in app bar
+          if (comparisonCount > 0)
+            IconButton(
+              icon: Badge(
+                label: Text('$comparisonCount'),
+                isLabelVisible: comparisonCount > 0,
+                child: const Icon(Icons.compare_arrows),
+              ),
+              onPressed:
+                  canCompare
+                      ? () {
+                        _showComparisonDrawer(context, selectedVenues);
+                      }
+                      : null,
+              tooltip:
+                  canCompare
+                      ? 'Compare selected venues'
+                      : 'Select at least 2 venues to compare',
+            ),
+        ],
       ),
       body: ResponsiveBuilder(
         // Mobile layout (portrait phones)
@@ -119,12 +257,7 @@ class _VenueListScreenState extends State<VenueListScreen> {
                   });
                 },
                 selectedSortOption: _selectedSortOption,
-                sortOptions: const [
-                  'Rating',
-                  'Price (Low to High)',
-                  'Price (High to Low)',
-                  'Capacity',
-                ],
+                sortOptions: SortService.getAllSortOptions(),
                 onSortChanged: (option) {
                   if (option != null) {
                     setState(() {
@@ -135,6 +268,25 @@ class _VenueListScreenState extends State<VenueListScreen> {
                 onFilterTap: () {
                   _showFilterDialog(context);
                 },
+                // Enhanced filter bar features
+                activeFilters: activeFilters,
+                onFilterRemoved: (filter) {
+                  _removeFilter(filter);
+                },
+                onClearAllFilters: () {
+                  _resetFilters();
+                },
+                showActiveFilters: activeFilters.isNotEmpty,
+                // Comparison features
+                showComparisonButton: true,
+                isComparisonActive: comparisonCount > 0,
+                onComparisonTap:
+                    canCompare
+                        ? () {
+                          _showComparisonDrawer(context, selectedVenues);
+                        }
+                        : null,
+                comparisonCount: comparisonCount,
               ),
               Expanded(
                 child: ScrollToTopWrapper(
@@ -158,31 +310,17 @@ class _VenueListScreenState extends State<VenueListScreen> {
           );
         },
       ),
-      floatingActionButton: Consumer<ComparisonProvider>(
-        builder: (context, provider, child) {
-          final int count = provider.getSelectedCount('Venue');
-
-          // Only show FAB if at least 2 items are selected
-          if (count >= 2) {
-            return FloatingActionButton.extended(
-              onPressed: () {
-                NavigationUtils.navigateToNamed(
-                  context,
-                  RouteNames.serviceComparison,
-                  arguments: const ServiceComparisonArguments(
-                    serviceType: 'Venue',
-                  ),
-                );
-              },
-              label: Text('Compare ($count)'),
-              icon: const Icon(Icons.compare_arrows),
-              backgroundColor:
-                  isDarkMode ? AppColorsDark.primary : AppColors.primary,
-            );
-          }
-
-          return const SizedBox.shrink();
+      floatingActionButton: ComparisonFloatingButton(
+        selectedCount: comparisonCount,
+        minItemsForComparison: 2,
+        onPressed: () {
+          NavigationUtils.navigateToNamed(
+            context,
+            RouteNames.serviceComparison,
+            arguments: const ServiceComparisonArguments(serviceType: 'Venue'),
+          );
         },
+        visible: comparisonCount > 0,
       ),
     );
   }
