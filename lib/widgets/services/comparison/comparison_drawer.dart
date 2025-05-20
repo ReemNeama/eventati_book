@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/styles/text_styles.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/widgets/services/comparison/feature_comparison_table.dart';
 import 'package:eventati_book/widgets/services/comparison/comparison_item_card.dart';
+import 'package:eventati_book/widgets/services/comparison/save_comparison_dialog.dart';
 
 /// A drawer for quick comparison of services
 class ComparisonDrawer extends StatelessWidget {
@@ -162,12 +164,50 @@ class ComparisonDrawer extends StatelessWidget {
                         backgroundColor: primaryColor,
                       ),
                     ),
-                  if (onSaveComparisonPressed != null)
-                    IconButton(
-                      icon: const Icon(Icons.save),
-                      onPressed: onSaveComparisonPressed,
-                      tooltip: 'Save comparison',
-                    ),
+                  IconButton(
+                    icon: const Icon(Icons.save),
+                    onPressed: () {
+                      // Get service IDs and names
+                      final List<String> serviceIds = [];
+                      final List<String> serviceNames = [];
+
+                      for (var service in services) {
+                        String id = '';
+                        String name = '';
+
+                        if (service is Venue) {
+                          id = service.name;
+                          name = service.name;
+                        } else if (service is CateringService) {
+                          id = service.name;
+                          name = service.name;
+                        } else if (service is Photographer) {
+                          id = service.name;
+                          name = service.name;
+                        } else if (service is Planner) {
+                          id = service.name;
+                          name = service.name;
+                        }
+
+                        if (id.isNotEmpty && name.isNotEmpty) {
+                          serviceIds.add(id);
+                          serviceNames.add(name);
+                        }
+                      }
+
+                      // Show the save dialog
+                      showDialog(
+                        context: context,
+                        builder:
+                            (context) => SaveComparisonDialog(
+                              serviceType: serviceType,
+                              serviceIds: serviceIds,
+                              serviceNames: serviceNames,
+                            ),
+                      );
+                    },
+                    tooltip: 'Save comparison',
+                  ),
                   if (onShareComparisonPressed != null)
                     IconButton(
                       icon: const Icon(Icons.share),

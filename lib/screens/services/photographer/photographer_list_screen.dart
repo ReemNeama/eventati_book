@@ -168,9 +168,24 @@ class _PhotographerListScreenState extends State<PhotographerListScreen> {
                   );
                 },
                 onSaveComparisonPressed: () {
-                  UIUtils.showSnackBar(
-                    context,
-                    'Save comparison functionality coming soon!',
+                  // Get service IDs and names
+                  final List<String> serviceIds = [];
+                  final List<String> serviceNames = [];
+
+                  for (var photographer in photographers) {
+                    serviceIds.add(photographer.name);
+                    serviceNames.add(photographer.name);
+                  }
+
+                  // Show the save dialog
+                  showDialog(
+                    context: context,
+                    builder:
+                        (context) => SaveComparisonDialog(
+                          serviceType: 'Photographer',
+                          serviceIds: serviceIds,
+                          serviceNames: serviceNames,
+                        ),
                   );
                 },
                 onShareComparisonPressed: () {
@@ -348,9 +363,15 @@ class _PhotographerListScreenState extends State<PhotographerListScreen> {
                     );
                   },
                   onSave: () {
-                    UIUtils.showSnackBar(
-                      context,
-                      'Save functionality coming soon!',
+                    // Show the save dialog for a single photographer
+                    showDialog(
+                      context: context,
+                      builder:
+                          (context) => SaveComparisonDialog(
+                            serviceType: 'Photographer',
+                            serviceIds: [photographer.name],
+                            serviceNames: [photographer.name],
+                          ),
                     );
                   },
                   onTap: () {

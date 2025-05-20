@@ -8,6 +8,7 @@ import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/widgets/services/comparison/comparison_item_card.dart';
 import 'package:eventati_book/widgets/services/comparison/feature_comparison_table.dart';
 import 'package:eventati_book/widgets/services/comparison/pricing_comparison_table.dart';
+import 'package:eventati_book/widgets/services/comparison/save_comparison_dialog.dart';
 import 'package:eventati_book/routing/routing.dart';
 import 'package:eventati_book/widgets/common/share_button.dart';
 
@@ -243,111 +244,8 @@ class _ServiceComparisonScreenState extends State<ServiceComparisonScreen>
           content: Text('Select at least 2 services to save a comparison'),
         ),
       );
-
       return;
     }
-
-    // Controllers for the form fields
-    final titleController = TextEditingController();
-    final notesController = TextEditingController();
-
-    // Default title based on service type and count
-    titleController.text =
-        '${widget.serviceType} Comparison (${services.length})';
-
-    // Create a form key for validation
-    final formKey = GlobalKey<FormState>();
-
-    showDialog(
-      context: context,
-      builder: (dialogContext) {
-        // This will be called when the dialog is dismissed
-        void disposeControllers() {
-          titleController.dispose();
-          notesController.dispose();
-        }
-
-        return AlertDialog(
-          title: const Text('Save Comparison'),
-          content: SingleChildScrollView(
-            child: Form(
-              key: formKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Title field with validation
-                  TextFormField(
-                    controller: titleController,
-                    decoration: const InputDecoration(
-                      labelText: 'Title',
-                      hintText: 'Enter a title for this comparison',
-                    ),
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'Please enter a title';
-                      }
-
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: AppConstants.mediumPadding),
-                  // Notes field
-                  TextField(
-                    controller: notesController,
-                    decoration: const InputDecoration(
-                      labelText: 'Notes',
-                      hintText: 'Enter any notes about this comparison',
-                    ),
-                    maxLines: 3,
-                  ),
-                  // Event selection will be added when event management is implemented
-                ],
-              ),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                disposeControllers();
-                Navigator.of(dialogContext).pop();
-              },
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                // Validate the form
-                if (formKey.currentState?.validate() ?? false) {
-                  _saveComparison(
-                    context,
-                    services,
-                    titleController.text.trim(),
-                    notesController.text.trim(),
-                  );
-                  disposeControllers();
-                }
-              },
-              child: const Text('Save'),
-            ),
-          ],
-        );
-      },
-    ).then((_) {
-      // Ensure controllers are disposed if dialog is dismissed in other ways
-      titleController.dispose();
-      notesController.dispose();
-    });
-  }
-
-  /// Save the comparison
-  void _saveComparison(
-    BuildContext context,
-    List<dynamic> services,
-    String title,
-    String notes,
-  ) async {
-    // Store the context for later use
-    final scaffoldMessenger = ScaffoldMessenger.of(context);
-    final navigator = Navigator.of(context);
 
     // Get service IDs and names
     final List<String> serviceIds = [];
@@ -358,19 +256,15 @@ class _ServiceComparisonScreenState extends State<ServiceComparisonScreen>
       String name = '';
 
       if (service is Venue) {
-        // Venues don't have an id field in the model, use name as ID
         id = service.name;
         name = service.name;
       } else if (service is CateringService) {
-        // CateringService doesn't have an id field in the model, use name as ID
         id = service.name;
         name = service.name;
       } else if (service is Photographer) {
-        // Photographer doesn't have an id field in the model, use name as ID
         id = service.name;
         name = service.name;
       } else if (service is Planner) {
-        // Planner doesn't have an id field in the model, use name as ID
         id = service.name;
         name = service.name;
       }
@@ -381,50 +275,21 @@ class _ServiceComparisonScreenState extends State<ServiceComparisonScreen>
       }
     }
 
-    // Save the comparison
-    final provider = Provider.of<ComparisonSavingProvider>(
-      context,
-      listen: false,
-    );
-
-    // Close the dialog before the async operation
-    navigator.pop();
-
-    final success = await provider.saveComparison(
-      serviceType: widget.serviceType,
-      serviceIds: serviceIds,
-      serviceNames: serviceNames,
-      title: title,
-      notes: notes,
-      // Event ID and name will be added when event management is implemented
-    );
-
-    // Check if the widget is still mounted before using context
-    if (!mounted) return;
-
-    // Show success or error message
-    scaffoldMessenger.showSnackBar(
-      SnackBar(
-        content: Text(
-          success
-              ? 'Comparison saved successfully'
-              : 'Failed to save comparison: ${provider.error}',
-        ),
-        action:
-            success
-                ? SnackBarAction(
-                  label: 'View',
-                  onPressed: () {
-                    if (mounted) {
-                      NavigationUtils.navigateToNamed(
-                        context,
-                        RouteNames.savedComparisons,
-                      );
-                    }
-                  },
-                )
-                : null,
-      ),
+    showDialog(
+      context: context,
+      builder:
+          (context) => SaveComparisonDialog(
+            serviceType: widget.serviceType,
+            serviceIds: serviceIds,
+            serviceNames: serviceNames,
+            onSaved: (savedComparison) {
+              // Navigate to saved comparisons if needed
+              // NavigationUtils.navigateToNamed(
+              //   context,
+              //   RouteNames.savedComparisons,
+              // );
+            },
+          ),
     );
   }
 }
