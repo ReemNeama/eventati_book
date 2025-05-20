@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:eventati_book/models/models.dart';
-import 'package:eventati_book/widgets/services/filter/service_filter_bar.dart';
-import 'package:eventati_book/widgets/services/card/service_card.dart';
-import 'package:eventati_book/widgets/services/filter/filter_dialog.dart';
-import 'package:eventati_book/styles/app_colors.dart';
-import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/utils.dart';
 import 'package:eventati_book/providers/providers.dart';
 import 'package:provider/provider.dart';
 import 'package:eventati_book/routing/routing.dart';
+import 'package:eventati_book/widgets/widgets.dart';
+import 'package:eventati_book/services/services.dart';
 
 class PlannerListScreen extends StatefulWidget {
   const PlannerListScreen({super.key});
@@ -123,16 +120,157 @@ class _PlannerListScreenState extends State<PlannerListScreen> {
       });
   }
 
+  /// Reset all filters to their default values
+  void _resetFilters() {
+    setState(() {
+      _searchQuery = '';
+      _searchController.clear();
+      _selectedSpecialties.clear();
+      _priceRange = const RangeValues(1000, 5000);
+      _experienceRange = const RangeValues(2, 10);
+      _showRecommendedOnly = false;
+    });
+  }
+
+  /// Remove a specific filter based on its display text
+  void _removeFilter(String filter) {
+    if (filter.startsWith('Search:')) {
+      setState(() {
+        _searchQuery = '';
+        _searchController.clear();
+      });
+    } else if (filter.startsWith('Specialties:')) {
+      setState(() {
+        _selectedSpecialties.clear();
+      });
+    } else if (filter.startsWith('Price:')) {
+      setState(() {
+        _priceRange = const RangeValues(1000, 5000);
+      });
+    } else if (filter.startsWith('Experience:')) {
+      setState(() {
+        _experienceRange = const RangeValues(2, 10);
+      });
+    } else if (filter == 'Recommended Only') {
+      setState(() {
+        _showRecommendedOnly = false;
+      });
+    }
+  }
+
+  /// Show the comparison drawer
+  void _showComparisonDrawer(BuildContext context, List<Planner> planners) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder:
+          (context) => DraggableScrollableSheet(
+            initialChildSize: 0.9,
+            minChildSize: 0.5,
+            maxChildSize: 0.95,
+            builder: (context, scrollController) {
+              return ComparisonDrawer(
+                services: planners,
+                serviceType: 'Planner',
+                onFullComparisonPressed: () {
+                  Navigator.pop(context);
+                  NavigationUtils.navigateToNamed(
+                    context,
+                    RouteNames.serviceComparison,
+                    arguments: const ServiceComparisonArguments(
+                      serviceType: 'Planner',
+                    ),
+                  );
+                },
+                onSaveComparisonPressed: () {
+                  UIUtils.showSnackBar(
+                    context,
+                    'Save comparison functionality coming soon!',
+                  );
+                },
+                onShareComparisonPressed: () {
+                  UIUtils.showSnackBar(
+                    context,
+                    'Share comparison functionality coming soon!',
+                  );
+                },
+                onRemoveService: (service) {
+                  if (service is Planner) {
+                    Provider.of<ComparisonProvider>(
+                      context,
+                      listen: false,
+                    ).toggleServiceSelection(service);
+                    Navigator.pop(context);
+                  }
+                },
+              );
+            },
+          ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final serviceRecommendationProvider =
+        Provider.of<ServiceRecommendationProvider>(context);
     final comparisonProvider = Provider.of<ComparisonProvider>(context);
-    final isDarkMode = UIUtils.isDarkMode(context);
+
+    // Get active filters for display
+    final List<String> activeFilters = [];
+    if (_searchQuery.isNotEmpty) {
+      activeFilters.add('Search: $_searchQuery');
+    }
+    if (_selectedSpecialties.isNotEmpty) {
+      activeFilters.add('Specialties: ${_selectedSpecialties.length} selected');
+    }
+    if (_priceRange.start > 1000 || _priceRange.end < 5000) {
+      activeFilters.add(
+        'Price: ${NumberUtils.formatCurrency(_priceRange.start)} - ${NumberUtils.formatCurrency(_priceRange.end)}',
+      );
+    }
+    if (_experienceRange.start > 2 || _experienceRange.end < 10) {
+      activeFilters.add(
+        'Experience: ${_experienceRange.start.round()} - ${_experienceRange.end.round()} years',
+      );
+    }
+    if (_showRecommendedOnly) {
+      activeFilters.add('Recommended Only');
+    }
+
+    // Get comparison count
+    final int comparisonCount = comparisonProvider.getSelectedCount('Planner');
+    final bool canCompare = comparisonCount >= 2;
+
+    // Get selected planners for comparison
+    final List<Planner> selectedPlanners = comparisonProvider.selectedPlanners;
 
     return Scaffold(
       backgroundColor: Theme.of(context).canvasColor,
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
         title: const Text('Event Planners'),
+        actions: [
+          // Comparison button in app bar
+          if (comparisonCount > 0)
+            IconButton(
+              icon: Badge(
+                label: Text('$comparisonCount'),
+                isLabelVisible: comparisonCount > 0,
+                child: const Icon(Icons.compare_arrows),
+              ),
+              onPressed:
+                  canCompare
+                      ? () {
+                        _showComparisonDrawer(context, selectedPlanners);
+                      }
+                      : null,
+              tooltip:
+                  canCompare
+                      ? 'Compare selected planners'
+                      : 'Select at least 2 planners to compare',
+            ),
+        ],
       ),
       body: Column(
         children: [
@@ -161,6 +299,25 @@ class _PlannerListScreenState extends State<PlannerListScreen> {
             onFilterTap: () {
               _showFilterDialog(context);
             },
+            // Enhanced filter bar features
+            activeFilters: activeFilters,
+            onFilterRemoved: (filter) {
+              _removeFilter(filter);
+            },
+            onClearAllFilters: () {
+              _resetFilters();
+            },
+            showActiveFilters: activeFilters.isNotEmpty,
+            // Comparison features
+            showComparisonButton: true,
+            isComparisonActive: comparisonCount > 0,
+            onComparisonTap:
+                canCompare
+                    ? () {
+                      _showComparisonDrawer(context, selectedPlanners);
+                    }
+                    : null,
+            comparisonCount: comparisonCount,
           ),
           Expanded(
             child: ListView.builder(
@@ -169,8 +326,6 @@ class _PlannerListScreenState extends State<PlannerListScreen> {
               itemBuilder: (context, index) {
                 final planner = filteredPlanners[index];
 
-                final serviceRecommendationProvider =
-                    Provider.of<ServiceRecommendationProvider>(context);
                 final isRecommended = serviceRecommendationProvider
                     .isPlannerRecommended(planner);
                 final recommendationReason =
@@ -192,6 +347,25 @@ class _PlannerListScreenState extends State<PlannerListScreen> {
                   onCompareToggle: (_) {
                     comparisonProvider.toggleServiceSelection(planner);
                   },
+                  showCompareCheckbox: true,
+                  // Enhanced features
+                  price: planner.pricePerEvent,
+                  priceType: PriceType.perEvent,
+                  tags: planner.specialties,
+                  isAvailable: true,
+                  // Quick actions
+                  onShare: () {
+                    UIUtils.showSnackBar(
+                      context,
+                      'Share functionality coming soon!',
+                    );
+                  },
+                  onSave: () {
+                    UIUtils.showSnackBar(
+                      context,
+                      'Save functionality coming soon!',
+                    );
+                  },
                   onTap: () {
                     NavigationUtils.navigateToNamed(
                       context,
@@ -201,70 +375,23 @@ class _PlannerListScreenState extends State<PlannerListScreen> {
                       ),
                     );
                   },
-                  additionalInfo: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 8),
-                      Wrap(
-                        spacing: 8,
-                        children:
-                            planner.specialties
-                                .map(
-                                  (specialty) => Chip(
-                                    label: Text(specialty),
-                                    backgroundColor: Color.fromRGBO(
-                                      AppColors.primary.r.toInt(),
-                                      AppColors.primary.g.toInt(),
-                                      AppColors.primary.b.toInt(),
-                                      0.5,
-                                    ),
-                                  ),
-                                )
-                                .toList(),
-                      ),
-                      const SizedBox(height: 8),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('Experience: ${planner.yearsExperience} years'),
-                          Text(
-                            '${NumberUtils.formatCurrency(planner.pricePerEvent, decimalPlaces: 0)} base fee',
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
                 );
               },
             ),
           ),
         ],
       ),
-      floatingActionButton: Consumer<ComparisonProvider>(
-        builder: (context, provider, child) {
-          final int count = provider.getSelectedCount('Planner');
-
-          // Only show FAB if at least 2 items are selected
-          if (count >= 2) {
-            return FloatingActionButton.extended(
-              onPressed: () {
-                NavigationUtils.navigateToNamed(
-                  context,
-                  RouteNames.serviceComparison,
-                  arguments: const ServiceComparisonArguments(
-                    serviceType: 'Planner',
-                  ),
-                );
-              },
-              label: Text('Compare ($count)'),
-              icon: const Icon(Icons.compare_arrows),
-              backgroundColor:
-                  isDarkMode ? AppColorsDark.primary : AppColors.primary,
-            );
-          }
-
-          return const SizedBox.shrink();
+      floatingActionButton: ComparisonFloatingButton(
+        selectedCount: comparisonCount,
+        minItemsForComparison: 2,
+        onPressed: () {
+          NavigationUtils.navigateToNamed(
+            context,
+            RouteNames.serviceComparison,
+            arguments: const ServiceComparisonArguments(serviceType: 'Planner'),
+          );
         },
+        visible: comparisonCount > 0,
       ),
     );
   }

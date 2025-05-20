@@ -136,7 +136,7 @@ class _CateringDetailsScreenState extends State<CateringDetailsScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
 
     // Track service view
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -185,44 +185,123 @@ class _CateringDetailsScreenState extends State<CateringDetailsScreen>
     final Color primaryColor =
         isDarkMode ? AppColorsDark.primary : AppColors.primary;
 
+    // Get comparison provider
+    final comparisonProvider = Provider.of<ComparisonProvider>(context);
+    final isInComparison = comparisonProvider.isServiceSelected(
+      widget.cateringService,
+    );
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.cateringService.name),
         backgroundColor: primaryColor,
+        actions: [
+          // Share button
+          IconButton(
+            icon: const Icon(Icons.share),
+            onPressed: () {
+              UIUtils.showSnackBar(context, 'Share functionality coming soon!');
+            },
+            tooltip: 'Share this catering service',
+          ),
+          // Save button
+          IconButton(
+            icon: const Icon(Icons.bookmark_border),
+            onPressed: () {
+              UIUtils.showSnackBar(context, 'Save functionality coming soon!');
+            },
+            tooltip: 'Save this catering service',
+          ),
+          // Compare button
+          IconButton(
+            icon: Icon(
+              isInComparison ? Icons.compare_arrows : Icons.compare,
+              color: isInComparison ? Colors.amber : null,
+            ),
+            onPressed: () {
+              comparisonProvider.toggleServiceSelection(widget.cateringService);
+              UIUtils.showSnackBar(
+                context,
+                isInComparison
+                    ? 'Removed from comparison'
+                    : 'Added to comparison',
+              );
+            },
+            tooltip:
+                isInComparison ? 'Remove from comparison' : 'Add to comparison',
+          ),
+        ],
         bottom: DetailTabBar(
           tabController: _tabController,
-          tabTitles: const ['Packages', 'Menu'],
+          tabTitles: const ['Overview', 'Packages', 'Menu', 'Reviews'],
         ),
       ),
       body: TabBarView(
         controller: _tabController,
-        children: [_buildPackagesTab(), _buildMenuTab()],
+        children: [
+          _buildOverviewTab(),
+          _buildPackagesTab(),
+          _buildMenuTab(),
+          _buildReviewsTab(),
+        ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed:
-            _selectedPackageIndex >= 0 ? () => _navigateToBookingForm() : null,
-        backgroundColor:
-            _selectedPackageIndex >= 0
-                ? primaryColor
-                : isDarkMode
-                ? Color.fromRGBO(
-                  AppColors.disabled.r.toInt(),
-                  AppColors.disabled.g.toInt(),
-                  AppColors.disabled.b.toInt(),
-                  0.7,
-                )
-                : Color.fromRGBO(
-                  AppColors.disabled.r.toInt(),
-                  AppColors.disabled.g.toInt(),
-                  AppColors.disabled.b.toInt(),
-                  0.4,
+      bottomNavigationBar: BottomAppBar(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            // Price display
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Starting from', style: TextStyle(fontSize: 12)),
+                Text(
+                  ServiceUtils.formatPrice(
+                    widget.cateringService.pricePerPerson,
+                    showPerPerson: true,
+                    decimalPlaces: 0,
+                  ),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
                 ),
-        label: const Text('Book Now'),
-        icon: const Icon(Icons.calendar_today),
-        tooltip:
-            _selectedPackageIndex >= 0
-                ? 'Book this catering service'
-                : 'Select a package first',
+              ],
+            ),
+            // Book now button
+            ElevatedButton.icon(
+              onPressed:
+                  _selectedPackageIndex >= 0
+                      ? () => _navigateToBookingForm()
+                      : null,
+              style: ElevatedButton.styleFrom(
+                backgroundColor:
+                    _selectedPackageIndex >= 0
+                        ? primaryColor
+                        : isDarkMode
+                        ? Color.fromRGBO(
+                          AppColors.disabled.r.toInt(),
+                          AppColors.disabled.g.toInt(),
+                          AppColors.disabled.b.toInt(),
+                          0.7,
+                        )
+                        : Color.fromRGBO(
+                          AppColors.disabled.r.toInt(),
+                          AppColors.disabled.g.toInt(),
+                          AppColors.disabled.b.toInt(),
+                          0.4,
+                        ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+              ),
+              icon: const Icon(Icons.calendar_today),
+              label: const Text('Book Now'),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -339,6 +418,141 @@ class _CateringDetailsScreenState extends State<CateringDetailsScreen>
     );
   }
 
+  /// Builds the overview tab with key catering service information
+  Widget _buildOverviewTab() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildServiceImage(),
+          const SizedBox(height: 16),
+          _buildRecommendationSection(),
+          const SizedBox(height: 16),
+          _buildServiceInfo(),
+          const SizedBox(height: 16),
+          _buildCuisineTypes(),
+          const SizedBox(height: 16),
+          _buildCapacityInfo(),
+        ],
+      ),
+    );
+  }
+
+  /// Builds the service image section
+  Widget _buildServiceImage() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (widget.cateringService.imageUrl.isNotEmpty)
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Image.network(
+              widget.cateringService.imageUrl,
+              height: 200,
+              width: double.infinity,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return const ImagePlaceholder(
+                  height: 200,
+                  width: double.infinity,
+                  borderRadius: 8,
+                  icon: Icons.restaurant,
+                  iconSize: 50,
+                );
+              },
+            ),
+          )
+        else
+          const ImagePlaceholder(
+            height: 200,
+            width: double.infinity,
+            borderRadius: 8,
+            icon: Icons.restaurant,
+            iconSize: 50,
+          ),
+      ],
+    );
+  }
+
+  /// Builds the service information section
+  Widget _buildServiceInfo() {
+    return InfoCard(
+      title: 'About',
+      content: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(widget.cateringService.description),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              const Icon(Icons.star, color: Colors.amber, size: 20),
+              const SizedBox(width: 4),
+              Text(
+                '${widget.cateringService.rating} Rating',
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Builds the cuisine types section
+  Widget _buildCuisineTypes() {
+    return InfoCard(
+      title: 'Cuisine Types',
+      content: Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        children:
+            widget.cateringService.cuisineTypes.map((cuisine) {
+              return Chip(
+                label: Text(cuisine),
+                backgroundColor: Color.fromRGBO(
+                  Theme.of(context).primaryColor.r.toInt(),
+                  Theme.of(context).primaryColor.g.toInt(),
+                  Theme.of(context).primaryColor.b.toInt(),
+                  0.1,
+                ),
+              );
+            }).toList(),
+      ),
+    );
+  }
+
+  /// Builds the capacity information section
+  Widget _buildCapacityInfo() {
+    return InfoCard(
+      title: 'Capacity',
+      content: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.people, size: 20),
+              const SizedBox(width: 8),
+              Text(
+                'Minimum: ${NumberUtils.formatWithCommas(widget.cateringService.minCapacity)} guests',
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              const Icon(Icons.people, size: 20),
+              const SizedBox(width: 8),
+              Text(
+                'Maximum: ${NumberUtils.formatWithCommas(widget.cateringService.maxCapacity)} guests',
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildMenuTab() {
     // Group menu items by category
     final Map<String, List<MenuItem>> categorizedItems = {};
@@ -447,6 +661,202 @@ class _CateringDetailsScreenState extends State<CateringDetailsScreen>
             );
           }),
         ],
+      ),
+    );
+  }
+
+  /// Builds the reviews tab with catering service reviews and ratings
+  Widget _buildReviewsTab() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildRatingSummary(),
+          const SizedBox(height: 16),
+          _buildReviewsList(),
+        ],
+      ),
+    );
+  }
+
+  /// Builds the rating summary section
+  Widget _buildRatingSummary() {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Rating Summary',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Text(
+                  widget.cateringService.rating.toString(),
+                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: List.generate(5, (index) {
+                        return Icon(
+                          index < widget.cateringService.rating.floor()
+                              ? Icons.star
+                              : (index < widget.cateringService.rating
+                                  ? Icons.star_half
+                                  : Icons.star_border),
+                          color: Colors.amber,
+                          size: 24,
+                        );
+                      }),
+                    ),
+                    const Text('Based on 18 reviews'),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            _buildRatingBar('Food Quality', 4.7),
+            _buildRatingBar('Service', 4.5),
+            _buildRatingBar('Value', 4.3),
+            _buildRatingBar('Presentation', 4.8),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Builds a rating bar for a specific category
+  Widget _buildRatingBar(String category, double rating) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        children: [
+          SizedBox(width: 100, child: Text(category)),
+          Expanded(
+            child: LinearProgressIndicator(
+              value: rating / 5,
+              backgroundColor: Colors.grey[300],
+              color: Colors.amber,
+              minHeight: 8,
+              borderRadius: BorderRadius.circular(4),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text(rating.toString()),
+        ],
+      ),
+    );
+  }
+
+  /// Builds the reviews list section
+  Widget _buildReviewsList() {
+    // Sample review data
+    final List<Map<String, dynamic>> reviews = [
+      {
+        'name': 'Emily R.',
+        'rating': 5.0,
+        'date': 'July 10, 2023',
+        'comment':
+            'The food was absolutely amazing! Everyone at our wedding raved about it. The staff was professional and attentive.',
+      },
+      {
+        'name': 'David K.',
+        'rating': 4.5,
+        'date': 'June 5, 2023',
+        'comment':
+            'Great food and presentation. The only issue was they arrived a bit late, but they made up for it with excellent service.',
+      },
+      {
+        'name': 'Jessica M.',
+        'rating': 4.0,
+        'date': 'May 22, 2023',
+        'comment':
+            'Good variety of options and the food tasted great. Would recommend for corporate events.',
+      },
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('Reviews', style: Theme.of(context).textTheme.titleMedium),
+            TextButton(
+              onPressed: () {
+                UIUtils.showSnackBar(
+                  context,
+                  'Write a review functionality coming soon!',
+                );
+              },
+              child: const Text('Write a Review'),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        ...reviews.map((review) => _buildReviewItem(review)),
+        const SizedBox(height: 16),
+        Center(
+          child: TextButton(
+            onPressed: () {
+              UIUtils.showSnackBar(
+                context,
+                'View all reviews functionality coming soon!',
+              );
+            },
+            child: const Text('View All Reviews'),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Builds a single review item
+  Widget _buildReviewItem(Map<String, dynamic> review) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 16),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  review['name'],
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Text(review['date']),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: List.generate(5, (index) {
+                return Icon(
+                  index < review['rating'].floor()
+                      ? Icons.star
+                      : (index < review['rating']
+                          ? Icons.star_half
+                          : Icons.star_border),
+                  color: Colors.amber,
+                  size: 16,
+                );
+              }),
+            ),
+            const SizedBox(height: 8),
+            Text(review['comment']),
+          ],
+        ),
       ),
     );
   }

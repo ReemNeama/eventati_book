@@ -123,7 +123,7 @@ class _VenueDetailsScreenState extends State<VenueDetailsScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
     _loadVenueImages();
 
     // Track service view
@@ -202,29 +202,109 @@ class _VenueDetailsScreenState extends State<VenueDetailsScreen>
     final Color primaryColor =
         isDarkMode ? AppColorsDark.primary : AppColors.primary;
 
+    // Get comparison provider
+    final comparisonProvider = Provider.of<ComparisonProvider>(context);
+    final isInComparison = comparisonProvider.isServiceSelected(widget.venue);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.venue.name),
         backgroundColor: primaryColor,
+        actions: [
+          // Share button
+          IconButton(
+            icon: const Icon(Icons.share),
+            onPressed: () {
+              UIUtils.showSnackBar(context, 'Share functionality coming soon!');
+            },
+            tooltip: 'Share this venue',
+          ),
+          // Save button
+          IconButton(
+            icon: const Icon(Icons.bookmark_border),
+            onPressed: () {
+              UIUtils.showSnackBar(context, 'Save functionality coming soon!');
+            },
+            tooltip: 'Save this venue',
+          ),
+          // Compare button
+          IconButton(
+            icon: Icon(
+              isInComparison ? Icons.compare_arrows : Icons.compare,
+              color: isInComparison ? Colors.amber : null,
+            ),
+            onPressed: () {
+              comparisonProvider.toggleServiceSelection(widget.venue);
+              UIUtils.showSnackBar(
+                context,
+                isInComparison
+                    ? 'Removed from comparison'
+                    : 'Added to comparison',
+              );
+            },
+            tooltip:
+                isInComparison ? 'Remove from comparison' : 'Add to comparison',
+          ),
+        ],
         bottom: DetailTabBar(
           tabController: _tabController!,
-          tabTitles: const ['Packages', 'Venue Details'],
+          tabTitles: const ['Overview', 'Packages', 'Features', 'Reviews'],
         ),
       ),
       body: TabBarView(
         controller: _tabController!,
-        children: [_buildPackagesTab(), _buildVenueDetailsTab()],
+        children: [
+          _buildOverviewTab(),
+          _buildPackagesTab(),
+          _buildFeaturesTab(),
+          _buildReviewsTab(),
+        ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed:
-            _selectedPackageIndex >= 0 ? () => _navigateToBookingForm() : null,
-        backgroundColor: _getButtonBackgroundColor(primaryColor, isDarkMode),
-        label: const Text('Book Now'),
-        icon: const Icon(Icons.calendar_today),
-        tooltip:
-            _selectedPackageIndex >= 0
-                ? 'Book this venue'
-                : 'Select a package first',
+      bottomNavigationBar: BottomAppBar(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            // Price display
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Starting from', style: TextStyle(fontSize: 12)),
+                Text(
+                  ServiceUtils.formatPrice(
+                    widget.venue.pricePerEvent,
+                    showPerEvent: true,
+                    decimalPlaces: 0,
+                  ),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+              ],
+            ),
+            // Book now button
+            ElevatedButton.icon(
+              onPressed:
+                  _selectedPackageIndex >= 0
+                      ? () => _navigateToBookingForm()
+                      : null,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: _getButtonBackgroundColor(
+                  primaryColor,
+                  isDarkMode,
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+              ),
+              icon: const Icon(Icons.calendar_today),
+              label: const Text('Book Now'),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -455,8 +535,8 @@ class _VenueDetailsScreenState extends State<VenueDetailsScreen>
     );
   }
 
-  /// Builds the venue details tab with all venue information sections
-  Widget _buildVenueDetailsTab() {
+  /// Builds the overview tab with key venue information
+  Widget _buildOverviewTab() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(AppConstants.mediumPadding),
       child: Column(
@@ -466,10 +546,283 @@ class _VenueDetailsScreenState extends State<VenueDetailsScreen>
           _buildVenueRecommendation(),
           _buildVenueInfo(),
           const SizedBox(height: AppConstants.mediumPadding),
-          _buildVenueFeatures(),
-          const SizedBox(height: AppConstants.mediumPadding),
           _buildLocationInfo(),
         ],
+      ),
+    );
+  }
+
+  /// Builds the features tab with detailed venue features
+  Widget _buildFeaturesTab() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(AppConstants.mediumPadding),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildVenueFeatures(),
+          const SizedBox(height: AppConstants.mediumPadding),
+          _buildAmenitiesSection(),
+          const SizedBox(height: AppConstants.mediumPadding),
+          _buildAccessibilitySection(),
+        ],
+      ),
+    );
+  }
+
+  /// Builds the reviews tab with venue reviews and ratings
+  Widget _buildReviewsTab() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(AppConstants.mediumPadding),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildRatingSummary(),
+          const SizedBox(height: AppConstants.mediumPadding),
+          _buildReviewsList(),
+        ],
+      ),
+    );
+  }
+
+  /// Builds the amenities section
+  Widget _buildAmenitiesSection() {
+    // Sample amenities data
+    final List<String> amenities = [
+      'Free Wi-Fi',
+      'Air Conditioning',
+      'Catering Kitchen',
+      'Restrooms',
+      'Coat Check',
+      'Outdoor Space',
+      'Stage Area',
+      'Dance Floor',
+      'Bar Area',
+    ];
+
+    return InfoCard(
+      title: 'Amenities',
+      content: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ...amenities.map(
+            (amenity) => FeatureItem(
+              text: amenity,
+              padding: const EdgeInsets.only(bottom: AppConstants.smallPadding),
+              iconSize: 20,
+              icon: Icons.check_circle_outline,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Builds the accessibility section
+  Widget _buildAccessibilitySection() {
+    // Sample accessibility data
+    final List<String> accessibility = [
+      'Wheelchair Accessible',
+      'Elevator Access',
+      'Accessible Restrooms',
+      'Accessible Parking',
+      'Service Animal Friendly',
+    ];
+
+    return InfoCard(
+      title: 'Accessibility',
+      content: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ...accessibility.map(
+            (feature) => FeatureItem(
+              text: feature,
+              padding: const EdgeInsets.only(bottom: AppConstants.smallPadding),
+              iconSize: 20,
+              icon: Icons.accessibility_new,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Builds the rating summary section
+  Widget _buildRatingSummary() {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(AppConstants.mediumPadding),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Rating Summary',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: AppConstants.mediumPadding),
+            Row(
+              children: [
+                Text(
+                  widget.venue.rating.toString(),
+                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(width: AppConstants.mediumPadding),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: List.generate(5, (index) {
+                        return Icon(
+                          index < widget.venue.rating.floor()
+                              ? Icons.star
+                              : (index < widget.venue.rating
+                                  ? Icons.star_half
+                                  : Icons.star_border),
+                          color: Colors.amber,
+                          size: 24,
+                        );
+                      }),
+                    ),
+                    const Text('Based on 24 reviews'),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: AppConstants.mediumPadding),
+            _buildRatingBar('Location', 4.8),
+            _buildRatingBar('Value', 4.5),
+            _buildRatingBar('Service', 4.7),
+            _buildRatingBar('Cleanliness', 4.6),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Builds a rating bar for a specific category
+  Widget _buildRatingBar(String category, double rating) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppConstants.smallPadding),
+      child: Row(
+        children: [
+          SizedBox(width: 100, child: Text(category)),
+          Expanded(
+            child: LinearProgressIndicator(
+              value: rating / 5,
+              backgroundColor: Colors.grey[300],
+              color: Colors.amber,
+              minHeight: 8,
+              borderRadius: BorderRadius.circular(4),
+            ),
+          ),
+          const SizedBox(width: AppConstants.smallPadding),
+          Text(rating.toString()),
+        ],
+      ),
+    );
+  }
+
+  /// Builds the reviews list section
+  Widget _buildReviewsList() {
+    // Sample review data
+    final List<Map<String, dynamic>> reviews = [
+      {
+        'name': 'John D.',
+        'rating': 5.0,
+        'date': 'June 15, 2023',
+        'comment':
+            'Amazing venue! Perfect for our wedding. The staff was incredibly helpful and the space was beautiful.',
+      },
+      {
+        'name': 'Sarah M.',
+        'rating': 4.5,
+        'date': 'May 22, 2023',
+        'comment':
+            'Great location and amenities. The only issue was limited parking, but everything else was perfect.',
+      },
+      {
+        'name': 'Michael T.',
+        'rating': 4.0,
+        'date': 'April 10, 2023',
+        'comment':
+            'Good venue for our corporate event. Sound system could be better, but the space worked well for our needs.',
+      },
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('Reviews', style: Theme.of(context).textTheme.titleMedium),
+            TextButton(
+              onPressed: () {
+                UIUtils.showSnackBar(
+                  context,
+                  'Write a review functionality coming soon!',
+                );
+              },
+              child: const Text('Write a Review'),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppConstants.smallPadding),
+        ...reviews.map((review) => _buildReviewItem(review)),
+        const SizedBox(height: AppConstants.mediumPadding),
+        Center(
+          child: TextButton(
+            onPressed: () {
+              UIUtils.showSnackBar(
+                context,
+                'View all reviews functionality coming soon!',
+              );
+            },
+            child: const Text('View All Reviews'),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Builds a single review item
+  Widget _buildReviewItem(Map<String, dynamic> review) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: AppConstants.mediumPadding),
+      child: Padding(
+        padding: const EdgeInsets.all(AppConstants.mediumPadding),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  review['name'],
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Text(review['date']),
+              ],
+            ),
+            const SizedBox(height: AppConstants.smallPadding),
+            Row(
+              children: List.generate(5, (index) {
+                return Icon(
+                  index < review['rating'].floor()
+                      ? Icons.star
+                      : (index < review['rating']
+                          ? Icons.star_half
+                          : Icons.star_border),
+                  color: Colors.amber,
+                  size: 16,
+                );
+              }),
+            ),
+            const SizedBox(height: AppConstants.smallPadding),
+            Text(review['comment']),
+          ],
+        ),
       ),
     );
   }
