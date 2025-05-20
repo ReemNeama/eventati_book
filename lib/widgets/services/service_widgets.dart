@@ -15,6 +15,8 @@ export 'card/recommended_badge.dart';
 
 // Comparison widgets
 export 'comparison/comparison_item_card.dart';
+export 'comparison/comparison_drawer.dart';
+export 'comparison/comparison_floating_button.dart';
 export 'comparison/feature_comparison_table.dart';
 export 'comparison/feature_list_builder.dart';
 export 'comparison/feature_value_builder.dart';

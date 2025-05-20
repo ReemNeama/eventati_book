@@ -8,6 +8,8 @@ import 'package:eventati_book/widgets/services/card/availability_indicator.dart'
 import 'package:eventati_book/widgets/details/chip_group.dart';
 import 'package:eventati_book/styles/text_styles.dart';
 import 'package:eventati_book/models/models.dart';
+import 'package:eventati_book/widgets/common/rating_display.dart';
+import 'package:eventati_book/widgets/common/quick_action_button.dart';
 
 class ServiceCard extends StatelessWidget {
   final String name;
@@ -66,34 +68,19 @@ class ServiceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = UIUtils.isDarkMode(context);
-    final backgroundColor =
-        isDarkMode
-            ? Color.fromRGBO(
-              AppColors.disabled.r.toInt(),
-              AppColors.disabled.g.toInt(),
-              AppColors.disabled.b.toInt(),
-              0.8,
-            )
-            : Color.fromRGBO(
-              AppColors.disabled.r.toInt(),
-              AppColors.disabled.g.toInt(),
-              AppColors.disabled.b.toInt(),
-              0.3,
-            );
-    final iconColor =
-        isDarkMode
-            ? Color.fromRGBO(
-              AppColors.disabled.r.toInt(),
-              AppColors.disabled.g.toInt(),
-              AppColors.disabled.b.toInt(),
-              0.4,
-            )
-            : Color.fromRGBO(
-              AppColors.disabled.r.toInt(),
-              AppColors.disabled.g.toInt(),
-              AppColors.disabled.b.toInt(),
-              0.6,
-            );
+    final primaryColor = isDarkMode ? AppColorsDark.primary : AppColors.primary;
+    final backgroundColor = Color.fromRGBO(
+      AppColors.disabled.r.toInt(),
+      AppColors.disabled.g.toInt(),
+      AppColors.disabled.b.toInt(),
+      isDarkMode ? 0.8 : 0.3,
+    );
+    final iconColor = Color.fromRGBO(
+      AppColors.disabled.r.toInt(),
+      AppColors.disabled.g.toInt(),
+      AppColors.disabled.b.toInt(),
+      isDarkMode ? 0.4 : 0.6,
+    );
 
     return Card(
       margin: const EdgeInsets.symmetric(
@@ -106,11 +93,14 @@ class ServiceCard extends StatelessWidget {
       ),
       child: InkWell(
         onTap: onTap,
+        borderRadius: BorderRadius.circular(AppConstants.mediumBorderRadius),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Image section with badges
             Stack(
               children: [
+                // Image container
                 ClipRRect(
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(AppConstants.mediumBorderRadius),
@@ -120,22 +110,60 @@ class ServiceCard extends StatelessWidget {
                     height: 150,
                     width: double.infinity,
                     color: backgroundColor,
-                    child: Center(
-                      child: Icon(Icons.image, size: 50, color: iconColor),
-                    ),
+                    child:
+                        imageUrl.isNotEmpty
+                            ? Image.network(
+                              imageUrl,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Center(
+                                  child: Icon(
+                                    Icons.image,
+                                    size: 50,
+                                    color: iconColor,
+                                  ),
+                                );
+                              },
+                              loadingBuilder: (
+                                context,
+                                child,
+                                loadingProgress,
+                              ) {
+                                if (loadingProgress == null) return child;
+                                return Center(
+                                  child: CircularProgressIndicator(
+                                    value:
+                                        loadingProgress.expectedTotalBytes !=
+                                                null
+                                            ? loadingProgress
+                                                    .cumulativeBytesLoaded /
+                                                loadingProgress
+                                                    .expectedTotalBytes!
+                                            : null,
+                                    color: primaryColor,
+                                  ),
+                                );
+                              },
+                            )
+                            : Center(
+                              child: Icon(
+                                Icons.image,
+                                size: 50,
+                                color: iconColor,
+                              ),
+                            ),
                   ),
                 ),
-                // Recommended badge (top right)
+
+                // Badges and indicators
                 if (isRecommended)
                   Positioned(
                     top: 10,
                     right: 10,
                     child: RecommendedBadge(reason: recommendationReason),
                   ),
-                // Featured badge (top left)
                 if (isFeatured)
                   const Positioned(top: 10, left: 10, child: FeaturedBadge()),
-                // Availability indicator (bottom right)
                 Positioned(
                   bottom: 10,
                   right: 10,
@@ -143,107 +171,125 @@ class ServiceCard extends StatelessWidget {
                 ),
               ],
             ),
+
+            // Content section
             Padding(
               padding: const EdgeInsets.all(AppConstants.mediumPadding - 4),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Name and rating
+                  // Header row with name and rating
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Expanded(
-                        child: Text(name, style: TextStyles.sectionTitle),
+                        child: Text(
+                          name,
+                          style: TextStyles.sectionTitle,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.star,
-                            color: AppColors.ratingStarColor,
-                            size: 20,
-                          ),
-                          Text(
-                            ServiceUtils.formatRating(rating),
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
+                      RatingDisplay(rating: rating, starSize: 20),
                     ],
                   ),
 
-                  // Price (if available)
-                  if (price != null && priceType != null) ...[
-                    const SizedBox(height: 4),
-                    Row(
+                  // Info section
+                  Container(
+                    margin: const EdgeInsets.symmetric(vertical: 8),
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Color.fromRGBO(
+                        primaryColor.r.toInt(),
+                        primaryColor.g.toInt(),
+                        primaryColor.b.toInt(),
+                        0.05,
+                      ),
+                      borderRadius: BorderRadius.circular(
+                        AppConstants.smallBorderRadius,
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Icon(
-                          Icons.attach_money,
-                          size: 16,
-                          color:
-                              isDarkMode
-                                  ? AppColorsDark.textSecondary
-                                  : AppColors.textSecondary,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          ServiceUtils.formatPrice(
-                            price!,
-                            showPerPerson: priceType == PriceType.perPerson,
-                            showPerEvent: priceType == PriceType.perEvent,
+                        // Price row
+                        if (price != null && priceType != null)
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.attach_money,
+                                size: 16,
+                                color:
+                                    isDarkMode
+                                        ? AppColorsDark.textSecondary
+                                        : AppColors.textSecondary,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                ServiceUtils.formatPrice(
+                                  price!,
+                                  showPerPerson:
+                                      priceType == PriceType.perPerson,
+                                  showPerEvent: priceType == PriceType.perEvent,
+                                ),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: primaryColor,
+                                ),
+                              ),
+                            ],
                           ),
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color:
-                                isDarkMode
-                                    ? AppColorsDark.primary
-                                    : AppColors.primary,
+
+                        // Capacity row
+                        if (minCapacity != null && maxCapacity != null) ...[
+                          const SizedBox(height: 4),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.people,
+                                size: 16,
+                                color:
+                                    isDarkMode
+                                        ? AppColorsDark.textSecondary
+                                        : AppColors.textSecondary,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                ServiceUtils.formatCapacityRange(
+                                  minCapacity!,
+                                  maxCapacity!,
+                                ),
+                                style: TextStyles.bodySmall,
+                              ),
+                            ],
                           ),
-                        ),
+                        ],
                       ],
                     ),
-                  ],
+                  ),
 
-                  const SizedBox(height: AppConstants.smallPadding),
-                  Text(description),
+                  // Description
+                  Text(
+                    description,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyles.bodySmall,
+                  ),
 
-                  // Tags (if available)
+                  // Tags
                   if (tags.isNotEmpty) ...[
-                    const SizedBox(height: AppConstants.smallPadding),
-                    ChipGroup(items: tags),
+                    const SizedBox(height: 8),
+                    ChipGroup(items: tags, maxChips: 3),
                   ],
 
-                  // Capacity (if available)
-                  if (minCapacity != null && maxCapacity != null) ...[
-                    const SizedBox(height: AppConstants.smallPadding),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.people,
-                          size: 16,
-                          color:
-                              isDarkMode
-                                  ? AppColorsDark.textSecondary
-                                  : AppColors.textSecondary,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          ServiceUtils.formatCapacityRange(
-                            minCapacity!,
-                            maxCapacity!,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-
-                  // Additional info (if available)
+                  // Additional info
                   if (additionalInfo != null) ...[
-                    const SizedBox(height: AppConstants.smallPadding),
-                    // Use the non-null additionalInfo directly
-                    additionalInfo ?? const SizedBox.shrink(),
+                    const SizedBox(height: 8),
+                    additionalInfo!,
                   ],
+
                   // Action buttons row
-                  const SizedBox(height: AppConstants.smallPadding),
+                  const SizedBox(height: 12),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -252,76 +298,54 @@ class ServiceCard extends StatelessWidget {
                         children: [
                           // Save button
                           if (onSave != null)
-                            IconButton(
-                              icon: Icon(
-                                isSaved
-                                    ? Icons.bookmark
-                                    : Icons.bookmark_border,
-                                color:
-                                    isSaved
-                                        ? (isDarkMode
-                                            ? AppColorsDark.warning
-                                            : AppColors.warning)
-                                        : (isDarkMode
-                                            ? AppColorsDark.textSecondary
-                                            : AppColors.textSecondary),
-                              ),
-                              onPressed: onSave,
+                            QuickActionButton(
+                              icon:
+                                  isSaved
+                                      ? Icons.bookmark
+                                      : Icons.bookmark_border,
+                              onPressed: onSave!,
                               tooltip: isSaved ? 'Saved' : 'Save',
-                              constraints: const BoxConstraints(),
-                              padding: const EdgeInsets.all(8),
-                              iconSize: 20,
+                              isActive: isSaved,
+                              activeColor:
+                                  isDarkMode
+                                      ? AppColorsDark.warning
+                                      : AppColors.warning,
                             ),
 
                           // Share button
-                          if (onShare != null) ...[
-                            const SizedBox(width: 8),
-                            IconButton(
-                              icon: Icon(
-                                Icons.share,
-                                color:
-                                    isDarkMode
-                                        ? AppColorsDark.textSecondary
-                                        : AppColors.textSecondary,
-                              ),
-                              onPressed: onShare,
+                          if (onShare != null)
+                            QuickActionButton(
+                              icon: Icons.share,
+                              onPressed: onShare!,
                               tooltip: 'Share',
-                              constraints: const BoxConstraints(),
-                              padding: const EdgeInsets.all(8),
-                              iconSize: 20,
                             ),
-                          ],
+
+                          // View details button
+                          QuickActionButton(
+                            icon: Icons.visibility,
+                            onPressed: onTap,
+                            tooltip: 'View details',
+                            label: 'Details',
+                          ),
                         ],
                       ),
 
-                      // Compare checkbox
+                      // Compare button/checkbox
                       if (showCompareCheckbox && onCompareToggle != null)
-                        Row(
-                          children: [
-                            Text(
-                              'Compare',
-                              style: TextStyle(
-                                color:
-                                    isDarkMode
-                                        ? AppColorsDark.primary
-                                        : AppColors.primary,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Checkbox(
-                              value: isCompareSelected,
-                              onChanged: (value) {
-                                if (value != null && onCompareToggle != null) {
-                                  // Use null-aware method invocation operator
-                                  onCompareToggle?.call(value);
-                                }
-                              },
-                              activeColor:
-                                  isDarkMode
-                                      ? AppColorsDark.primary
-                                      : AppColors.primary,
-                            ),
-                          ],
+                        QuickActionButton(
+                          icon:
+                              isCompareSelected
+                                  ? Icons.compare_arrows
+                                  : Icons.compare_arrows_outlined,
+                          onPressed: () {
+                            onCompareToggle!(!isCompareSelected);
+                          },
+                          tooltip:
+                              isCompareSelected
+                                  ? 'Remove from comparison'
+                                  : 'Add to comparison',
+                          isActive: isCompareSelected,
+                          label: 'Compare',
                         ),
                     ],
                   ),
