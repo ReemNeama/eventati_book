@@ -19,6 +19,8 @@
   *All tasks moved to eventati_book_completed_tasks.md*
 - Services & Booking: ✅ Completed
   *All tasks moved to eventati_book_completed_tasks.md*
+- Comparison Features: ✅ Completed
+  *Implemented save comparison functionality with Supabase integration*
 
 ## Upcoming Tasks
 
