@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/providers/providers.dart';
+import 'package:eventati_book/services/sharing/platform_sharing_service.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/utils.dart';
@@ -10,7 +11,6 @@ import 'package:eventati_book/widgets/services/comparison/feature_comparison_tab
 import 'package:eventati_book/widgets/services/comparison/pricing_comparison_table.dart';
 import 'package:eventati_book/widgets/services/comparison/save_comparison_dialog.dart';
 import 'package:eventati_book/routing/routing.dart';
-import 'package:eventati_book/widgets/common/share_button.dart';
 
 /// Screen for comparing services side by side
 class ServiceComparisonScreen extends StatefulWidget {
@@ -109,10 +109,10 @@ class _ServiceComparisonScreenState extends State<ServiceComparisonScreen>
                 eventId: null,
               );
 
-              return ShareButton(
-                contentType: ShareContentType.comparison,
-                content: comparison,
+              return IconButton(
+                icon: const Icon(Icons.share),
                 tooltip: 'Share comparison',
+                onPressed: () => _showShareOptions(context, comparison),
               );
             },
           ),
@@ -234,6 +234,156 @@ class _ServiceComparisonScreenState extends State<ServiceComparisonScreen>
         ],
       ),
     );
+  }
+
+  /// Show share options dialog
+  void _showShareOptions(BuildContext context, SavedComparison comparison) {
+    showDialog(
+      context: context,
+      builder:
+          (dialogContext) => AlertDialog(
+            title: const Text('Share Comparison'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.picture_as_pdf),
+                  title: const Text('Export as PDF'),
+                  subtitle: const Text(
+                    'Create a PDF document of this comparison',
+                  ),
+                  onTap: () {
+                    Navigator.of(dialogContext).pop();
+                    _shareComparison(comparison);
+                  },
+                ),
+                const Divider(),
+                const SizedBox(height: 8),
+                const Text(
+                  'Share to social media:',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    // Facebook share button
+                    _buildSocialShareButton(
+                      dialogContext,
+                      comparison,
+                      SharingPlatform.facebook,
+                      Icons.facebook,
+                      'Facebook',
+                    ),
+                    // Twitter share button
+                    _buildSocialShareButton(
+                      dialogContext,
+                      comparison,
+                      SharingPlatform.twitter,
+                      Icons.flutter_dash,
+                      'Twitter',
+                    ),
+                    // WhatsApp share button
+                    _buildSocialShareButton(
+                      dialogContext,
+                      comparison,
+                      SharingPlatform.whatsapp,
+                      Icons.message,
+                      'WhatsApp',
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(),
+                child: const Text('Cancel'),
+              ),
+            ],
+          ),
+    );
+  }
+
+  /// Build a social media share button
+  Widget _buildSocialShareButton(
+    BuildContext dialogContext,
+    SavedComparison comparison,
+    SharingPlatform platform,
+    IconData icon,
+    String label,
+  ) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        IconButton(
+          icon: Icon(icon),
+          onPressed: () async {
+            Navigator.of(dialogContext).pop();
+
+            // Show loading indicator
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Sharing to $label...'),
+                duration: const Duration(seconds: 1),
+              ),
+            );
+
+            try {
+              // Share to the platform
+              final success = await Provider.of<SocialSharingProvider>(
+                context,
+                listen: false,
+              ).shareComparisonToPlatform(comparison, platform);
+
+              if (success && mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Shared to $label successfully')),
+                );
+              } else if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Failed to share to $label')),
+                );
+              }
+            } catch (e) {
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Error sharing to $label: $e')),
+                );
+              }
+            }
+          },
+          tooltip: 'Share to $label',
+        ),
+        Text(label, style: const TextStyle(fontSize: 12)),
+      ],
+    );
+  }
+
+  /// Share a comparison as a PDF
+  Future<void> _shareComparison(SavedComparison comparison) async {
+    try {
+      // Show a loading indicator
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Generating PDF...'),
+          duration: Duration(seconds: 1),
+        ),
+      );
+
+      // Share the comparison
+      await Provider.of<SocialSharingProvider>(
+        context,
+        listen: false,
+      ).shareComparison(comparison);
+    } catch (e) {
+      // Show error message
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to share comparison: $e')),
+        );
+      }
+    }
   }
 
   /// Show dialog to save the comparison

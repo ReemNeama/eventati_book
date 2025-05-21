@@ -178,9 +178,11 @@ class PlatformShareButtons extends StatelessWidget {
           }
           break;
         case ShareContentType.comparison:
-          // For comparisons, we'll use the generic share for now
           if (content is SavedComparison) {
-            success = await socialSharingProvider.shareComparison(content);
+            success = await socialSharingProvider.shareComparisonToPlatform(
+              content,
+              platform,
+            );
           } else {
             throw Exception('Content must be a SavedComparison');
           }

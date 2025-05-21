@@ -289,6 +289,91 @@ class SocialSharingService {
     }
   }
 
+  /// Share a comparison to a specific platform
+  ///
+  /// [comparison] The comparison to share
+  /// [platform] The platform to share to
+  Future<bool> shareComparisonToPlatform(
+    SavedComparison comparison,
+    SharingPlatform platform,
+  ) async {
+    try {
+      // Generate a deep link to the comparison
+      final deepLink = DeepLinkConfig.generateComparisonUrl(comparison.id);
+
+      // Create the share text
+      String shareText =
+          'Check out my comparison of ${comparison.serviceNames.join(', ')}';
+
+      // Add more details based on the comparison
+      shareText += '\n\nComparison: ${comparison.title}';
+      shareText += '\nService Type: ${comparison.serviceType}';
+
+      if (comparison.notes.isNotEmpty) {
+        shareText += '\n\nNotes: ${comparison.notes}';
+      }
+
+      if (comparison.eventName != null && comparison.eventName!.isNotEmpty) {
+        shareText += '\nEvent: ${comparison.eventName}';
+      }
+
+      shareText += '\n\nView in Eventati Book: $deepLink';
+
+      // Share to the specified platform
+      bool success = false;
+      switch (platform) {
+        case SharingPlatform.facebook:
+          success = await _platformSharingService.shareToFacebook(
+            text: shareText,
+            url: deepLink,
+            hashtag: 'EventatiBook',
+          );
+          break;
+        case SharingPlatform.twitter:
+          success = await _platformSharingService.shareToTwitter(
+            text:
+                'Check out my comparison of ${comparison.serviceNames.join(', ')}',
+            url: deepLink,
+            hashtags: ['EventatiBook', 'Comparison', comparison.serviceType],
+          );
+          break;
+        case SharingPlatform.whatsapp:
+          success = await _platformSharingService.shareToWhatsApp(
+            text: shareText,
+          );
+          break;
+        // No default case needed as we've covered all enum values
+      }
+
+      // Track the share
+      await _analyticsService.trackShare(
+        contentType: 'comparison',
+        itemId: comparison.id,
+        method: platform.toString().split('.').last,
+      );
+
+      if (success) {
+        Logger.i(
+          'Comparison shared successfully to ${platform.toString().split('.').last}: ${comparison.id}',
+          tag: 'SocialSharingService',
+        );
+      } else {
+        Logger.w(
+          'Failed to share comparison to ${platform.toString().split('.').last}: ${comparison.id}',
+          tag: 'SocialSharingService',
+        );
+      }
+
+      return success;
+    } catch (e) {
+      Logger.e(
+        'Error sharing comparison to ${platform.toString().split('.').last}: $e',
+        tag: 'SocialSharingService',
+      );
+      return false;
+    }
+  }
+
   /// Share a service via the platform's share dialog
   ///
   /// [service] The service to share

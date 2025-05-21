@@ -142,7 +142,7 @@
 ### "Coming Soon" Features to Implement
 - [ ] Share functionality
   - [x] Service details sharing
-  - [ ] Comparison sharing
+  - [x] Comparison sharing
   - [ ] Event details sharing
 - [ ] Save functionality
   - [ ] Save service to favorites

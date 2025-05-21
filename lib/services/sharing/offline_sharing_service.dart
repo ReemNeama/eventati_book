@@ -190,7 +190,10 @@ class OfflineSharingService {
   }
 
   /// Queue a comparison for sharing when online
-  Future<bool> queueComparisonShare(SavedComparison comparison) async {
+  Future<bool> queueComparisonShare(
+    SavedComparison comparison, {
+    SharingPlatform? platform,
+  }) async {
     try {
       // For now, we'll use a simplified approach since SavedComparison.toJson() might not exist
       final pendingShare = PendingShare(
@@ -200,7 +203,14 @@ class OfflineSharingService {
           'userId': comparison.userId,
           'createdAt': DateTime.now().toIso8601String(),
           'serviceIds': comparison.serviceIds,
+          'serviceNames': comparison.serviceNames,
+          'serviceType': comparison.serviceType,
+          'title': comparison.title,
+          'notes': comparison.notes,
+          'eventId': comparison.eventId,
+          'eventName': comparison.eventName,
         }),
+        platform: platform,
         timestamp: DateTime.now(),
       );
 
@@ -451,25 +461,33 @@ class OfflineSharingService {
     try {
       final comparisonMap = jsonDecode(share.contentJson);
 
-      // For simplicity, we'll just use the data we have and pass it to the sharing service
-      // This is a workaround since we don't have access to the full SavedComparison model
-      // In a real implementation, you would create a proper SavedComparison object
-
-      // We'll use a mock comparison with minimal required data
+      // Create a SavedComparison from the JSON data
       final comparison = SavedComparison(
         id: comparisonMap['id'] ?? 'unknown',
         userId: comparisonMap['userId'] ?? '',
         serviceIds: List<String>.from(comparisonMap['serviceIds'] ?? []),
+        serviceNames: List<String>.from(
+          comparisonMap['serviceNames'] ?? ['Unknown Service'],
+        ),
         createdAt: DateTime.parse(
           comparisonMap['createdAt'] ?? DateTime.now().toIso8601String(),
         ),
-        serviceType: 'unknown',
-        serviceNames: ['Unknown Service'],
-        title: 'Comparison',
+        serviceType: comparisonMap['serviceType'] ?? 'unknown',
+        title: comparisonMap['title'] ?? 'Comparison',
+        notes: comparisonMap['notes'] ?? '',
+        eventId: comparisonMap['eventId'],
+        eventName: comparisonMap['eventName'],
       );
 
-      await _socialSharingService.shareComparison(comparison);
-      return true;
+      if (share.platform != null) {
+        return await _socialSharingService.shareComparisonToPlatform(
+          comparison,
+          share.platform!,
+        );
+      } else {
+        await _socialSharingService.shareComparison(comparison);
+        return true;
+      }
     } catch (e) {
       Logger.e(
         'Error processing comparison share: $e',

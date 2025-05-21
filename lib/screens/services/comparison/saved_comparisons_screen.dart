@@ -4,6 +4,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/models/feature_models/comparison_annotation.dart';
 import 'package:eventati_book/providers/providers.dart';
+import 'package:eventati_book/services/sharing/platform_sharing_service.dart';
 import 'package:eventati_book/styles/app_colors.dart';
 import 'package:eventati_book/styles/app_colors_dark.dart';
 import 'package:eventati_book/utils/utils.dart';
@@ -754,6 +755,42 @@ class _SavedComparisonsScreenState extends State<SavedComparisonsScreen> {
                     _emailComparison(comparison);
                   },
                 ),
+                const Divider(),
+                const SizedBox(height: 8),
+                const Text(
+                  'Share to social media:',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    // Facebook share button
+                    _buildSocialShareButton(
+                      dialogContext,
+                      comparison,
+                      SharingPlatform.facebook,
+                      Icons.facebook,
+                      'Facebook',
+                    ),
+                    // Twitter share button
+                    _buildSocialShareButton(
+                      dialogContext,
+                      comparison,
+                      SharingPlatform.twitter,
+                      Icons.flutter_dash,
+                      'Twitter',
+                    ),
+                    // WhatsApp share button
+                    _buildSocialShareButton(
+                      dialogContext,
+                      comparison,
+                      SharingPlatform.whatsapp,
+                      Icons.message,
+                      'WhatsApp',
+                    ),
+                  ],
+                ),
               ],
             ),
             actions: [
@@ -763,6 +800,61 @@ class _SavedComparisonsScreenState extends State<SavedComparisonsScreen> {
               ),
             ],
           ),
+    );
+  }
+
+  /// Build a social media share button
+  Widget _buildSocialShareButton(
+    BuildContext dialogContext,
+    SavedComparison comparison,
+    SharingPlatform platform,
+    IconData icon,
+    String label,
+  ) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        IconButton(
+          icon: Icon(icon),
+          onPressed: () async {
+            Navigator.of(dialogContext).pop();
+
+            // Show loading indicator
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Sharing to $label...'),
+                duration: const Duration(seconds: 1),
+              ),
+            );
+
+            try {
+              // Share to the platform
+              final success = await Provider.of<SocialSharingProvider>(
+                context,
+                listen: false,
+              ).shareComparisonToPlatform(comparison, platform);
+
+              if (success && mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Shared to $label successfully')),
+                );
+              } else if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Failed to share to $label')),
+                );
+              }
+            } catch (e) {
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Error sharing to $label: $e')),
+                );
+              }
+            }
+          },
+          tooltip: 'Share to $label',
+        ),
+        Text(label, style: const TextStyle(fontSize: 12)),
+      ],
     );
   }
 

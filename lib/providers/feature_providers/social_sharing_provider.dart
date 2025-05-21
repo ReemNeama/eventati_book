@@ -365,6 +365,56 @@ class SocialSharingProvider extends ChangeNotifier {
     }
   }
 
+  /// Share a comparison to a specific platform
+  ///
+  /// [comparison] The comparison to share
+  /// [platform] The platform to share to
+  /// [queueIfOffline] Whether to queue the share if offline
+  Future<bool> shareComparisonToPlatform(
+    SavedComparison comparison,
+    SharingPlatform platform, {
+    bool? queueIfOffline,
+  }) async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      // Check if we're online
+      if (!_isOnline && (queueIfOffline ?? _autoQueueWhenOffline)) {
+        // Queue the share for later
+        final success = await _offlineSharingService.queueComparisonShare(
+          comparison,
+          platform: platform,
+        );
+
+        _isLoading = false;
+        notifyListeners();
+
+        return success;
+      } else {
+        // Share immediately
+        final success = await _sharingService.shareComparisonToPlatform(
+          comparison,
+          platform,
+        );
+
+        _isLoading = false;
+        notifyListeners();
+
+        return success;
+      }
+    } catch (e) {
+      _isLoading = false;
+      _errorMessage =
+          'Failed to share comparison to ${platform.toString().split('.').last}: $e';
+      Logger.e(_errorMessage!, tag: 'SocialSharingProvider');
+      notifyListeners();
+
+      return false;
+    }
+  }
+
   /// Share a service via the platform's share dialog
   ///
   /// [service] The service to share
