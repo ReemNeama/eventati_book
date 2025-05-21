@@ -7,6 +7,7 @@ import 'package:eventati_book/widgets/details/package_card.dart';
 import 'package:eventati_book/widgets/details/info_card.dart';
 import 'package:eventati_book/widgets/details/detail_tab_bar.dart';
 import 'package:eventati_book/widgets/details/image_placeholder.dart';
+import 'package:eventati_book/widgets/common/share_button.dart';
 import 'package:eventati_book/routing/routing.dart';
 import 'package:eventati_book/providers/providers.dart';
 import 'package:provider/provider.dart';
@@ -197,11 +198,9 @@ class _CateringDetailsScreenState extends State<CateringDetailsScreen>
         backgroundColor: primaryColor,
         actions: [
           // Share button
-          IconButton(
-            icon: const Icon(Icons.share),
-            onPressed: () {
-              UIUtils.showSnackBar(context, 'Share functionality coming soon!');
-            },
+          ShareButton(
+            contentType: ShareContentType.catering,
+            content: widget.cateringService,
             tooltip: 'Share this catering service',
           ),
           // Save button

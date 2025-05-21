@@ -221,6 +221,38 @@ class OfflineSharingService {
     }
   }
 
+  /// Queue a service for sharing when online
+  Future<bool> queueServiceShare(
+    Service service, {
+    SharingPlatform? platform,
+    bool includeDetails = true,
+  }) async {
+    try {
+      final pendingShare = PendingShare(
+        contentType: 'service',
+        contentJson: jsonEncode(service.toJson()),
+        platform: platform,
+        timestamp: DateTime.now(),
+        includeDetails: includeDetails,
+      );
+
+      await _addPendingShare(pendingShare);
+
+      // If we're online, process pending shares immediately
+      if (_isOnline) {
+        _processPendingShares();
+      }
+
+      return true;
+    } catch (e) {
+      Logger.e(
+        'Error queueing service share: $e',
+        tag: 'OfflineSharingService',
+      );
+      return false;
+    }
+  }
+
   /// Get all pending shares
   Future<List<PendingShare>> getPendingShares() async {
     try {
@@ -312,6 +344,9 @@ class OfflineSharingService {
             break;
           case 'comparison':
             success = await _processComparisonShare(share);
+            break;
+          case 'service':
+            success = await _processServiceShare(share);
             break;
         }
 
@@ -438,6 +473,35 @@ class OfflineSharingService {
     } catch (e) {
       Logger.e(
         'Error processing comparison share: $e',
+        tag: 'OfflineSharingService',
+      );
+      return false;
+    }
+  }
+
+  /// Process a service share
+  Future<bool> _processServiceShare(PendingShare share) async {
+    try {
+      final serviceMap = jsonDecode(share.contentJson);
+      // Create a Service from the JSON data
+      final service = Service.fromJson(serviceMap);
+
+      if (share.platform != null) {
+        return await _socialSharingService.shareServiceToPlatform(
+          service,
+          share.platform!,
+          includeDetails: share.includeDetails,
+        );
+      } else {
+        await _socialSharingService.shareService(
+          service,
+          includeDetails: share.includeDetails,
+        );
+        return true;
+      }
+    } catch (e) {
+      Logger.e(
+        'Error processing service share: $e',
         tag: 'OfflineSharingService',
       );
       return false;

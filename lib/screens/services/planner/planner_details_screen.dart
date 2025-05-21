@@ -13,6 +13,7 @@ import 'package:eventati_book/utils/utils.dart';
 // Import widgets using barrel files
 import 'package:eventati_book/widgets/details/detail_widgets.dart';
 import 'package:eventati_book/widgets/responsive/responsive.dart';
+import 'package:eventati_book/widgets/common/share_button.dart';
 
 // Import routing
 import 'package:eventati_book/routing/routing.dart';
@@ -147,6 +148,14 @@ class _PlannerDetailsScreenState extends State<PlannerDetailsScreen>
       appBar: AppBar(
         title: Text(widget.planner.name),
         backgroundColor: primaryColor,
+        actions: [
+          // Share button
+          ShareButton(
+            contentType: ShareContentType.planner,
+            content: widget.planner,
+            tooltip: 'Share this planner',
+          ),
+        ],
         bottom: DetailTabBar(
           tabController: _tabController,
           tabTitles: const ['Packages', 'About Planner'],

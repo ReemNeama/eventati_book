@@ -110,6 +110,41 @@ class ShareButton extends StatelessWidget {
             );
           }
           break;
+        case ShareContentType.service:
+          if (content is Service) {
+            await socialSharingProvider.shareService(content);
+          } else {
+            throw Exception('Content must be a Service');
+          }
+          break;
+        case ShareContentType.venue:
+          if (content is Venue) {
+            await socialSharingProvider.shareService(content);
+          } else {
+            throw Exception('Content must be a Venue');
+          }
+          break;
+        case ShareContentType.photographer:
+          if (content is Photographer) {
+            await socialSharingProvider.shareService(content);
+          } else {
+            throw Exception('Content must be a Photographer');
+          }
+          break;
+        case ShareContentType.planner:
+          if (content is Planner) {
+            await socialSharingProvider.shareService(content);
+          } else {
+            throw Exception('Content must be a Planner');
+          }
+          break;
+        case ShareContentType.catering:
+          if (content is CateringService) {
+            await socialSharingProvider.shareService(content);
+          } else {
+            throw Exception('Content must be a CateringService');
+          }
+          break;
       }
 
       // Call success callback if provided
@@ -153,4 +188,19 @@ enum ShareContentType {
 
   /// Share a file
   file,
+
+  /// Share a service
+  service,
+
+  /// Share a venue
+  venue,
+
+  /// Share a photographer
+  photographer,
+
+  /// Share a planner
+  planner,
+
+  /// Share a catering service
+  catering,
 }

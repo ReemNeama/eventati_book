@@ -289,6 +289,196 @@ class SocialSharingService {
     }
   }
 
+  /// Share a service via the platform's share dialog
+  ///
+  /// [service] The service to share
+  /// [includeDetails] Whether to include detailed service information
+  Future<void> shareService(
+    Service service, {
+    bool includeDetails = true,
+  }) async {
+    try {
+      // Generate a deep link to the service
+      final serviceType = _getServiceType(service);
+      final deepLink = DeepLinkConfig.generateServiceUrl(
+        serviceType,
+        service.id,
+      );
+
+      // Create the share text
+      String shareText =
+          'Check out this ${serviceType.toLowerCase()}: ${service.name}';
+
+      if (includeDetails) {
+        shareText += '\n\n${service.description}';
+
+        if (service.price > 0) {
+          final priceText =
+              service.isPricePerHour
+                  ? '${service.price} ${service.currency}/hour'
+                  : '${service.price} ${service.currency}';
+          shareText += '\n\nPrice: $priceText';
+
+          if (service.isPricePerHour && service.minimumBookingHours != null) {
+            shareText +=
+                '\nMinimum booking: ${service.minimumBookingHours} hours';
+          }
+        }
+
+        if (service.location != null && service.location!.isNotEmpty) {
+          shareText += '\nLocation: ${service.location}';
+        }
+
+        if (service.averageRating > 0) {
+          shareText +=
+              '\nRating: ${service.averageRating.toStringAsFixed(1)}/5 (${service.reviewCount} reviews)';
+        }
+      }
+
+      shareText += '\n\nView in Eventati Book: $deepLink';
+
+      // Share the service
+      await shareContent(
+        text: shareText,
+        subject: 'Eventati Book - ${service.name}',
+      );
+
+      // Track the share
+      await _analyticsService.trackShare(
+        contentType: 'service',
+        itemId: service.id,
+        method: 'platform_share',
+      );
+
+      Logger.i(
+        'Service shared successfully: ${service.id}',
+        tag: 'SocialSharingService',
+      );
+    } catch (e) {
+      Logger.e('Error sharing service: $e', tag: 'SocialSharingService');
+      throw Exception('Failed to share service: $e');
+    }
+  }
+
+  /// Share a service to a specific platform
+  ///
+  /// [service] The service to share
+  /// [platform] The platform to share to
+  /// [includeDetails] Whether to include detailed service information
+  Future<bool> shareServiceToPlatform(
+    Service service,
+    SharingPlatform platform, {
+    bool includeDetails = true,
+  }) async {
+    try {
+      final serviceType = _getServiceType(service);
+      final deepLink = DeepLinkConfig.generateServiceUrl(
+        serviceType,
+        service.id,
+      );
+
+      // Create the share text
+      String shareText =
+          'Check out this ${serviceType.toLowerCase()}: ${service.name}';
+
+      if (includeDetails) {
+        shareText += '\n\n${service.description}';
+
+        if (service.price > 0) {
+          final priceText =
+              service.isPricePerHour
+                  ? '${service.price} ${service.currency}/hour'
+                  : '${service.price} ${service.currency}';
+          shareText += '\n\nPrice: $priceText';
+
+          if (service.isPricePerHour && service.minimumBookingHours != null) {
+            shareText +=
+                '\nMinimum booking: ${service.minimumBookingHours} hours';
+          }
+        }
+
+        if (service.location != null && service.location!.isNotEmpty) {
+          shareText += '\nLocation: ${service.location}';
+        }
+
+        if (service.averageRating > 0) {
+          shareText +=
+              '\nRating: ${service.averageRating.toStringAsFixed(1)}/5 (${service.reviewCount} reviews)';
+        }
+      }
+
+      shareText += '\n\nView in Eventati Book: $deepLink';
+
+      // Share to the specified platform
+      bool success = false;
+      switch (platform) {
+        case SharingPlatform.facebook:
+          success = await _platformSharingService.shareToFacebook(
+            text: shareText,
+            url: deepLink,
+            hashtag: 'EventatiBook',
+          );
+          break;
+        case SharingPlatform.twitter:
+          success = await _platformSharingService.shareToTwitter(
+            text:
+                'Check out this ${serviceType.toLowerCase()}: ${service.name}',
+            url: deepLink,
+            hashtags: ['EventatiBook', serviceType],
+          );
+          break;
+        case SharingPlatform.whatsapp:
+          success = await _platformSharingService.shareToWhatsApp(
+            text: shareText,
+          );
+          break;
+        // No default case needed as we've covered all enum values
+      }
+
+      // Track the share
+      await _analyticsService.trackShare(
+        contentType: 'service',
+        itemId: service.id,
+        method: platform.toString().split('.').last,
+      );
+
+      if (success) {
+        Logger.i(
+          'Service shared successfully to ${platform.toString().split('.').last}: ${service.id}',
+          tag: 'SocialSharingService',
+        );
+      } else {
+        Logger.w(
+          'Failed to share service to ${platform.toString().split('.').last}: ${service.id}',
+          tag: 'SocialSharingService',
+        );
+      }
+
+      return success;
+    } catch (e) {
+      Logger.e(
+        'Error sharing service to ${platform.toString().split('.').last}: $e',
+        tag: 'SocialSharingService',
+      );
+      return false;
+    }
+  }
+
+  /// Get the service type as a string
+  String _getServiceType(Service service) {
+    if (service is Venue) {
+      return 'Venue';
+    } else if (service is Photographer) {
+      return 'Photographer';
+    } else if (service is Planner) {
+      return 'Planner';
+    } else if (service is CateringService) {
+      return 'Catering';
+    } else {
+      return 'Service';
+    }
+  }
+
   /// Format a date for display in shares
   String _formatDate(DateTime date) {
     final day = date.day.toString().padLeft(2, '0');

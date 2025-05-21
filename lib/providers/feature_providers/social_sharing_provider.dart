@@ -364,4 +364,105 @@ class SocialSharingProvider extends ChangeNotifier {
       return false;
     }
   }
+
+  /// Share a service via the platform's share dialog
+  ///
+  /// [service] The service to share
+  /// [includeDetails] Whether to include detailed service information
+  /// [queueIfOffline] Whether to queue the share if offline
+  Future<void> shareService(
+    Service service, {
+    bool includeDetails = true,
+    bool? queueIfOffline,
+  }) async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      // Check if we're online
+      if (!_isOnline && (queueIfOffline ?? _autoQueueWhenOffline)) {
+        // Queue the share for later
+        final success = await _offlineSharingService.queueServiceShare(
+          service,
+          includeDetails: includeDetails,
+        );
+
+        if (success) {
+          _isLoading = false;
+          notifyListeners();
+        } else {
+          throw Exception('Failed to queue service share');
+        }
+      } else {
+        // Share immediately
+        await _sharingService.shareService(
+          service,
+          includeDetails: includeDetails,
+        );
+
+        _isLoading = false;
+        notifyListeners();
+      }
+    } catch (e) {
+      _isLoading = false;
+      _errorMessage = 'Failed to share service: $e';
+      Logger.e(_errorMessage!, tag: 'SocialSharingProvider');
+      notifyListeners();
+    }
+  }
+
+  /// Share a service to a specific platform
+  ///
+  /// [service] The service to share
+  /// [platform] The platform to share to
+  /// [includeDetails] Whether to include detailed service information
+  /// [queueIfOffline] Whether to queue the share if offline
+  Future<bool> shareServiceToPlatform(
+    Service service,
+    SharingPlatform platform, {
+    bool includeDetails = true,
+    bool? queueIfOffline,
+  }) async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      // Check if we're online
+      if (!_isOnline && (queueIfOffline ?? _autoQueueWhenOffline)) {
+        // Queue the share for later
+        final success = await _offlineSharingService.queueServiceShare(
+          service,
+          platform: platform,
+          includeDetails: includeDetails,
+        );
+
+        _isLoading = false;
+        notifyListeners();
+
+        return success;
+      } else {
+        // Share immediately
+        final success = await _sharingService.shareServiceToPlatform(
+          service,
+          platform,
+          includeDetails: includeDetails,
+        );
+
+        _isLoading = false;
+        notifyListeners();
+
+        return success;
+      }
+    } catch (e) {
+      _isLoading = false;
+      _errorMessage =
+          'Failed to share service to ${platform.toString().split('.').last}: $e';
+      Logger.e(_errorMessage!, tag: 'SocialSharingProvider');
+      notifyListeners();
+
+      return false;
+    }
+  }
 }

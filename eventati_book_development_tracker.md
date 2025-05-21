@@ -1,5 +1,5 @@
 # Eventati Book - Development Tracker
-*Last updated: July 15, 2024*
+*Last updated: July 16, 2024*
 
 ## How to use this tracker
 - [ ] Unchecked task (not started or in progress)
@@ -139,6 +139,53 @@
 - Vendor admin portal integration
 - Advanced analytics dashboard
 
+### "Coming Soon" Features to Implement
+- [ ] Share functionality
+  - [x] Service details sharing
+  - [ ] Comparison sharing
+  - [ ] Event details sharing
+- [ ] Save functionality
+  - [ ] Save service to favorites
+  - [ ] Save comparison results
+- [ ] Review system
+  - [ ] Write reviews for services
+  - [ ] View all reviews for a service
+  - [ ] Rating and review management
+- [ ] Optimize for landscape mode
+
+### Code Organization Improvements
+- [ ] Update imports to use barrel files consistently
+- [ ] Remove re-export files once imports are updated
+- [ ] Add comprehensive documentation for model classes
+- [ ] Move utility files to appropriate subfolders
+
+### Notification System Enhancements
+- [ ] Add SMS notification support
+- [ ] Implement notification templates
+- [ ] Add rich notifications with images and actions
+- [ ] Implement notification analytics
+- [ ] Add notification categories and filtering
+
+### Premium & Beta Features
+- [ ] AI-powered features
+  - [ ] AI suggestions
+  - [ ] AI planning assistance
+  - [ ] AI budget optimization
+  - [ ] AI timeline planning
+  - [ ] AI vendor matching
+  - [ ] AI theme generation
+  - [ ] AI menu planning
+  - [ ] AI seating arrangement
+  - [ ] AI speech writing
+- [ ] Premium subscription features
+  - [ ] Premium booking features
+  - [ ] Premium comparison tools
+  - [ ] Premium search capabilities
+  - [ ] Premium filter and sort options
+  - [ ] Premium event planning tools
+  - [ ] Premium analytics
+  - [ ] Premium export/import functionality
+  - [ ] Premium templates and themes
 
 
 ---

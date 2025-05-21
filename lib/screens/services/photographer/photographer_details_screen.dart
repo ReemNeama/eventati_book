@@ -10,6 +10,7 @@ import 'package:eventati_book/widgets/details/detail_tab_bar.dart';
 import 'package:eventati_book/widgets/details/image_placeholder.dart';
 import 'package:eventati_book/widgets/details/chip_group.dart';
 import 'package:eventati_book/widgets/responsive/responsive.dart';
+import 'package:eventati_book/widgets/common/share_button.dart';
 import 'package:eventati_book/routing/routing.dart';
 import 'package:eventati_book/providers/providers.dart';
 import 'package:provider/provider.dart';
@@ -218,6 +219,14 @@ class _PhotographerDetailsScreenState extends State<PhotographerDetailsScreen>
       appBar: AppBar(
         title: Text(widget.photographer.name),
         backgroundColor: primaryColor,
+        actions: [
+          // Share button
+          ShareButton(
+            contentType: ShareContentType.photographer,
+            content: widget.photographer,
+            tooltip: 'Share this photographer',
+          ),
+        ],
         bottom: DetailTabBar(
           tabController: _tabController,
           tabTitles: const ['Packages', 'Portfolio'],
