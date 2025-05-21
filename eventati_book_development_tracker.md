@@ -140,10 +140,10 @@
 - Advanced analytics dashboard
 
 ### "Coming Soon" Features to Implement
-- [ ] Share functionality
+- [x] Share functionality
   - [x] Service details sharing
   - [x] Comparison sharing
-  - [ ] Event details sharing
+  - [x] Event details sharing
 - [ ] Save functionality
   - [ ] Save service to favorites
   - [ ] Save comparison results
