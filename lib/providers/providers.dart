@@ -37,9 +37,10 @@ export 'feature_providers/feature_providers.dart';
 // SERVICE PROVIDERS
 // -------------------------
 // Providers that handle service-related functionality
-export 'service_providers/service_recommendation_provider.dart';
+export 'service_providers/service_providers.dart';
 // Includes:
 // - ServiceRecommendationProvider: Service recommendations for venues, catering, photographers, etc.
+// - ServiceDatabaseProvider: Service database operations
 
 // -------------------------
 // PLANNING PROVIDERS

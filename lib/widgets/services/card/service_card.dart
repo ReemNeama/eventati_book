@@ -10,6 +10,7 @@ import 'package:eventati_book/styles/text_styles.dart';
 import 'package:eventati_book/models/models.dart';
 import 'package:eventati_book/widgets/common/rating_display.dart';
 import 'package:eventati_book/widgets/common/quick_action_button.dart';
+import 'package:eventati_book/widgets/common/favorite_button.dart';
 
 class ServiceCard extends StatelessWidget {
   final String name;
@@ -298,14 +299,11 @@ class ServiceCard extends StatelessWidget {
                         children: [
                           // Save button
                           if (onSave != null)
-                            QuickActionButton(
-                              icon:
-                                  isSaved
-                                      ? Icons.bookmark
-                                      : Icons.bookmark_border,
-                              onPressed: onSave!,
-                              tooltip: isSaved ? 'Saved' : 'Save',
-                              isActive: isSaved,
+                            FavoriteButton(
+                              isFavorite: isSaved,
+                              onToggle: onSave!,
+                              size: 20,
+                              showBackground: false,
                               activeColor:
                                   isDarkMode
                                       ? AppColorsDark.warning

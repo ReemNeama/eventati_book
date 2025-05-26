@@ -18,3 +18,6 @@ export 'planner/index.dart';
 
 // Recently viewed screens
 export 'recently_viewed/recently_viewed_screen.dart';
+
+// Favorites screens
+export 'favorites/index.dart';

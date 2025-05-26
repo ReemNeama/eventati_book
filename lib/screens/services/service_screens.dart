@@ -65,6 +65,22 @@ export 'comparison/index.dart';
 // - SavedComparisonsScreen: View previously saved comparisons
 
 // -------------------------
+// FAVORITES SCREENS
+// -------------------------
+// Screens for managing favorite services
+export 'favorites/index.dart';
+// Includes:
+// - FavoritesScreen: View and manage favorite services
+
+// -------------------------
+// REVIEWS SCREENS
+// -------------------------
+// Screens for managing service reviews
+export 'reviews/index.dart';
+// Includes:
+// - ReviewsScreen: View and manage reviews for a service
+
+// -------------------------
 // NAVIGATION FLOW
 // -------------------------
 // The typical navigation flow for services is:

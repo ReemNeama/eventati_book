@@ -152,10 +152,18 @@ class ProfileScreen extends StatelessWidget {
                 const SizedBox(height: 8),
                 _buildSettingItem(
                   context,
+                  icon: Icons.favorite_border,
+                  title: 'My Favorites',
+                  onTap: () {
+                    Navigator.pushNamed(context, RouteNames.favorites);
+                  },
+                ),
+                _buildSettingItem(
+                  context,
                   icon: Icons.compare_arrows,
                   title: 'Saved Comparisons',
                   onTap: () {
-                    Navigator.pushNamed(context, '/comparisons/saved');
+                    Navigator.pushNamed(context, RouteNames.savedComparisons);
                   },
                 ),
                 _buildSettingItem(

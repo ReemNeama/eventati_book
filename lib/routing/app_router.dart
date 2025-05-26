@@ -15,6 +15,9 @@ import 'package:eventati_book/di/service_locator.dart';
 import 'package:eventati_book/providers/planning_providers/task_template_provider.dart';
 import 'package:eventati_book/screens/booking/pre_checkout_comparison_screen.dart';
 
+import 'package:eventati_book/screens/services/reviews/reviews_screen.dart';
+import 'package:eventati_book/widgets/common/error_screen.dart';
+
 /// Router class for handling all navigation in the app
 class AppRouter {
   /// Define static routes that don't require parameters
@@ -443,6 +446,43 @@ class AppRouter {
       case RouteNames.recentlyViewedServices:
         return MaterialPageRoute(
           builder: (context) => const RecentlyViewedScreen(),
+        );
+
+      case RouteNames.favorites:
+        return MaterialPageRoute(builder: (context) => const FavoritesScreen());
+
+      case RouteNames.reviews:
+        // Extract parameters from settings
+        final args = settings.arguments as Map<String, dynamic>?;
+        if (args == null) {
+          return MaterialPageRoute(
+            builder:
+                (context) => const ErrorScreen(
+                  message: 'Missing required parameters for reviews screen',
+                ),
+          );
+        }
+
+        final serviceId = args['serviceId'] as String?;
+        final serviceType = args['serviceType'] as String?;
+        final serviceName = args['serviceName'] as String?;
+
+        if (serviceId == null || serviceType == null || serviceName == null) {
+          return MaterialPageRoute(
+            builder:
+                (context) => const ErrorScreen(
+                  message: 'Missing required parameters for reviews screen',
+                ),
+          );
+        }
+
+        return MaterialPageRoute(
+          builder:
+              (context) => ReviewsScreen(
+                serviceId: serviceId,
+                serviceType: serviceType,
+                serviceName: serviceName,
+              ),
         );
 
       case RouteNames.budgetOverview:

@@ -50,6 +50,7 @@ class ProvidersManager {
     ),
     ChangeNotifierProvider(create: (_) => SuggestionProvider()),
     ChangeNotifierProvider(create: (_) => ServiceRecommendationProvider()),
+    ChangeNotifierProvider(create: (_) => ServiceDatabaseProvider()),
     ChangeNotifierProvider(create: (_) => ComparisonProvider()),
 
     // Planning providers

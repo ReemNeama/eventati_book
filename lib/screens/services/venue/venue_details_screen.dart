@@ -12,6 +12,8 @@ import 'package:eventati_book/widgets/details/image_placeholder.dart';
 import 'package:eventati_book/widgets/details/chip_group.dart';
 import 'package:eventati_book/widgets/common/image_gallery.dart';
 import 'package:eventati_book/widgets/common/share_button.dart';
+import 'package:eventati_book/widgets/common/favorite_button.dart';
+import 'package:eventati_book/widgets/reviews/reviews_list.dart';
 import 'package:eventati_book/providers/providers.dart';
 import 'package:provider/provider.dart';
 import 'package:eventati_book/routing/routing.dart';
@@ -30,6 +32,7 @@ class _VenueDetailsScreenState extends State<VenueDetailsScreen>
     with SingleTickerProviderStateMixin {
   TabController? _tabController;
   int _selectedPackageIndex = -1;
+  bool _isFavorite = false;
 
   // Sample data for packages
   final List<VenuePackage> _packages = [
@@ -126,11 +129,62 @@ class _VenueDetailsScreenState extends State<VenueDetailsScreen>
     super.initState();
     _tabController = TabController(length: 4, vsync: this);
     _loadVenueImages();
+    _checkIfFavorite();
 
     // Track service view
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _trackServiceView();
     });
+  }
+
+  /// Check if the venue is already in favorites
+  void _checkIfFavorite() {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    if (authProvider.user != null) {
+      setState(() {
+        _isFavorite = authProvider.user!.favoriteVenues.contains(
+          widget.venue.id,
+        );
+      });
+    }
+  }
+
+  /// Toggle favorite status
+  Future<void> _toggleFavorite() async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+    if (authProvider.user == null) {
+      UIUtils.showSnackBar(context, 'You must be logged in to save favorites');
+      return;
+    }
+
+    try {
+      bool success;
+
+      if (_isFavorite) {
+        // Remove from favorites
+        success = await authProvider.removeFavoriteVenue(widget.venue.id);
+        if (success && mounted) {
+          UIUtils.showSnackBar(context, 'Removed from favorites');
+        }
+      } else {
+        // Add to favorites
+        success = await authProvider.addFavoriteVenue(widget.venue.id);
+        if (success && mounted) {
+          UIUtils.showSnackBar(context, 'Added to favorites');
+        }
+      }
+
+      if (success) {
+        setState(() {
+          _isFavorite = !_isFavorite;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        UIUtils.showSnackBar(context, 'Error: ${e.toString()}');
+      }
+    }
   }
 
   /// Track that this service was viewed
@@ -218,13 +272,12 @@ class _VenueDetailsScreenState extends State<VenueDetailsScreen>
             content: widget.venue,
             tooltip: 'Share this venue',
           ),
-          // Save button
-          IconButton(
-            icon: const Icon(Icons.bookmark_border),
-            onPressed: () {
-              UIUtils.showSnackBar(context, 'Save functionality coming soon!');
-            },
-            tooltip: 'Save this venue',
+          // Favorite button
+          FavoriteButton(
+            isFavorite: _isFavorite,
+            onToggle: _toggleFavorite,
+            showBackground: false,
+            size: 24,
           ),
           // Compare button
           IconButton(
@@ -724,105 +777,24 @@ class _VenueDetailsScreenState extends State<VenueDetailsScreen>
 
   /// Builds the reviews list section
   Widget _buildReviewsList() {
-    // Sample review data
-    final List<Map<String, dynamic>> reviews = [
-      {
-        'name': 'John D.',
-        'rating': 5.0,
-        'date': 'June 15, 2023',
-        'comment':
-            'Amazing venue! Perfect for our wedding. The staff was incredibly helpful and the space was beautiful.',
+    return ReviewsList(
+      serviceId: widget.venue.id,
+      serviceType: 'venue',
+      maxReviews: 3,
+      showWriteReviewButton: true,
+      showViewAllButton: true,
+      onViewAllPressed: () {
+        // Navigate to reviews screen
+        Navigator.pushNamed(
+          context,
+          RouteNames.reviews,
+          arguments: {
+            'serviceId': widget.venue.id,
+            'serviceType': 'venue',
+            'serviceName': widget.venue.name,
+          },
+        );
       },
-      {
-        'name': 'Sarah M.',
-        'rating': 4.5,
-        'date': 'May 22, 2023',
-        'comment':
-            'Great location and amenities. The only issue was limited parking, but everything else was perfect.',
-      },
-      {
-        'name': 'Michael T.',
-        'rating': 4.0,
-        'date': 'April 10, 2023',
-        'comment':
-            'Good venue for our corporate event. Sound system could be better, but the space worked well for our needs.',
-      },
-    ];
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text('Reviews', style: Theme.of(context).textTheme.titleMedium),
-            TextButton(
-              onPressed: () {
-                UIUtils.showSnackBar(
-                  context,
-                  'Write a review functionality coming soon!',
-                );
-              },
-              child: const Text('Write a Review'),
-            ),
-          ],
-        ),
-        const SizedBox(height: AppConstants.smallPadding),
-        ...reviews.map((review) => _buildReviewItem(review)),
-        const SizedBox(height: AppConstants.mediumPadding),
-        Center(
-          child: TextButton(
-            onPressed: () {
-              UIUtils.showSnackBar(
-                context,
-                'View all reviews functionality coming soon!',
-              );
-            },
-            child: const Text('View All Reviews'),
-          ),
-        ),
-      ],
-    );
-  }
-
-  /// Builds a single review item
-  Widget _buildReviewItem(Map<String, dynamic> review) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: AppConstants.mediumPadding),
-      child: Padding(
-        padding: const EdgeInsets.all(AppConstants.mediumPadding),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  review['name'],
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-                Text(review['date']),
-              ],
-            ),
-            const SizedBox(height: AppConstants.smallPadding),
-            Row(
-              children: List.generate(5, (index) {
-                return Icon(
-                  index < review['rating'].floor()
-                      ? Icons.star
-                      : (index < review['rating']
-                          ? Icons.star_half
-                          : Icons.star_border),
-                  color: Colors.amber,
-                  size: 16,
-                );
-              }),
-            ),
-            const SizedBox(height: AppConstants.smallPadding),
-            Text(review['comment']),
-          ],
-        ),
-      ),
     );
   }
 

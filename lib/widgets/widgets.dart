@@ -37,6 +37,7 @@ export 'common/standard_button.dart'; // Standardized button with consistent sty
 export 'common/standard_card.dart'; // Standardized card with consistent styling
 export 'common/standard_list_item.dart'; // Standardized list item with consistent styling
 export 'common/spacing.dart'; // Standardized spacing and padding
+export 'common/favorite_button.dart'; // Button for toggling favorite status
 
 // -------------------------
 // AUTHENTICATION WIDGETS
@@ -165,6 +166,15 @@ export 'search/search_widgets.dart'; // Barrel file for search widgets
 // Includes:
 // - SearchResultCard: Card displaying search results
 // - QuickSearchBar: Search bar for quick access
+
+// -------------------------
+// REVIEW WIDGETS
+// -------------------------
+// Widgets for displaying and collecting reviews
+export 'reviews/reviews.dart'; // Barrel file for review widgets
+// Includes:
+// - ReviewForm: Form for writing reviews
+// - ReviewsList: List of reviews for a service
 
 // -------------------------
 // SPECIAL NOTES

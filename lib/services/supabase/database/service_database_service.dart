@@ -55,6 +55,23 @@ class ServiceDatabaseService {
     }
   }
 
+  /// Get a venue by ID
+  Future<Service?> getVenue(String id) async {
+    try {
+      final response =
+          await _supabase.from('venues').select().eq('id', id).maybeSingle();
+
+      if (response == null) {
+        return null;
+      }
+
+      return Service.fromJson(response);
+    } catch (e) {
+      Logger.e('Error getting venue: $e', tag: 'ServiceDatabaseService');
+      return null;
+    }
+  }
+
   /// Get services by category
   Future<List<Service>> getServicesByCategory(String categoryId) async {
     try {
@@ -172,18 +189,113 @@ class ServiceDatabaseService {
       final data = review.toJson();
       data['service_id'] = serviceId;
 
-      await _supabase.from(_reviewsTable).insert(data);
+      // Check if review already exists
+      final existingReview =
+          await _supabase
+              .from(_reviewsTable)
+              .select()
+              .eq('id', review.id)
+              .maybeSingle();
 
-      Logger.i(
-        'Added review for service: $serviceId',
-        tag: 'ServiceDatabaseService',
-      );
+      if (existingReview != null) {
+        // Update existing review
+        await _supabase.from(_reviewsTable).update(data).eq('id', review.id);
+
+        Logger.i(
+          'Updated review for service: $serviceId',
+          tag: 'ServiceDatabaseService',
+        );
+      } else {
+        // Insert new review
+        await _supabase.from(_reviewsTable).insert(data);
+
+        Logger.i(
+          'Added review for service: $serviceId',
+          tag: 'ServiceDatabaseService',
+        );
+      }
+
+      // Update service average rating
+      await _updateServiceAverageRating(serviceId);
     } catch (e) {
       Logger.e(
         'Error adding service review: $e',
         tag: 'ServiceDatabaseService',
       );
       rethrow;
+    }
+  }
+
+  /// Delete a review for a service
+  Future<void> deleteServiceReview(String reviewId) async {
+    try {
+      // Get the review to find the service ID
+      final review =
+          await _supabase
+              .from(_reviewsTable)
+              .select()
+              .eq('id', reviewId)
+              .single();
+
+      final serviceId = review['service_id'] as String;
+
+      // Delete the review
+      await _supabase.from(_reviewsTable).delete().eq('id', reviewId);
+
+      Logger.i('Deleted review: $reviewId', tag: 'ServiceDatabaseService');
+
+      // Update service average rating
+      await _updateServiceAverageRating(serviceId);
+    } catch (e) {
+      Logger.e(
+        'Error deleting service review: $e',
+        tag: 'ServiceDatabaseService',
+      );
+      rethrow;
+    }
+  }
+
+  /// Update the average rating for a service
+  Future<void> _updateServiceAverageRating(String serviceId) async {
+    try {
+      // Get all reviews for the service
+      final reviews = await getServiceReviews(serviceId);
+
+      if (reviews.isEmpty) {
+        // No reviews, set rating to 0
+        await _supabase
+            .from(_servicesTable)
+            .update({'average_rating': 0.0, 'review_count': 0})
+            .eq('id', serviceId);
+        return;
+      }
+
+      // Calculate average rating
+      final totalRating = reviews.fold<double>(
+        0.0,
+        (sum, review) => sum + review.rating,
+      );
+      final averageRating = totalRating / reviews.length;
+
+      // Update service
+      await _supabase
+          .from(_servicesTable)
+          .update({
+            'average_rating': averageRating,
+            'review_count': reviews.length,
+          })
+          .eq('id', serviceId);
+
+      Logger.i(
+        'Updated average rating for service: $serviceId',
+        tag: 'ServiceDatabaseService',
+      );
+    } catch (e) {
+      Logger.e(
+        'Error updating service average rating: $e',
+        tag: 'ServiceDatabaseService',
+      );
+      // Don't rethrow, this is a background operation
     }
   }
 
